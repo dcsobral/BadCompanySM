@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7C9762DD-54F1-4324-8FDD-6CFBE6F0D757}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BCM</RootNamespace>
+    <AssemblyName>BCManager</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\7dtd-binaries\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="LogLibrary">
+      <HintPath>..\7dtd-binaries\LogLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\7dtd-binaries\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ModInfo.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\API.cs" />
+    <Compile Include="src\Commands\BCCommandAbstract.cs" />
+    <Compile Include="src\Commands\ListPlayersPersistentData.cs" />
+    <Compile Include="src\Commands\ListPlayersData.cs" />
+    <Compile Include="src\Commands\ListEntitiesDataJSON.cs" />
+    <Compile Include="src\Commands\ListPlayersAdvancedStats.cs" />
+    <Compile Include="src\Commands\ListEntitiesData.cs" />
+    <Compile Include="src\Commands\ListPlayersGamestage.cs" />
+    <Compile Include="src\Config\Command.cs" />
+    <Compile Include="src\Config\Config.cs" />
+    <Compile Include="src\DataManager.cs" />
+    <Compile Include="src\Functions\GetEntity.cs" />
+    <Compile Include="src\Functions\BCUtils.cs" />
+    <Compile Include="src\GameObjects\BlockItemList.cs" />
+    <Compile Include="src\Models\QuestList.cs" />
+    <Compile Include="src\Models\BuffList.cs" />
+    <Compile Include="src\PersistentData\Attributes.cs" />
+    <Compile Include="src\PersistentData\Inventory.cs" />
+    <Compile Include="src\PersistentData\InvItem.cs" />
+    <Compile Include="src\PersistentData\Player.cs" />
+    <Compile Include="src\PersistentData\PersistentContainer.cs" />
+    <Compile Include="src\PersistentData\Players.cs" />
+    <Compile Include="src\StateManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Description\ListPlayersPersistentData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Help\ListPlayersPersistentData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Description\ListEntitiesDataJSON.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Help\ListEntitiesDataJSON.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Description\ListEntitiesData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Help\ListEntitiesData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Description\ListPlayersGamestage.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Help\ListPlayersGamestage.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Description\ListPlayersData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Help\ListPlayersData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Description\ListPlayersAdvancedStats.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Help\ListPlayersAdvancedStats.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

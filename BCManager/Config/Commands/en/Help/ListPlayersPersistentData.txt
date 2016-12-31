@@ -1,0 +1,4 @@
+﻿List Persistent Players Data
+      Usage:
+            1. bc-lpp <partialname / entityid / steamid>
+            2. bc-lpp
