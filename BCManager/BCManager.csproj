@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="src\API.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
+    <Compile Include="src\Commands\Test.cs" />
     <Compile Include="src\Commands\ListPlayersPersistentData.cs" />
     <Compile Include="src\Commands\ListPlayersData.cs" />
     <Compile Include="src\Commands\ListEntitiesDataJSON.cs" />
@@ -68,6 +69,12 @@
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\GameObjects\BlockItemList.cs" />
+    <Compile Include="src\Models\CraftingQueue.cs" />
+    <Compile Include="src\Models\FavoriteRecipeList.cs" />
+    <Compile Include="src\Models\WaypointList.cs" />
+    <Compile Include="src\Models\UnlockedRecipeList.cs" />
+    <Compile Include="src\Models\SpawnpointList.cs" />
+    <Compile Include="src\Models\SkillList.cs" />
     <Compile Include="src\Models\QuestList.cs" />
     <Compile Include="src\Models\BuffList.cs" />
     <Compile Include="src\PersistentData\Attributes.cs" />

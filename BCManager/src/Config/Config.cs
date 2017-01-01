@@ -126,7 +126,7 @@ namespace BCM
       }
       if (commandDictionary.Keys.Contains(command))
       {
-        if (commandDictionary[command].description != "")
+        if (commandDictionary[command].description != "" && commandDictionary[command].description != null)
         {
           return "" + ModPrefix + " " + commandDictionary[command].description;
         }
@@ -145,7 +145,7 @@ namespace BCM
       }
       if (commandDictionary.Keys.Contains(command))
       {
-        if (commandDictionary[command].help != "")
+        if (commandDictionary[command].help != "" && commandDictionary[command].help != null)
         {
           return "" + ModPrefix + " " + commandDictionary[command].help;
         }

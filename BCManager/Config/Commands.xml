@@ -29,9 +29,14 @@
     commands="bc-gs" 
     defaultpermissionlevel="0"
     />
-  <Command 
-    name="ListPlayersPersistentData" 
-    commands="bc-lpp,bc-listplayerspersistent" 
+  <Command
+    name="ListPlayersPersistentData"
+    commands="bc-lpp,bc-listplayerspersistent"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="Test"
+    commands="bc-test"
     defaultpermissionlevel="0"
     />
 </Commands>

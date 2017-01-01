@@ -9,7 +9,6 @@ namespace BCM.Models
   public class QuestList
   {
     private List<Quest> quests = new List<Quest>();
-    //private Dictionary<string, QuestClass> qc = QuestClass.s_Quests;
 
     public QuestList()
     {
@@ -17,25 +16,24 @@ namespace BCM.Models
 
     public QuestList(PlayerDataFile _pdf)
     {
-      LoadQuests(_pdf);
+      Load(_pdf);
     }
 
-    public void LoadQuests(PlayerDataFile _pdf)
+    public void Load(PlayerDataFile _pdf)
     {
       foreach (Quest q in _pdf.questJournal.Clone().quests)
       {
-        var qc = QuestClass.s_Quests[q.ID];
         quests.Add(q);
       }
     }
 
-    public string DisplayQuests()
+    public string Display()
     {
-      string output = "Quests={\n";
       bool first = true;
-
+      string output = "Quests={\n";
       foreach (Quest q in quests)
       {
+        // todo: add checks for existance of quests before trying to output them.
         var qc = QuestClass.s_Quests[q.ID];
         if (!first) { output += ",\n"; } else { first = false; }
         output += " " + qc.Name + "(" + q.ID + "):" + q.CurrentState;
@@ -48,7 +46,7 @@ namespace BCM.Models
     public bool IsChanged ()
     {
       // checks for a change in the quest list and returns true if there is a difference.
-      // todo: check the passes questlist with the this.quests for changes (new quests, status changed, removed quests)
+      // todo: check the past questlist with the this.quests for changes (new quests, status changed, removed quests). Requires quests to be pushed to persistent data
       return false;
     }
 
