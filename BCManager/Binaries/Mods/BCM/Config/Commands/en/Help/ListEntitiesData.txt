@@ -1,0 +1,4 @@
+﻿List Entities Data
+      Usage:
+            1. bc-le <partialname / entityid / steamid>
+            2. bc-le

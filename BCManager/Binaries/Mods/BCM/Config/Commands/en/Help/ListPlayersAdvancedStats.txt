@@ -1,0 +1,4 @@
+﻿List Players Advanced Stats
+      Usage:
+            1. bc-as <partialname / entityid / steamid>
+            2. bc-as
