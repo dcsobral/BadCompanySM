@@ -1,5 +1,6 @@
 ﻿using BCM.PersistentData;
 using System;
+using System.Reflection;
 
 namespace BCM
 {
@@ -13,7 +14,7 @@ namespace BCM
       }
       catch (Exception e)
       {
-        Log.Out("(" + Config.ModPrefix + ") Error in DataManager.SavePlayerData: " + e);
+        Log.Out("" + Config.ModPrefix + " Error in DataManager." + MethodBase.GetCurrentMethod().Name + ": " + e);
       }
     }
   }

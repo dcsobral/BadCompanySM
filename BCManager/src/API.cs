@@ -1,5 +1,6 @@
 ﻿using BCM.PersistentData;
 using System;
+using System.Reflection;
 
 namespace BCM
 {
@@ -39,7 +40,7 @@ namespace BCM
       }
       catch (Exception e)
       {
-        Log.Out("(" + Config.ModPrefix + ") Error in : API.PlayerSpawning" + e);
+        Log.Out("" + Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
       }
     }
 
@@ -54,13 +55,13 @@ namespace BCM
         }
         else
         {
-          //Log.Out("(" + Config.ModPrefix + ") Disconnected player not found in client list...");
+          //Log.Out("" + Config.ModPrefix + " Disconnected player not found in client list...");
         }
         PersistentContainer.Instance.Save();
       }
       catch (Exception e)
       {
-        Log.Out("(" + Config.ModPrefix + ") Error in API.PlayerDisconnected: " + e);
+        Log.Out("" + Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
       }
     }
 

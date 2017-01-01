@@ -44,7 +44,7 @@ namespace BCM.Commands
       }
       catch (Exception e)
       {
-        Log.Out("(" + Config.ModPrefix + ") Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        Log.Out("" + Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
       }
     }
 

@@ -21,7 +21,7 @@ namespace BCM.PersistentData
     {
       lock (this)
       {
-        //Log.Out ("(" + Config.ModPrefix + ") Updating player inventory - player id: " + pdf.id);
+        //Log.Out ("" + Config.ModPrefix + " Updating player inventory - player id: " + pdf.id);
         ProcessInv(bag, pdf.bag, pdf.id);
         ProcessInv(belt, pdf.inventory, pdf.id);
         ProcessEqu(pdf.equipment, pdf.id);
@@ -76,7 +76,7 @@ namespace BCM.PersistentData
 
         if (_count > maxAllowed)
         {
-          Log.Out("(" + Config.ModPrefix + ") Player with ID " + _playerId + " has stack for \"" + name + "\" greater than allowed (" + _count + " > " + maxAllowed + ")");
+          Log.Out("" + Config.ModPrefix + " Player with ID " + _playerId + " has stack for \"" + name + "\" greater than allowed (" + _count + " > " + maxAllowed + ")");
         }
 
         InvItem item = null;

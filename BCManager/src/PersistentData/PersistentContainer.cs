@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -76,8 +77,7 @@ namespace BCM.PersistentData
         }
         catch (Exception e)
         {
-          Log.Error("(" + Config.ModPrefix + ") Exception in PersistentContainer.Load");
-          Log.Exception(e);
+          Log.Error("" + Config.ModPrefix + " Error in PersistentContainer." + MethodBase.GetCurrentMethod().Name + ": " + e);
         }
       }
       return false;

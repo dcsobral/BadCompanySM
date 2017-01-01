@@ -213,7 +213,7 @@ namespace BCM.PersistentData
     {
       if (clientInfo != null)
       {
-        //Log.Out("(" + Config.ModPrefix + ") Player set to offline: " + steamId);
+        //Log.Out("" + Config.ModPrefix + " Player set to offline: " + steamId);
         lastOnline = DateTime.Now;
         try
         {
@@ -225,7 +225,7 @@ namespace BCM.PersistentData
         }
         catch (NullReferenceException)
         {
-          //Log.Out("(" + Config.ModPrefix + ") Entity not available. Something seems to be wrong here...");
+          //Log.Out("" + Config.ModPrefix + " Entity not available. Something seems to be wrong here...");
         }
         clientInfo = null;
       }
@@ -233,7 +233,7 @@ namespace BCM.PersistentData
 
     public void SetOnline(ClientInfo ci)
     {
-      //Log.Out("(" + Config.ModPrefix + ") Player set to online: " + steamId);
+      //Log.Out("" + Config.ModPrefix + " Player set to online: " + steamId);
       clientInfo = ci;
       entityId = ci.entityId;
       name = ci.playerName;

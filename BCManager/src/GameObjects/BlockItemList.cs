@@ -64,7 +64,7 @@ namespace BCM
           }
           else
           {
-            //Log.Out ("(" + Config.ModPrefix + ") Item \"" + name + "\" already in list!");
+            //Log.Out ("" + Config.ModPrefix + " Item \"" + name + "\" already in list!");
           }
         }
       }
@@ -80,7 +80,7 @@ namespace BCM
           }
           else
           {
-            //Log.Out ("(" + Config.ModPrefix + ") Item \"" + name + "\" already in list!");
+            //Log.Out ("" + Config.ModPrefix + " Item \"" + name + "\" already in list!");
           }
         }
       }

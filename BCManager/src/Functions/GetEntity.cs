@@ -7,6 +7,8 @@ namespace BCM
   {
     public static bool GetBySearch(string _param, out string _steamId, string _el = "")
     {
+      // todo: allow for finding by entityid for offline players (playerdatafile.id)
+
       // finds an entity based on entityid, steamid, or partial name match
       _steamId = _param;
       ClientInfo _cInfo = null;
@@ -30,11 +32,11 @@ namespace BCM
       {
         if (_count > 1)
         {
-          Error(_el, "(" + Config.ModPrefix + ") Multiple matches found.");
+          Error(_el, "" + Config.ModPrefix + " Multiple matches found.");
         }
         else
         {
-          Error(_el, "(" + Config.ModPrefix + ") Entity not found.");
+          Error(_el, "" + Config.ModPrefix + " Entity not found.");
         }
         return false;
       }

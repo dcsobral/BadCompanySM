@@ -46,7 +46,7 @@ namespace BCM.Commands
       }
       catch (Exception e)
       {
-        Log.Out("(" + Config.ModPrefix + ") Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        Log.Out("" + Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
       }
     }
 
@@ -63,7 +63,7 @@ namespace BCM.Commands
       }
       catch
       {
-        Log.Out("(" + Config.ModPrefix + ") Player Data not found for SteamId: " + _steamId);
+        Log.Out("" + Config.ModPrefix + " Player Data not found for SteamId: " + _steamId);
         SdtdConsole.Instance.Output("Player Data not found for SteamId: " + _steamId);
       }
       Player _ppd = PersistentContainer.Instance.Players[_steamId, false];

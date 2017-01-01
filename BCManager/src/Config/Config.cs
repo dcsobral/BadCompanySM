@@ -10,7 +10,7 @@ namespace BCM
 {
   public static class Config
   {
-    public static string ModPrefix = "BCM";
+    public static string ModPrefix = "(BCM)";
     private static string DllPath = Utils.GetDirectoryFromPath(System.Reflection.Assembly.GetExecutingAssembly().Location);
     public static string ModDir
     {
@@ -47,7 +47,7 @@ namespace BCM
         }
         else
         {
-          Log.Out("(" + ModPrefix + ") Using DefaultLocale '" + DefaultLocale + "', setting not found in config");
+          Log.Out("" + ModPrefix + " Using DefaultLocale '" + DefaultLocale + "', setting not found in config");
         }
 
         XmlNodeList _commands = _xd.SelectNodes("/Commands/Command");
@@ -63,7 +63,7 @@ namespace BCM
             // command name
             if (!_el.HasAttribute("name"))
             {
-              Log.Out("(" + ModPrefix + ") Skipping Command element #" + count + ", missing 'name' attribute");
+              Log.Out("" + ModPrefix + " Skipping Command element #" + count + ", missing 'name' attribute");
               continue;
             }
             else
@@ -74,7 +74,7 @@ namespace BCM
             // command commands
             if (!_el.HasAttribute("commands"))
             {
-              Log.Out("(" + ModPrefix + ") Skipping Command element #" + count + ", missing 'commands' attribute");
+              Log.Out("" + ModPrefix + " Skipping Command element #" + count + ", missing 'commands' attribute");
               continue;
             }
             else
@@ -112,7 +112,7 @@ namespace BCM
       }
       catch (Exception e)
       {
-        Log.Error("(" + ModPrefix + ") Error loading config files\n" + e);
+        Log.Error("" + ModPrefix + " Error loading config files\n" + e);
         return false;
       }
       return true;
@@ -128,11 +128,11 @@ namespace BCM
       {
         if (commandDictionary[command].description != "")
         {
-          return "(" + ModPrefix + ") " + commandDictionary[command].description;
+          return "" + ModPrefix + " " + commandDictionary[command].description;
         }
         else
         {
-          return "(" + ModPrefix + ") " + command;
+          return "" + ModPrefix + " " + command;
         }
       }
       return string.Empty;
@@ -147,11 +147,11 @@ namespace BCM
       {
         if (commandDictionary[command].help != "")
         {
-          return "(" + ModPrefix + ") " + commandDictionary[command].help;
+          return "" + ModPrefix + " " + commandDictionary[command].help;
         }
         else
         {
-          return "(" + ModPrefix + ") " + command + "\nNo Help Available.\n";
+          return "" + ModPrefix + " " + command + "\nNo Help Available.\n";
         }
       }
       return string.Empty;

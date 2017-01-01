@@ -25,7 +25,7 @@ namespace BCM.PersistentData
         {
           if (create && steamId != null && steamId.Length == 17)
           {
-            Log.Out("(" + Config.ModPrefix + ") Created new player entry for ID: " + steamId);
+            Log.Out("" + Config.ModPrefix + " Created new player entry for ID: " + steamId);
             Player p = new Player(steamId);
             players.Add(steamId, p);
             return p;

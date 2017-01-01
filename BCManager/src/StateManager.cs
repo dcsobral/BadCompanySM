@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace BCM
 {
@@ -12,7 +13,7 @@ namespace BCM
       }
       catch (Exception e)
       {
-        Log.Out("(" + Config.ModPrefix + ") Error in StateManager.Awake: " + e);
+        Log.Out("" + Config.ModPrefix + " Error in StateManager." + MethodBase.GetCurrentMethod().Name + ": " + e);
       }
     }
 
@@ -24,7 +25,7 @@ namespace BCM
       }
       catch (Exception e)
       {
-        Log.Out("(" + Config.ModPrefix + ") Error in StateManager.Shutdown: " + e);
+        Log.Out("" + Config.ModPrefix + " Error in StateManager." + MethodBase.GetCurrentMethod().Name + ": " + e);
       }
     }
   }
