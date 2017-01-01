@@ -41,7 +41,7 @@ namespace BCM.Models
         foreach (Skill s in skills)
         {
           // Note: don't use s.TitleKey as it will break the command if there is no localisation for the skill
-          if (!first) { output += ", "; } else { first = false; }
+          if (!first) { output += ",\n"; } else { first = false; }
           output += " " + s.Name + ":" + s.Level + " +" + (s.PercentThisLevel * 100).ToString("0.0") + "%";
         }
         output += "\n}\n";

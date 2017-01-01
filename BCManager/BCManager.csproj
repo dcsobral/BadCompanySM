@@ -57,7 +57,7 @@
     <Compile Include="src\API.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
     <Compile Include="src\Commands\Test.cs" />
-    <Compile Include="src\Commands\ListPlayersPersistentData.cs" />
+    <Compile Include="src\Commands\ListPlayersExtensive.cs" />
     <Compile Include="src\Commands\ListPlayersData.cs" />
     <Compile Include="src\Commands\ListEntitiesDataJSON.cs" />
     <Compile Include="src\Commands\ListPlayersAdvancedStats.cs" />
@@ -69,6 +69,9 @@
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\GameObjects\BlockItemList.cs" />
+    <Compile Include="src\Models\EquipmentList.cs" />
+    <Compile Include="src\Models\BagList.cs" />
+    <Compile Include="src\Models\ToolbeltList.cs" />
     <Compile Include="src\Models\CraftingQueue.cs" />
     <Compile Include="src\Models\FavoriteRecipeList.cs" />
     <Compile Include="src\Models\WaypointList.cs" />
@@ -86,12 +89,12 @@
     <Compile Include="src\StateManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersPersistentData.txt">
+    <None Include="Config\Commands\en\Description\ListPlayersExtensive.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersPersistentData.txt">
+    <None Include="Config\Commands\en\Help\ListPlayersExtensive.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -32,14 +32,14 @@ namespace BCM.Commands
             SdtdConsole.Instance.Output("Playername or entity id not found.");
             return;
           }
-          printPlayerGamestage(p1);
+          displayPlayers(p1);
         }
         else
         {
           List<EntityPlayer> players = GameManager.Instance.World.Players.list;
           foreach (EntityPlayer player in players)
           {
-            printPlayerGamestage(player);
+            displayPlayers(player);
           }
         }
       }
@@ -49,7 +49,7 @@ namespace BCM.Commands
       }
     }
 
-    private void printPlayerGamestage(EntityPlayer player)
+    private void displayPlayers(EntityPlayer player)
     {
       int gamestage = player.gameStage;
       string playerGamestage = "Gamestage for " + player.EntityName + " (Id:" + player.entityId + "): " + gamestage;

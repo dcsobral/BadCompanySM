@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace BCM.Commands
 {
-  public class ListPlayersPersistentData : BCCommandAbstract
+  public class ListPlayersExtensive : BCCommandAbstract
   {
     public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
     {
@@ -68,7 +68,6 @@ namespace BCM.Commands
       Player _pcd = PersistentContainer.Instance.Players[_steamId, false];
       ClientInfo _ci = ConsoleHelper.ParseParamIdOrName(_pdf.id.ToString());
 
-      //_pdf.ecd.entityData
       //PersistentPlayerData _ppd = GameManager.Instance.persistentPlayers.GetPlayerData(_steamId);
 
       //CLIENT INFO
@@ -158,146 +157,15 @@ namespace BCM.Commands
       output += "ItemsCrafted:" + (_pl != null ? _pl.totalItemsCrafted : _pdf.totalItemsCrafted) + "\n";
       output += new CraftingQueue(_pdf).Display();
 
-
-      //TOOLBELT
-      // todo: FIX *********************************  itemValue.type == 0 for offline section???
-      output += "SelectedItem:";
-      if (_pl != null)
-      {
-        output += _pl.inventory.holdingItemIdx.ToString() + "[" + _pl.inventory.holdingItem.Name + "(" + _pl.inventory.holdingItem.Id + ")]";
-      }
-      else
-      {
-        output += _pdf.selectedInventorySlot.ToString();
-        ItemStack i = _pdf.inventory[_pdf.selectedInventorySlot];
-        int xt = i.itemValue.type;
-        if (xt != 0)
-        {
-          ItemClass ic = ItemClass.list[xt];
-          if (xt > 4096)
-          {
-            xt = xt - 4096;
-          }
-          output += "[" + ic.Name + "(" + ic.Id + ")]";
-        }
-        output += "\n";
-      }
-
-      output += "Inventory={\n";
-      int idx = 1;
-      if (_pl != null)
-      {
-        foreach (ItemStack i in _pl.inventory.GetSlots())
-        {
-          ItemStack xi = i;
-          if (i.itemValue.type == 0)
-          {
-            // get items from _pdf until they have been held at least once to force an update
-            xi = _pdf.inventory[idx];
-          }
-          int xt = i.itemValue.type;
-          if (xt != 0)
-          {
-            ItemClass ic = ItemClass.list[xt];
-            if (xt > 4096)
-            {
-              xt = xt - 4096;
-            }
-            output += idx + ":" + ic.Name + "(" + xt + ")*" + xi.count + "\n";
-          }
-          else
-          {
-            output += idx + ":";
-          }
-          idx++;
-        }
-      } else
-      {
-        foreach (ItemStack i in _pdf.inventory)
-        {
-          int xt = i.itemValue.type;
-          if (xt != 0)
-          {
-            ItemClass ic = ItemClass.list[xt];
-            if (xt > 4096)
-            {
-              xt = xt - 4096;
-            }
-            output += idx + ":" + ic.Name + "(" + xt + ")*" + i.count + "\n";
-          } else
-          {
-            output += idx + ":\n";
-          }
-          idx++;
-        }
-      }
-      output += "\n}\n";
-
-      //WORN ITEMS
-      output += "Equipment={\n";
-      if (_pl != null)
-      {
-        foreach (ItemValue iv in _pl.equipment.GetItems())
-        {
-          if (iv.type != 0)
-          {
-            ItemClass ic = ItemClass.list[iv.type];
-            int xt = iv.type;
-            if (xt > 4096)
-            {
-              xt = xt - 4096;
-            }
-            output += ic.EquipSlot + ":" + ic.Name + "(" + xt + ")\n";
-          }
-        }
-      }
-      else
-      {
-        foreach (ItemValue iv in _pdf.equipment.GetItems())
-        {
-          int xt = iv.type;
-          if (xt != 0)
-          {
-            ItemClass ic = ItemClass.list[xt];
-            if (xt > 4096)
-            {
-              xt = xt - 4096;
-            }
-            output += ic.EquipSlot + ":" + ic.Name + "(" + xt + ")\n";
-          }
-        }
-      }
-      output += "\n}\n";
-
-      //BAG
-      output += "Bag={\n";
-      idx = 1;
-      foreach (ItemStack i in _pdf.bag)
-      {
-        int xt = i.itemValue.type;
-        if (xt != 0)
-        {
-          ItemClass ic = ItemClass.list[xt];
-          if (xt > 4096)
-          {
-            xt = xt - 4096;
-          }
-          output += idx + ":" + ic.Name + "(" + xt + ")*" + i.count + "\n";
-        }
-        else
-        {
-          output += idx + ":\n";
-        }
-        idx++;
-      }
-      output += "\n}\n";
-
-      
+      output += new ToolbeltList(_pdf, _pl).Display();
+      output += new EquipmentList(_pdf, _pl).Display();
+      output += new BagList(_pdf, _pl).Display();
 
 
-      //friends
-      //tracked friends // _pdf.trackedFriendEntityIds //List<int>
-      //claims (_ppd.LPBlocks)
+      // todo: 
+      // friends
+      // tracked friends // _pdf.trackedFriendEntityIds //List<int>
+      // claims (_ppd.LPBlocks)
 
 
       return output;
