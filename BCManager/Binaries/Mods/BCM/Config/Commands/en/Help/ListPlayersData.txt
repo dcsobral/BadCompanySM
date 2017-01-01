@@ -1,4 +1,0 @@
-﻿List Players Data
-      Usage:
-            1. bc-lp <partialname / entityid / steamid> 
-            2. bc-lp

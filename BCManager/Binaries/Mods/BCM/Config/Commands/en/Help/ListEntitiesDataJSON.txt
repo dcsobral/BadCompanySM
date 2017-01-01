@@ -1,4 +1,0 @@
-﻿List Entities Data in JSON Format
-      Usage:
-            1. bc-lejs <partialname / entityid / steamid>
-            2. bc-lejs

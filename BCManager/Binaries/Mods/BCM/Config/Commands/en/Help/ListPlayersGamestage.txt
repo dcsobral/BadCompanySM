@@ -1,4 +1,0 @@
-﻿List Online Players Gamestage Values
-      Usage:
-            1. bc-gs <partialname / entityid / steamid>
-            2. bc-gs
