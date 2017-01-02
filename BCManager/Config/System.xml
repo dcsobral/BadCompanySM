@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<System>
+  <Heartbeat isalive="true"/>
+  <BPM rate="60"/>
+  <Synapse name="questmonitor" enabled="true" beats="1"/>
+</System>

@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using BCM.PersistentData;
@@ -113,11 +112,11 @@ namespace BCM.Commands
       output += "DroppedBackpack:" + (_pdf.droppedBackpackPosition != Vector3i.zero ? GameUtils.WorldPosToStr(_pdf.droppedBackpackPosition.ToVector3(), " ") : "None") + "\n";
 
       output += "Level:" + (_pl != null ? _pl.GetLevel() : _pdf.level) + "\n";
-      output += "LevelProgress=" + (_pl != null ? (_pl.GetLevelProgressPercentage() * 100).ToString("0.00") : (_pdf.experience / Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pdf.level + 1)), int.MaxValue) * 100).ToString("0.00") + "%") + "\n";
+      output += "LevelProgress=" + (_pl != null ? (_pl.GetLevelProgressPercentage() * 100).ToString("0.00") + "%" : (_pdf.experience / Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pdf.level + 1)), int.MaxValue) * 100).ToString("0.00") + "%") + "\n";
       output += "ExpToNextLevel:" + (_pl != null ? _pl.ExpToNextLevel : (int)_pdf.experience) + "\n";
       output += "ExpForNextLevel:" + (_pl != null ? _pl.GetExpForNextLevel() : (int)Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pdf.level + 1)), int.MaxValue)) + "\n";
 
-      //add gamestage to persistent data
+      // todo: add gamestage to persistent data
       output += "Gamestage:" + (_pl != null ? _pl.gameStage.ToString() : "") + "\n";
       output += "KilledPlayers:" + (_pl != null ? _pl.KilledPlayers : _pdf.playerKills) + "\n";
       output += "KilledZombies:" + (_pl != null ? _pl.KilledZombies : _pdf.zombieKills) + "\n";
@@ -133,8 +132,8 @@ namespace BCM.Commands
         output += "IsSafeZoneActive=" + _pl.IsSafeZoneActive() + "\n";
         output += "Remote=" + _pl.isEntityRemote + "\n";
         output += "Dead=" + _pl.IsDead() + "\n";
-        //add LastZombieAttackTime to persistent data
-        output += "TimeSinceLastZombieAttack=" + ((GameManager.Instance.World.worldTime - _pl.LastZombieAttackTime) / 600).ToString("0.0") + "(mins)\n";
+        //todo: add LastZombieAttackTime to persistent data
+        output += "TimeSinceLastZombieAttacked=" + ((GameManager.Instance.World.worldTime - _pl.LastZombieAttackTime) / 600).ToString("0.0") + "(mins)\n";
       }
 
       output += "RentedVendor:" + (_pl != null ? _pl.RentedVMPosition : _pdf.rentedVMPosition) + "\n";
@@ -166,6 +165,7 @@ namespace BCM.Commands
       // friends
       // tracked friends // _pdf.trackedFriendEntityIds //List<int>
       // claims (_ppd.LPBlocks)
+      // list owned storage containers and doors for the players
 
 
       return output;

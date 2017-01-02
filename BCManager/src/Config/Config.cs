@@ -3,14 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 
 namespace BCM
 {
   public static class Config
   {
-    public static string ModPrefix = "(BCM)";
+    public const string ModPrefix = "(BCM)";
     private static string DllPath = Utils.GetDirectoryFromPath(System.Reflection.Assembly.GetExecutingAssembly().Location);
     public static string ModDir
     {
@@ -29,17 +28,114 @@ namespace BCM
         return _filepath;
       }
     }
-    private static string commandsFile = ModDir + "Config/Commands.xml";
+    private static string commandsFile = "Commands.xml";
+    private static string systemFile = "System.xml";
+    private static string ConfigPath = ModDir + "Config/";
     public static string DefaultLocale = "en";
     private static Dictionary<string, Command> commandDictionary = new Dictionary<string, Command>();
 
-    public static bool Load()
+    public static bool ConfigureSystem()
     {
       XmlDocument _xd = new XmlDocument();
       try
       {
-        _xd.Load(commandsFile);
-        //XmlNode _de = _xd.DocumentElement;
+        //Heartbeat.IsAlive
+        _xd.Load(ConfigPath + systemFile);
+        XmlNodeList _hb = _xd.SelectNodes("/System/Heartbeat/@isalive");
+        if (_hb.Count > 0)
+        {
+          if (!bool.TryParse(_hb.Item(0).Value, out Heartbeat.IsAlive))
+          {
+            Log.Out("" + ModPrefix + " Unable to load Heartbeat, isalive is not a valid boolean in " + systemFile);
+          }
+        }
+        else
+        {
+          Log.Out("" + ModPrefix + " Unable to load Heartbeat IsAlive, setting not found in " + systemFile);
+        }
+
+        //Heartbeat.BPM
+        XmlNodeList _bpm = _xd.SelectNodes("/System/BPM/@rate");
+        if (_bpm.Count > 0)
+        {
+          if (!int.TryParse(_bpm.Item(0).Value, out Heartbeat.BPM))
+          {
+            Log.Out("" + ModPrefix + " Unable to load BPM, 'rate' is not a valid int in " + systemFile);
+          }
+        }
+        else
+        {
+          Log.Out("" + ModPrefix + " Unable to load BPM, setting not found in " + systemFile);
+        }
+
+        //Synapses
+        XmlNodeList _synapses = _xd.SelectNodes("/System/Synapse");
+        if (_synapses.Count > 0)
+        {
+          int count = 0;
+          foreach (XmlElement _s in _synapses)
+          {
+            count++;
+            Synapse _synapse = new Synapse();
+
+            if (!_s.HasAttribute("name"))
+            {
+              Log.Out("" + ModPrefix + " Skipping Synapse element #" + count + ", missing 'name' attribute in " + systemFile);
+              continue;
+            }
+            else
+            {
+              _synapse.name = _s.GetAttribute("name");
+            }
+
+            if (!_s.HasAttribute("enabled"))
+            {
+              Log.Out("" + ModPrefix + " Skipping Synapse element #" + count + ", missing 'enabled' attribute in " + systemFile);
+              continue;
+            }
+            else
+            {
+              if (!bool.TryParse(_s.GetAttribute("enabled"), out _synapse.IsEnabled))
+              {
+                Log.Out("" + ModPrefix + " Unable to load Synapse 'enabled' in element #" + count + ", value is not a valid boolean in " + systemFile);
+              }
+            }
+
+            if (!_s.HasAttribute("beats"))
+            {
+              Log.Out("" + ModPrefix + " Skipping Synapse element #" + count + ", missing 'beats' attribute in " + systemFile);
+              continue;
+            }
+            else
+            {
+              if (!int.TryParse(_s.GetAttribute("beats"), out _synapse.beats))
+              {
+                Log.Out("" + ModPrefix + " Unable to load Synapse 'beats' in element #" + count + ", value not a valid int in " + systemFile);
+              }
+            }
+            _synapse.WireNeurons();
+            Brain.BondSynapse(_synapse);
+          }
+        }
+        else
+        {
+          Log.Out("" + ModPrefix + " Unable to load Synapses, settings not found in " + systemFile);
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Error("" + ModPrefix + " Error configuring tasks\n" + e);
+        return false;
+      }
+      return true;
+    }
+
+    public static bool LoadCommands()
+    {
+      XmlDocument _xd = new XmlDocument();
+      try
+      {
+        _xd.Load(ConfigPath + commandsFile);
         XmlNodeList _locale = _xd.SelectNodes("/Commands/DefaultLocale");
         if (_locale.Count > 0)
         {
@@ -47,7 +143,7 @@ namespace BCM
         }
         else
         {
-          Log.Out("" + ModPrefix + " Using DefaultLocale '" + DefaultLocale + "', setting not found in config");
+          Log.Out("" + ModPrefix + " Using DefaultLocale '" + DefaultLocale + "', setting not found in " + commandsFile);
         }
 
         XmlNodeList _commands = _xd.SelectNodes("/Commands/Command");
@@ -63,7 +159,7 @@ namespace BCM
             // command name
             if (!_el.HasAttribute("name"))
             {
-              Log.Out("" + ModPrefix + " Skipping Command element #" + count + ", missing 'name' attribute");
+              Log.Out("" + ModPrefix + " Skipping Command element #" + count + ", missing 'name' attribute in " + commandsFile);
               continue;
             }
             else
@@ -74,7 +170,7 @@ namespace BCM
             // command commands
             if (!_el.HasAttribute("commands"))
             {
-              Log.Out("" + ModPrefix + " Skipping Command element #" + count + ", missing 'commands' attribute");
+              Log.Out("" + ModPrefix + " Skipping Command element #" + count + ", missing 'commands' attribute " + commandsFile);
               continue;
             }
             else
@@ -117,7 +213,6 @@ namespace BCM
       }
       return true;
     }
-
     public static string GetDescription(string command)
     {
       if (command == "BCCommandAbstract")

@@ -69,6 +69,11 @@
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\GameObjects\BlockItemList.cs" />
+    <Compile Include="src\System\NeuronAbstract.cs" />
+    <Compile Include="src\System\Neurons\QuestMonitor.cs" />
+    <Compile Include="src\System\Synapse.cs" />
+    <Compile Include="src\System\Brain.cs" />
+    <Compile Include="src\System\Heartbeat.cs" />
     <Compile Include="src\Models\EquipmentList.cs" />
     <Compile Include="src\Models\BagList.cs" />
     <Compile Include="src\Models\ToolbeltList.cs" />
@@ -148,6 +153,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\System.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

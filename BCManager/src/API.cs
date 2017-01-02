@@ -8,7 +8,9 @@ namespace BCM
   {
     public API()
     {
-      Config.Load();
+      Config.LoadCommands();
+      Config.ConfigureSystem();
+      Heartbeat.Start();
     }
 
     public override void GameAwake()
