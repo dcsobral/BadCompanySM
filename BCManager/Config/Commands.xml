@@ -29,6 +29,11 @@
     commands="bc-lq"
     defaultpermissionlevel="0"
     />
+  <Command
+    name="ListHubCellData"
+    commands="bc-lhcd"
+    defaultpermissionlevel="0"
+    />
 
   <Command
     name="ListEntitiesData"
