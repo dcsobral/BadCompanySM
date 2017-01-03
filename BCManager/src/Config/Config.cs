@@ -34,6 +34,13 @@ namespace BCM
     public static string DefaultLocale = "en";
     private static Dictionary<string, Command> commandDictionary = new Dictionary<string, Command>();
 
+    public static bool Init()
+    {
+      LoadCommands();
+      ConfigureSystem();
+      return true;
+    }
+
     public static bool ConfigureSystem()
     {
       XmlDocument _xd = new XmlDocument();

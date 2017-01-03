@@ -20,6 +20,7 @@ namespace BCM
     {
       while (IsAlive)
       {
+        //Log.Out(Config.ModPrefix + " " + beats + " " + IsAlive);
         beats++;
         Brain.FireNeurons(beats);
         Thread.Sleep(1000 * 60 / BPM);

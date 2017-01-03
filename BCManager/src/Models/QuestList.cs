@@ -6,7 +6,7 @@ namespace BCM.Models
   [Serializable]
   public class QuestList
   {
-    private List<Quest> quests = new List<Quest>();
+    public List<Quest> quests = new List<Quest>();
 
     public QuestList()
     {

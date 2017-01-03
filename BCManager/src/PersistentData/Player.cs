@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BCM.Models;
+using System;
 using System.Runtime.Serialization;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ namespace BCM.PersistentData
     [OptionalField]
     private DateTime lastOnline;
     private Inventory inventory;
+    [OptionalField]
+    private PDQuests quests;
     [OptionalField]
     private int lastPositionX, lastPositionY, lastPositionZ;
     [OptionalField]
@@ -51,6 +54,16 @@ namespace BCM.PersistentData
     public string IP
     {
       get { return ip == null ? string.Empty : ip; }
+    }
+
+    public PDQuests Quests
+    {
+      get
+      {
+        if (quests == null)
+          quests = new PDQuests();
+        return quests;
+      }
     }
 
     public Inventory Inventory
@@ -246,92 +259,14 @@ namespace BCM.PersistentData
       expToNextLevel = _pdf.experience;
       level = _pdf.level;
       inventory.Update(_pdf);
-
-
-
-      //string output = "";
-
-      ////output += "_cInfo:" + JsonUtility.ToJson(_cInfo) + "\n";
-      //output += "_pdf:" + JsonUtility.ToJson(_pdf) + "\n";
-
-      //output += "ecd.stats.Health.Value:" + _pdf.ecd.stats.Health.Value + "\n";
-      //output += "ecd.stats.Wellness.Value:" + _pdf.ecd.stats.Wellness.Value + "\n";
-      //output += "ecd.stats.CoreTemp.Value:" + _pdf.ecd.stats.CoreTemp.Value + "\n";
-
-      ////EntityPlayer _player = null;
-      ////_pdf.ToPlayer(_player);
-      ////output += "Health:" + _player.Health + "\n";
-      ////output += "Stats.Health:" + _player.Stats.Health + "\n";
-
-
-      //output += "spawnPoints:" + "\n" + "\n";
-      //foreach (Vector3i sp in _pdf.spawnPoints)
-      //{
-      //  output += "    sp:" + sp.ToString() + "\n";
-      //}
-
-      //output += "quests:" + "\n" + "\n";
-      //foreach (Quest q in _pdf.questJournal.quests)
-      //{
-      //  output += "    q:" + q.ID + "(" + q.CurrentState + ")" + "\n";
-      //}
-
-      //output += "waypoints:" + "\n";
-      //foreach (Waypoint wp in _pdf.waypoints.List)
-      //{
-      //  output += "    wp:" + wp.pos + "\n";
-      //}
-
-      //output += "inventory:" + "\n";
-      //foreach (ItemStack inv in _pdf.inventory)
-      //{
-      //  output += "    inv:" + inv + "\n";
-      //}
-
-      //output += "favoriteRecipeList:" + "\n";
-      //foreach (string fr in _pdf.favoriteRecipeList)
-      //{
-      //  output += "    fr:" + fr + "\n";
-      //}
-
-      //output += "unlockedRecipeList:" + "\n";
-      //foreach (string ur in _pdf.unlockedRecipeList)
-      //{
-      //  output += "    ur:" + ur + "\n";
-      //}
-
-      //output += "RecipeQueueItems:" + "\n";
-      //foreach (RecipeQueueItem rqi in _pdf.craftingData.RecipeQueueItems)
-      //{
-      //  if (rqi.IsCrafting)
-      //  {
-      //    output += "    " + rqi.Recipe.GetName() + ": (" + rqi.Multiplier + ")" + rqi.CraftingTimeLeft + "\n";
-      //  }
-      //}
-
-      //output += "equipment:" + "\n" + "\n";
-      //foreach (ItemValue its in _pdf.equipment.GetItems())
-      //{
-      //  output += "    its:" + its + "\n";
-      //}
-
-      //output += "buffs:" + "\n" + "\n";
-      //foreach (MultiBuff b in _pdf.ecd.stats.Buffs)
-      //{
-      //  output += "    " + b.Name + ":" + (b.Timer.TimeFraction * 100).ToString("0.0") + "\n";
-      //}
-
-
-      //Log.Out(output);
-
-
-
+      quests.Update(_pdf);
     }
 
     public Player(string steamId)
     {
       this.steamId = steamId;
       this.inventory = new Inventory();
+      this.quests = new PDQuests();
     }
 
 

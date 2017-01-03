@@ -56,6 +56,9 @@
   <ItemGroup>
     <Compile Include="src\API.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
+    <Compile Include="src\Commands\ListQuests.cs" />
+    <Compile Include="src\Commands\RemoveQuestFromPlayer.cs" />
+    <Compile Include="src\Commands\GiveQuestToPlayer.cs" />
     <Compile Include="src\Commands\Test.cs" />
     <Compile Include="src\Commands\ListPlayersExtensive.cs" />
     <Compile Include="src\Commands\ListPlayersData.cs" />
@@ -66,9 +69,12 @@
     <Compile Include="src\Config\Command.cs" />
     <Compile Include="src\Config\Config.cs" />
     <Compile Include="src\DataManager.cs" />
+    <Compile Include="src\Functions\ObjectCopier.cs" />
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\GameObjects\BlockItemList.cs" />
+    <Compile Include="src\PersistentData\PDQuests.cs" />
+    <Compile Include="src\PersistentData\PDQuest.cs" />
     <Compile Include="src\System\NeuronAbstract.cs" />
     <Compile Include="src\System\Neurons\QuestMonitor.cs" />
     <Compile Include="src\System\Synapse.cs" />

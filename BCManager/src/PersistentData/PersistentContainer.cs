@@ -48,6 +48,13 @@ namespace BCM.PersistentData
         return instance;
       }
     }
+    public static bool IsLoaded
+    {
+      get
+      {
+        return instance != null;
+      }
+    }
 
     private PersistentContainer()
     {

@@ -8,8 +8,7 @@ namespace BCM
   {
     public API()
     {
-      Config.LoadCommands();
-      Config.ConfigureSystem();
+      Config.Init();
       Heartbeat.Start();
     }
 
