@@ -1,0 +1,9 @@
+﻿List HubCell Data
+      Usage:
+            1. bc-lhcd
+            2. bc-lhcd filtertext
+            3. bc-lhcd x y
+            4. bc-lhcd x y filtertext
+
+            filtertext is a string to compare against prefab names
+            x y are the grid co-ords for the cells, 0 0 being the central hub, out to 6 for the limit on a vanilla world
