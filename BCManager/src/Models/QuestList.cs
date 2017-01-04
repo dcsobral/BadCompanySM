@@ -12,14 +12,14 @@ namespace BCM.Models
     {
     }
 
-    public QuestList(PlayerDataFile _pdf)
+    public QuestList(PlayerInfo _pInfo)
     {
-      Load(_pdf);
+      Load(_pInfo);
     }
 
-    public void Load(PlayerDataFile _pdf)
+    public void Load(PlayerInfo _pInfo)
     {
-      foreach (Quest q in _pdf.questJournal.Clone().quests)
+      foreach (Quest q in _pInfo.PDF.questJournal.Clone().quests)
       {
         quests.Add(q);
       }
@@ -40,35 +40,5 @@ namespace BCM.Models
 
       return output;
     }
-
-    public bool IsChanged ()
-    {
-      // checks for a change in the quest list and returns true if there is a difference.
-      // todo: check the past questlist with the this.quests for changes (new quests, status changed, removed quests). Requires quests to be pushed to persistent data
-      return false;
-    }
-
-    public List<Quest> ChangedQuests()
-    {
-      // checks for a change in the quest list and returns true if there is a difference.
-      if (IsChanged())
-      {
-        // todo: only return the quests that have changed status
-        return quests;
-      }
-      return null;
-    }
-
-    public List<Quest> NewQuests()
-    {
-      // checks for a change in the quest list and returns true if there is a difference.
-      if (IsChanged())
-      {
-        // todo: only return the quests that are new
-        return quests;
-      }
-      return null;
-    }
-
   }
 }

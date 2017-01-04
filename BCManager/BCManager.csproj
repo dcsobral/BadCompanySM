@@ -56,27 +56,51 @@
   <ItemGroup>
     <Compile Include="src\API.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
-    <Compile Include="src\Commands\ListHubCellData.cs" />
-    <Compile Include="src\Commands\ListQuests.cs" />
-    <Compile Include="src\Commands\RemoveQuestFromPlayer.cs" />
-    <Compile Include="src\Commands\GiveQuestToPlayer.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListHubCellData.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListQuests.cs" />
+    <Compile Include="src\Commands\AdminPlayers\RemoveQuestFromPlayer.cs" />
+    <Compile Include="src\Commands\AdminPlayers\GiveQuestToPlayer.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayers.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersBag.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersBuffs.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersCraftingQueue.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersEquipment.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersClientInfo.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersFavRecipes.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersQuests.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersSkills.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersSpawns.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersStats.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersToolbelt.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersRecipes.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersWaypoints.cs" />
+    <Compile Include="src\Commands\BCHelp.cs" />
     <Compile Include="src\Commands\Test.cs" />
-    <Compile Include="src\Commands\ListPlayersExtensive.cs" />
-    <Compile Include="src\Commands\ListPlayersData.cs" />
-    <Compile Include="src\Commands\ListEntitiesDataJSON.cs" />
-    <Compile Include="src\Commands\ListPlayersAdvancedStats.cs" />
-    <Compile Include="src\Commands\ListEntitiesData.cs" />
-    <Compile Include="src\Commands\ListPlayersGamestage.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersExtensive.cs" />
+    <Compile Include="src\Commands\Obsolete\ListPlayersData.cs" />
+    <Compile Include="src\Commands\Obsolete\ListEntitiesDataJSON.cs" />
+    <Compile Include="src\Commands\Obsolete\ListPlayersAdvancedStats.cs" />
+    <Compile Include="src\Commands\ListEntities\ListEntities.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersGamestage.cs" />
     <Compile Include="src\Config\Command.cs" />
     <Compile Include="src\Config\Config.cs" />
     <Compile Include="src\DataManager.cs" />
+    <Compile Include="src\Functions\GetPlayer.cs" />
     <Compile Include="src\Functions\ObjectCopier.cs" />
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\GameObjects\BlockItemList.cs" />
+    <Compile Include="src\Models\ClientInfoList.cs" />
+    <Compile Include="src\Models\StatsList.cs" />
     <Compile Include="src\PersistentData\PDQuests.cs" />
     <Compile Include="src\PersistentData\PDQuest.cs" />
     <Compile Include="src\System\NeuronAbstract.cs" />
+    <Compile Include="src\System\Neurons\BagMonitor.cs" />
+    <Compile Include="src\System\Neurons\EquipmentMonitor.cs" />
+    <Compile Include="src\System\Neurons\ToolbeltMonitor.cs" />
+    <Compile Include="src\System\Neurons\PositionTracker.cs" />
+    <Compile Include="src\System\Neurons\BuffMonitor.cs" />
+    <Compile Include="src\System\Neurons\DeadIsDead.cs" />
     <Compile Include="src\System\Neurons\QuestMonitor.cs" />
     <Compile Include="src\System\Synapse.cs" />
     <Compile Include="src\System\Brain.cs" />
@@ -111,22 +135,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListEntitiesDataJSON.txt">
+    <None Include="Config\Commands\en\Description\ListEntities.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListEntitiesDataJSON.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListEntitiesData.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListEntitiesData.txt">
+    <None Include="Config\Commands\en\Help\ListEntities.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -141,22 +155,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersData.txt">
+    <None Include="Config\Commands\en\Description\ListPlayers.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersData.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersAdvancedStats.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersAdvancedStats.txt">
+    <None Include="Config\Commands\en\Help\ListPlayers.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -167,6 +171,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Config\Commands\en\Help\ListHubCellData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Description\ListHubCellData.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -12,15 +12,15 @@ namespace BCM.Models
     {
     }
 
-    public CraftingQueue(PlayerDataFile _pdf)
+    public CraftingQueue(PlayerInfo _pInfo)
     {
-      Load(_pdf);
+      Load(_pInfo);
     }
 
-    public void Load(PlayerDataFile _pdf)
+    public void Load(PlayerInfo _pInfo)
     {
 
-      foreach (RecipeQueueItem rqi in _pdf.craftingData.RecipeQueueItems)
+      foreach (RecipeQueueItem rqi in _pInfo.PDF.craftingData.RecipeQueueItems)
       {
         queueItems.Add(rqi);
       }

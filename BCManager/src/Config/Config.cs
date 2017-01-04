@@ -32,7 +32,7 @@ namespace BCM
     private static string systemFile = "System.xml";
     private static string ConfigPath = ModDir + "Config/";
     public static string DefaultLocale = "en";
-    private static Dictionary<string, Command> commandDictionary = new Dictionary<string, Command>();
+    public static Dictionary<string, Command> commandDictionary = new Dictionary<string, Command>();
 
     public static bool Init()
     {

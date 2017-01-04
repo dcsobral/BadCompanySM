@@ -12,14 +12,14 @@ namespace BCM.Models
     {
     }
 
-    public UnlockedRecipeList(PlayerDataFile _pdf)
+    public UnlockedRecipeList(PlayerInfo _pInfo)
     {
-      Load(_pdf);
+      Load(_pInfo);
     }
 
-    public void Load(PlayerDataFile _pdf)
+    public void Load(PlayerInfo _pInfo)
     {
-      foreach (string ur in _pdf.unlockedRecipeList)
+      foreach (string ur in _pInfo.PDF.unlockedRecipeList)
       {
         unlockedRecipes.Add(ur);
       }

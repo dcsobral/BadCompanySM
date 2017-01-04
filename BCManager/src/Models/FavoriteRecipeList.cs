@@ -12,14 +12,14 @@ namespace BCM.Models
     {
     }
 
-    public FavoriteRecipeList(PlayerDataFile _pdf)
+    public FavoriteRecipeList(PlayerInfo _pInfo)
     {
-      Load(_pdf);
+      Load(_pInfo);
     }
 
-    public void Load(PlayerDataFile _pdf)
+    public void Load(PlayerInfo _pInfo)
     {
-      foreach (string fr in _pdf.favoriteRecipeList)
+      foreach (string fr in _pInfo.PDF.favoriteRecipeList)
       {
         favoriteRecipes.Add(fr);
       }

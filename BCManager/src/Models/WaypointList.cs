@@ -7,19 +7,21 @@ namespace BCM.Models
   public class WaypointList
   {
     private List<Waypoint> waypoints = new List<Waypoint>();
+    private string markerpos;
 
     public WaypointList()
     {
     }
 
-    public WaypointList(PlayerDataFile _pdf)
+    public WaypointList(PlayerInfo _pInfo)
     {
-      Load(_pdf);
+      Load(_pInfo);
     }
 
-    public void Load(PlayerDataFile _pdf)
+    public void Load(PlayerInfo _pInfo)
     {
-      foreach (Waypoint wp in _pdf.waypoints.List)
+      markerpos = (_pInfo.PDF.markerPosition != Vector3i.zero ? GameUtils.WorldPosToStr(_pInfo.PDF.markerPosition.ToVector3(), " ") : "None");
+      foreach (Waypoint wp in _pInfo.PDF.waypoints.List)
       {
         waypoints.Add(wp);
       }
@@ -27,8 +29,10 @@ namespace BCM.Models
 
     public string Display()
     {
+      string output = "MarkerPosition:" + markerpos + "\n";
+
       bool first = true;
-      string output = "Waypoints(saved)={\n";
+      output += "Waypoints(saved)={\n";
       foreach (Waypoint wp in waypoints)
       {
         if (!first) { output += ",\n"; } else { first = false; }

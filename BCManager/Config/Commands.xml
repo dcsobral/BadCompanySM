@@ -5,15 +5,91 @@
   <!-- commands are the console text to execute the command. Seperate each alias for the command with a comma -->
   <!-- defaultpermissionlevel can be overridden in the Saves/serveradmin.xml file, 0=admin level, 1000=anyone -->
   <Command
+    name="BCHelp"
+    commands="bc-help"
+    defaultpermissionlevel="1000"
+    />
+  <Command
+    name="ListPlayers"
+    commands="bc-lp"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersBag"
+    commands="bc-lpbag"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersBuffs"
+    commands="bc-lpbuff"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersCraftingQueue"
+    commands="bc-lpcraft"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersEquipment"
+    commands="bc-lpequip"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersFavRecipes"
+    commands="bc-lpfav"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersQuests"
+    commands="bc-lpquest"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersSkills"
+    commands="bc-lpskill"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersSpawns"
+    commands="bc-lpspawn"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersStats"
+    commands="bc-lpstats"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersToolbelt"
+    commands="bc-lptool"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersRecipes"
+    commands="bc-lprecipe"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersWaypoints"
+    commands="bc-lpwayp"
+    defaultpermissionlevel="0"
+    />
+  <Command
+    name="ListPlayersClientInfo"
+    commands="bc-lpci,bc-lpcinfo"
+    defaultpermissionlevel="0"
+    />
+  <Command
     name="ListPlayersExtensive"
-    commands="bc-lpx,bc-lx"
+    commands="bc-lpx,bc-x"
     defaultpermissionlevel="0"
     />
   <Command
     name="ListPlayersGamestage"
-    commands="bc-gs"
+    commands="bc-lpgs,bc-gs"
     defaultpermissionlevel="0"
     />
+  
   <Command
     name="GiveQuestToPlayer"
     commands="bc-gqp"
@@ -24,6 +100,7 @@
     commands="bc-rqp"
     defaultpermissionlevel="0"
     />
+  
   <Command
     name="ListQuests"
     commands="bc-lq"
@@ -36,15 +113,13 @@
     />
 
   <Command
-    name="ListEntitiesData"
-    commands="bc-le,bc-listentities"
+    name="ListEntities"
+    commands="bc-le"
     defaultpermissionlevel="0"
     />
-  <Command 
-    name="ListEntitiesDataJSON" 
-    commands="bc-lejs" 
-    defaultpermissionlevel="0"
-    />
+  
+  
+  <!-- obsolete -->
   <Command 
     name="ListPlayersAdvancedStats" 
     commands="bc-as" 

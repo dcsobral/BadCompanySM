@@ -11,16 +11,16 @@ namespace BCM.Models
     {
     }
 
-    public BagList(PlayerDataFile _pdf, EntityPlayer _pl)
+    public BagList(PlayerInfo _pInfo)
     {
-      Load(_pdf, _pl);
+      Load(_pInfo);
     }
 
-    public void Load(PlayerDataFile _pdf, EntityPlayer _pl)
+    public void Load(PlayerInfo _pInfo)
     {
       // todo: try to find the bag info on the live player for immediate updates on connected clients.
       // Updates are instantly triggered when looting, but not when an item is moved to equipment so there is a delay of up to 30 seconds
-      bag = _pdf.bag;
+      bag = _pInfo.PDF.bag;
     }
 
     public string Display()

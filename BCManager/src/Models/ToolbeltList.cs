@@ -13,16 +13,16 @@ namespace BCM.Models
     {
     }
 
-    public ToolbeltList(PlayerDataFile _pdf, EntityPlayer _pl)
+    public ToolbeltList(PlayerInfo _pInfo)
     {
-      Load(_pdf, _pl);
+      Load(_pInfo);
     }
 
-    public void Load(PlayerDataFile _pdf, EntityPlayer _pl)
+    public void Load(PlayerInfo _pInfo)
     {
-      if (_pl != null)
+      if (_pInfo.EP != null)
       {
-        inventory = _pl.inventory.GetSlots();
+        inventory = _pInfo.EP.inventory.GetSlots();
         int idx = 1;
         foreach (ItemStack i in inventory)
         {
@@ -31,23 +31,23 @@ namespace BCM.Models
           {
             // get items from _pdf until they have been held at least once to force an update, could result in showing an item from saved data when no item held
             // todo: fix function, doesnt seem to be pulling data correctly
-            xi = _pdf.inventory[idx];
+            xi = _pInfo.PDF.inventory[idx];
           }
           inventory[idx] = xi;
         }
-        selecteditemSlot = _pl.inventory.holdingItemIdx + 1;
+        selecteditemSlot = _pInfo.EP.inventory.holdingItemIdx + 1;
         if (selecteditemSlot > 0)
         {
-          selecteditem = inventory[_pl.inventory.holdingItemIdx];
+          selecteditem = inventory[_pInfo.EP.inventory.holdingItemIdx];
         }
       }
       else
       {
-        inventory = _pdf.inventory;
-        selecteditemSlot = _pdf.selectedInventorySlot + 1;
+        inventory = _pInfo.PDF.inventory;
+        selecteditemSlot = _pInfo.PDF.selectedInventorySlot + 1;
         if (selecteditemSlot > 0)
         {
-          selecteditem = inventory[_pdf.selectedInventorySlot];
+          selecteditem = inventory[_pInfo.PDF.selectedInventorySlot];
         }
       }
 

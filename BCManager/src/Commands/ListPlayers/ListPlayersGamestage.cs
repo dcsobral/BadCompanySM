@@ -6,18 +6,17 @@ namespace BCM.Commands
 {
   public class ListPlayersGamestage : BCCommandAbstract
   {
-    public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
+    public override void Process()
     {
-      try
-      {
-        if (_params.Count != 0 && _params.Count != 1)
+      // todo: change to Extensive format once gamestage info is stored in persistent data
+      if (_params.Count != 0 && _params.Count != 1)
         {
           SdtdConsole.Instance.Output("Wrong number of arguments, expected 0 or 1, found " + _params.Count + ".");
           return;
         }
 
-        if (_params.Count == 1)
-        {
+      if (_params.Count == 1)
+      {
           ClientInfo ci = ConsoleHelper.ParseParamIdOrName(_params[0]);
           if (ci == null)
           {
@@ -32,19 +31,14 @@ namespace BCM.Commands
             return;
           }
           displayPlayers(p1);
-        }
-        else
-        {
-          List<EntityPlayer> players = GameManager.Instance.World.Players.list;
-          foreach (EntityPlayer player in players)
-          {
-            displayPlayers(player);
-          }
-        }
       }
-      catch (Exception e)
+      else
       {
-        Log.Out("" + Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        List<EntityPlayer> players = GameManager.Instance.World.Players.list;
+        foreach (EntityPlayer player in players)
+        {
+          displayPlayers(player);
+        }
       }
     }
 
@@ -52,7 +46,7 @@ namespace BCM.Commands
     {
       int gamestage = player.gameStage;
       string playerGamestage = "Gamestage for " + player.EntityName + " (Id:" + player.entityId + "): " + gamestage;
-      SdtdConsole.Instance.Output(playerGamestage);
+      SendOutput(playerGamestage);
     }
   }
 }

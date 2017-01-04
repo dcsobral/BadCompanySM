@@ -1,4 +1,5 @@
 ﻿using BCM.Neurons;
+using System;
 using System.Collections.Generic;
 
 namespace BCM
@@ -34,7 +35,13 @@ namespace BCM
         lastfired = b;
         foreach (NeuronAbstract n in neurons)
         {
-          n.Fire(b);
+          try
+          {
+            n.Fire(b);
+          } catch (Exception e)
+          {
+            Log.Out(Config.ModPrefix + " WARNING: Brain Damage detected trying to fire Neuron :" + n.GetType() + e);
+          }
         }
       }
       return true;

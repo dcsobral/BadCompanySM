@@ -12,14 +12,14 @@ namespace BCM.Models
     {
     }
 
-    public SpawnpointList(PlayerDataFile _pdf)
+    public SpawnpointList(PlayerInfo _pInfo)
     {
-      Load(_pdf);
+      Load(_pInfo);
     }
 
-    public void Load(PlayerDataFile _pdf)
+    public void Load(PlayerInfo _pInfo)
     {
-      foreach (Vector3i sp in _pdf.spawnPoints)
+      foreach (Vector3i sp in _pInfo.PDF.spawnPoints)
       {
         spawnpoints.Add(sp);
       }

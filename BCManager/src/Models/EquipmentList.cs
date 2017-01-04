@@ -11,20 +11,20 @@ namespace BCM.Models
     {
     }
 
-    public EquipmentList(PlayerDataFile _pdf, EntityPlayer _pl)
+    public EquipmentList(PlayerInfo _pInfo)
     {
-      Load(_pdf, _pl);
+      Load(_pInfo);
     }
 
-    public void Load(PlayerDataFile _pdf, EntityPlayer _pl)
+    public void Load(PlayerInfo _pInfo)
     {
-      if (_pl != null)
+      if (_pInfo.EP != null)
       {
-        equipment = _pl.equipment.GetItems();
+        equipment = _pInfo.EP.equipment.GetItems();
       }
       else
       {
-        equipment = _pdf.equipment.GetItems();
+        equipment = _pInfo.PDF.equipment.GetItems();
       }
 
     }

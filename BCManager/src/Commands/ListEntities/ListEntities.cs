@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace BCM.Commands
 {
-  public class ListEntitiesData : BCCommandAbstract
+  public class ListEntities : BCCommandAbstract
   {
     public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
     {

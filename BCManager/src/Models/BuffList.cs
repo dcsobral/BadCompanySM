@@ -13,21 +13,21 @@ namespace BCM.Models
     {
     }
 
-    public BuffList(PlayerDataFile _pdf, EntityPlayer _pl)
+    public BuffList(PlayerInfo _pInfo)
     {
-      Load(_pdf, _pl);
+      Load(_pInfo);
     }
 
-    public void Load(PlayerDataFile _pdf, EntityPlayer _pl)
+    public void Load(PlayerInfo _pInfo)
     {
-      if (_pl != null)
+      if (_pInfo.EP != null)
       {
-        foreach (MultiBuff b in _pl.Stats.Buffs)
+        foreach (MultiBuff b in _pInfo.EP.Stats.Buffs)
         {
           buffs.Add(b);
         }
       }
-      foreach (MultiBuff b in _pdf.ecd.stats.Buffs)
+      foreach (MultiBuff b in _pInfo.PDF.ecd.stats.Buffs)
       {
         sdbuffs.Add(b);
       }
@@ -35,7 +35,7 @@ namespace BCM.Models
 
     public string Display()
     {
-      // todo: make the list intoa single list with a flag for saved buffs since the timer only updates when the save updates (30 sec interval)
+      // todo: make the list into a single list with a flag for saved buffs since the timer only updates when the save updates (30 sec interval)
       bool first = true;
       string output = "Buffs={\n";
       foreach (MultiBuff b in buffs)

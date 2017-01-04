@@ -7,21 +7,23 @@ namespace BCM.Models
   public class SkillList
   {
     private List<Skill> skills = new List<Skill>();
+    private string points;
 
     public SkillList()
     {
     }
 
-    public SkillList(PlayerDataFile _pdf, EntityPlayer _pl)
+    public SkillList(PlayerInfo _pInfo)
     {
-      Load(_pdf, _pl);
+      Load(_pInfo);
     }
 
-    public void Load(PlayerDataFile _pdf, EntityPlayer _pl)
+    public void Load(PlayerInfo _pInfo)
     {
-      if (_pl != null)
+      points = _pInfo.PDF.skillPoints.ToString();
+      if (_pInfo.EP != null)
       {
-        skills = _pl.Skills.GetAllSkills();
+        skills = _pInfo.EP.Skills.GetAllSkills();
       }
       else
       {
@@ -32,9 +34,10 @@ namespace BCM.Models
 
     public string Display()
     {
+      string output = "SkillPoints:" + points + "\n";
       if (skills != null)
       {
-        string output = "Skills={\n";
+        output += "Skills={\n";
         bool first = true;
         foreach (Skill s in skills)
         {
