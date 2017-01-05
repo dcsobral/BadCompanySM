@@ -46,6 +46,7 @@
   <ItemGroup>
     <None Include="Config\Commands.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -57,12 +58,28 @@
     <Compile Include="src\API.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListHubCellData.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListPrefabs.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListBlocks.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListItems.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListEntityClasses.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListEntityGroups.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListLootGroups.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListMaterials.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListProgression.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListRecipes.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListSpawners.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListArchetypes.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListBiomes.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListLootContainers.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListBuffs.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListQuests.cs" />
     <Compile Include="src\Commands\AdminPlayers\RemoveQuestFromPlayer.cs" />
     <Compile Include="src\Commands\AdminPlayers\GiveQuestToPlayer.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayers.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersBag.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersBuffs.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersPositions.cs" />
+    <Compile Include="src\Commands\ListPlayers\ListPlayersId.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersCraftingQueue.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersEquipment.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersClientInfo.cs" />
@@ -82,19 +99,23 @@
     <Compile Include="src\Commands\Obsolete\ListPlayersAdvancedStats.cs" />
     <Compile Include="src\Commands\ListEntities\ListEntities.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersGamestage.cs" />
+    <Compile Include="src\Commands\Utility\MemTrash.cs" />
     <Compile Include="src\Config\Command.cs" />
     <Compile Include="src\Config\Config.cs" />
     <Compile Include="src\DataManager.cs" />
+    <Compile Include="src\Functions\Convert.cs" />
     <Compile Include="src\Functions\GetPlayer.cs" />
     <Compile Include="src\Functions\ObjectCopier.cs" />
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\GameObjects\BlockItemList.cs" />
     <Compile Include="src\Models\ClientInfoList.cs" />
+    <Compile Include="src\Models\AbstractList.cs" />
     <Compile Include="src\Models\StatsList.cs" />
     <Compile Include="src\PersistentData\PDQuests.cs" />
     <Compile Include="src\PersistentData\PDQuest.cs" />
     <Compile Include="src\System\NeuronAbstract.cs" />
+    <Compile Include="src\System\Neurons\TrashCollector.cs" />
     <Compile Include="src\System\Neurons\BagMonitor.cs" />
     <Compile Include="src\System\Neurons\EquipmentMonitor.cs" />
     <Compile Include="src\System\Neurons\ToolbeltMonitor.cs" />

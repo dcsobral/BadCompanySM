@@ -38,6 +38,7 @@ namespace BCM
     {
       LoadCommands();
       ConfigureSystem();
+      // todo: load hubcelldata for all cells to populate world data properly and create a cache for list commands?
       return true;
     }
 

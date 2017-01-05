@@ -9,6 +9,7 @@ namespace BCM.Commands
     public CommandSenderInfo _senderInfo;
     public List<string> _params = null;
     public Dictionary<string,string> _options = null;
+    public string _sep = "";
 
     public override string GetDescription()
     {
@@ -88,6 +89,20 @@ namespace BCM.Commands
           pindex++;
         }
       }
+      _sep = "";
+      if (_options.ContainsKey("csv"))
+      {
+        _sep += ",";
+      }
+      if (_options.ContainsKey("nl"))
+      {
+        _sep += "\n";
+      }
+      if (_sep == "")
+      {
+        _sep = " ";
+      }
+
     }
     public void SendOutput(string output)
     {

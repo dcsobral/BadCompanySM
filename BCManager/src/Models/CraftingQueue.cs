@@ -4,37 +4,31 @@ using System.Collections.Generic;
 namespace BCM.Models
 {
   [Serializable]
-  public class CraftingQueue
+  public class CraftingQueue : AbstractList
   {
     private List<RecipeQueueItem> queueItems = new List<RecipeQueueItem>();
 
-    public CraftingQueue()
+    public CraftingQueue(PlayerInfo _pInfo, Dictionary<string, string> _options) : base(_pInfo, _options)
     {
     }
 
-    public CraftingQueue(PlayerInfo _pInfo)
+    public override void Load(PlayerInfo _pInfo)
     {
-      Load(_pInfo);
-    }
-
-    public void Load(PlayerInfo _pInfo)
-    {
-
       foreach (RecipeQueueItem rqi in _pInfo.PDF.craftingData.RecipeQueueItems)
       {
         queueItems.Add(rqi);
       }
     }
 
-    public string Display()
+    public override string Display(string sep = " ")
     {
-      string output = "CraftingQueue={\n";
+      string output = "CraftingQueue:{";
       bool first = true;
       foreach (RecipeQueueItem rqi in queueItems)
       {
         if (rqi.Recipe != null)
         {
-          if (!first) { output += ",\n"; } else { first = false; }
+          if (!first) { output += sep; } else { first = false; }
           int it = rqi.Recipe.itemValueType;
           if (it > 4096)
           {
@@ -70,7 +64,7 @@ namespace BCM.Models
           output += "]";
         }
       }
-      output += "\n}\n";
+      output += "}" + sep;
 
       return output;
     }

@@ -1,22 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BCM.Models
 {
   [Serializable]
-  public class EquipmentList
+  public class EquipmentList : AbstractList
   {
     private ItemValue[] equipment = null;
 
-    public EquipmentList()
+    public EquipmentList(PlayerInfo _pInfo, Dictionary<string, string> _options) : base(_pInfo, _options)
     {
     }
 
-    public EquipmentList(PlayerInfo _pInfo)
-    {
-      Load(_pInfo);
-    }
-
-    public void Load(PlayerInfo _pInfo)
+    public override void Load(PlayerInfo _pInfo)
     {
       if (_pInfo.EP != null)
       {
@@ -26,13 +22,11 @@ namespace BCM.Models
       {
         equipment = _pInfo.PDF.equipment.GetItems();
       }
-
     }
-    //ItemValue
-    public string Display()
+
+    public override string Display(string sep = " ")
     {
-      //WORN ITEMS
-      string output = "Equipment={\n";
+      string output = "Equipment:{";
       bool first = true;
       foreach (ItemValue iv in equipment)
       {
@@ -44,11 +38,11 @@ namespace BCM.Models
           {
             xt = xt - 4096;
           }
-          if (!first) { output += ",\n"; } else { first = false; }
+          if (!first) { output += sep; } else { first = false; }
           output += ic.EquipSlot + ":" + ic.Name + "(" + xt + ")";
         }
       }
-      output += "\n}\n";
+      output += "}" + sep;
 
       return output;
     }

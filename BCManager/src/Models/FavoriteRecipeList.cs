@@ -4,20 +4,15 @@ using System.Collections.Generic;
 namespace BCM.Models
 {
   [Serializable]
-  public class FavoriteRecipeList
+  public class FavoriteRecipeList : AbstractList
   {
     private List<string> favoriteRecipes = new List<string>();
 
-    public FavoriteRecipeList()
+    public FavoriteRecipeList(PlayerInfo _pInfo, Dictionary<string, string> _options) : base(_pInfo, _options)
     {
     }
 
-    public FavoriteRecipeList(PlayerInfo _pInfo)
-    {
-      Load(_pInfo);
-    }
-
-    public void Load(PlayerInfo _pInfo)
+    public override void Load(PlayerInfo _pInfo)
     {
       foreach (string fr in _pInfo.PDF.favoriteRecipeList)
       {
@@ -25,17 +20,17 @@ namespace BCM.Models
       }
     }
 
-    public string Display()
+    public override string Display(string sep = " ")
     {
-      // todo: filter duplicate entrys for recipes with multiple versions?
+      // todo: filter duplicate entrys for recipes with multiple versions, or display ingredients as a /detail option?
       bool first = true;
-      string output = "FavoriteRecipe(saved)={\n";
+      string output = "FavoriteRecipe:{";
       foreach (string fr in favoriteRecipes)
       {
-        if (!first) { output += ",\n"; } else { first = false; }
-        output += fr;
+        if (!first) { output += sep; } else { first = false; }
+        output += fr + sep;
       }
-      output += "\n}\n";
+      output += "}" + sep;
 
       return output;
     }

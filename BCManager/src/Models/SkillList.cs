@@ -4,21 +4,16 @@ using System.Collections.Generic;
 namespace BCM.Models
 {
   [Serializable]
-  public class SkillList
+  public class SkillList : AbstractList
   {
     private List<Skill> skills = new List<Skill>();
     private string points;
 
-    public SkillList()
+    public SkillList(PlayerInfo _pInfo, Dictionary<string, string> _options) : base(_pInfo, _options)
     {
     }
 
-    public SkillList(PlayerInfo _pInfo)
-    {
-      Load(_pInfo);
-    }
-
-    public void Load(PlayerInfo _pInfo)
+    public override void Load(PlayerInfo _pInfo)
     {
       points = _pInfo.PDF.skillPoints.ToString();
       if (_pInfo.EP != null)
@@ -32,20 +27,21 @@ namespace BCM.Models
       }
     }
 
-    public string Display()
+    public override string Display(string sep = " ")
     {
-      string output = "SkillPoints:" + points + "\n";
+      string output = "SkillPoints:" + points + sep;
       if (skills != null)
       {
-        output += "Skills={\n";
+        output += "Skills:{";
         bool first = true;
         foreach (Skill s in skills)
         {
           // Note: don't use s.TitleKey as it will break the command if there is no localisation for the skill
-          if (!first) { output += ",\n"; } else { first = false; }
+          if (!first) { output += sep; } else { first = false; }
           output += " " + s.Name + ":" + s.Level + " +" + (s.PercentThisLevel * 100).ToString("0.0") + "%";
         }
-        output += "\n}\n";
+        output += "}" + sep;
+
         return output;
       }
       return string.Empty;

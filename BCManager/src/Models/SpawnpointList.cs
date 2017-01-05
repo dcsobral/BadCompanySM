@@ -4,20 +4,15 @@ using System.Collections.Generic;
 namespace BCM.Models
 {
   [Serializable]
-  public class SpawnpointList
+  public class SpawnpointList : AbstractList
   {
     private List<Vector3i> spawnpoints = new List<Vector3i>();
 
-    public SpawnpointList()
+    public SpawnpointList(PlayerInfo _pInfo, Dictionary<string, string> _options) : base(_pInfo, _options)
     {
     }
 
-    public SpawnpointList(PlayerInfo _pInfo)
-    {
-      Load(_pInfo);
-    }
-
-    public void Load(PlayerInfo _pInfo)
+    public override void Load(PlayerInfo _pInfo)
     {
       foreach (Vector3i sp in _pInfo.PDF.spawnPoints)
       {
@@ -25,16 +20,17 @@ namespace BCM.Models
       }
     }
 
-    public string Display()
+    public override string Display(string sep = " ")
     {
+      string postype = GetPosType();
       bool first = true;
-      string output = "Spawnpoints(saved)={\n";
+      string output = "Spawnpoints:{";
       foreach (Vector3i sp in spawnpoints)
       {
-        if (!first) { output += ",\n"; } else { first = false; }
-        output += " Bed:" + GameUtils.WorldPosToStr(sp.ToVector3(), " ");
+        if (!first) { output += sep; } else { first = false; }
+        output += " Bed:" + Convert.PosToStr(sp, postype);
       }
-      output += "\n}\n";
+      output += "}" + sep;
 
       return output;
     }

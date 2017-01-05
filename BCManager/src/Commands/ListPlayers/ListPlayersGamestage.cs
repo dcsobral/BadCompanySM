@@ -1,52 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
+using BCM.Models;
 
 namespace BCM.Commands
 {
-  public class ListPlayersGamestage : BCCommandAbstract
+  public class ListPlayersGamestage : ListPlayers
   {
-    public override void Process()
+    public override void displayPlayer(PlayerInfo _pInfo)
     {
-      // todo: change to Extensive format once gamestage info is stored in persistent data
-      if (_params.Count != 0 && _params.Count != 1)
-        {
-          SdtdConsole.Instance.Output("Wrong number of arguments, expected 0 or 1, found " + _params.Count + ".");
-          return;
-        }
+      string output = "";
+      output += new StatsList(_pInfo, _options).DisplayGamestage(_pInfo.CI, _sep);
 
-      if (_params.Count == 1)
-      {
-          ClientInfo ci = ConsoleHelper.ParseParamIdOrName(_params[0]);
-          if (ci == null)
-          {
-            SdtdConsole.Instance.Output("Playername or entity id not found.");
-            return;
-          }
-
-          EntityPlayer p1 = GameManager.Instance.World.Players.dict[ci.entityId];
-          if (p1 == null)
-          {
-            SdtdConsole.Instance.Output("Playername or entity id not found.");
-            return;
-          }
-          displayPlayers(p1);
-      }
-      else
-      {
-        List<EntityPlayer> players = GameManager.Instance.World.Players.list;
-        foreach (EntityPlayer player in players)
-        {
-          displayPlayers(player);
-        }
-      }
-    }
-
-    private void displayPlayers(EntityPlayer player)
-    {
-      int gamestage = player.gameStage;
-      string playerGamestage = "Gamestage for " + player.EntityName + " (Id:" + player.entityId + "): " + gamestage;
-      SendOutput(playerGamestage);
+      SendOutput(output);
     }
   }
 }

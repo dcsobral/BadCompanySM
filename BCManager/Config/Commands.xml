@@ -4,135 +4,49 @@
   <!-- name is both the code class name (/src/Commands) and the file name for localisation (Case sensitive) -->
   <!-- commands are the console text to execute the command. Seperate each alias for the command with a comma -->
   <!-- defaultpermissionlevel can be overridden in the Saves/serveradmin.xml file, 0=admin level, 1000=anyone -->
-  <Command
-    name="BCHelp"
-    commands="bc-help"
-    defaultpermissionlevel="1000"
-    />
-  <Command
-    name="ListPlayers"
-    commands="bc-lp"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersBag"
-    commands="bc-lpbag"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersBuffs"
-    commands="bc-lpbuff"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersCraftingQueue"
-    commands="bc-lpcraft"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersEquipment"
-    commands="bc-lpequip"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersFavRecipes"
-    commands="bc-lpfav"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersQuests"
-    commands="bc-lpquest"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersSkills"
-    commands="bc-lpskill"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersSpawns"
-    commands="bc-lpspawn"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersStats"
-    commands="bc-lpstats"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersToolbelt"
-    commands="bc-lptool"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersRecipes"
-    commands="bc-lprecipe"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersWaypoints"
-    commands="bc-lpwayp"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersClientInfo"
-    commands="bc-lpci,bc-lpcinfo"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersExtensive"
-    commands="bc-lpx,bc-x"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListPlayersGamestage"
-    commands="bc-lpgs,bc-gs"
-    defaultpermissionlevel="0"
-    />
-  
-  <Command
-    name="GiveQuestToPlayer"
-    commands="bc-gqp"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="RemoveQuestFromPlayer"
-    commands="bc-rqp"
-    defaultpermissionlevel="0"
-    />
-  
-  <Command
-    name="ListQuests"
-    commands="bc-lq"
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="ListHubCellData"
-    commands="bc-lhcd"
-    defaultpermissionlevel="0"
-    />
+  <Command name="BCHelp" commands="bc-help" defaultpermissionlevel="1000"/>
 
-  <Command
-    name="ListEntities"
-    commands="bc-le"
-    defaultpermissionlevel="0"
-    />
+  <!-- List Players -->
+  <Command name="ListPlayers" commands="bc-lp" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersBag" commands="bc-lpbag" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersBuffs" commands="bc-lpbuffs,bc-lpbuff" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersCraftingQueue" commands="bc-lpcrafts,bc-lpcraft" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersEquipment" commands="bc-lpequip" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersFavRecipes" commands="bc-lpfavs,bc-lpfav" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersQuests" commands="bc-lpquests,bc-lpquest" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersSkills" commands="bc-lpskills,bc-lpskill" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersSpawns" commands="bc-lpspawns,bc-lpspawn" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersStats" commands="bc-lpstats" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersToolbelt" commands="bc-lptools,bc-lptool" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersRecipes" commands="bc-lprecipes,bc-lprecipe" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersWaypoints" commands="bc-lpwayp,bc-lpwayps,bc-lpwaypoints" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersClientInfo" commands="bc-lpci,bc-lpcinfo" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersExtensive" commands="bc-lpx,bc-x" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersGamestage" commands="bc-lpgs,bc-gs" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersId" commands="bc-lpids,bc-lpid" defaultpermissionlevel="0"/>
+  <Command name="ListPlayersPositions" commands="bc-lppos" defaultpermissionlevel="0"/>
+
+  <!-- Admin Players -->
+  <Command name="GiveQuestToPlayer" commands="bc-gpg" defaultpermissionlevel="0"/>
+  <Command name="RemoveQuestFromPlayer" commands="bc-rpq" defaultpermissionlevel="0"/>
   
-  
+  <!-- GAME OBJECTS -->
+  <Command name="ListHubCellData" commands="bc-lhcd,bc-hcd" defaultpermissionlevel="0"/>
+  <Command name="ListArchetypes" commands="bc-arch,bc-archetypes" defaultpermissionlevel="0"/>
+  <Command name="ListBlocks" commands="bc-blocks" defaultpermissionlevel="0"/>
+  <Command name="ListBuffs" commands="bc-buffs" defaultpermissionlevel="0"/>
+  <Command name="ListEntityClasses" commands="bc-lec,bc-entityclasses" defaultpermissionlevel="0"/>
+  <Command name="ListItems" commands="bc-items" defaultpermissionlevel="0"/>
+  <Command name="ListQuests" commands="bc-quests" defaultpermissionlevel="0"/>
+
+  <!-- ENTITIES -->
+  <Command name="ListEntities" commands="bc-le" defaultpermissionlevel="0"/>
+
+  <!-- UTILITY -->
+  <Command name="MemTrash" commands="bc-trash" defaultpermissionlevel="0"/>
+
   <!-- obsolete -->
-  <Command 
-    name="ListPlayersAdvancedStats" 
-    commands="bc-as" 
-    defaultpermissionlevel="0"
-    />
-  <Command 
-    name="ListPlayersData" 
-    commands="bc-lp" 
-    defaultpermissionlevel="0"
-    />
-  <Command
-    name="Test"
-    commands="bc-test"
-    defaultpermissionlevel="0"
-    />
+  <!--<Command name="ListPlayersAdvancedStats" commands="bc-as" defaultpermissionlevel="0"/>-->
+  <!--<Command name="ListPlayersData" commands="bc-lp" defaultpermissionlevel="0"/>-->
+  <Command name="Test" commands="bc-test" defaultpermissionlevel="0"/>
 </Commands>

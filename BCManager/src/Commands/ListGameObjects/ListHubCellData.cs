@@ -1,124 +1,149 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using BCM.PersistentData;
-using BCM.Models;
-using System.Reflection;
 using System.IO;
+using RWG2;
 
 namespace BCM.Commands
 {
   public class ListHubCellData : BCCommandAbstract
   {
-    public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
+    //public Dictionary<Vector2i, RWG2.HubCell> HCD = new Dictionary<Vector2i, RWG2.HubCell>();
+    public List<Vector2i> HCDLotGrid = new List<Vector2i>();
+    public List<string> HCDLotName = new List<string>();
+    public List<Vector3i> HCDLotPos = new List<Vector3i>();
+
+    public override void Process()
     {
-      try
+      if (_params.Count > 3)
       {
-        if (_params.Count > 3)
-        {
-          SdtdConsole.Instance.Output("Wrong number of arguments, expected between 0 and 3, found " + _params.Count + ".");
-          return;
-        }
-
-        RWG2.PCRWGDataLoader loader = new RWG2.PCRWGDataLoader();
-        RWG2.RWGDataInfo rwgInfo = new RWG2.RWGDataInfo();
-        rwgInfo.worldName = GamePrefs.GetString(EnumGamePrefs.GameWorld);
-        rwgInfo.gameName = GamePrefs.GetString(EnumGamePrefs.GameName);
-        rwgInfo.seed = GameManager.Instance.World.Seed;
-        rwgInfo.isClient = false;
-        rwgInfo.isDebugMode = false;
-        rwgInfo.isPregenerating = false;
-        string SaveDir = GameUtils.GetSaveGameDir() + "/HubCellData/";
-
-        string output = "\n";
-        //find all prefabs
-        if (_params.Count == 0)
-        {
-          output += "\nHubCellLots - All:\n";
-          int radius = 6;
-          for (int x = -radius; x <= radius; x++)
-          {
-            for (int y = -radius; y <= radius; y++)
-            {
-              if (File.Exists(SaveDir + x.ToString() + "." + y.ToString() + ".hcd"))
-              {
-                RWG2.HubCell hc = loader.LoadHubCell(new Vector2i(x, y), rwgInfo);
-                foreach (RWG2.HubCell.Lot lot in hc.lots)
-                {
-                  output += lot.PrefabName + ":" + lot.PrefabSpawnPos + "\n";
-                }
-              }
-            }
-          }
-          //SdtdConsole.Instance.Output(output);
-          SdtdConsole.Instance.Output("Data sent to log file");
-          Log.Out(output);
-        }
-
-        if (_params.Count == 1)
-        {
-          output += "\nHubCellLots with filter:" + _params[0] + ":\n";
-          int radius = 6;
-          for (int x = -radius; x <= radius; x++)
-          {
-            for (int y = -radius; y <= radius; y++)
-            {
-              if (File.Exists(SaveDir + x.ToString() + "." + y.ToString() + ".hcd"))
-              {
-                RWG2.HubCell hc = loader.LoadHubCell(new Vector2i(x, y), rwgInfo);
-                foreach (RWG2.HubCell.Lot lot in hc.lots)
-                {
-                  if (lot.PrefabName.Contains(_params[0]))
-                  {
-                    output += lot.PrefabName + ":" + lot.PrefabSpawnPos + "\n";
-                  }
-                }
-              }
-            }
-          }
-          SdtdConsole.Instance.Output(output);
-          Log.Out(output);
-        }
-
-        if (_params.Count == 2 || _params.Count == 3)
-        {
-          int x, y = 0;
-          int.TryParse(_params[0], out x);
-          int.TryParse(_params[1], out y);
-          output += "HubCellLots for " + _params[0] + "," + _params[1] + "";
-          if (_params.Count == 3)
-          {
-            output += " with filter:" + _params[2];
-          }
-          output += "\n";
-
-          //try
-          //{
-          RWG2.HubCell hc = loader.LoadHubCell(new Vector2i(x, y), rwgInfo);
-            foreach (RWG2.HubCell.Lot lot in hc.lots)
-            {
-              if (_params.Count == 3)
-              {
-                if (!lot.PrefabName.Contains(_params[2]))
-                {
-                  continue;
-                }
-              }
-              output += lot.PrefabName + ":" + lot.PrefabSpawnPos + "\n";
-            }
-          //}
-          //catch
-          //{ //hubcelldata not found, skipping
-          //}
-          SdtdConsole.Instance.Output(output);
-          Log.Out(output);
-        }
-
+        SdtdConsole.Instance.Output("Wrong number of arguments, expected between 0 and 3, found " + _params.Count + ".");
+        return;
       }
-      catch (Exception e)
+      if (_options.ContainsKey("current"))
       {
-        Log.Out(Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        try
+        {
+          int EntityId = _senderInfo.RemoteClientInfo.entityId;
+          EntityPlayer EP = GameManager.Instance.World.Players.dict[EntityId];
+          Vector2i playergrid = RWGCore.Instance.WorldPosToGridPos(new Vector2(EP.position.x, EP.position.z));
+          if (_options.ContainsKey("current"))
+          {
+            _params[0] = playergrid.x.ToString();
+            _params[1] = playergrid.y.ToString();
+          }
+        }
+        catch
+        {
+          SdtdConsole.Instance.Output(" Unable to use /current option when caller not in game.");
+        }
       }
+
+      var postype = "";
+      if (_options.ContainsKey("worldpos"))
+      {
+        postype = "worldpos";
+      }
+      if (_options.ContainsKey("csvpos"))
+      {
+        postype = "csvpos";
+      }
+
+      string output = "";
+      int radius = 6;
+      string hcdDir = GameUtils.GetSaveGameDir() + "/HubCellData/";
+      BaseRWGDataLoader rwgDataLoader = new BaseRWGDataLoader(GameManager.Instance.World.Seed, new PCRWGDataLoader(), false);
+
+      //load HubCell Data if not already loaded
+      if (HCDLotName.Count == 0)
+      {
+        for (int x = -radius; x < radius; x++)
+        {
+          for (int y = -radius; y < radius; y++)
+          {
+            string hcdFile = string.Format("{0}{1}.{2}.hcd", hcdDir, x, y);
+            if (File.Exists(hcdFile))
+            {
+              Vector2i v = new Vector2i(x, y);
+              BinaryReader binaryReader = new BinaryReader(File.OpenRead(hcdFile));
+              RWG2.HubCell hubCell = new RWG2.HubCell(v);
+              hubCell.Read(binaryReader);
+              binaryReader.Close();
+              //HCD.Add(v, hubCell);
+              foreach (RWG2.HubCell.Lot lot in hubCell.lots)
+              {
+                HCDLotName.Add(lot.PrefabName);
+                HCDLotPos.Add(lot.PrefabSpawnPos);
+                HCDLotGrid.Add(v);
+              }
+              binaryReader = null;
+              hubCell = null;
+            }
+          }
+        }
+      }
+      rwgDataLoader = null;
+
+      // GET PREFABS
+      if (_params.Count == 0)
+      {
+        output += "All HubCellLots" + _sep;
+        int index = 0;
+        foreach (string lotName in HCDLotName)
+        {
+          output += lotName + (_options.ContainsKey("csv") ? "," : ":") + Convert.PosToStr(HCDLotPos[index], postype) + _sep;
+          index++;
+        }
+      }
+
+      if (_params.Count == 1)
+      {
+        output += "All HubCellLots with filter '" + _params[0] + "'" + _sep;
+        int index = 0;
+        foreach (string lotName in HCDLotName)
+        {
+          if (lotName.ToLower().Contains(_params[0].ToLower()))
+          {
+            output += lotName + (_options.ContainsKey("csv") ? "," : ":") + Convert.PosToStr(HCDLotPos[index], postype) + _sep;
+          }
+          index++;
+        }
+      }
+
+      if (_params.Count == 2 || _params.Count == 3)
+      {
+        int x, y = 0;
+        int.TryParse(_params[0], out x);
+        int.TryParse(_params[1], out y);
+        output += "HubCellLots for " + x + "," + y;
+        if (_params.Count == 3)
+        {
+          output += " with filter:" + _params[2];
+        }
+        output += _sep;
+
+        int index = 0;
+        foreach (string lotName in HCDLotName)
+        {
+          if (HCDLotGrid[index] == new Vector2i(x, y))
+          {
+            if (_params.Count == 3)
+            {
+              if (!lotName.ToLower().Contains(_params[0].ToLower()))
+              {
+                continue;
+              }
+            }
+            output += lotName + (_options.ContainsKey("csv") ? "," : ":") + Convert.PosToStr(HCDLotPos[index], postype) + _sep;
+          }
+          index++;
+        }
+      }
+
+      SendOutput(output);
+
+      GC.Collect();
+      GC.WaitForPendingFinalizers();
     }
   }
 }

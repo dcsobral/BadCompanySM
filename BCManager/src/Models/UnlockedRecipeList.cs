@@ -4,20 +4,15 @@ using System.Collections.Generic;
 namespace BCM.Models
 {
   [Serializable]
-  public class UnlockedRecipeList
+  public class UnlockedRecipeList : AbstractList
   {
     private List<string> unlockedRecipes = new List<string>();
 
-    public UnlockedRecipeList()
+    public UnlockedRecipeList(PlayerInfo _pInfo, Dictionary<string, string> _options) : base(_pInfo, _options)
     {
     }
 
-    public UnlockedRecipeList(PlayerInfo _pInfo)
-    {
-      Load(_pInfo);
-    }
-
-    public void Load(PlayerInfo _pInfo)
+    public override void Load(PlayerInfo _pInfo)
     {
       foreach (string ur in _pInfo.PDF.unlockedRecipeList)
       {
@@ -25,17 +20,16 @@ namespace BCM.Models
       }
     }
 
-    public string Display()
+    public override string Display(string sep = " ")
     {
-      // todo: filter duplicate entrys for recipes with multiple versions?
       bool first = true;
-      string output = "UnlockedRecipe(saved)={\n";
+      string output = "UnlockedRecipe:{";
       foreach (string ur in unlockedRecipes)
       {
-        if (!first) { output += ",\n"; } else { first = false; }
+        if (!first) { output += sep; } else { first = false; }
         output += ur;
       }
-      output += "\n}\n";
+      output += "}" + sep;
 
       return output;
     }

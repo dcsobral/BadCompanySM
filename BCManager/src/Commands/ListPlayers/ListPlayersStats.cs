@@ -6,9 +6,9 @@ namespace BCM.Commands
   {
     public override void displayPlayer(PlayerInfo _pInfo)
     {
-      string output = "\n";
-      output += new ClientInfoList(_pInfo).DisplayShort();
-      output += new StatsList(_pInfo).Display();
+      string output = "";
+      output += new ClientInfoList(_pInfo, _options).DisplayShort(_sep);
+      output += new StatsList(_pInfo, _options).Display(_sep);
 
       SendOutput(output);
     }

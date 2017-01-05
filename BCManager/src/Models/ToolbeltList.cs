@@ -1,24 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BCM.Models
 {
   [Serializable]
-  public class ToolbeltList
+  public class ToolbeltList : AbstractList
   {
     private ItemStack[] inventory = null;
     private int selecteditemSlot = 0;
     private ItemStack selecteditem = new ItemStack();
 
-    public ToolbeltList()
+    public ToolbeltList(PlayerInfo _pInfo, Dictionary<string, string> _options) : base(_pInfo, _options)
     {
     }
 
-    public ToolbeltList(PlayerInfo _pInfo)
-    {
-      Load(_pInfo);
-    }
-
-    public void Load(PlayerInfo _pInfo)
+    public override void Load(PlayerInfo _pInfo)
     {
       if (_pInfo.EP != null)
       {
@@ -53,9 +49,8 @@ namespace BCM.Models
 
     }
 
-    public string Display()
+    public override string Display(string sep = " ")
     {
-      //SELECTED ITEM
       string output = "SelectedItem:";
       output += selecteditemSlot.ToString();
       int xt = selecteditem.itemValue.type;
@@ -68,41 +63,31 @@ namespace BCM.Models
         }
         output += "[" + ic.Name + "(" + xt + ")]";
       }
-      output += "\n";
+      output += sep;
 
-
-      // todo: refine error checking
-      try
+      output += "Toolbelt:{";
+      bool first = true;
+      int idx = 1;
+      foreach (ItemStack i in inventory)
       {
-        //TOOLBELT
-        output += "Toolbelt={\n";
-        bool first = true;
-        int idx = 1;
-        foreach (ItemStack i in inventory)
+        if (!first) { output += sep; } else { first = false; }
+        int it = i.itemValue.type;
+        if (it != 0)
         {
-          if (!first) { output += ",\n"; } else { first = false; }
-          int it = i.itemValue.type;
-          if (it != 0)
+          ItemClass ic = ItemClass.list[it];
+          if (it > 4096)
           {
-            ItemClass ic = ItemClass.list[it];
-            if (it > 4096)
-            {
-              it = it - 4096;
-            }
-            output += idx + ":" + ic.Name + "(" + it + ")*" + i.count + "";
+            it = it - 4096;
           }
-          else
-          {
-            output += idx + ":";
-          }
-          idx++;
+          output += idx + ":" + ic.Name + "(" + it + ")*" + i.count + "";
         }
-        output += "\n}\n";
+        else
+        {
+          output += idx + ":";
+        }
+        idx++;
       }
-      catch
-      {
-        output += "Toolbelt Item Error\n";
-      }
+      output += "}" + sep;
 
       return output;
     }

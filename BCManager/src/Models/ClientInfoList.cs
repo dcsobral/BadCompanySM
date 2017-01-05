@@ -5,21 +5,18 @@ using UnityEngine;
 namespace BCM.Models
 {
   [Serializable]
-  public class ClientInfoList
+  public class ClientInfoList : AbstractList
   {
     private Dictionary<string, string> info = new Dictionary<string, string>();
 
-    public ClientInfoList()
+    public ClientInfoList(PlayerInfo _pInfo, Dictionary<string, string> _options) : base(_pInfo, _options)
     {
     }
 
-    public ClientInfoList(PlayerInfo _pInfo)
+    public override void Load(PlayerInfo _pInfo)
     {
-      Load(_pInfo);
-    }
+      string postype = GetPosType();
 
-    public void Load(PlayerInfo _pInfo)
-    {
       info.Add("Name", (_pInfo.CI != null ? _pInfo.CI.playerName : _pInfo.PCP != null ? _pInfo.PCP.Name : string.Empty));
       info.Add("SteamId", _pInfo._steamId);
       info.Add("EntityId", _pInfo.PDF.id.ToString());
@@ -31,32 +28,40 @@ namespace BCM.Models
       if (_pInfo.EP == null)
       {
         info.Add("LastOnline", (_pInfo.PCP != null ? _pInfo.PCP.LastOnline.ToString("yyyy-MM-dd HH:mm") : ""));
-        info.Add("LastPosition", (_pInfo.PCP != null ? GameUtils.WorldPosToStr(_pInfo.PCP.LastPosition.ToVector3(), " ") : ""));
-        //todo: add lastrotation to persistent data
+        info.Add("LastPosition", (_pInfo.PCP != null ? Convert.PosToStr(_pInfo.PCP.LastPosition, postype) : ""));
+        //todo: add lastrotation to persistent data?
         info.Add("TotalPlayTime", totalPlayTime.ToString());
       }
       else if (_pInfo.EP != null)
       {
         info.Add("SessionPlayTime", ((Time.timeSinceLevelLoad - _pInfo.EP.CreationTimeSinceLevelLoad) / 60).ToString("0.0") + "(mins)");
         info.Add("TotalPlayTime", (totalPlayTime / 60).ToString("0.0") + "(mins)");
-        info.Add("Position", _pInfo.EP.position.x.ToString("0.0") + " " + _pInfo.EP.position.y.ToString("0.0") + " " + _pInfo.EP.position.z.ToString("0.0"));
+        info.Add("Position", Convert.PosToStr(_pInfo.EP.position, postype));
         info.Add("Rotation", _pInfo.EP.rotation.ToString());
       }
     }
 
-    public string Display()
+    public override string Display(string sep = " ")
     {
       string output = "";
+      bool first = true;
       foreach (KeyValuePair<string,string> kvp in info)
       {
-        output += kvp.Key + ":" + kvp.Value + "\n";
+        if (!first) { output += sep; } else { first = false; }
+        output += kvp.Key + ":" + kvp.Value;
       }
       return output;
     }
-    public string DisplayShort()
+    public string DisplayShort(string sep = " ")
     {
       string output = "";
-      output += "Name:" + info["Name"] + "," + "SteamId:" + info["SteamId"] + "," + "EntityId:" + info["EntityId"] + "\n";
+      output += "Name:" + info["Name"] + "," + "SteamId:" + info["SteamId"] + "," + "EntityId:" + info["EntityId"] + sep;
+      return output;
+    }
+    public string DisplayShortWithPos(string sep = " ")
+    {
+      string output = "";
+      output += "Name:" + info["Name"] + "," + "SteamId:" + info["SteamId"] + "," + "EntityId:" + info["EntityId"] + "," + (info["Position"] != "" ? "Position:" + info["Position"] : "LastPosition:" + info["LastPosition"]) + sep;
       return output;
     }
   }

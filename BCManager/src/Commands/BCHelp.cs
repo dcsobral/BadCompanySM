@@ -8,6 +8,7 @@ namespace BCM.Commands
     public override void Process()
     {
       // todo: add permission checking to display only commands sender has permission to execute
+      // AdminTools.CommandAllowedFor(string[] _cmdNames, string _playerId)
       SdtdConsole.Instance.Output("***Bad Company Commands***");
       foreach(KeyValuePair<string, Command> kvp in Config.commandDictionary)
       {
@@ -22,6 +23,12 @@ namespace BCM.Commands
       SdtdConsole.Instance.Output("/color=FFFFFF => specify a color for text sent to chat");
       SdtdConsole.Instance.Output("/detail => for commands that support it, will give more details on items returned");
       SdtdConsole.Instance.Output("/json => for commands that support it, will return the data in json encoded format");
+      SdtdConsole.Instance.Output("***Output Format Options***");
+      SdtdConsole.Instance.Output("/nl => Adds a newline after each entry (can be combined with /csv)");
+      SdtdConsole.Instance.Output("/csv => Adds a comma after each entry (can be combined with /nl)");
+      SdtdConsole.Instance.Output("/csvpos =>  Converts all Vector3 co-ords to csv seperated (default is space seperated)");
+      SdtdConsole.Instance.Output("/worldpos => Converts all Vector3 co-ords to Map Co-ords");
+      SdtdConsole.Instance.Output("/online => For ListPlayers commands it will display only online players");
     }
   }
 }
