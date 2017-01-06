@@ -33,11 +33,26 @@
   <!-- GAME OBJECTS -->
   <Command name="ListHubCellData" commands="bc-lhcd,bc-hcd" defaultpermissionlevel="0"/>
   <Command name="ListArchetypes" commands="bc-arch,bc-archetypes" defaultpermissionlevel="0"/>
+  <Command name="ListBiomes" commands="bc-biomes" defaultpermissionlevel="0"/>
+  <Command name="ListBiomeSpawning" commands="bc-biomespawns" defaultpermissionlevel="0"/>
   <Command name="ListBlocks" commands="bc-blocks" defaultpermissionlevel="0"/>
   <Command name="ListBuffs" commands="bc-buffs" defaultpermissionlevel="0"/>
   <Command name="ListEntityClasses" commands="bc-lec,bc-entityclasses" defaultpermissionlevel="0"/>
+  <Command name="ListEntityGroups" commands="bc-leg,bc-entitygroups" defaultpermissionlevel="0"/>
   <Command name="ListItems" commands="bc-items" defaultpermissionlevel="0"/>
   <Command name="ListQuests" commands="bc-quests" defaultpermissionlevel="0"/>
+  <Command name="ListSpawners" commands="bc-spawners" defaultpermissionlevel="0"/>
+  <Command name="ListPrefabs" commands="bc-prefabs" defaultpermissionlevel="0"/>
+  <Command name="ListRecipes" commands="bc-recipes" defaultpermissionlevel="0"/>
+
+
+  <Command name="ListLootContainers" commands="bc-lootcon,bc-lootcontainers" defaultpermissionlevel="0"/>
+  <Command name="ListLootGroups" commands="bc-lootg,bc-lootgroups" defaultpermissionlevel="0"/>
+  <Command name="ListMaterials" commands="bc-mats,bc-materials" defaultpermissionlevel="0"/>
+  <Command name="ListProgression" commands="bc-skills,bc-progression" defaultpermissionlevel="0"/>
+  <!--<Command name="ListGamestages" commands="bc-gamestages" defaultpermissionlevel="0"/>-->
+  <!--<Command name="ListNPCs" commands="bc-npcs" defaultpermissionlevel="0"/>-->
+  <!--<Command name="ListTraders" commands="bc-npcs" defaultpermissionlevel="0"/>-->
 
   <!-- ENTITIES -->
   <Command name="ListEntities" commands="bc-le" defaultpermissionlevel="0"/>

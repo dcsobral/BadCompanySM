@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace BCM.Commands
 {
   public class ListEntityGroups : BCCommandAbstract
@@ -5,10 +7,11 @@ namespace BCM.Commands
     public override void Process()
     {
       string output = "";
-      //foreach (string name in Archetypes.Instance.GetArchetypeNames())
-      //{
-      //  output += name + _sep;
-      //}
+      foreach (string entitygroupname in EntityGroups.list.Keys)
+      {
+        List<SEntityClassAndProb> EG = EntityGroups.list[entitygroupname];
+        output += entitygroupname + ":" + EG.Count + "" + _sep;
+      }
       SendOutput(output);
     }
   }

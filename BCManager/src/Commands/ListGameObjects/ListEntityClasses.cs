@@ -7,7 +7,7 @@ namespace BCM.Commands
       string output = "";
       foreach (EntityClass ec in EntityClass.list.Values)
       {
-        output += ec.entityClassName + _sep;
+        output += ec.entityClassName + ":" + ec.classname + "" + _sep;
       }
       SendOutput(output);
     }

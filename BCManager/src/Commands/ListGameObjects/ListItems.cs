@@ -12,7 +12,12 @@ namespace BCM.Commands
         if (ItemClass.list[i] != null)
           if (ItemClass.list[i].IsBlock() == false)
           {
-            output += ItemClass.list[i].Name + "(" + (i - 4096) + ")" + _sep;
+            output += ItemClass.list[i].Name;
+            if (_options.ContainsKey("itemids"))
+            {
+              output += "(" + (i - 4096) + ")";
+            }
+            output += _sep;
           }
       }
       SendOutput(output);

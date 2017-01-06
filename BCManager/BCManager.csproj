@@ -67,6 +67,7 @@
     <Compile Include="src\Commands\ListGameObjects\ListMaterials.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListProgression.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListRecipes.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListBiomeSpawning.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListSpawners.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListArchetypes.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListBiomes.cs" />

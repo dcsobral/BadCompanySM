@@ -2,5 +2,5 @@
 <System>
   <Heartbeat isalive="true"/>
   <BPM rate="60"/>
-  <Synapse name="questmonitor" enabled="true" beats="1"/>
+  <Synapse name="questmonitor" enabled="true" beats="15"/>
 </System>

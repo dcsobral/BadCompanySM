@@ -1,6 +1,6 @@
 namespace BCM.Commands
 {
-  public class ListGroups : BCCommandAbstract
+  public class ListLootGroups : BCCommandAbstract
   {
     public override void Process()
     {
