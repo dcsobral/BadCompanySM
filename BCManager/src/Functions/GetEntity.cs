@@ -45,16 +45,28 @@ namespace BCM
 
     public static bool InStored(string _steamId)
     {
-      List<string> players = GetStoredPlayers();
+      List<string> players = GetStoredPlayers(null);
       return players.Contains(_steamId);
     }
 
     /* returns a list of steam ids found in Player Data Dir */
-    public static List<string> GetStoredPlayers()
+    public static List<string> GetStoredPlayers(Dictionary<string, string> _options)
     {
       string playerDataDir = GameUtils.GetPlayerDataDir();
       string[] files = Directory.GetFiles(playerDataDir);
       List<string> players = new List<string>();
+
+      List<ClientInfo> clients = new List<ClientInfo>();
+      if (_options != null)
+      {
+        if (_options.ContainsKey("online") || _options.ContainsKey("offline"))
+        {
+          if (ConnectionManager.Instance.ClientCount() > 0)
+          {
+            clients = ConnectionManager.Instance.GetClients();
+          }
+        }
+      }
 
       for (int i = files.Length - 1; i >= 0; i--)
       {
@@ -67,7 +79,33 @@ namespace BCM
           int len = file.Length - start - 4;
           if (start + len <= file.Length)
           {
-            players.Add(file.Substring(start, len));
+            string id = file.Substring(start, len);
+
+            if (_options != null)
+            {
+              if (_options.ContainsKey("online"))
+              {
+                if (clients.Find(x => x.playerId == id) != null)
+                {
+                  players.Add(id);
+                  continue;
+                }
+              } else if (_options.ContainsKey("offline"))
+              {
+                if (clients.Find(x => x.playerId == id) == null)
+                {
+                  players.Add(id);
+                  continue;
+                }
+              } else
+              {
+                players.Add(id);
+              }
+            }
+            else
+            {
+              players.Add(id);
+            }
           }
         }
       }

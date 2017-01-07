@@ -35,7 +35,7 @@ namespace BCM.Models
         if (!first) { output += sep; } else { first = false; }
         output += wp.name + ":" + Convert.PosToStr(wp.pos, postype);
       }
-      output += "}" + sep;
+      output += "}";
 
       return output;
     }

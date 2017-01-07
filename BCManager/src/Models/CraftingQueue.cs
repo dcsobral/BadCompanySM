@@ -64,7 +64,7 @@ namespace BCM.Models
           output += "]";
         }
       }
-      output += "}" + sep;
+      output += "}";
 
       return output;
     }

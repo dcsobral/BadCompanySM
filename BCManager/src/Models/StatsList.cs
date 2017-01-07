@@ -73,7 +73,10 @@ namespace BCM.Models
     public string DisplayGamestage(ClientInfo _ci, string sep = " ")
     {
       string output = "";
-      output += "Gamestage for " + _ci + " (Id:" + _ci + "): " + stats["Gamestage"] + sep;
+      if (stats["Gamestage"] != "" && _ci != null)
+      {
+        output += "Gamestage for " + _ci.playerName + " (" + _ci.playerId + "): " + stats["Gamestage"];
+      }
 
       return output;
     }

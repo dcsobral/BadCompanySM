@@ -55,13 +55,13 @@ namespace BCM.Models
     public string DisplayShort(string sep = " ")
     {
       string output = "";
-      output += "Name:" + info["Name"] + "," + "SteamId:" + info["SteamId"] + "," + "EntityId:" + info["EntityId"] + sep;
+      output += "Name:" + info["Name"] + "," + "SteamId:" + info["SteamId"] + "," + "EntityId:" + info["EntityId"];
       return output;
     }
     public string DisplayShortWithPos(string sep = " ")
     {
       string output = "";
-      output += "Name:" + info["Name"] + "," + "SteamId:" + info["SteamId"] + "," + "EntityId:" + info["EntityId"] + "," + (info["Position"] != "" ? "Position:" + info["Position"] : "LastPosition:" + info["LastPosition"]) + sep;
+      output += "Name:" + info["Name"] + "," + "SteamId:" + info["SteamId"] + "," + "EntityId:" + info["EntityId"] + "," + (info["Position"] != "" ? "Position:" + info["Position"] : "LastPosition:" + info["LastPosition"]);
       return output;
     }
   }

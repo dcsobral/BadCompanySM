@@ -1,4 +1,12 @@
-﻿List Online Players Gamestage Values
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
       Usage:
-            1. bc-gs <partialname / entityid / steamid>
-            2. bc-gs
+            1. {command}
+            2. {command} [partialname / entityid / steamid]
+      Notes:
+            Command without a param will return all datasets.
+            [partialname] case insensitive. Will search online players only. If more than one player matches will return an error to console, refine your text if this happens.
+            [entityid] Will search online players only. Use bc-lpid to get a list of player entityids
+            [steamid] Can search for offline players.
+            Use bc-help to get a list of common /options

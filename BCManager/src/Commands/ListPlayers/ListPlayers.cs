@@ -26,7 +26,7 @@ namespace BCM.Commands
       else
       {
         // All players
-        List<string> players = GetEntity.GetStoredPlayers();
+        List<string> players = GetEntity.GetStoredPlayers(_options);
         foreach (string _steamId in players)
         {
           displayPlayer(new GetPlayer().BySteamId(_steamId));

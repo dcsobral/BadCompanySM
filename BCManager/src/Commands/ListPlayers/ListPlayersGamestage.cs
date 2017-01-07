@@ -8,8 +8,10 @@ namespace BCM.Commands
     {
       string output = "";
       output += new StatsList(_pInfo, _options).DisplayGamestage(_pInfo.CI, _sep);
-
-      SendOutput(output);
+      if (output != "")
+      {
+        SendOutput(output);
+      }
     }
   }
 }

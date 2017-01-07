@@ -30,7 +30,7 @@ namespace BCM.Models
         if (!first) { output += sep; } else { first = false; }
         output += " Bed:" + Convert.PosToStr(sp, postype);
       }
-      output += "}" + sep;
+      output += "}";
 
       return output;
     }

@@ -27,15 +27,19 @@ namespace BCM.Commands
           int EntityId = _senderInfo.RemoteClientInfo.entityId;
           EntityPlayer EP = GameManager.Instance.World.Players.dict[EntityId];
           Vector2i playergrid = RWGCore.Instance.WorldPosToGridPos(new Vector2(EP.position.x, EP.position.z));
-          if (_options.ContainsKey("current"))
+          string _filter = "";
+          if (_params.Count != 0)
           {
-            _params[0] = playergrid.x.ToString();
-            _params[1] = playergrid.y.ToString();
+            _filter = _params[0];
+            _params.Clear();
           }
+          _params.Add(playergrid.x.ToString());
+          _params.Add(playergrid.y.ToString());
+          _params.Add(_filter);
         }
         catch
         {
-          SdtdConsole.Instance.Output(" Unable to use /current option when caller not in game.");
+          SdtdConsole.Instance.Output("Unable to use /current option when caller not in game.");
         }
       }
 
@@ -87,12 +91,19 @@ namespace BCM.Commands
       // GET PREFABS
       if (_params.Count == 0)
       {
-        output += "All HubCellLots" + _sep;
-        int index = 0;
-        foreach (string lotName in HCDLotName)
+        if (_options.ContainsKey("all"))
         {
-          output += lotName + (_options.ContainsKey("csv") ? "," : ":") + Convert.PosToStr(HCDLotPos[index], postype) + _sep;
-          index++;
+          output += "All HubCellLots" + _sep;
+          int index = 0;
+          foreach (string lotName in HCDLotName)
+          {
+            output += lotName + (_options.ContainsKey("csv") ? "," : ":") + Convert.PosToStr(HCDLotPos[index], postype) + _sep;
+            index++;
+          }
+        }
+        else
+        {
+          output += GetHelp();
         }
       }
 
@@ -129,7 +140,7 @@ namespace BCM.Commands
           {
             if (_params.Count == 3)
             {
-              if (!lotName.ToLower().Contains(_params[0].ToLower()))
+              if (!lotName.ToLower().Contains(_params[2].ToLower()))
               {
                 continue;
               }

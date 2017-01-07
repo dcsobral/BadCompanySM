@@ -42,7 +42,7 @@ namespace BCM.Models
           output += ic.EquipSlot + ":" + ic.Name + "(" + xt + ")";
         }
       }
-      output += "}" + sep;
+      output += "}";
 
       return output;
     }

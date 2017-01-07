@@ -40,7 +40,7 @@ namespace BCM.Models
           if (!first) { output += sep; } else { first = false; }
           output += " " + s.Name + ":" + s.Level + " +" + (s.PercentThisLevel * 100).ToString("0.0") + "%";
         }
-        output += "}" + sep;
+        output += "}";
 
         return output;
       }

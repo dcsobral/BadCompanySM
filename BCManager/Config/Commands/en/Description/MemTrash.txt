@@ -1,0 +1,1 @@
+﻿Mem Trash - Runs Garbage Collection to try and free up Memory on the server

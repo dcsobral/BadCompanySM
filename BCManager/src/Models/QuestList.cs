@@ -31,7 +31,7 @@ namespace BCM.Models
         if (!first) { output += sep; } else { first = false; }
         output += " " + qc.Name + "(" + q.ID + "):" + q.CurrentState;
       }
-      output += "}" + sep;
+      output += "}";
 
       return output;
     }

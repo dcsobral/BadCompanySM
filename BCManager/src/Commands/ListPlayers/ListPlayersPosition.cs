@@ -2,7 +2,7 @@ using BCM.Models;
 
 namespace BCM.Commands
 {
-  public class ListPlayersPositions : ListPlayers
+  public class ListPlayersPosition : ListPlayers
   {
     public override void displayPlayer(PlayerInfo _pInfo)
     {

@@ -1,0 +1,7 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} <partialname / entityid / steamid> <questid>
+      Notes:
+            Use bc-help to get a list of common /options

@@ -22,7 +22,7 @@ namespace BCM.Models
 
     public override string Display(string sep = " ")
     {
-      // todo: filter duplicate entrys for recipes with multiple versions, or display ingredients as a /detail option?
+      // todo: filter duplicate entrys for recipes with multiple versions, or display ingredients as a /details option?
       bool first = true;
       string output = "FavoriteRecipe:{";
       foreach (string fr in favoriteRecipes)
@@ -30,7 +30,7 @@ namespace BCM.Models
         if (!first) { output += sep; } else { first = false; }
         output += fr + sep;
       }
-      output += "}" + sep;
+      output += "}";
 
       return output;
     }

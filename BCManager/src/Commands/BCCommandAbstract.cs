@@ -46,6 +46,7 @@ namespace BCM.Commands
       }
       catch (Exception e)
       {
+        SdtdConsole.Instance.Output("Error while executing command.");
         Log.Out("" + Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
       }
     }
@@ -89,6 +90,37 @@ namespace BCM.Commands
           pindex++;
         }
       }
+
+      string defaultoptions = Config.GetDefaultOptions(GetType().Name);
+      string[] addDefaults = defaultoptions.Split(',');
+      foreach (string add in addDefaults)
+      {
+        if (
+          (add == "online" && (_options.ContainsKey("offline") || _options.ContainsKey("all")))
+          ||
+          (add == "offline" && (_options.ContainsKey("online") || _options.ContainsKey("all")))
+          ||
+          (add == "nl" && _options.ContainsKey("nonl"))
+          ||
+          (add == "csv" && _options.ContainsKey("nocsv"))
+          ||
+          (add == "details" && _options.ContainsKey("nodetails"))
+          ||
+          (add == "csvpos" && _options.ContainsKey("spacepos"))
+          ||
+          (add == "worldpos" && _options.ContainsKey("spacepos"))
+          ||
+          (_options.ContainsKey(add))
+          )
+        {
+          continue;
+        }
+        else 
+        {
+          _options.Add(add, null);
+        }
+      }
+
       _sep = "";
       if (_options.ContainsKey("csv"))
       {
@@ -116,11 +148,19 @@ namespace BCM.Commands
         {
           output = "[" + _options["color"] + "]" + output + "[-]";
         }
-        GameManager.Instance.GameMessageServer(null, EnumGameMessages.Chat, output, "Server", false, string.Empty, false);
+        string[] split = output.Split('\n');
+        foreach (string text in split)
+        {
+          GameManager.Instance.GameMessageServer(null, EnumGameMessages.Chat, text, "Server", false, string.Empty, false);
+        }
       }
       else
       {
-        SdtdConsole.Instance.Output(output);
+        string[] split = output.Split('\n');
+        foreach (string text in split)
+        {
+          SdtdConsole.Instance.Output(text);
+        }
       }
     }
 

@@ -87,7 +87,7 @@ namespace BCM.Models
         }
         idx++;
       }
-      output += "}" + sep;
+      output += "}";
 
       return output;
     }

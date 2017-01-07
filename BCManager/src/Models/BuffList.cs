@@ -47,7 +47,7 @@ namespace BCM.Models
         if (!first) { output += sep; } else { first = false; }
         output += " " + b.Name + "(" + b.MultiBuffClass.Id + ")" + ":" + (b.MultiBuffClass.FDuration * b.Timer.TimeFraction).ToString("0") + "/" + b.MultiBuffClass.FDuration + "(s) (" + (b.Timer.TimeFraction * 100).ToString("0.0") + "%)";
       }
-      output += "}" + sep;
+      output += "}";
 
       return output;
     }

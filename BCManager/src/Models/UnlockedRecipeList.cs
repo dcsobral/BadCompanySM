@@ -29,7 +29,7 @@ namespace BCM.Models
         if (!first) { output += sep; } else { first = false; }
         output += ur;
       }
-      output += "}" + sep;
+      output += "}";
 
       return output;
     }

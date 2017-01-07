@@ -192,6 +192,12 @@ namespace BCM
               int.TryParse(_el.GetAttribute("defaultpermissionlevel"), out _command.dpl);
             }
 
+            // command defaultoptions
+            if (_el.HasAttribute("defaultoptions"))
+            {
+              _command.defaultoptions = _el.GetAttribute("defaultoptions");
+            }
+
             // load Description and Help text
             string cmdLocale = ModDir + "/Config/Commands/" + DefaultLocale;
             string helpfile = cmdLocale + "/Help/" + _command.name + ".txt";
@@ -250,7 +256,19 @@ namespace BCM
       {
         if (commandDictionary[command].help != "" && commandDictionary[command].help != null)
         {
-          return "" + ModPrefix + " " + commandDictionary[command].help;
+          Log.Out("TEST" + commandDictionary[command].commands.ToString());
+          string help = commandDictionary[command].help;
+          help = help.Replace("{description}", commandDictionary[command].description);
+          help = help.Replace("{commands}", string.Join(", ", commandDictionary[command].commands));
+          help = help.Replace("{command}", commandDictionary[command].commands[0]);
+          string[] splitDefaults = commandDictionary[command].defaultoptions.Split(',');
+          string slashdefaultoptions = "";
+          foreach (string split in splitDefaults)
+          {
+            slashdefaultoptions += "/" + split + " ";
+          }
+          help = help.Replace("{defaultoptions}", slashdefaultoptions);
+          return "" + ModPrefix + " " + help;
         }
         else
         {
@@ -287,6 +305,21 @@ namespace BCM
       else
       {
         return 0;
+      }
+    }
+    public static string GetDefaultOptions(string command)
+    {
+      if (command == "BCCommandAbstract")
+      {
+        return "";
+      }
+      if (commandDictionary.Keys.Contains(command))
+      {
+        return commandDictionary[command].defaultoptions;
+      }
+      else
+      {
+        return "";
       }
     }
   }

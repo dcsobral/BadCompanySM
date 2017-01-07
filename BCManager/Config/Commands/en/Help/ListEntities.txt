@@ -1,4 +1,8 @@
-﻿List Entities Data
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
       Usage:
-            1. bc-le <partialname / entityid / steamid>
-            2. bc-le
+            1. {command}
+            2. {command} [entityid]
+      Notes:
+            Use bc-help to get a list of common /options
