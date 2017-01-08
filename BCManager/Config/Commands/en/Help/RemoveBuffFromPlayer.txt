@@ -1,0 +1,9 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} <partialname / entityid / steamid> <buffid>
+      Notes:
+            Use bc-help to get a list of common /options
+            Use bc-buffs to get a list of buff ids
+            Use bc-lpbuffs <partialname> to get a list of buffs for a player

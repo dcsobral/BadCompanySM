@@ -8,7 +8,6 @@
             4. {command} <x y> <filtertext>
       Notes:
             Use bc-help to get a list of common /options
-
             <filtertext> - a string to compare against prefab names
             <x y> - the grid co-ords for the cells, 0 0 being the central hub, limit between -5 and 6.
       Options:

@@ -10,7 +10,7 @@
   <Command name="ListPlayers" commands="bc-lp" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersBag" commands="bc-lpbag" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersBuffs" commands="bc-lpbuffs,bc-lpbuff" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersClientInfo" commands="bc-lpci,bc-lpcinfo" defaultpermissionlevel="0" defaultoptions="online,worldpos"/>
+  <Command name="ListPlayersClientInfo" commands="bc-lpci,bc-lpcinfo" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersCraftingQueue" commands="bc-lpcrafts,bc-lpcraft" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersEquipment" commands="bc-lpequip" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersExtensive" commands="bc-lpx,bc-x" defaultpermissionlevel="0" defaultoptions="online"/>
@@ -27,9 +27,16 @@
   <Command name="ListPlayersWaypoints" commands="bc-lpwayp,bc-lpwayps,bc-lpwaypoints" defaultpermissionlevel="0" defaultoptions="online"/>
 
   <!-- Admin Players -->
-  <Command name="GiveQuestToPlayer" commands="bc-gpq,bc-gpquest" defaultpermissionlevel="0"/>
-  <Command name="RemoveQuestFromPlayer" commands="bc-rpq,bc-rpquest" defaultpermissionlevel="0"/>
+  <Command name="GiveQuestToPlayer" commands="bc-gpq,bc-gpquest" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="RemoveQuestFromPlayer" commands="bc-rpq,bc-rpquest" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="GiveBuffToPlayer" commands="bc-gpb,bc-gpbuff" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="RemoveBuffFromPlayer" commands="bc-rpb,bc-rpbuff" defaultpermissionlevel="0" defaultoptions=""/>
   
+  <!-- Admin Entities -->
+  <Command name="ListEntities" commands="bc-le" defaultpermissionlevel="0" defaultoptions="nl,alive"/>
+  <Command name="GiveBuffToEntity" commands="bc-geb,bc-gebuff" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="RemoveBuffFromEntity" commands="bc-reb,bc-debuff,bc-rembuff" defaultpermissionlevel="0" defaultoptions=""/>
+
   <!-- GAME OBJECTS -->
   <Command name="ListHubCellData" commands="bc-lhcd,bc-hcd" defaultpermissionlevel="0" defaultoptions="nl"/>
   <Command name="ListArchetypes" commands="bc-arch,bc-archetypes" defaultpermissionlevel="0" defaultoptions="csv"/>
@@ -52,14 +59,9 @@
   <!--<Command name="ListNPCs" commands="bc-npcs" defaultpermissionlevel="0"/>-->
   <!--<Command name="ListTraders" commands="bc-traders" defaultpermissionlevel="0"/>-->
 
-  <!-- ENTITIES -->
-  <Command name="ListEntities" commands="bc-le" defaultpermissionlevel="0" defaultoptions="nl"/>
-
   <!-- UTILITY -->
   <Command name="MemTrash" commands="bc-trash" defaultpermissionlevel="0"/>
 
-  <!-- obsolete -->
-  <!--<Command name="ListPlayersAdvancedStats" commands="bc-as" defaultpermissionlevel="0"/>-->
-  <!--<Command name="ListPlayersData" commands="bc-lp" defaultpermissionlevel="0"/>-->
+  <!-- TEST -->
   <Command name="Test" commands="bc-test" defaultpermissionlevel="0"/>
 </Commands>

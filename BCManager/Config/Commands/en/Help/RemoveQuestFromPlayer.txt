@@ -5,3 +5,6 @@
             1. {command} <partialname / entityid / steamid> <questid>
       Notes:
             Use bc-help to get a list of common /options
+            Use bc-quests to get a list of quest ids
+            Use bc-lpquests <partialname> to get a list of quests for a player
+            Only InProgress quests can be removed with this command

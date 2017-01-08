@@ -1,6 +1,6 @@
 namespace BCM.Commands
 {
-  public class GiveQuestToPlayer : BCCommandAbstract
+  public class RemoveBuffFromPlayer : BCCommandAbstract
   {
     public override void Process()
     {
@@ -30,11 +30,11 @@ namespace BCM.Commands
         {
           if (_senderInfo.IsLocalGame)
           {
-            SdtdConsole.Instance.Output("Use the \"givequest\" command for the local player.");
+            SdtdConsole.Instance.Output("Use the \"debuff\" command for the local player.");
           }
           else if (clientInfo.playerId != null)
           {
-            clientInfo.SendPackage(new NetPackageConsoleCmdClient("givequest " + str, true));
+            clientInfo.SendPackage(new NetPackageConsoleCmdClient("debuff " + str, true));
           }
         }
       }

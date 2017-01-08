@@ -56,6 +56,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\API.cs" />
+    <Compile Include="src\Commands\AdminEntities\GiveBuffToEntity.cs" />
+    <Compile Include="src\Commands\AdminEntities\RemoveEntities.cs" />
+    <Compile Include="src\Commands\AdminEntities\RemoveBuffFromEntity.cs" />
+    <Compile Include="src\Commands\AdminPlayers\GiveBuffToPlayer.cs" />
+    <Compile Include="src\Commands\AdminPlayers\RemoveBuffFromPlayer.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListHubCellData.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListPrefabs.cs" />
@@ -94,10 +99,7 @@
     <Compile Include="src\Commands\BCHelp.cs" />
     <Compile Include="src\Commands\Test.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersExtensive.cs" />
-    <Compile Include="src\Commands\Obsolete\ListPlayersData.cs" />
-    <Compile Include="src\Commands\Obsolete\ListEntitiesDataJSON.cs" />
-    <Compile Include="src\Commands\Obsolete\ListPlayersAdvancedStats.cs" />
-    <Compile Include="src\Commands\ListEntities\ListEntities.cs" />
+    <Compile Include="src\Commands\AdminEntities\ListEntities.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersGamestage.cs" />
     <Compile Include="src\Commands\Utility\MemTrash.cs" />
     <Compile Include="src\Config\Command.cs" />
@@ -537,6 +539,36 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Config\Commands\en\Help\RemoveQuestFromPlayer.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Help\RemoveBuffFromPlayer.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Help\GiveBuffToPlayer.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Description\GiveBuffToPlayer.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Description\RemoveBuffFromPlayer.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Help\GiveBuffToEntity.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Config\Commands\en\Description\GiveBuffToEntity.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
