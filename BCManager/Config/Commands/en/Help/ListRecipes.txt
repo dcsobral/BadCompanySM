@@ -3,6 +3,6 @@
       Default Options: {defaultoptions}
       Usage:
             1. {command}
-            2. {command} [recipeitem]
+            2. {command} <recipeitem>
       Notes:
             Use bc-help to get a list of common /options

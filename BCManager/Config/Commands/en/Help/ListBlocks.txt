@@ -3,6 +3,6 @@
       Default Options: {defaultoptions}
       Usage:
             1. {command}
-            2. {command} [blockid / blockname]
+            2. {command} <blockid / blockname>
       Notes:
             Use bc-help to get a list of common /options

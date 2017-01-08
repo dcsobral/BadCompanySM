@@ -3,9 +3,9 @@
       Default Options: {defaultoptions}
       Usage:
             1. {command}
-            2. {command} [containerid]
+            2. {command} <containerid>
             2. {command} /groups
-            2. {command} /groups [groupname]
+            2. {command} /groups <groupname>
       Notes:
             With no params returns a list of all available loot container ids, or with /groups all available loot groups
             /details - adds additional details to the results returned

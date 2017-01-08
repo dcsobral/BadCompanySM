@@ -3,6 +3,6 @@
       Default Options: {defaultoptions}
       Usage:
             1. {command}
-            2. {command} [archetypename]
+            2. {command} <archetypename>
       Notes:
             Use bc-help to get a list of common /options
