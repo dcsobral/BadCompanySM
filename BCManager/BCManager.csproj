@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\API.cs" />
+    <Compile Include="src\Classes\EntityZombie.cs" />
     <Compile Include="src\Commands\AdminEntities\GiveBuffToEntity.cs" />
     <Compile Include="src\Commands\AdminEntities\RemoveEntities.cs" />
     <Compile Include="src\Commands\AdminEntities\RemoveBuffFromEntity.cs" />

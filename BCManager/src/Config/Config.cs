@@ -256,7 +256,6 @@ namespace BCM
       {
         if (commandDictionary[command].help != "" && commandDictionary[command].help != null)
         {
-          Log.Out("TEST" + commandDictionary[command].commands.ToString());
           string help = commandDictionary[command].help;
           help = help.Replace("{description}", commandDictionary[command].description);
           help = help.Replace("{commands}", string.Join(", ", commandDictionary[command].commands));
