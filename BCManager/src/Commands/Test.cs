@@ -14,23 +14,23 @@ namespace BCM.Commands
       //Particle Effects
       //try
       //{
-      //  Dictionary<int, Transform> pe = new Dictionary<int, Transform>();
+      //Dictionary<int, Transform> pe = new Dictionary<int, Transform>();
 
-      //  object[] array = Resources.LoadAll("ParticleEffects", typeof(Transform));
-      //  object[] array2 = array;
-      //  for (int i = 0; i < array2.Length; i++)
+      //object[] array = Resources.LoadAll("ParticleEffects", typeof(Transform));
+      //object[] array2 = array;
+      //for (int i = 0; i < array2.Length; i++)
+      //{
+      //  object obj = array2[i];
+      //  string text = ((Transform)obj).gameObject.name;
+      //  if (!text.StartsWith("p_"))
       //  {
-      //    object obj = array2[i];
-      //    string text = ((Transform)obj).gameObject.name;
-      //    if (!text.StartsWith("p_"))
-      //    {
-      //      continue;
-      //    }
-      //    else
-      //    {
-      //      Log.Out(text);
-      //    }
+      //    continue;
       //  }
+      //  else
+      //  {
+      //    Log.Out(text);
+      //  }
+      //}
 
       //}
       //catch (Exception e)

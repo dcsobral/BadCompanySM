@@ -77,7 +77,7 @@ namespace BCM.Commands
             y = 255 - prefab.size.y;
           }
 
-
+          // todo: define a box first, then spawn prefab centered on middle of the box
           // todo: spawn at position x,z with y=average terrain height?
           // todo: create an entity observer and spawn prefab once chunks are loaded?
           // todo: allow for partial names for prefab, provide list if more then one result, allow for partial + # from list to specify

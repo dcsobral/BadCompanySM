@@ -62,6 +62,7 @@
     <Compile Include="src\Commands\AdminEntities\RemoveBuffFromEntity.cs" />
     <Compile Include="src\Commands\AdminPlayers\GiveBuffToPlayer.cs" />
     <Compile Include="src\Commands\AdminPlayers\RemoveBuffFromPlayer.cs" />
+    <Compile Include="src\Commands\AdminWorld\BCPrefab.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListHubCellData.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListPrefabs.cs" />
