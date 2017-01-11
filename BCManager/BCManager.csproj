@@ -112,6 +112,7 @@
     <Compile Include="src\Functions\ObjectCopier.cs" />
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
+    <Compile Include="src\Functions\PlayerDataReader.cs" />
     <Compile Include="src\GameObjects\BlockItemList.cs" />
     <Compile Include="src\Models\ClientInfoList.cs" />
     <Compile Include="src\Models\AbstractList.cs" />
