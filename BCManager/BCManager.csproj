@@ -107,18 +107,16 @@
     <Compile Include="src\Config\Command.cs" />
     <Compile Include="src\Config\Config.cs" />
     <Compile Include="src\DataManager.cs" />
+    <Compile Include="src\EventSystem\Neurons\SpawnManager.cs" />
     <Compile Include="src\Functions\Convert.cs" />
     <Compile Include="src\Functions\GetPlayer.cs" />
     <Compile Include="src\Functions\ObjectCopier.cs" />
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\Functions\PlayerDataReader.cs" />
-    <Compile Include="src\GameObjects\BlockItemList.cs" />
     <Compile Include="src\Models\ClientInfoList.cs" />
     <Compile Include="src\Models\AbstractList.cs" />
     <Compile Include="src\Models\StatsList.cs" />
-    <Compile Include="src\PersistentData\PDQuests.cs" />
-    <Compile Include="src\PersistentData\PDQuest.cs" />
     <Compile Include="src\EventSystem\NeuronAbstract.cs" />
     <Compile Include="src\EventSystem\Neurons\TrashCollector.cs" />
     <Compile Include="src\EventSystem\Neurons\BagMonitor.cs" />
@@ -142,9 +140,7 @@
     <Compile Include="src\Models\SkillList.cs" />
     <Compile Include="src\Models\QuestList.cs" />
     <Compile Include="src\Models\BuffList.cs" />
-    <Compile Include="src\PersistentData\Attributes.cs" />
-    <Compile Include="src\PersistentData\Inventory.cs" />
-    <Compile Include="src\PersistentData\InvItem.cs" />
+    <Compile Include="src\PersistentData\BCMSettings.cs" />
     <Compile Include="src\PersistentData\Player.cs" />
     <Compile Include="src\PersistentData\PersistentContainer.cs" />
     <Compile Include="src\PersistentData\Players.cs" />
@@ -193,6 +189,7 @@
   <ItemGroup>
     <None Include="Config\System.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
