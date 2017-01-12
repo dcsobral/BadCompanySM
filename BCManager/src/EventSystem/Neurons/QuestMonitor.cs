@@ -1,11 +1,6 @@
-﻿using BCM.Models;
-using BCM.PersistentData;
+﻿using BCM.PersistentData;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using UnityEngine;
 
 namespace BCM.Neurons
 {
@@ -40,19 +35,19 @@ namespace BCM.Neurons
             string playerName = enumerator.Current.playerName;
             string playerId = enumerator.Current.playerId;
 
-            PDQuests _currentQuests = new PDQuests();
-            PDQuests _cacheQuests = new PDQuests();
+            //Quests _currentQuests = new Quests();
+            //Quests _cacheQuests = new Quests();
             try
             {
               Player pcurr = PersistentContainer.Instance.Players[playerId, false];
               Player pcache = _pcCache.Players[playerId, true]; // allow player to be created if it doesn't exist in cache
               if (pcurr != null)
               {
-                _currentQuests = pcurr.Quests;
+                //_currentQuests = pcurr.Quests;
               }
               if (pcache != null)
               {
-                _cacheQuests = pcache.Quests;
+                //_cacheQuests = pcache.Quests;
               }
               //else
               //{
@@ -70,34 +65,34 @@ namespace BCM.Neurons
             catch (Exception e)
             { Log.Out(Config.ModPrefix + " QuestMonitoring.Fire Exception getting quest lists: " + e); }
 
-            List<PDQuest> _changedQuests = new List<PDQuest>();
+            List<Quest> _changedQuests = new List<Quest>();
             try
             {
-              foreach (PDQuest q in _currentQuests.quests)
-              {
-                if (_cacheQuests != null)
-                {
-                  PDQuest qq = _cacheQuests.quests.Find(x => x.ID == q.ID && x.CurrentState == q.CurrentState);
-                  if (qq == null)
-                  {
-                    //not found in list, so must be new or status changed
-                    _changedQuests.Add(q);
-                  }
-                  else
-                  {
-                    //found a match so remove 1 instance of quest
-                    _cacheQuests.quests.RemoveAt(_cacheQuests.quests.LastIndexOf(qq));
-                  }
-                }
-                else
-                {
-                  _changedQuests.Add(q);
-                }
-              }
+              //foreach (Quest q in _currentQuests.quests)
+              //{
+              //  if (_cacheQuests != null)
+              //  {
+              //    Quest qq = _cacheQuests.quests.Find(x => x.Id == q.Id && x.CurrentState == q.CurrentState);
+              //    if (qq == null)
+              //    {
+              //      //not found in list, so must be new or status changed
+              //      _changedQuests.Add(q);
+              //    }
+              //    else
+              //    {
+              //      //found a match so remove 1 instance of quest
+              //      _cacheQuests.quests.RemoveAt(_cacheQuests.quests.LastIndexOf(qq));
+              //    }
+              //  }
+              //  else
+              //  {
+              //    _changedQuests.Add(q);
+              //  }
+              //}
               // update cached quests to current quests
               try
               {
-                _cacheQuests.quests = _currentQuests.quests.Clone();
+                //_cacheQuests.quests = _currentQuests.quests.Clone();
               }
               catch (Exception e)
               {
@@ -107,12 +102,12 @@ namespace BCM.Neurons
             catch (Exception e)
             {
               Log.Out(Config.ModPrefix + " QuestMonitoring.Fire Exception computing changed quests: " + e);
-              _changedQuests = new List<PDQuest>(); //if an error computing changes then don't return a list or it spams log files
+              _changedQuests = new List<Quest>(); //if an error computing changes then don't return a list or it spams log files
             }
 
             try
             {
-              foreach (PDQuest q in _changedQuests)
+              foreach (Quest q in _changedQuests)
               {
                 Log.Out(Config.ModPrefix + " " + playerName + " Quest Status Changed to " + q.CurrentState + ":" + q.ID + "");
               }
