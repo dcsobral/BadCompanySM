@@ -9,9 +9,14 @@ namespace BCM.PersistentData
   [Serializable]
   public class PersistentContainer
   {
+    private static PersistentContainer instance;
     private Players players;
     [OptionalField]
-    private Attributes attributes;
+    private BCMSettings settings;
+
+    private PersistentContainer()
+    {
+    }
 
     public Players Players
     {
@@ -23,19 +28,17 @@ namespace BCM.PersistentData
       }
     }
 
-    public Attributes Attributes
+    public BCMSettings Settings
     {
       get
       {
-        if (attributes == null)
+        if (settings == null)
         {
-          attributes = new Attributes();
+          settings = new BCMSettings();
         }
-        return attributes;
+        return settings;
       }
     }
-
-    private static PersistentContainer instance;
 
     public static PersistentContainer Instance
     {
@@ -56,36 +59,83 @@ namespace BCM.PersistentData
       }
     }
 
-    private PersistentContainer()
-    {
-    }
-
     public void Save()
     {
-      Stream stream = File.Open(GameUtils.GetSaveGameDir() + "/BCMPersistentData.bin", FileMode.Create);
-      BinaryFormatter bFormatter = new BinaryFormatter();
-      bFormatter.Serialize(stream, this);
-      stream.Close();
+      try
+      {
+
+        Directory.CreateDirectory(GameUtils.GetSaveGameDir() + "/BCM/");
+        BinaryFormatter bFormatter = new BinaryFormatter();
+
+        if (Players.Count > 0)
+        {
+          // todo: create a keys database, move older players to a file that isnt loaded to reduce memory used, default /offline commands to rececnt players (claim expiry x 4?) and use /archives to get older data
+          Stream streamPlayers = File.Open(GameUtils.GetSaveGameDir() + "/BCM/Players.bin", FileMode.Create);
+          bFormatter.Serialize(streamPlayers, players);
+          streamPlayers.Close();
+          Log.Out(Config.ModPrefix + " Players Saved");
+        }
+        else
+        {
+          Log.Out(Config.ModPrefix + " No Players to Save");
+        }
+
+        if (settings != null)
+        {
+          Stream streamSettings = File.Open(GameUtils.GetSaveGameDir() + "/BCM/Settings.bin", FileMode.Create);
+          bFormatter.Serialize(streamSettings, settings);
+          streamSettings.Close();
+          Log.Out(Config.ModPrefix + " Settings Saved");
+        }
+        else
+        {
+          Log.Out(Config.ModPrefix + " No Mod Settings to Save");
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Error("" + Config.ModPrefix + " Error in PersistentContainer." + MethodBase.GetCurrentMethod().Name + ": " + e);
+      }
     }
 
     public static bool Load()
     {
-      if (File.Exists(GameUtils.GetSaveGameDir() + "/BCMPersistentData.bin"))
+      try
       {
-        try
+        PersistentContainer obj = new PersistentContainer();
+        BinaryFormatter bFormatter = new BinaryFormatter();
+
+        Directory.CreateDirectory(GameUtils.GetSaveGameDir() + "/BCM/");
+
+        // todo: add files for players stats, position, buff, inventory histories 
+        Stream streamPlayers = File.Open(GameUtils.GetSaveGameDir() + "/BCM/Players.bin", FileMode.OpenOrCreate);
+        if (streamPlayers.Length > 0)
         {
-          PersistentContainer obj;
-          Stream stream = File.Open(GameUtils.GetSaveGameDir() + "/BCMPersistentData.bin", FileMode.Open);
-          BinaryFormatter bFormatter = new BinaryFormatter();
-          obj = (PersistentContainer)bFormatter.Deserialize(stream);
-          stream.Close();
-          instance = obj;
-          return true;
+          obj.players = (Players)bFormatter.Deserialize(streamPlayers);
         }
-        catch (Exception e)
+        else
         {
-          Log.Error("" + Config.ModPrefix + " Error in PersistentContainer." + MethodBase.GetCurrentMethod().Name + ": " + e);
+          Log.Out(Config.ModPrefix + " No Players to Load");
         }
+        streamPlayers.Close();
+
+        Stream streamSettings = File.Open(GameUtils.GetSaveGameDir() + "/BCM/Settings.bin", FileMode.OpenOrCreate);
+        if (streamSettings.Length > 0)
+        {
+          obj.settings = (BCMSettings)bFormatter.Deserialize(streamSettings);
+        }
+        else
+        {
+          Log.Out(Config.ModPrefix + " No Mod Settings to Load");
+        }
+        streamSettings.Close();
+
+        instance = obj;
+        return true;
+      }
+      catch (Exception e)
+      {
+        Log.Error("" + Config.ModPrefix + " Error in PersistentContainer." + MethodBase.GetCurrentMethod().Name + ": " + e);
       }
       return false;
     }
