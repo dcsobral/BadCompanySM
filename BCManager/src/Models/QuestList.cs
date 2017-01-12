@@ -26,10 +26,14 @@ namespace BCM.Models
       string output = "Quests:{";
       foreach (Quest q in quests)
       {
-        // todo: add checks for existance of quests before trying to output them.
-        var qc = QuestClass.s_Quests[q.ID];
         if (!first) { output += sep; } else { first = false; }
-        output += " " + qc.Name + "(" + q.ID + "):" + q.CurrentState;
+        if (QuestClass.s_Quests.ContainsKey(q.ID)) {
+          var qc = QuestClass.s_Quests[q.ID];
+          output += qc.Name + "(" + q.ID + "):" + q.CurrentState;
+        } else
+        {
+          output += "Unknown Quest";
+        }
       }
       output += "}";
 
