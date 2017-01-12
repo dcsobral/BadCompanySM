@@ -2,5 +2,6 @@
 <System>
   <Heartbeat isalive="true"/>
   <BPM rate="60"/>
-  <Synapse name="questmonitor" enabled="true" beats="15"/>
+  <Synapse name="questmonitor" enabled="false" beats="15"/>
+  <Synapse name="spawnmanager" enabled="false" beats="1"/>
 </System>
