@@ -37,7 +37,17 @@ namespace BCM.Models
         {
           // Note: don't use s.TitleKey as it will break the command if there is no localisation for the skill
           if (!first) { output += sep; } else { first = false; }
-          output += " " + s.Name + ":" + s.Level + " +" + (s.PercentThisLevel * 100).ToString("0.0") + "%";
+          //workaround for some skills missing the Level setting
+          int lvl;
+          try
+          {
+            lvl = s.Level;
+          }
+          catch
+          {
+            lvl = 0;
+          }
+          output += " " + s.Name + ":" + lvl + " +" + (s.PercentThisLevel * 100).ToString("0.0") + "%";
         }
         output += "}";
 
