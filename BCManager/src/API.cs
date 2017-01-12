@@ -21,11 +21,11 @@ namespace BCM
     public API()
     {
       Config.Init();
-      Heartbeat.Start();
       if (Config.logCache)
       {
         LogCache.Instance.GetType();
       }
+      Heartbeat.Start();
     }
 
     public override void GameUpdate()
