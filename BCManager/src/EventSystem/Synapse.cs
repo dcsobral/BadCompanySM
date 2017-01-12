@@ -23,6 +23,9 @@ namespace BCM
         case "questmonitor":
           neurons.Add(new QuestMonitor());
           break;
+        case "spawnmanager":
+          neurons.Add(new SpawnManager());
+          break;
         default:
           Log.Out(Config.ModPrefix + " Unable to find unknown Synapse " + name);
           break;
