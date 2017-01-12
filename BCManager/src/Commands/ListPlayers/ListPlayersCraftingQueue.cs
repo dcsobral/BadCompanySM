@@ -8,6 +8,7 @@ namespace BCM.Commands
     {
       string output = "";
       output += new ClientInfoList(_pInfo, _options).DisplayShort(_sep);
+      output += _sep;
       output += new CraftingQueue(_pInfo, _options).Display(_sep);
 
       SendOutput(output);
