@@ -22,8 +22,7 @@ namespace BCM.Models
       }
       else
       {
-        // todo: add skills to persistent data, or find a way to read binary steam from save file
-        skills = null;
+        skills = _pInfo.PDF.skills;
       }
     }
 

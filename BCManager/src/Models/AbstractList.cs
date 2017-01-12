@@ -36,7 +36,7 @@ namespace BCM.Models
 
     public virtual void Load(PlayerInfo _pInfo)
     {
-      string postype = GetPosType();
+      //string postype = GetPosType();
     }
 
     public virtual string Display(string sep = " ")

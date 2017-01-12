@@ -33,8 +33,7 @@ namespace BCM.Models
       stats.Add("ExpToNextLevel", (_pInfo.EP != null ? _pInfo.EP.ExpToNextLevel : (int)_pInfo.PDF.experience).ToString());
       stats.Add("ExpForNextLevel", (_pInfo.EP != null ? _pInfo.EP.GetExpForNextLevel() : (int)Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pInfo.PDF.level + 1)), int.MaxValue)).ToString());
 
-      // todo: add gamestage to persistent data
-      stats.Add("Gamestage", (_pInfo.EP != null ? _pInfo.EP.gameStage.ToString() : ""));
+      stats.Add("Gamestage", (_pInfo.EP != null ? _pInfo.EP.gameStage.ToString() : _pInfo.PCP.Gamestage.ToString()));
       stats.Add("Score", (_pInfo.EP != null ? _pInfo.EP.Score : _pInfo.PDF.score).ToString());
       stats.Add("KilledPlayers", (_pInfo.EP != null ? _pInfo.EP.KilledPlayers : _pInfo.PDF.playerKills).ToString());
       stats.Add("KilledZombies", (_pInfo.EP != null ? _pInfo.EP.KilledZombies : _pInfo.PDF.zombieKills).ToString());
@@ -43,14 +42,13 @@ namespace BCM.Models
       stats.Add("LongestLife", (_pInfo.EP != null ? _pInfo.EP.longestLife.ToString("0.0") : _pInfo.PDF.longestLife.ToString("0.0")));
       stats.Add("ItemsCrafted", (_pInfo.EP != null ? _pInfo.EP.totalItemsCrafted : _pInfo.PDF.totalItemsCrafted).ToString());
 
+      stats.Add("Dead", (_pInfo.EP != null ? _pInfo.EP.IsDead().ToString() : _pInfo.PDF.bDead.ToString()));
       if (_pInfo.EP != null)
       {
         stats.Add("onGround", _pInfo.EP.onGround.ToString());
         stats.Add("IsStuck", _pInfo.EP.IsStuck.ToString());
         stats.Add("IsSafeZoneActive", _pInfo.EP.IsSafeZoneActive().ToString());
         stats.Add("Remote", _pInfo.EP.isEntityRemote.ToString());
-        stats.Add("Dead", _pInfo.EP.IsDead().ToString());
-        //todo: add LastZombieAttackTime to persistent data
         stats.Add("TimeSinceLastZombieAttacked", ((GameManager.Instance.World.worldTime - _pInfo.EP.LastZombieAttackTime) / 600).ToString("0.0"));
       }
 

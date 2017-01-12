@@ -1,5 +1,4 @@
-﻿using BCM.Models;
-using System;
+﻿using System;
 using System.Runtime.Serialization;
 using UnityEngine;
 
@@ -13,28 +12,16 @@ namespace BCM.PersistentData
     private string name;
     private string ip;
     private long totalPlayTime;
+
     [OptionalField]
     private DateTime lastOnline;
-    private Inventory inventory;
     [OptionalField]
-    private PDQuests quests;
-    [OptionalField]
-    private int lastPositionX, lastPositionY, lastPositionZ;
-    [OptionalField]
-    private bool chatMuted;
-    [OptionalField]
-    private int maxChatLength;
-    [OptionalField]
-    private string chatColor;
-    [OptionalField]
-    private bool chatName;
-    [OptionalField]
-    private uint expToNextLevel;
-    [OptionalField]
-    private int level;
+    private int gamestage;
 
     [NonSerialized]
     private ClientInfo clientInfo;
+    [NonSerialized]
+    private PlayerDataReader playerData;
 
     public string SteamID
     {
@@ -51,29 +38,14 @@ namespace BCM.PersistentData
       get { return name == null ? string.Empty : name; }
     }
 
+    public int Gamestage
+    {
+      get { return gamestage; }
+    }
+
     public string IP
     {
       get { return ip == null ? string.Empty : ip; }
-    }
-
-    public PDQuests Quests
-    {
-      get
-      {
-        if (quests == null)
-          quests = new PDQuests();
-        return quests;
-      }
-    }
-
-    public Inventory Inventory
-    {
-      get
-      {
-        if (inventory == null)
-          inventory = new Inventory();
-        return inventory;
-      }
     }
 
     public bool IsOnline
@@ -84,6 +56,16 @@ namespace BCM.PersistentData
     public ClientInfo ClientInfo
     {
       get { return clientInfo; }
+    }
+
+    public PlayerDataReader PlayerData
+    {
+      get
+      {
+        if (playerData == null)
+          playerData = new PlayerDataReader();
+        return playerData;
+      }
     }
 
     public EntityPlayer Entity
@@ -107,7 +89,7 @@ namespace BCM.PersistentData
       {
         if (IsOnline)
         {
-          return totalPlayTime + (long)(Time.timeSinceLevelLoad - Entity.CreationTimeSinceLevelLoad);
+          return totalPlayTime + (long)(DateTime.Now - lastOnline).TotalSeconds;
         }
         else
         {
@@ -127,17 +109,6 @@ namespace BCM.PersistentData
       }
     }
 
-    public Vector3i LastPosition
-    {
-      get
-      {
-        if (IsOnline)
-          return new Vector3i(Entity.GetPosition());
-        else
-          return new Vector3i(lastPositionX, lastPositionY, lastPositionZ);
-      }
-    }
-
     public bool LandProtectionActive
     {
       get
@@ -154,121 +125,81 @@ namespace BCM.PersistentData
       }
     }
 
-    public float Level
-    {
-      get
-      {
-        float expForNextLevel = (int)Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, level + 1)), int.MaxValue);
-        float fLevel = level + 1f - ((float)expToNextLevel / expForNextLevel);
-        return fLevel;
-      }
-    }
-
-    public bool IsChatMuted
-    {
-      get
-      {
-        return chatMuted;
-      }
-      set
-      {
-        chatMuted = value;
-      }
-    }
-
-    public int MaxChatLength
-    {
-      get
-      {
-        if (maxChatLength == 0)
-        {
-          maxChatLength = 255;
-        }
-        return maxChatLength;
-      }
-      set
-      {
-        maxChatLength = value;
-      }
-    }
-
-    public string ChatColor
-    {
-      get
-      {
-        if (chatColor == null || chatColor == "")
-        {
-          chatColor = "";
-        }
-        return chatColor;
-      }
-
-      set
-      {
-        chatColor = value;
-      }
-    }
-
-    public bool ChatName
-    {
-      get
-      {
-        return chatName;
-      }
-
-      set
-      {
-        chatName = value;
-      }
-    }
-
     public void SetOffline()
     {
       if (clientInfo != null)
       {
-        //Log.Out("" + Config.ModPrefix + " Player set to offline: " + steamId);
+        totalPlayTime += (long)(DateTime.Now - lastOnline).TotalSeconds;
+        //(long)(Time.timeSinceLevelLoad - Entity.CreationTimeSinceLevelLoad);
         lastOnline = DateTime.Now;
-        try
-        {
-          Vector3i lastPos = new Vector3i(Entity.GetPosition());
-          lastPositionX = lastPos.x;
-          lastPositionY = lastPos.y;
-          lastPositionZ = lastPos.z;
-          totalPlayTime += (long)(Time.timeSinceLevelLoad - Entity.CreationTimeSinceLevelLoad);
-        }
-        catch (NullReferenceException)
-        {
-          //Log.Out("" + Config.ModPrefix + " Entity not available. Something seems to be wrong here...");
-        }
+
         clientInfo = null;
+        playerData = null;
       }
     }
 
     public void SetOnline(ClientInfo ci)
     {
-      //Log.Out("" + Config.ModPrefix + " Player set to online: " + steamId);
       clientInfo = ci;
       entityId = ci.entityId;
       name = ci.playerName;
       ip = ci.ip;
       lastOnline = DateTime.Now;
+      if (Entity != null)
+      {
+        gamestage = Entity.gameStage;
+      }
+      playerData.GetData(steamId);
     }
 
     public void Update(PlayerDataFile _pdf)
     {
-      expToNextLevel = _pdf.experience;
-      level = _pdf.level;
-      inventory.Update(_pdf);
-      quests.Update(_pdf);
+      playerData.bLoaded = _pdf.bLoaded;
+      playerData.ecd = _pdf.ecd;
+      playerData.inventory = _pdf.inventory;
+      playerData.bag = _pdf.bag;
+      playerData.equipment = _pdf.equipment;
+      playerData.favoriteEquipment = _pdf.favoriteEquipment;
+      playerData.selectedInventorySlot = _pdf.selectedInventorySlot;
+      playerData.food = _pdf.food;
+      playerData.drink = _pdf.drink;
+      playerData.spawnPoints = _pdf.spawnPoints;
+      playerData.selectedSpawnPointKey = _pdf.selectedSpawnPointKey;
+      playerData.alreadyCraftedList = _pdf.alreadyCraftedList;
+      playerData.unlockedRecipeList = _pdf.unlockedRecipeList;
+      playerData.favoriteRecipeList = _pdf.favoriteRecipeList;
+      playerData.lastSpawnPosition = _pdf.lastSpawnPosition;
+      playerData.droppedBackpackPosition = _pdf.droppedBackpackPosition;
+      playerData.playerKills = _pdf.playerKills;
+      playerData.zombieKills = _pdf.zombieKills;
+      playerData.deaths = _pdf.deaths;
+      playerData.score = _pdf.score;
+      playerData.id = _pdf.id;
+      playerData.markerPosition = _pdf.markerPosition;
+      playerData.experience = _pdf.experience;
+      playerData.level = _pdf.level;
+      playerData.skillPoints = _pdf.skillPoints;
+      playerData.bCrouchedLocked = _pdf.bCrouchedLocked;
+      playerData.craftingData = _pdf.craftingData;
+      playerData.deathUpdateTime = _pdf.deathUpdateTime;
+      playerData.bDead = _pdf.bDead;
+      playerData.distanceWalked = _pdf.distanceWalked;
+      playerData.totalItemsCrafted = _pdf.totalItemsCrafted;
+      playerData.longestLife = _pdf.longestLife;
+      playerData.currentLife = _pdf.currentLife;
+      playerData.waypoints = _pdf.waypoints;
+      playerData.questJournal = _pdf.questJournal;
+      //playerData.IsModdedSave = _pdf.IsModdedSave;
+      playerData.playerJournal = _pdf.playerJournal;
+      playerData.rentedVMPosition = _pdf.rentedVMPosition;
+      playerData.rentalEndTime = _pdf.rentalEndTime;
+      playerData.trackedFriendEntityIds = _pdf.trackedFriendEntityIds;
+      //playerData.skills = _pdf.skills;
     }
 
-    public Player(string steamId)
+    public Player(string _steamId)
     {
-      this.steamId = steamId;
-      this.inventory = new Inventory();
-      this.quests = new PDQuests();
+      steamId = _steamId;
     }
-
-
   }
 }

@@ -11,7 +11,8 @@ namespace BCM
   {
     public string _steamId;
     public EntityPlayer EP;
-    public PlayerDataFile PDF;
+    public PlayerDataReader PDF;
+    //public PlayerDataFile PDF;
     public Player PCP;
     public ClientInfo CI;
     public PersistentPlayerData PPD;
@@ -24,10 +25,12 @@ namespace BCM
       PlayerInfo _pinfo = new PlayerInfo();
       _pinfo._steamId = _steamId;
       _pinfo.EP = null;
-      _pinfo.PDF = new PlayerDataFile();
+      //_pinfo.PDF = new PlayerDataFile();
+      _pinfo.PDF = new PlayerDataReader();
       try
       {
-        _pinfo.PDF.Load(GameUtils.GetPlayerDataDir(), _steamId);
+        _pinfo.PDF.GetData(_steamId);
+        //_pinfo.PDF.Load(GameUtils.GetPlayerDataDir(), _steamId);
       }
       catch
       {
