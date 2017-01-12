@@ -32,6 +32,7 @@ namespace BCM
     private static string systemFile = "System.xml";
     private static string ConfigPath = ModDir + "Config/";
     public static string DefaultLocale = "en";
+    public static bool logCache = false;
     public static Dictionary<string, Command> commandDictionary = new Dictionary<string, Command>();
 
     public static bool Init()
@@ -47,8 +48,23 @@ namespace BCM
       XmlDocument _xd = new XmlDocument();
       try
       {
-        //Heartbeat.IsAlive
         _xd.Load(ConfigPath + systemFile);
+
+        //LogCache.enabled
+        XmlNodeList _lc = _xd.SelectNodes("/System/LogCache/@enabled");
+        if (_lc.Count > 0)
+        {
+          if (!bool.TryParse(_lc.Item(0).Value, out logCache))
+          {
+            Log.Out("" + ModPrefix + " Unable to load LogCache, enabled is not a valid boolean in " + systemFile);
+          }
+        }
+        else
+        {
+          Log.Out("" + ModPrefix + " Unable to load LogCache enabled, setting not found in " + systemFile);
+        }
+
+        //Heartbeat.IsAlive
         XmlNodeList _hb = _xd.SelectNodes("/System/Heartbeat/@isalive");
         if (_hb.Count > 0)
         {

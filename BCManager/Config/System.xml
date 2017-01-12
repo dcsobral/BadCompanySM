@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <System>
+  <LogCache enabled="true"/>
   <Heartbeat isalive="true"/>
   <BPM rate="60"/>
   <Synapse name="questmonitor" enabled="false" beats="15"/>

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Threading;
 using UnityEngine;
 
 namespace BCM.Commands
@@ -11,13 +9,12 @@ namespace BCM.Commands
   {
     public override void Process()
     {
-      string steamid = "76561198106697782";
-      PlayerDataReader pdr = new PlayerDataReader();
-      pdr.GetData(steamid);
 
-      foreach (Skill s in pdr.skills)
+      List<LogCache.LogEntry> logEntries = LogCache.Instance.GetRange();
+
+      foreach (LogCache.LogEntry log in logEntries)
       {
-        SdtdConsole.Instance.Output(s.Name + "\n");
+        SdtdConsole.Instance.Output(log.message);
       }
 
     }

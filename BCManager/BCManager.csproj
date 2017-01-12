@@ -107,6 +107,7 @@
     <Compile Include="src\Config\Command.cs" />
     <Compile Include="src\Config\Config.cs" />
     <Compile Include="src\DataManager.cs" />
+    <Compile Include="src\EventSystem\LogCache.cs" />
     <Compile Include="src\EventSystem\Neurons\SpawnManager.cs" />
     <Compile Include="src\Functions\Convert.cs" />
     <Compile Include="src\Functions\GetPlayer.cs" />

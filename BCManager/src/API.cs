@@ -22,6 +22,10 @@ namespace BCM
     {
       Config.Init();
       Heartbeat.Start();
+      if (Config.logCache)
+      {
+        LogCache.Instance.GetType();
+      }
     }
 
     public override void GameUpdate()
