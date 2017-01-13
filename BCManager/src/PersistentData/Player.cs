@@ -149,52 +149,52 @@ namespace BCM.PersistentData
       {
         gamestage = Entity.gameStage;
       }
-      playerData.GetData(steamId);
+      PlayerData.GetData(steamId);
     }
 
     public void Update(PlayerDataFile _pdf)
     {
-      playerData.bLoaded = _pdf.bLoaded;
-      playerData.ecd = _pdf.ecd;
-      playerData.inventory = _pdf.inventory;
-      playerData.bag = _pdf.bag;
-      playerData.equipment = _pdf.equipment;
-      playerData.favoriteEquipment = _pdf.favoriteEquipment;
-      playerData.selectedInventorySlot = _pdf.selectedInventorySlot;
-      playerData.food = _pdf.food;
-      playerData.drink = _pdf.drink;
-      playerData.spawnPoints = _pdf.spawnPoints;
-      playerData.selectedSpawnPointKey = _pdf.selectedSpawnPointKey;
-      playerData.alreadyCraftedList = _pdf.alreadyCraftedList;
-      playerData.unlockedRecipeList = _pdf.unlockedRecipeList;
-      playerData.favoriteRecipeList = _pdf.favoriteRecipeList;
-      playerData.lastSpawnPosition = _pdf.lastSpawnPosition;
-      playerData.droppedBackpackPosition = _pdf.droppedBackpackPosition;
-      playerData.playerKills = _pdf.playerKills;
-      playerData.zombieKills = _pdf.zombieKills;
-      playerData.deaths = _pdf.deaths;
-      playerData.score = _pdf.score;
-      playerData.id = _pdf.id;
-      playerData.markerPosition = _pdf.markerPosition;
-      playerData.experience = _pdf.experience;
-      playerData.level = _pdf.level;
-      playerData.skillPoints = _pdf.skillPoints;
-      playerData.bCrouchedLocked = _pdf.bCrouchedLocked;
-      playerData.craftingData = _pdf.craftingData;
-      playerData.deathUpdateTime = _pdf.deathUpdateTime;
-      playerData.bDead = _pdf.bDead;
-      playerData.distanceWalked = _pdf.distanceWalked;
-      playerData.totalItemsCrafted = _pdf.totalItemsCrafted;
-      playerData.longestLife = _pdf.longestLife;
-      playerData.currentLife = _pdf.currentLife;
-      playerData.waypoints = _pdf.waypoints;
-      playerData.questJournal = _pdf.questJournal;
-      //playerData.IsModdedSave = _pdf.IsModdedSave;
-      playerData.playerJournal = _pdf.playerJournal;
-      playerData.rentedVMPosition = _pdf.rentedVMPosition;
-      playerData.rentalEndTime = _pdf.rentalEndTime;
-      playerData.trackedFriendEntityIds = _pdf.trackedFriendEntityIds;
-      //playerData.skills = _pdf.skills;
+      PlayerData.bLoaded = _pdf.bLoaded;
+      PlayerData.ecd = _pdf.ecd;
+      PlayerData.inventory = _pdf.inventory;
+      PlayerData.bag = _pdf.bag;
+      PlayerData.equipment = _pdf.equipment;
+      PlayerData.favoriteEquipment = _pdf.favoriteEquipment;
+      PlayerData.selectedInventorySlot = _pdf.selectedInventorySlot;
+      PlayerData.food = _pdf.food;
+      PlayerData.drink = _pdf.drink;
+      PlayerData.spawnPoints = _pdf.spawnPoints;
+      PlayerData.selectedSpawnPointKey = _pdf.selectedSpawnPointKey;
+      PlayerData.alreadyCraftedList = _pdf.alreadyCraftedList;
+      PlayerData.unlockedRecipeList = _pdf.unlockedRecipeList;
+      PlayerData.favoriteRecipeList = _pdf.favoriteRecipeList;
+      PlayerData.lastSpawnPosition = _pdf.lastSpawnPosition;
+      PlayerData.droppedBackpackPosition = _pdf.droppedBackpackPosition;
+      PlayerData.playerKills = _pdf.playerKills;
+      PlayerData.zombieKills = _pdf.zombieKills;
+      PlayerData.deaths = _pdf.deaths;
+      PlayerData.score = _pdf.score;
+      PlayerData.id = _pdf.id;
+      PlayerData.markerPosition = _pdf.markerPosition;
+      PlayerData.experience = _pdf.experience;
+      PlayerData.level = _pdf.level;
+      PlayerData.skillPoints = _pdf.skillPoints;
+      PlayerData.bCrouchedLocked = _pdf.bCrouchedLocked;
+      PlayerData.craftingData = _pdf.craftingData;
+      PlayerData.deathUpdateTime = _pdf.deathUpdateTime;
+      PlayerData.bDead = _pdf.bDead;
+      PlayerData.distanceWalked = _pdf.distanceWalked;
+      PlayerData.totalItemsCrafted = _pdf.totalItemsCrafted;
+      PlayerData.longestLife = _pdf.longestLife;
+      PlayerData.currentLife = _pdf.currentLife;
+      PlayerData.waypoints = _pdf.waypoints;
+      PlayerData.questJournal = _pdf.questJournal;
+      //PlayerData.IsModdedSave = _pdf.IsModdedSave;
+      PlayerData.playerJournal = _pdf.playerJournal;
+      PlayerData.rentedVMPosition = _pdf.rentedVMPosition;
+      PlayerData.rentalEndTime = _pdf.rentalEndTime;
+      PlayerData.trackedFriendEntityIds = _pdf.trackedFriendEntityIds;
+      //PlayerData.skills = _pdf.skills;
     }
 
     public Player(string _steamId)
