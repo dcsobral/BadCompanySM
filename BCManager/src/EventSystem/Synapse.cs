@@ -43,7 +43,7 @@ namespace BCM
             n.Fire(b);
           } catch (Exception e)
           {
-            Log.Out(Config.ModPrefix + " WARNING: Brain Damage detected trying to fire Neuron :" + n.GetType() + e);
+            Log.Out(Config.ModPrefix + " WARNING: Brain Damage detected trying to fire Neuron : " + n.GetType() + e);
           }
         }
       }
