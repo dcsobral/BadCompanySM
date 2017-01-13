@@ -9,6 +9,7 @@ namespace BCM
   {
     public int entityClassID;
     public Vector3 pos;
+    //todo: add additional fields for better spawning control
   }
   public class EntitySpawner
   {
@@ -35,6 +36,8 @@ namespace BCM
               {
                 BCMSpawner spawner = spawnQueue.Dequeue();
                 int x, y, z = 0;
+                //todo: allow for setting via code/command settings
+                //todo: add a min spawn distance
                 float m = 32;
                 Vector3 max = new Vector3(m, m, m);
                 Vector3 pos = new Vector3(0, 0, 0);
@@ -47,15 +50,20 @@ namespace BCM
                   Log.Out(Config.ModPrefix + " Unable to find Spawn Point");
                 }
 
+                //todo: change to use EntityCreationData method
                 Entity _entity = EntityFactory.CreateEntity(spawner.entityClassID, pos);
                 if (_entity != null)
                 {
+                  //todo: log entityid for checking against spawn counts in wave etc
                   string name = "";
                   if (EntityClass.list.ContainsKey(_entity.entityClass))
                   {
                     name = EntityClass.list[_entity.entityClass].entityClassName;
                   }
-                  Log.Out(Config.ModPrefix + " Spawning " + _entity.entityType + ":" + name + " @" + _entity.position);
+
+                  //todo: customise entity attributes
+                  //      speed, archtype? feral, scout, health, 
+                  Log.Out(Config.ModPrefix + " Spawning " + _entity.entityType + ":" + name + " @" + pos);
 
                   GameManager.Instance.World.Entities.Add(_entity.entityId, _entity);
                   if (_entity.IsEntityAttachedToChunk)

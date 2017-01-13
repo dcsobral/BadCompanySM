@@ -77,6 +77,8 @@ namespace BCM.Neurons
                         continue;
                       }
                       BCMSpawner spawner = new BCMSpawner();
+                      // todo: random entity from a type or group defined in the command settings
+                      // todo: delay between spawns based on command settings
                       string classname = "zombie01";
                       if (EntityClassList.ContainsKey(classname))
                       {
