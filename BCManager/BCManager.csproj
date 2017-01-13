@@ -110,6 +110,7 @@
     <Compile Include="src\DataManager.cs" />
     <Compile Include="src\EventSystem\LogCache.cs" />
     <Compile Include="src\EventSystem\Neurons\SpawnManager.cs" />
+    <Compile Include="src\EventSystem\EntitySpawner.cs" />
     <Compile Include="src\Functions\Convert.cs" />
     <Compile Include="src\Functions\GetPlayer.cs" />
     <Compile Include="src\Functions\ObjectCopier.cs" />
