@@ -60,9 +60,10 @@
   <!--<Command name="ListTraders" commands="bc-traders" defaultpermissionlevel="0"/>-->
 
   <!-- Admin World -->
-  <Command name="BCPrefab" commands="bc-prefab" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCPrefab" commands="bc-prefab,pre" defaultpermissionlevel="0" defaultoptions=""/>
 
   <!-- UTILITY -->
+  <Command name="Settings" commands="bc-settings,set" defaultpermissionlevel="0"/>
   <Command name="MemTrash" commands="bc-trash" defaultpermissionlevel="0"/>
 
   <!-- TEST -->

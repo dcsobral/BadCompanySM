@@ -99,6 +99,7 @@
     <Compile Include="src\Commands\ListPlayers\ListPlayersRecipes.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersWaypoints.cs" />
     <Compile Include="src\Commands\BCHelp.cs" />
+    <Compile Include="src\Commands\Settings\Settings.cs" />
     <Compile Include="src\Commands\Test.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersExtensive.cs" />
     <Compile Include="src\Commands\AdminEntities\ListEntities.cs" />
