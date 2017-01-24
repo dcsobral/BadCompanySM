@@ -15,8 +15,6 @@ namespace BCM.Models
 
     public override void Load(PlayerInfo _pInfo)
     {
-      //todo: magazine contents for guns
-
       if (_pInfo.EP != null)
       {
         ItemStack[] inv = new ItemStack[_pInfo.PDF.inventory.Length];

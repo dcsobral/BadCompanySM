@@ -34,5 +34,16 @@ namespace BCM.Models
 
       return output;
     }
+    public Dictionary<string, string> GetFavoriteRecipes()
+    {
+      Dictionary<string, string> favs = new Dictionary<string, string>();
+      int idx = 0;
+      foreach (string recipe in favoriteRecipes)
+      {
+        favs.Add(idx.ToString(), recipe);
+        idx++;
+      }
+      return favs;
+    }
   }
 }

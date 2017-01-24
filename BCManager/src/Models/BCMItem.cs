@@ -51,6 +51,8 @@ namespace BCM.Models
 
     public void Parse(ItemValue item)
     {
+      //todo: magazine contents for guns
+
       iv_type = item.type;
       iv_HasQuality = item.HasQuality;
       if (iv_HasQuality)

@@ -34,5 +34,16 @@ namespace BCM.Models
 
       return output;
     }
+    public Dictionary<string, string> GetSpawnpoints()
+    {
+      Dictionary<string, string> _spawnpoints = new Dictionary<string, string>();
+      int idx = 0;
+      foreach (Vector3i spawn in spawnpoints)
+      {
+        _spawnpoints.Add(idx.ToString(), Convert.PosToStr(spawn, GetPosType()));
+        idx++;
+      }
+      return _spawnpoints;
+    }
   }
 }

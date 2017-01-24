@@ -33,5 +33,16 @@ namespace BCM.Models
 
       return output;
     }
+    public Dictionary<string, string> GetUnlockedRecipes ()
+    {
+      Dictionary<string, string> unlocked = new Dictionary<string, string>();
+      int idx = 0;
+      foreach (string recipe in unlockedRecipes)
+      {
+        unlocked.Add(idx.ToString(), recipe);
+        idx++;
+      }
+      return unlocked;
+    }
   }
 }

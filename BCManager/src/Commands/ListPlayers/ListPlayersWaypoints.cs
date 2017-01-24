@@ -7,7 +7,13 @@ namespace BCM.Commands
   {
     public override Dictionary<string, string> jsonPlayer(PlayerInfo _pInfo)
     {
-      return null;
+      Dictionary<string, string> waypoints = new WaypointList(_pInfo, _options).GetWaypoints();
+      Dictionary<string, string> marker = new WaypointList(_pInfo, _options).GetMarkerpos();
+      if (!waypoints.ContainsKey("MarkerPosition") && marker.ContainsKey("MarkerPosition"))
+      {
+        waypoints.Add("MarkerPosition", marker["MarkerPosition"]);
+      }
+      return waypoints;
     }
     public override string displayPlayer(PlayerInfo _pInfo)
     {

@@ -42,9 +42,17 @@ namespace BCM.Models
     public Dictionary<string, string> GetWaypoints ()
     {
       Dictionary<string, string> _waypoints = new Dictionary<string, string>();
+      int idx = 0;
+
+      bool first = true;
       foreach (Waypoint wp in waypoints)
       {
-        _waypoints.Add(wp.name, Convert.PosToStr(wp.pos, GetPosType()));
+        string wayp = null;
+
+        if (!first) { wayp += ","; } else { first = false; }
+        wayp += "{\"Name\":\"" + wp.name + "\",\"Pos\":\"" + Convert.PosToStr(wp.pos, GetPosType()) + "\"}";
+        _waypoints.Add(idx.ToString(), wayp);
+        idx++;
       }
       return _waypoints;
     }
