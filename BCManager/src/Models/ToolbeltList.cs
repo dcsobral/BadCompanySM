@@ -8,7 +8,6 @@ namespace BCM.Models
   {
     private ItemStack[] inventory = null;
     private int selecteditemSlot = 0;
-    private ItemStack selecteditem = new ItemStack();
 
     public ToolbeltList(PlayerInfo _pInfo, Dictionary<string, string> _options) : base(_pInfo, _options)
     {
@@ -16,54 +15,47 @@ namespace BCM.Models
 
     public override void Load(PlayerInfo _pInfo)
     {
+      //todo: magazine contents for guns
+
       if (_pInfo.EP != null)
       {
-        inventory = _pInfo.EP.inventory.GetSlots();
-        int idx = 1;
-        foreach (ItemStack i in inventory)
+        ItemStack[] inv = new ItemStack[_pInfo.PDF.inventory.Length];
+
+        int idx = 0;
+
+        foreach (ItemStack i in _pInfo.EP.inventory.GetSlots())
         {
           ItemStack xi = i;
-          if (i.itemValue.type == 0)
+          if (i.itemValue == null || i.itemValue.type == 0)
           {
             // get items from _pdf until they have been held at least once to force an update, could result in showing an item from saved data when no item held
-            // todo: fix function, doesnt seem to be pulling data correctly
-            xi = _pInfo.PDF.inventory[idx];
+            if (idx < _pInfo.PDF.inventory.Length)
+            {
+              xi = _pInfo.PDF.inventory[idx];
+              inv.SetValue(xi, idx);
+            }
           }
-          inventory[idx] = xi;
+          if (i.itemValue != null && i.itemValue.type > 0)
+          {
+            inv.SetValue(i, idx);
+          }
+          idx++;
         }
-        selecteditemSlot = _pInfo.EP.inventory.holdingItemIdx + 1;
-        if (selecteditemSlot > 0)
-        {
-          selecteditem = inventory[_pInfo.EP.inventory.holdingItemIdx];
-        }
+        inventory = inv;
+        selecteditemSlot = _pInfo.EP.inventory.holdingItemIdx;
       }
       else
       {
         inventory = _pInfo.PDF.inventory;
-        selecteditemSlot = _pInfo.PDF.selectedInventorySlot + 1;
-        if (selecteditemSlot > 0)
-        {
-          selecteditem = inventory[_pInfo.PDF.selectedInventorySlot];
-        }
+        selecteditemSlot = _pInfo.PDF.selectedInventorySlot;
       }
 
     }
 
     public override string Display(string sep = " ")
     {
-      string output = "SelectedItem:";
-      output += selecteditemSlot.ToString();
-      int xt = selecteditem.itemValue.type;
-      if (xt != 0)
-      {
-        ItemClass ic = ItemClass.list[xt];
-        if (xt > 4096)
-        {
-          xt = xt - 4096;
-        }
-        output += "[" + ic.Name + "(" + xt + ")]";
-      }
-      output += sep;
+      string output = "SelectedSlot:";
+      output += (selecteditemSlot).ToString();
 
       output += "Toolbelt:{";
       bool first = true;
@@ -90,6 +82,31 @@ namespace BCM.Models
       output += "}";
 
       return output;
+    }
+    public Dictionary<string, string> GetInventory()
+    {
+      Dictionary<string, string> inv = new Dictionary<string, string>();
+
+      int slot = 0;
+      if (inventory != null)
+      {
+        foreach (ItemStack item in inventory)
+        {
+          if (item.itemValue != null && item.itemValue.type != 0)
+          {
+            BCMItem bi = new BCMItem(item);
+            bi.Parse(item);
+            inv.Add(slot.ToString(), bi.GetJson());
+          }
+          slot++;
+        }
+      }
+
+      return inv;
+    }
+    public int GetSelecteditemSlot()
+    {
+      return selecteditemSlot;
     }
   }
 }
