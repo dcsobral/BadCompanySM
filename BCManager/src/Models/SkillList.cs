@@ -55,6 +55,35 @@ namespace BCM.Models
       }
       return string.Empty;
     }
+    public Dictionary<string, string> GetSkills()
+    {
+      Dictionary<string, string> skillsDict = new Dictionary<string, string>();
+      foreach (Skill s in skills)
+      {
+        // check for null and empty skill names in case a skill was removed that is in player data
+        if (s.Name != null && s.Name.Length > 0)
+        {
+          int lvl;
+          try
+          {
+            lvl = s.Level;
+          }
+          catch
+          {
+            lvl = 0;
+          }
+          float skill = lvl + s.PercentThisLevel;
+          skillsDict.Add(s.Name, skill.ToString());
+        }
+      }
 
+      return skillsDict;
+    }
+    public Dictionary<string, string> GetSkillPoints()
+    {
+      Dictionary<string, string> sp = new Dictionary<string, string>();
+      sp.Add("SkillPoints", points);
+      return sp;
+    }
   }
 }

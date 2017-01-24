@@ -25,14 +25,14 @@ namespace BCM.Models
       info.Add("Ping", (_pInfo.CI != null ? _pInfo.CI.ping.ToString() : "Offline"));
 
       long totalPlayTime = (_pInfo.PCP != null ? _pInfo.PCP.TotalPlayTime : 0);
-      info.Add("TotalPlayTime", (totalPlayTime / 60).ToString("0.0") + "(mins)");
+      info.Add("TotalPlayTime", (totalPlayTime / 60).ToString("F1") + "");
       if (_pInfo.EP == null)
       {
         info.Add("LastOnline", (_pInfo.PCP != null ? _pInfo.PCP.LastOnline.ToString("yyyy-MM-dd HH:mm") : ""));
       }
       else if (_pInfo.EP != null)
       {
-        info.Add("SessionPlayTime", ((Time.timeSinceLevelLoad - _pInfo.EP.CreationTimeSinceLevelLoad) / 60).ToString("0.0") + "(mins)");
+        info.Add("SessionPlayTime", ((Time.timeSinceLevelLoad - _pInfo.EP.CreationTimeSinceLevelLoad) / 60).ToString("F1") + "");
       }
       info.Add("Position", (_pInfo.EP != null ? Convert.PosToStr(_pInfo.EP.position, postype) : (_pInfo.PDF != null ? Convert.PosToStr(_pInfo.PDF.ecd.pos, postype) : "")));
       info.Add("Rotation", (_pInfo.EP != null ? Convert.PosToStr(_pInfo.EP.rotation, postype) : (_pInfo.PDF != null ? Convert.PosToStr(_pInfo.PDF.ecd.rot, postype) : "")));
@@ -43,12 +43,21 @@ namespace BCM.Models
     {
       string output = "";
       bool first = true;
-      foreach (KeyValuePair<string,string> kvp in info)
+      //foreach (string key in info.Keys)
+      //{
+      //  if (!first) { output += sep; } else { first = false; }
+      //  output += key + ":" + info[key];
+      //}
+      foreach (KeyValuePair<string, string> kvp in info)
       {
         if (!first) { output += sep; } else { first = false; }
         output += kvp.Key + ":" + kvp.Value;
       }
       return output;
+    }
+    public Dictionary<string, string> GetInfo()
+    {
+      return info;
     }
     public string DisplayShort(string sep = " ")
     {

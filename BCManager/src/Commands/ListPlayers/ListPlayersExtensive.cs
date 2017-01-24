@@ -1,10 +1,15 @@
 using BCM.Models;
+using System.Collections.Generic;
 
 namespace BCM.Commands
 {
   public class ListPlayersExtensive : ListPlayers
   {
-    public override void displayPlayer(PlayerInfo _pInfo)
+    public override Dictionary<string, string> jsonPlayer(PlayerInfo _pInfo)
+    {
+      return null;
+    }
+    public override string displayPlayer(PlayerInfo _pInfo)
     {
       string output = "";
       output += new ClientInfoList(_pInfo, _options).Display(_sep);
@@ -40,7 +45,7 @@ namespace BCM.Commands
       // claims (_ppd.LPBlocks)
       // list owned storage containers and doors for the players
 
-      SendOutput(output);
+      return output;
     }
   }
 }

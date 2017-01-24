@@ -46,5 +46,27 @@ namespace BCM.Models
 
       return output;
     }
+
+    public Dictionary<string, string> GetEquipment()
+    {
+      Dictionary<string, string> equipdict = new Dictionary<string, string>();
+
+      int slot = 0;
+      if (equipment != null)
+      {
+        foreach (ItemValue item in equipment)
+        {
+          if (item != null && item.type != 0)
+          {
+            BCMItem bi = new BCMItem(item);
+            bi.Parse(item);
+            equipdict.Add(slot.ToString(), bi.GetJson());
+          }
+          slot++;
+        }
+      }
+
+      return equipdict;
+    }
   }
 }

@@ -39,5 +39,27 @@ namespace BCM.Models
 
       return output;
     }
+    public Dictionary<string, string> GetQuests ()
+    {
+
+      Dictionary<string, string> questdict = new Dictionary<string, string>();
+
+      int slot = 0;
+      if (quests != null)
+      {
+        foreach (Quest quest in quests)
+        {
+          if (quest != null && quest.ID.Length != 0)
+          {
+            BCMQuest q = new BCMQuest(quest);
+            q.Parse(quest);
+            questdict.Add(slot.ToString(), q.GetJson());
+          }
+          slot++;
+        }
+      }
+
+      return questdict;
+    }
   }
 }

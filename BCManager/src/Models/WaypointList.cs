@@ -39,5 +39,20 @@ namespace BCM.Models
 
       return output;
     }
+    public Dictionary<string, string> GetWaypoints ()
+    {
+      Dictionary<string, string> _waypoints = new Dictionary<string, string>();
+      foreach (Waypoint wp in waypoints)
+      {
+        _waypoints.Add(wp.name, Convert.PosToStr(wp.pos, GetPosType()));
+      }
+      return _waypoints;
+    }
+    public Dictionary<string, string> GetMarkerpos()
+    {
+      Dictionary<string, string> mp = new Dictionary<string, string>();
+      mp.Add("MarkerPosition", markerpos);
+      return mp;
+    }
   }
 }

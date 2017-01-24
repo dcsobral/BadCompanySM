@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace BCM.Models
 {
@@ -50,6 +51,42 @@ namespace BCM.Models
       output += "}";
 
       return output;
+    }
+
+    public Dictionary<string, string> GetBuffs()
+    {
+      Dictionary<string, MultiBuff> mb = new Dictionary<string, MultiBuff>();
+      foreach (MultiBuff b in buffs)
+      {
+        if (b != null && b.MultiBuffClass.Id != null)
+        {
+          if (!mb.ContainsKey(b.MultiBuffClass.Id))
+          {
+            mb.Add(b.MultiBuffClass.Id, b);
+          }
+        }
+      }
+      foreach (MultiBuff b in sdbuffs)
+      {
+        if (b != null && b.MultiBuffClass.Id != null)
+        {
+          if (!mb.ContainsKey(b.MultiBuffClass.Id))
+          {
+            mb.Add(b.MultiBuffClass.Id, b);
+          }
+        }
+      }
+
+      Dictionary<string, string> bcmbd = new Dictionary<string, string>();
+        foreach (MultiBuff buff in mb.Values)
+        {
+          BCMBuff bcmb = new BCMBuff(buff);
+          if (!bcmbd.ContainsKey(buff.MultiBuffClass.Id))
+          {
+            bcmbd.Add(buff.MultiBuffClass.Id, bcmb.GetJson());
+          }
+        }
+      return bcmbd;
     }
   }
 }

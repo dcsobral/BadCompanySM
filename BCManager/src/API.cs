@@ -24,7 +24,7 @@ namespace BCM
     {
       if (IsAlive)
       {
-        entitySpawner.CheckSpawnQueue();
+        entitySpawner.ProcessSpawnQueue();
       }
     }
 

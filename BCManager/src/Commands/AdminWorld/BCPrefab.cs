@@ -10,7 +10,11 @@ namespace BCM.Commands
   {
     public override void Process()
     {
-      EntityPlayer sender = GameManager.Instance.World.Entities.dict[_senderInfo.RemoteClientInfo.entityId] as EntityPlayer;
+      EntityPlayer sender = null;
+      if (_senderInfo.RemoteClientInfo != null)
+      {
+        sender = GameManager.Instance.World.Entities.dict[_senderInfo.RemoteClientInfo.entityId] as EntityPlayer;
+      }
       //ChunkProviderGenerateWorldRandom2 _chunkProvider = new ChunkProviderGenerateWorldRandom2(GameManager.Instance.World.ChunkCache, GameManager.Instance.World.GetWorldCreationData(), GamePrefs.GetString(EnumGamePrefs.GameWorld));
       //_chunkProvider.RequestChunk(_x, _y);
       //_chunkProvider.DoGenerateChunks();
@@ -26,28 +30,38 @@ namespace BCM.Commands
 
           Vector3i pos = new Vector3i(0, 0, 0);
           int rot = 0;
-          int x = (int)sender.position.x - (prefab.size.x / 2);
-          int y = (int)sender.position.y;
-          int z = (int)sender.position.z - (prefab.size.z / 2);
-          if (_options.ContainsKey("cornersw") || _options.ContainsKey("ne"))
+          int x = 0;
+          int y = 0;
+          int z = 0;
+          if (sender != null)
           {
-            x = (int)sender.position.x;
-            z = (int)sender.position.z;
-          }
-          else if (_options.ContainsKey("cornerse") || _options.ContainsKey("nw"))
+            x = (int)sender.position.x - (prefab.size.x / 2);
+            y = (int)sender.position.y;
+            z = (int)sender.position.z - (prefab.size.z / 2);
+            if (_options.ContainsKey("cornersw") || _options.ContainsKey("ne"))
+            {
+              x = (int)sender.position.x;
+              z = (int)sender.position.z;
+            }
+            else if (_options.ContainsKey("cornerse") || _options.ContainsKey("nw"))
+            {
+              x = (int)sender.position.x - prefab.size.x;
+              z = (int)sender.position.z;
+            }
+            else if (_options.ContainsKey("cornernw") || _options.ContainsKey("se"))
+            {
+              x = (int)sender.position.x;
+              z = (int)sender.position.z - prefab.size.z;
+            }
+            else if (_options.ContainsKey("cornerne") || _options.ContainsKey("sw"))
+            {
+              x = (int)sender.position.x - prefab.size.x;
+              z = (int)sender.position.z - prefab.size.z;
+            }
+          } else if (_params.Count < 5)
           {
-            x = (int)sender.position.x - prefab.size.x;
-            z = (int)sender.position.z;
-          }
-          else if (_options.ContainsKey("cornernw") || _options.ContainsKey("se"))
-          {
-            x = (int)sender.position.x;
-            z = (int)sender.position.z - prefab.size.z;
-          }
-          else if (_options.ContainsKey("cornerne") || _options.ContainsKey("sw"))
-          {
-            x = (int)sender.position.x - prefab.size.x;
-            z = (int)sender.position.z - prefab.size.z;
+            Log.Out(Config.ModPrefix + " Command requires name x y z rot params if not sent by an online player");
+            return;
           }
 
           if (_params.Count > 1)
@@ -185,13 +199,13 @@ namespace BCM.Commands
 
 
           // todo: confirm - a list of chunks loaded, is it for the server or just that player?
-          HashSet<long> cl = sender.ChunkObserver.chunksLoaded;
-          foreach (long l in cl)
-          {
-            //Log.Out("long:" + l.ToString());
-            Chunk cs = GameManager.Instance.World.GetChunkSync(l) as Chunk;
-            //Log.Out("cs:" + cs.X.ToString() + " " + cs.Z.ToString());
-          }
+          //HashSet<long> cl = sender.ChunkObserver.chunksLoaded;
+          //foreach (long l in cl)
+          //{
+          //  //Log.Out("long:" + l.ToString());
+          //  Chunk cs = GameManager.Instance.World.GetChunkSync(l) as Chunk;
+          //  //Log.Out("cs:" + cs.X.ToString() + " " + cs.Z.ToString());
+          //}
 
 
           // REFRESH CLIENTS CHUNKS
@@ -222,9 +236,12 @@ namespace BCM.Commands
             {
               client.SendPackage(new NetPackageChunk(_chunk));
             }
+            //todo: after chunks have loaded on client need to check for falling and telelport on top.
+            //Vector3 clientpos = GameManager.Instance.World.Players.dict[client.entityId].position;
+            //clientpos.y = -1;
+            //NetPackageTeleportPlayer netPackageTeleportPlayer = new NetPackageTeleportPlayer(clientpos);
+            //client.SendPackage(netPackageTeleportPlayer);
           }
-
-          // todo: if not in god mode, and location is not air blocks then teleport to same location with y=-1
 
           GameManager.bPhysicsActive = bPhysicsActive;
         }

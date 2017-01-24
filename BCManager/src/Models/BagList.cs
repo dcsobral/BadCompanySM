@@ -46,5 +46,26 @@ namespace BCM.Models
 
       return output;
     }
+    public Dictionary<string, string> GetBag ()
+    {
+      Dictionary<string, string> bagdict = new Dictionary<string, string>();
+
+      int slot = 0;
+      if (bag != null)
+      {
+        foreach (ItemStack item in bag)
+        {
+          if (item.itemValue != null && item.itemValue.type != 0)
+          {
+            BCMItem bi = new BCMItem(item);
+            bi.Parse(item);
+            bagdict.Add(slot.ToString(), bi.GetJson());
+          }
+          slot++;
+        }
+      }
+
+      return bagdict;
+    }
   }
 }

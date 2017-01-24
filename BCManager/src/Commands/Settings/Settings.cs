@@ -1,5 +1,6 @@
 using BCM.PersistentData;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace BCM.Commands
 {
@@ -41,18 +42,30 @@ namespace BCM.Commands
 
       if (_params.Count == 2)
       {
-        //todo: report details on setting key
-      }
-
-      if (_params.Count == 3)
-      {
-        string v = _settings.GetValue(_params[0], _params[1]);
-        if (v != null)
+        string jsonvalues = _settings.GetValue(_params[0], _params[1]);
+        if (jsonvalues != null)
         {
           output += "Command/Key:" + _params[0] + "/" + _params[1] + _sep;
-          output += "Previous Value:" + v + _sep;
+          output += "Previous Value:" + jsonvalues + _sep;
         }
-        _settings.SetValue(_params[0], _params[1], _params[2]);
+        Dictionary<string, string> values = JsonUtility.FromJson<Dictionary<string, string>>(jsonvalues);
+
+        foreach (string option in _options.Keys)
+        {
+          if (_options[option] != null)
+          {
+            if (values.ContainsKey(option))
+            {
+              values[option] = _options[option];
+            }
+            else
+            {
+              values.Add(option, _options[option]);
+            }
+          }
+        }
+        string encodedvalues = JsonUtility.ToJson(values);
+        _settings.SetValue(_params[0], _params[1], encodedvalues);
         PersistentContainer.Instance.Save();
       }
 

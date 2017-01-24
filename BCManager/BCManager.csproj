@@ -34,6 +34,10 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\7dtd-binaries\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\7dtd-binaries\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
     <Reference Include="LogLibrary">
       <HintPath>..\7dtd-binaries\LogLibrary.dll</HintPath>
     </Reference>
@@ -109,6 +113,8 @@
     <Compile Include="src\Config\Config.cs" />
     <Compile Include="src\DataManager.cs" />
     <Compile Include="src\EventSystem\LogCache.cs" />
+    <Compile Include="src\EventSystem\Models\HordeSpawner.cs" />
+    <Compile Include="src\EventSystem\Models\Spawn.cs" />
     <Compile Include="src\EventSystem\Neurons\SpawnManager.cs" />
     <Compile Include="src\EventSystem\EntitySpawner.cs" />
     <Compile Include="src\Functions\Convert.cs" />
@@ -117,8 +123,11 @@
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\Functions\PlayerDataReader.cs" />
+    <Compile Include="src\Models\BCMQuest.cs" />
+    <Compile Include="src\Models\BCMItem.cs" />
     <Compile Include="src\Models\ClientInfoList.cs" />
     <Compile Include="src\Models\AbstractList.cs" />
+    <Compile Include="src\Models\BCMBuff.cs" />
     <Compile Include="src\Models\StatsList.cs" />
     <Compile Include="src\EventSystem\NeuronAbstract.cs" />
     <Compile Include="src\EventSystem\Neurons\TrashCollector.cs" />

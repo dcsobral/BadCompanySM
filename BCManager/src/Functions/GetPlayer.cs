@@ -38,7 +38,7 @@ namespace BCM
       }
       _pinfo.PCP = PersistentContainer.Instance.Players[_steamId, false];
       _pinfo.CI = ConnectionManager.Instance.GetClientInfoForPlayerId(_steamId);
-      if (_pinfo.CI != null)
+      if (_pinfo.CI != null && GameManager.Instance.World.Entities.dict.ContainsKey(_pinfo.CI.entityId))
       {
         _pinfo.EP = (EntityPlayer)GameManager.Instance.World.Entities.dict[_pinfo.CI.entityId];
       }

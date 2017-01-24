@@ -129,6 +129,10 @@ namespace BCM.PersistentData
     {
       if (clientInfo != null)
       {
+        if (Entity != null)
+        {
+          gamestage = Entity.gameStage;
+        }
         totalPlayTime += (long)(DateTime.Now - lastOnline).TotalSeconds;
         //(long)(Time.timeSinceLevelLoad - Entity.CreationTimeSinceLevelLoad);
         lastOnline = DateTime.Now;
@@ -145,10 +149,6 @@ namespace BCM.PersistentData
       name = ci.playerName;
       ip = ci.ip;
       lastOnline = DateTime.Now;
-      if (Entity != null)
-      {
-        gamestage = Entity.gameStage;
-      }
       PlayerData.GetData(steamId);
     }
 
