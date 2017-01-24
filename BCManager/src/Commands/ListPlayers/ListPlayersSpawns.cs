@@ -7,7 +7,8 @@ namespace BCM.Commands
   {
     public override Dictionary<string, string> jsonPlayer(PlayerInfo _pInfo)
     {
-      return null;
+      Dictionary<string, string> spawnpoints = new SpawnpointList(_pInfo, _options).GetSpawnpoints();
+      return spawnpoints;
     }
     public override string displayPlayer(PlayerInfo _pInfo)
     {

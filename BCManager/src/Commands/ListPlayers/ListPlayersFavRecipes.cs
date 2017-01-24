@@ -7,7 +7,8 @@ namespace BCM.Commands
   {
     public override Dictionary<string, string> jsonPlayer(PlayerInfo _pInfo)
     {
-      return null;
+      Dictionary<string, string> recipes = new FavoriteRecipeList(_pInfo, _options).GetFavoriteRecipes();
+      return recipes;
     }
     public override string displayPlayer(PlayerInfo _pInfo)
     {

@@ -68,5 +68,34 @@ namespace BCM.Models
 
       return output;
     }
+    public Dictionary<string, string> GetQueueItems()
+    {
+      Dictionary<string, string> qi = new Dictionary<string, string>();
+      int idx = 0;
+      foreach (RecipeQueueItem queue in queueItems)
+      {
+        if (queue != null)
+        {
+          string str = null;
+          str += "{";
+          str += "\"Multiplier\":\"" + queue.Multiplier.ToString() + "\",";
+          str += "\"CraftingTimeLeft\":\"" + queue.CraftingTimeLeft.ToString("F2") + "\"";
+          if (queue.Recipe != null)
+          {
+            str += ",\"Name\":\"" + queue.Recipe.GetName() + "\",";
+            str += "\"itemValue\":\"" + queue.Recipe.itemValueType.ToString() + "\",";
+            // todo: ingredients
+            if (queue.IsCrafting)
+            {
+              str += ",\"craftingTime\":\"" + queue.Recipe.craftingTime.ToString("F2") + "\"";
+            }
+          }
+          str += "}";
+          qi.Add(idx.ToString(), str);
+        }
+        idx++;
+      }
+      return qi;
+    }
   }
 }
