@@ -20,14 +20,52 @@ namespace BCM
       // todo: change to use the config files to define which neurons should be wired for a synapse
       switch (name)
       {
-        case "questmonitor":
-          neurons.Add(new QuestMonitor());
-          break;
         case "spawnmanager":
           neurons.Add(new SpawnManager());
           break;
+
+        case "bagmonitor":
+          neurons.Add(new BagMonitor());
+          break;
+        case "buffmonitor":
+          neurons.Add(new BuffMonitor());
+          break;
+        case "deadiddead":
+          neurons.Add(new DeadIsDead());
+          break;
+        case "deathwatch":
+          neurons.Add(new DeathWatch());
+          break;
+        case "equipmentmonitor":
+          neurons.Add(new EquipmentMonitor());
+          break;
+        case "positiontracker":
+          neurons.Add(new PositionTracker());
+          break;
+        case "questmonitor":
+          neurons.Add(new QuestMonitor());
+          break;
+        case "toolbeltmonitor":
+          neurons.Add(new ToolbeltMonitor());
+          break;
+
+        case "saveworld":
+          neurons.Add(new SaveWorld());
+          break;
+        case "trashcollector":
+          neurons.Add(new TrashCollector());
+          break;
+
+        case "broadcastapi":
+          neurons.Add(new BroadcastAPI());
+          break;
+
+        case "motd":
+          neurons.Add(new Motd());
+          break;
+
         default:
-          Log.Out(Config.ModPrefix + " Unable to find unknown Synapse " + name);
+          Log.Out(Config.ModPrefix + " Unknown Synapse " + name);
           break;
       }
     }
@@ -43,7 +81,7 @@ namespace BCM
             n.Fire(b);
           } catch (Exception e)
           {
-            Log.Out(Config.ModPrefix + " WARNING: Brain Damage detected trying to fire Neuron : " + n.GetType() + e);
+            Log.Out(Config.ModPrefix + " WARNING: Brain Damage detected trying to fire Neuron: " + n.GetType() + e);
           }
         }
       }

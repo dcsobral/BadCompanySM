@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BCM.Models;
+using BCM.PersistentData;
 
 namespace BCM.Commands
 {
@@ -23,7 +24,7 @@ namespace BCM.Commands
           if (_options.ContainsKey("json"))
           {
             Dictionary<string, string> data = jsonPlayer(new GetPlayer().BySteamId(_steamId));
-            SendOutput(BCUtils.GenerateJson(data));
+            SendOutput(BCUtils.toJson(data));
           }
           else
           {
@@ -40,7 +41,14 @@ namespace BCM.Commands
         {
           if (_options.ContainsKey("json"))
           {
-            data.Add(_steamId, jsonPlayer(new GetPlayer().BySteamId(_steamId)));
+            if (_options.ContainsKey("nopdf"))
+            {
+              data.Add(_steamId, jsonPlayer(_steamId));
+            }
+            else
+            {
+              data.Add(_steamId, jsonPlayer(new GetPlayer().BySteamId(_steamId)));
+            }
           }
           else
           {
@@ -49,11 +57,17 @@ namespace BCM.Commands
         }
         if (_options.ContainsKey("json"))
         {
-          SendOutput(BCUtils.GenerateJson(data));
+          SendOutput(BCUtils.toJson(data));
         } else if (players.Count > 0) {
           SendOutput("Total of " + players.Count + " player data files");
         }
       }
+    }
+    public virtual Dictionary<string, string> jsonPlayer(string _pInfo)
+    {
+      Dictionary<string, string> data = new Dictionary<string, string>();
+
+      return data;
     }
     public virtual Dictionary<string, string> jsonPlayer(PlayerInfo _pInfo)
     {

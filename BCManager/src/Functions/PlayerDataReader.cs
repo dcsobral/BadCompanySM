@@ -6,47 +6,49 @@ namespace BCM
 {
   public class PlayerDataReader
   {
-    public bool bLoaded;
-    public EntityCreationData ecd = new EntityCreationData();
-    public ItemStack[] inventory = new ItemStack[0];
-    public ItemStack[] bag = new ItemStack[0];
-    public Equipment equipment = new Equipment();
-    public Equipment favoriteEquipment = new Equipment();
-    public int selectedInventorySlot;
-    public LiveStats food = new LiveStats(0, 0);
-    public LiveStats drink = new LiveStats(0, 0);
-    public List<Vector3i> spawnPoints = new List<Vector3i>();
-    public long selectedSpawnPointKey;
     public HashSet<string> alreadyCraftedList = new HashSet<string>();
-    public List<string> unlockedRecipeList = new List<string>();
-    public List<string> favoriteRecipeList = new List<string>();
-    public SpawnPosition lastSpawnPosition = SpawnPosition.Undef;
-    public Vector3i droppedBackpackPosition = Vector3i.zero;
-    public int playerKills;
-    public int zombieKills;
-    public int deaths;
-    public int score;
-    public int id;
-    public Vector3i markerPosition = new Vector3i();
-    public uint experience;
-    public int level;
-    public int skillPoints;
+    public ItemStack[] bag = new ItemStack[0];
     public bool bCrouchedLocked;
-    public CraftingData craftingData = new CraftingData();
-    public int deathUpdateTime;
     public bool bDead;
-    public float distanceWalked = 0f;
-    public uint totalItemsCrafted = 0u;
-    public float longestLife = 0f;
+    public bool bLoaded;
+    public CraftingData craftingData = new CraftingData();
     public float currentLife = 0f;
-    public WaypointCollection waypoints = new WaypointCollection();
-    public QuestJournal questJournal = new QuestJournal();
-    public bool IsModdedSave;
+    public int deaths;
+    public int deathUpdateTime;
+    public float distanceWalked = 0f;
+    public LiveStats drink = new LiveStats(0, 0);
+    public Vector3i droppedBackpackPosition = Vector3i.zero;
+    public EntityCreationData ecd = new EntityCreationData();
+    public Equipment equipment = new Equipment();
+    public uint experience;
+    public Equipment favoriteEquipment = new Equipment();
+    public List<string> favoriteRecipeList = new List<string>();
+    public LiveStats food = new LiveStats(0, 0);
+    public int id;
+    public ItemStack[] inventory = new ItemStack[0];
+    public SpawnPosition lastSpawnPosition = SpawnPosition.Undef;
+    public int level;
+    public float longestLife = 0f;
+    public Vector3i markerPosition = new Vector3i();
     public PlayerJournal playerJournal = new PlayerJournal();
-    public Vector3i rentedVMPosition = Vector3i.zero;
+    public int playerKills;
+    public QuestJournal questJournal = new QuestJournal();
     public ulong rentalEndTime = 0uL;
+    public Vector3i rentedVMPosition = Vector3i.zero;
+    public int score;
+    public int selectedInventorySlot;
+    public long selectedSpawnPointKey;
+    public int skillPoints;
+    public List<Vector3i> spawnPoints = new List<Vector3i>();
+    public uint totalItemsCrafted = 0u;
     public List<int> trackedFriendEntityIds = new List<int>();
+    public List<string> unlockedRecipeList = new List<string>();
+    public WaypointCollection waypoints = new WaypointCollection();
+    public int zombieKills;
+
+    public bool IsModdedSave;
     public List<Skill> skills;
+    //public PlayerStealth stealth;
 
     public void GetData(string _steamid)
     {
@@ -83,14 +85,21 @@ namespace BCM
 
     public void Read(BinaryReader _br, uint _version)
     {
+      //ECD
       ecd = new EntityCreationData();
       ecd.read(_br, false);
+
+      //FOOD/DRINK
       food = new LiveStats(Constants.cMaxPlayerFood, Constants.cFoodOversaturate);
       food.Read(_br);
       drink = new LiveStats(Constants.cMaxPlayerDrink, Constants.cDrinkOversaturate);
       drink.Read(_br);
+
+      //INVENTORY
       inventory = GameUtils.ReadItemStack(_br);
       selectedInventorySlot = _br.ReadByte();
+
+      //BAG
       bag = GameUtils.ReadItemStack(_br);
       if (bag.Length > 32)
       {
@@ -98,24 +107,32 @@ namespace BCM
         Array.Copy(bag, destinationArray, 32);
         bag = destinationArray;
       }
+
+      //CRAFTED
       alreadyCraftedList = new HashSet<string>();
       int num = _br.ReadUInt16();
       for (int i = 0; i < num; i++)
       {
         alreadyCraftedList.Add(_br.ReadString());
       }
+
+      //SPAWNS
       byte b = _br.ReadByte();
       for (int j = 0; j < b; j++)
       {
         spawnPoints.Add(new Vector3i(_br.ReadInt32(), _br.ReadInt32(), _br.ReadInt32()));
       }
       selectedSpawnPointKey = _br.ReadInt64();
+
+      //LOADED
       _br.ReadBoolean();
       _br.ReadInt16();
       if (_version > 1u)
       {
         bLoaded = _br.ReadBoolean();
       }
+
+      //LASTSPAWN
       if (_version > 2u)
       {
         lastSpawnPosition = new SpawnPosition(new Vector3i(_br.ReadInt32(), _br.ReadInt32(), _br.ReadInt32()), _br.ReadSingle());
@@ -124,14 +141,20 @@ namespace BCM
       {
         lastSpawnPosition = new SpawnPosition(new Vector3i(_br.ReadInt32(), _br.ReadInt32(), _br.ReadInt32()), 0f);
       }
+
+      //ID
       if (_version > 3u)
       {
         id = _br.ReadInt32();
       }
+
+      //BACKPACK
       if (_version > 4u)
       {
         droppedBackpackPosition = new Vector3i(_br.ReadInt32(), _br.ReadInt32(), _br.ReadInt32());
       }
+
+      //STATS/EQUIPMENT
       if (_version > 5u)
       {
         playerKills = _br.ReadInt32();
@@ -140,6 +163,8 @@ namespace BCM
         score = _br.ReadInt32();
         equipment = Equipment.Read(_br);
       }
+
+      //RECIPES
       if (_version > 6u)
       {
         unlockedRecipeList = new List<string>();
@@ -149,29 +174,42 @@ namespace BCM
           unlockedRecipeList.Add(_br.ReadString());
         }
       }
+
+      //MARKER
       if (_version > 7u)
       {
         _br.ReadUInt16();
         markerPosition = NetworkUtils.ReadVector3i(_br);
       }
+
+      //FAVS
       if (_version > 8u)
       {
         favoriteEquipment = Equipment.Read(_br);
       }
+
+      //EXP
       if (_version > 10u)
       {
         experience = _br.ReadUInt32();
       }
+
+      //LEVEL
       if (_version > 22u)
       {
         level = _br.ReadInt32();
       }
+
+      //CROUCHED
       if (_version > 11u)
       {
         bCrouchedLocked = _br.ReadBoolean();
       }
+
+      //CRAFTINGDATA
       craftingData.Read(_br, _version);
 
+      //SKILLS - part1
       if (_version > 14u)
       {
         if (_version < 18u)
@@ -180,6 +218,8 @@ namespace BCM
           pdfskills.Read(_br, _version);
         }
       }
+
+      //FAVRECIPES
       if (_version > 16u)
       {
         favoriteRecipeList = new List<string>();
@@ -189,6 +229,8 @@ namespace BCM
           favoriteRecipeList.Add(_br.ReadString());
         }
       }
+
+      //SKILLS - part2
       if (_version > 17u)
       {
         int num2 = (int)_br.ReadUInt32();
@@ -201,12 +243,14 @@ namespace BCM
           EP.Skills = new Skills();
           if (pdfskills.Length > 0L)
           {
-            EP.Skills.Read(new BinaryReader(pdfskills), 34u);
+            EP.Skills.Read(new BinaryReader(pdfskills), _version);
           }
           skills = EP.Skills.GetAllSkills();
           //end custom skill loader
         }
       }
+
+      //STATS
       if (_version > 18u)
       {
         totalItemsCrafted = _br.ReadUInt32();
@@ -261,6 +305,16 @@ namespace BCM
         for (int m = 0; m < num3; m++)
         {
           trackedFriendEntityIds.Add(_br.ReadInt32());
+        }
+      }
+      if (_version > 34u)
+      {
+        int num4 = _br.ReadInt32();
+        if (num4 > 0)
+        {
+          MemoryStream pdfstealth = new MemoryStream(0);
+          pdfstealth = new MemoryStream(_br.ReadBytes(num4));
+          //todo: custom loader
         }
       }
     }

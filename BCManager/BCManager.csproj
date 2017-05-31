@@ -68,6 +68,10 @@
     <Compile Include="src\Commands\AdminPlayers\RemoveBuffFromPlayer.cs" />
     <Compile Include="src\Commands\AdminWorld\BCPrefab.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListActiveChunks.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListTime.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListVersions.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListItemClass.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListHubCellData.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListPrefabs.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListBlocks.cs" />
@@ -86,6 +90,7 @@
     <Compile Include="src\Commands\ListGameObjects\ListQuests.cs" />
     <Compile Include="src\Commands\AdminPlayers\RemoveQuestFromPlayer.cs" />
     <Compile Include="src\Commands\AdminPlayers\GiveQuestToPlayer.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListPlayerFilesInfo.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayers.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersBag.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersBuffs.cs" />
@@ -103,6 +108,7 @@
     <Compile Include="src\Commands\ListPlayers\ListPlayersRecipes.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersWaypoints.cs" />
     <Compile Include="src\Commands\BCHelp.cs" />
+    <Compile Include="src\Commands\Neurons\BroadcastAPI.cs" />
     <Compile Include="src\Commands\Settings\Settings.cs" />
     <Compile Include="src\Commands\Test.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersExtensive.cs" />
@@ -115,14 +121,22 @@
     <Compile Include="src\EventSystem\LogCache.cs" />
     <Compile Include="src\EventSystem\Models\HordeSpawner.cs" />
     <Compile Include="src\EventSystem\Models\Spawn.cs" />
+    <Compile Include="src\EventSystem\Neurons\BroadcastAPI.cs" />
+    <Compile Include="src\EventSystem\Neurons\Motd.cs" />
+    <Compile Include="src\EventSystem\Neurons\DeathWatch.cs" />
+    <Compile Include="src\EventSystem\Neurons\SaveBackup.cs" />
+    <Compile Include="src\EventSystem\Neurons\InactiveEntityMonitor.cs" />
     <Compile Include="src\EventSystem\Neurons\SpawnManager.cs" />
     <Compile Include="src\EventSystem\EntitySpawner.cs" />
+    <Compile Include="src\EventSystem\Neurons\SaveWorld.cs" />
+    <Compile Include="src\Functions\SpawnPoint.cs" />
     <Compile Include="src\Functions\Convert.cs" />
     <Compile Include="src\Functions\GetPlayer.cs" />
     <Compile Include="src\Functions\ObjectCopier.cs" />
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\Functions\PlayerDataReader.cs" />
+    <Compile Include="src\Models\BCMItemClass.cs" />
     <Compile Include="src\Models\BCMQuest.cs" />
     <Compile Include="src\Models\BCMItem.cs" />
     <Compile Include="src\Models\ClientInfoList.cs" />
@@ -583,6 +597,14 @@
     <None Include="Config\Commands\en\Description\GiveBuffToEntity.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Config\Motd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Config\Defaults\" />
+    <Folder Include="Config\Examples\" />
+    <Folder Include="src\Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

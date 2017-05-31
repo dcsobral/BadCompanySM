@@ -1,17 +1,57 @@
+using System.Collections.Generic;
+
 namespace BCM.Commands
 {
   public class ListArchetypes : BCCommandAbstract
   {
+    public virtual Dictionary<string, string> jsonObject()
+    {
+      Dictionary<string, string> data = new Dictionary<string, string>();
+      string[] names = Archetypes.Instance.GetArchetypeNames();
+
+      for (var i = 0; i <= names.Length - 1; i++)
+      {
+        Dictionary<string, string> details = new Dictionary<string, string>();
+
+        Archetype a = Archetypes.Instance.GetArchetype(names[i]);
+
+        details.Add("Name", (a.Name != null ? a.Name : ""));
+        details.Add("IsMale", a.IsMale.ToString());
+        details.Add("HairColor", (a.HairColor != null ? a.HairColor.ToString() : ""));
+        details.Add("EyeColor", (a.EyeColor != null ? a.EyeColor.ToString() : ""));
+        details.Add("SkinColor", (a.SkinColor != null ? a.SkinColor.ToString() : ""));
+        details.Add("Type", a.Type.ToString());
+
+        //todo:
+        //a.BaseSlots;
+        //a.Dna;
+        //a.ExpressionData;
+        //a.PreviewSlots;
+        //a.VoiceSet;
+
+        var jsonDetails = BCUtils.toJson(details);
+        data.Add(i.ToString(), jsonDetails);
+      }
+
+      return data;
+    }
+
     public override void Process()
     {
       string output = "";
-      foreach (string name in Archetypes.Instance.GetArchetypeNames())
+      if (_options.ContainsKey("json"))
       {
-        output += name + _sep;
-        //Archetype a = Archetypes.Instance.GetArchetype(name);
-        //output += a.Name + _sep;
+        output = BCUtils.toJson(jsonObject());
+        SendOutput(output);
       }
-      SendOutput(output);
+      else
+      {
+        foreach (string name in Archetypes.Instance.GetArchetypeNames())
+        {
+          output += name + _sep;
+        }
+        SendOutput(output);
+      }
     }
   }
 }

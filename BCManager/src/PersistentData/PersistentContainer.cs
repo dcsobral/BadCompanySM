@@ -69,7 +69,7 @@ namespace BCM.PersistentData
 
         if (Players.Count > 0)
         {
-          // todo: create a keys database, move older players to a file that isnt loaded to reduce memory used, default /offline commands to rececnt players (claim expiry x 4?) and use /archives to get older data
+          // todo: create a keys database, move older players to a file that isnt loaded to reduce memory used, default /offline commands to recent players (claim expiry x 4?) and use /archives to get older data
           Stream streamPlayers = File.Open(GameUtils.GetSaveGameDir() + "/BCM/Players.bin", FileMode.Create);
           bFormatter.Serialize(streamPlayers, players);
           streamPlayers.Close();

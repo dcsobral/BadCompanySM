@@ -1,11 +1,4 @@
-﻿using BCM.Models;
-using BCM.PersistentData;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using UnityEngine;
+﻿using System;
 
 namespace BCM.Neurons
 {
@@ -17,6 +10,8 @@ namespace BCM.Neurons
     public override bool Fire(int b)
     {
       // todo: implement
+
+      Log.Out(Config.ModPrefix + " BuffMonitor");
       return true;
     }
   }

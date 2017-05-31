@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace BCM
 {
-
   public class EntitySpawner
   {
     public static Queue<Spawn> spawnQueue = new Queue<Spawn>();
@@ -28,6 +27,7 @@ namespace BCM
           {
             for (int i = 0; spawnQueue.Count > 0; i++)
             {
+              //todo: max execution time limit so that too many queued spawns doesnt bog server
               try
               {
                 //if obey maxspawns use below
@@ -42,22 +42,28 @@ namespace BCM
                   EntityEnemy _entity = EntityFactory.CreateEntity(spawn.entityClassId, pos) as EntityEnemy;
                   if (_entity != null)
                   {
+
+                    //_entity.lifetime
+
                     //todo: log entityid for checking against spawn counts in wave etc
                     //string name = "";
                     //if (EntityClass.list.ContainsKey(_entity.entityClass))
                     //{
                     //  name = EntityClass.list[_entity.entityClass].entityClassName;
                     //}
-                    spawn.entityId = _entity.entityId;
-                    if (hordeSpawners.ContainsKey(spawn.spawnerId))
+                    lock (hordeSpawners)
                     {
-                      hordeSpawners[spawn.spawnerId].spawns.Add(_entity.entityId, spawn);
-                    }
-                    else
-                    {
-                      HordeSpawner hs = new HordeSpawner();
-                      hs.spawns.Add(_entity.entityId, spawn);
-                      hordeSpawners.Add(spawn.spawnerId, hs);
+                      spawn.entityId = _entity.entityId;
+                      if (hordeSpawners.ContainsKey(spawn.spawnerId))
+                      {
+                        hordeSpawners[spawn.spawnerId].spawns.Add(_entity.entityId, spawn);
+                      }
+                      else
+                      {
+                        HordeSpawner hs = new HordeSpawner();
+                        hs.spawns.Add(_entity.entityId, spawn);
+                        hordeSpawners.Add(spawn.spawnerId, hs);
+                      }
                     }
 
                     _entity.bIsChunkObserver = spawn.bIsChunkObserver;

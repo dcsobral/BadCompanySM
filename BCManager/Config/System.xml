@@ -1,8 +1,32 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <System>
   <LogCache enabled="true"/>
   <Heartbeat isalive="true"/>
   <BPM rate="60"/>
-  <Synapse name="questmonitor" enabled="false" beats="15"/>
-  <Synapse name="spawnmanager" enabled="false" beats="1"/>
+  <!--Spawn System-->
+  <Synapse name="spawnmanager" enabled="false" beats="1"/> <!-- todo: fix -->
+  
+  <!--Character Management-->
+  <Synapse name="bagmonitor" enabled="true" beats="60"/>
+  <Synapse name="buffmonitor" enabled="true" beats="60"/>
+  <Synapse name="deadiddead" enabled="true" beats="15"/>
+  <Synapse name="deathwatch" enabled="true" beats="60"/>
+  <Synapse name="equipmentmonitor" enabled="true" beats="60"/>
+  <Synapse name="positiontracker" enabled="true" beats="60"/>
+  <Synapse name="questmonitor" enabled="false" beats="15"/><!-- todo: fix -->
+  <Synapse name="toolbeltmonitor" enabled="true" beats="60"/>
+
+
+  <!--Admin Functions-->
+  <Synapse name="saveworld" enabled="true" beats="600"/>
+  <Synapse name="trashcollector" enabled="true" beats="1200"/>
+
+  <!--Web App Integration-->
+  <Synapse name="broadcastapi" enabled="false" beats="5"/>
+  
+  <!--Messaging Systems-->
+  <Synapse name="motd" enabled="true" beats="20"/>
+  
+  <!--Logging-->
+  
 </System>

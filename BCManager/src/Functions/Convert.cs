@@ -39,5 +39,18 @@ namespace BCM
       }
       return position;
     }
+    public static string PosToStr(Vector2i v, string postype)
+    {
+      string position = string.Empty;
+      if (postype == "csvpos")
+      {
+        position = string.Format("{0}, {1}", v.x, v.y);
+      }
+      else
+      {
+        position = string.Format("{0} {1}", v.x, v.y);
+      }
+      return position;
+    }
   }
 }

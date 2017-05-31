@@ -40,6 +40,7 @@ namespace BCM
       LoadCommands();
       ConfigureSystem();
       // todo: load hubcelldata for all cells to populate world data properly and create a cache for list commands?
+      // todo: generate json data files for list game object commands and store in cache
       return true;
     }
 

@@ -13,59 +13,59 @@ namespace BCM.Commands
 
       if (_params.Count == 0)
       {
-        List<string> settings = _settings.GetAll();
-        output += "Settings(" + settings.Count + ")" + _sep;
+        List<string> collectionNames = _settings.GetCollectionNames();
+        output += "[";
 
-
-        if (settings.Count > 0)
+        if (collectionNames.Count > 0)
         {
-          foreach (string n in settings)
+          foreach (string _name in collectionNames)
           {
-            Dictionary<string, string> s = _settings.Get(n);
-            output += n + "(" + s.Count + ")" + _sep;
-            if (s.Count > 0)
+            Dictionary<string, Dictionary<string, Dictionary<string, string>>> _collection = _settings.GetCollection(_name);
+
+            if (_collection.Count > 0)
             {
-              foreach (string k in s.Keys)
+              output += "{\"name\":\"" + _name + "\", \"count\":\"" + _collection.Count + "\",\"items\":[";
+              foreach (string _id in _collection.Keys)
               {
-                string v = _settings.GetValue(n, k);
-                output += "  " + k + ": " + v + _sep;
+                string jsonItem = BCUtils.toJson(_collection[_id]);
+                output += "{\"id\":\"" + _id + "\",\"functions\":" + jsonItem + "},";
               }
+              output = output.Substring(0, output.Length - 1);
+              output += "]},";
             }
           }
+          output = output.Substring(0, output.Length - 1);
         }
+        output += "]";
       }
 
-      if (_params.Count == 1)
+      if (_params.Count == 1)//with no =
       {
         //todo: report details on setting
+
+      //same output as 0 params but with deeper root node. root=param1 
       }
 
-      if (_params.Count == 2)
+      if (_params.Count == 2)//or count=1 and contains valid setting kvp (kvp:a.b.c.d=v vs 2par:a.b.c.d v)
       {
-        string jsonvalues = _settings.GetValue(_params[0], _params[1]);
-        if (jsonvalues != null)
-        {
-          output += "Command/Key:" + _params[0] + "/" + _params[1] + _sep;
-          output += "Previous Value:" + jsonvalues + _sep;
-        }
-        Dictionary<string, string> values = JsonUtility.FromJson<Dictionary<string, string>>(jsonvalues);
+        var _path = _params[0].Split('.');
 
-        foreach (string option in _options.Keys)
+        if (_path.Length != 4)
         {
-          if (_options[option] != null)
-          {
-            if (values.ContainsKey(option))
-            {
-              values[option] = _options[option];
-            }
-            else
-            {
-              values.Add(option, _options[option]);
-            }
-          }
+          SendOutput("Incorrect format for the key string (four strings seperated by a dot.)");
+
+          //todo: allow 3 parts + an array of kvp from options. i.e. Player.8200889977663366.SpawnManager /opt1=val1 /opt2=val2
+          return;
         }
-        string encodedvalues = JsonUtility.ToJson(values);
-        _settings.SetValue(_params[0], _params[1], encodedvalues);
+
+
+        string value = _settings.GetValue(_path[0], _path[1], _path[2], _path[3]);
+        if (value != null)
+        {
+          output += "New Value:" + _params[0] + "=" + _params[1] + _sep;
+          output += "Prev Value:" + value + _sep;
+        }
+        _settings.SetValue(_path[0], _path[1], _path[2], _path[3], _params[1]);
         PersistentContainer.Instance.Save();
       }
 

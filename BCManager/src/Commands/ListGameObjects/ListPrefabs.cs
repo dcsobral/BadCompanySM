@@ -6,72 +6,106 @@ namespace BCM.Commands
 {
   public class ListPrefabs : BCCommandAbstract
   {
-    public override void Process()
+    public virtual Dictionary<string, string> jsonObject()
     {
-      string output = "";
+      Dictionary<string, string> data = new Dictionary<string, string>();
+
       string prefabsGameDir = Utils.GetGameDir("Data/Prefabs");
       List<string> prefabs = GetStoredPrefabs(prefabsGameDir);
 
-      if (_params.Count == 1)
+      var i = 0;
+      foreach (string _name in prefabs)
       {
         Prefab prefab = new Prefab();
-        if (File.Exists(prefabsGameDir + "/" + _params[0] + ".tts"))
+        if (File.Exists(prefabsGameDir + "/" + _name + ".tts"))
         {
-          if (prefab.Load(_params[0]))
+          if (prefab.Load(_name))
           {
-            output += _params[0] + "[size=" + prefab.size + ",yoffset=" + prefab.yOffset + "]" + _sep;
-            SortedDictionary<int, int> blockstat = new SortedDictionary<int, int>();
-            for (int i = 0; i < prefab.size.x; i++)
-            {
-              for (int j = 0; j < prefab.size.z; j++)
-              {
-                for (int k = 0; k < prefab.size.y; k++)
-                {
-                  BlockValue block = prefab.GetBlock(i, k, j);
-                  if (blockstat.ContainsKey(block.type))
-                  {
-                    blockstat[block.type]++;
-                  } else
-                  {
-                    blockstat[block.type] = 1;
-                  }
-                }
-              }
-            }
-
-            foreach (int blockid in blockstat.Keys)
-            {
-              if (blockid == 0)
-              {
-                output += "air(" + blockid + "):" + blockstat[blockid] + _sep;
-                continue;
-              }
-              try
-              {
-                ItemClass ic = ItemClass.list[blockid];
-                output += ic.Name + "(" + blockid + "):" + blockstat[blockid] + _sep;
-              }
-              catch
-              {
-                output += "NULL(" + blockid + "):" + blockstat[blockid] + _sep;
-              }
-            }
+            data.Add(i.ToString(), "{ \"name\":\"" + _name + "\", \"staticSpawnerClass\":\"" + prefab.StaticSpawnerClass + "\", \"size\":\"" + prefab.size + "\", \"rotationToFaceNorth\":\"" + prefab.rotationToFaceNorth + "\", \"yOffset\":\"" + prefab.yOffset + "\" }");
+            i++;
           }
-        } else
-        {
-          // todo: return results for partial matches to the prefabname string entered for param0
-          output += "Prefab not found";
         }
+      }
+      return data;
+    }
 
+    public override void Process()
+    {
+      string output = "";
+      if (_options.ContainsKey("json"))
+      {
+        output = BCUtils.toJson(jsonObject());
+        SendOutput(output);
       }
       else
       {
-        foreach (string prefabname in prefabs)
+        string prefabsGameDir = Utils.GetGameDir("Data/Prefabs");
+        List<string> prefabs = GetStoredPrefabs(prefabsGameDir);
+
+        if (_params.Count == 1)
         {
-          output += prefabname + _sep;
+          Prefab prefab = new Prefab();
+          if (File.Exists(prefabsGameDir + "/" + _params[0] + ".tts"))
+          {
+            if (prefab.Load(_params[0]))
+            {
+              output += _params[0] + "[size=" + prefab.size + ",yoffset=" + prefab.yOffset + "]" + _sep;
+              SortedDictionary<int, int> blockstat = new SortedDictionary<int, int>();
+              for (int i = 0; i < prefab.size.x; i++)
+              {
+                for (int j = 0; j < prefab.size.z; j++)
+                {
+                  for (int k = 0; k < prefab.size.y; k++)
+                  {
+                    BlockValue block = prefab.GetBlock(i, k, j);
+                    if (blockstat.ContainsKey(block.type))
+                    {
+                      blockstat[block.type]++;
+                    }
+                    else
+                    {
+                      blockstat[block.type] = 1;
+                    }
+                  }
+                }
+              }
+
+              foreach (int blockid in blockstat.Keys)
+              {
+                if (blockid == 0)
+                {
+                  output += "air(" + blockid + "):" + blockstat[blockid] + _sep;
+                  continue;
+                }
+                try
+                {
+                  ItemClass ic = ItemClass.list[blockid];
+                  output += ic.Name + "(" + blockid + "):" + blockstat[blockid] + _sep;
+                }
+                catch
+                {
+                  output += "NULL(" + blockid + "):" + blockstat[blockid] + _sep;
+                }
+              }
+            }
+          }
+          else
+          {
+            // todo: return results for partial matches to the prefabname string entered for param0
+            output += "Prefab not found";
+          }
+
         }
+        else
+        {
+          foreach (string prefabname in prefabs)
+          {
+            output += prefabname + _sep;
+          }
+        }
+        SendOutput(output);
       }
-      SendOutput(output);
+
     }
     public static List<string> GetStoredPrefabs(string prefabsGameDir)
     {

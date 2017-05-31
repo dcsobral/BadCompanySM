@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Text;
 using UnityEngine;
 
 namespace BCM.Models
@@ -121,7 +122,78 @@ namespace BCM.Models
 
     public string GetJson()
     {
-      return JsonUtility.ToJson(this);
+      StringBuilder strb = new StringBuilder();
+      strb.Append("{");
+
+      strb.Append(string.Format("\"{0}\"", "iv_type"));
+      strb.Append(":");
+      strb.Append(string.Format("\"{0}\"", iv_type));
+      strb.Append(",");
+
+      strb.Append(string.Format("\"{0}\"", "iv_HasQuality"));
+      strb.Append(":");
+      strb.Append(string.Format("\"{0}\"", iv_HasQuality));
+      strb.Append(",");
+
+      strb.Append(string.Format("\"{0}\"", "iv_quality"));
+      strb.Append(":");
+      strb.Append(string.Format("\"{0}\"", iv_quality));
+      strb.Append(",");
+
+      strb.Append(string.Format("\"{0}\"", "count"));
+      strb.Append(":");
+      strb.Append(string.Format("\"{0}\"", count));
+      strb.Append(",");
+
+      strb.Append(string.Format("\"{0}\"", "iv_maxUseTimes"));
+      strb.Append(":");
+      strb.Append(string.Format("\"{0}\"", iv_maxUseTimes));
+      strb.Append(",");
+
+      strb.Append(string.Format("\"{0}\"", "iv_useTimes"));
+      strb.Append(":");
+      strb.Append(string.Format("\"{0}\"", iv_useTimes));
+      strb.Append(",");
+
+      strb.Append(string.Format("\"{0}\"", "iv_activated"));
+      strb.Append(":");
+      strb.Append(string.Format("\"{0}\"", iv_activated));
+      strb.Append(",");
+
+      strb.Append(string.Format("\"{0}\"", "iv_ammo"));
+      strb.Append(":");
+      strb.Append(string.Format("\"{0}\"", iv_ammo));
+      strb.Append(",");
+
+      strb.Append(string.Format("\"{0}\"", "json_attachments"));
+      strb.Append(":");
+      if (json_attachments != null && json_attachments.Length > 0)
+      {
+        strb.Append(string.Format("{0}", json_attachments));
+      }
+      else
+      {
+        strb.Append(string.Format("{0}", "null"));
+      }
+      strb.Append(",");
+
+      strb.Append(string.Format("\"{0}\"", "json_parts"));
+      strb.Append(":");
+      if (json_parts != null && json_parts.Length > 0)
+      {
+        strb.Append(string.Format("{0}", json_parts));
+      }
+      else
+      {
+        strb.Append(string.Format("{0}", "null"));
+      }
+
+      strb.Append("}");
+      return strb.ToString();
+
+
+
+      //return JsonUtility.ToJson(this);
     }
 
   }
