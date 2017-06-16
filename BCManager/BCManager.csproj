@@ -66,9 +66,12 @@
     <Compile Include="src\Commands\AdminEntities\RemoveBuffFromEntity.cs" />
     <Compile Include="src\Commands\AdminPlayers\GiveBuffToPlayer.cs" />
     <Compile Include="src\Commands\AdminPlayers\RemoveBuffFromPlayer.cs" />
+    <Compile Include="src\Commands\AdminWorld\BCWorldBlocks.cs" />
+    <Compile Include="src\Commands\AdminWorld\BCExport.cs" />
     <Compile Include="src\Commands\AdminWorld\BCPrefab.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListActiveChunks.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListRWG.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListTime.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListVersions.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListItemClass.cs" />
@@ -91,6 +94,7 @@
     <Compile Include="src\Commands\AdminPlayers\RemoveQuestFromPlayer.cs" />
     <Compile Include="src\Commands\AdminPlayers\GiveQuestToPlayer.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListPlayerFilesInfo.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListAssets.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayers.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersBag.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersBuffs.cs" />

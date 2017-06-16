@@ -1,0 +1,134 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Text;
+using UMA;
+using UnityEngine;
+
+namespace BCM.Commands
+{
+  public class ListAssets : BCCommandAbstract
+  {
+    public override void Process()
+    {
+      string output = "\n";
+
+      //OVERLAYS
+      if (_options.ContainsKey("overlays"))
+      {
+        output += "Overlays:\n";
+        OverlayDataAsset[] oda_array = OverlayLibrary.Instance.GetAllOverlayAssets();
+        foreach (OverlayDataAsset oda in oda_array)
+        {
+          output += oda.name + _sep;
+        }
+        output += "\n";
+      }
+
+      //SLOTS
+      if (_options.ContainsKey("slots"))
+      {
+        output += "Slots:\n";
+        SlotDataAsset[] sda_array =  SlotLibrary.Instance.GetAllSlotAssets();
+        foreach (SlotDataAsset sda in sda_array)
+        {
+          output += sda.slotName + _sep;
+        }
+        output += "\n";
+      }
+
+      //PARTICLES
+      if (_options.ContainsKey("particles"))
+      {
+        output += "Particles:\n";
+        Dictionary<string, Transform> effects = LoadParticleEffects();
+        foreach (string key in effects.Keys)
+        {
+          output += key + _sep;
+        }
+        output += "\n";
+      }
+
+      //TEXTURES
+      if (_options.ContainsKey("textures"))
+      {
+        output += "Textures:\n";
+        var textures = BlockTextureData.list;
+        foreach (BlockTextureData texture in textures)
+        {
+          if (texture != null)
+          {
+            output += texture.ID.ToString() + ":" + texture.LocalizedName + " (" + texture.Name + " - " + texture.TextureID.ToString() + ")" + _sep;
+          }
+        }
+        output += "\n";
+      }
+
+      //UIATLAS
+      if (_options.ContainsKey("uiatlas"))
+      {
+        output += "UIAtlas:\n";
+        Dictionary<string, UISpriteData> _UIAtlas = LoadUIAtlas();
+        foreach (UISpriteData sprite in _UIAtlas.Values)
+        {
+          if (sprite != null)
+          {
+            output += sprite.name + _sep;
+          }
+        }
+        output += "\n";
+      }
+
+      SendOutput(output);
+    }
+
+    public static Dictionary<string, Transform> LoadParticleEffects()
+    {
+      Dictionary<string, Transform> particleEffects = new Dictionary<string, Transform>();
+
+      object[] effects = Resources.LoadAll("ParticleEffects", typeof(Transform));
+      for (int i = 0; i < effects.Length; i++)
+      {
+        object effect = effects[i];
+        string name = ((Transform)effect).gameObject.name;
+        if (name.StartsWith(ParticleEffect.prefix))
+        {
+          name = name.Substring(ParticleEffect.prefix.Length);
+          if (particleEffects.ContainsKey(name))
+          {
+            Log.Error(string.Format("Particle Effect {0} already exists! Skipping it!", name));
+          }
+          else
+          {
+            particleEffects.Add(name, (Transform)effect);
+          }
+        }
+      }
+      return particleEffects;
+    }
+
+    public static Dictionary<string, UISpriteData> LoadUIAtlas()
+    {
+      Dictionary<string, UISpriteData> _UIAtlas = new Dictionary<string, UISpriteData>();
+
+      //todo: get path? /NGUI Root (2D)/
+      object[] sprites = Resources.LoadAll("/NGUI Root (2D)/UIAtlas", typeof(TextureAtlas));
+
+      for (int i = 0; i < sprites.Length; i++)
+      {
+        object sprite = sprites[i];
+        string name = ((UISpriteData)sprite).name;
+        if (_UIAtlas.ContainsKey(name))
+        {
+          Log.Error(string.Format("Sprite {0} already exists! Skipping it!", name));
+        }
+        else
+        {
+          _UIAtlas.Add(name, (UISpriteData)sprite);
+        }
+      }
+      return _UIAtlas;
+    }
+  }
+}

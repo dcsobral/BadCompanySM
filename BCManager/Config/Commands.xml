@@ -7,7 +7,6 @@
   <Command name="BCHelp" commands="bc-help" defaultpermissionlevel="1000"/>
 
   <!-- List Players -->
-  <!--broken, requires new reader-->
   <Command name="ListPlayerFilesInfo" commands="bc-pfinfo" defaultpermissionlevel="0" defaultoptions="nl"/>
   <Command name="ListPlayers" commands="bc-lp" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersBag" commands="bc-lpbag" defaultpermissionlevel="0" defaultoptions="online"/>
@@ -60,7 +59,9 @@
   <Command name="ListSkills" commands="bc-skills" defaultpermissionlevel="0" defaultoptions="csv"/>
   <Command name="ListSpawners" commands="bc-spawners" defaultpermissionlevel="0" defaultoptions="csv"/>
   <Command name="ListActiveChunks" commands="bc-chunks,bc-cc" defaultpermissionlevel="0" defaultoptions="csv"/>
-  
+  <Command name="ListAssets" commands="bc-assets" defaultpermissionlevel="0" defaultoptions="csv"/>
+  <Command name="ListRWG" commands="bc-rwg" defaultpermissionlevel="0" defaultoptions="csv"/>
+
 
   <!--<Command name="ListGamestages" commands="bc-gamestages" defaultpermissionlevel="0"/>-->
   <!--<Command name="ListNPCs" commands="bc-npcs" defaultpermissionlevel="0"/>-->
@@ -68,6 +69,7 @@
 
   <!-- Admin World -->
   <Command name="BCPrefab" commands="bc-prefab,pre" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCExport" commands="bc-export,ex" defaultpermissionlevel="0" defaultoptions=""/>
 
   <!-- UTILITY -->
   <Command name="Settings" commands="bc-settings,set" defaultpermissionlevel="0"/>

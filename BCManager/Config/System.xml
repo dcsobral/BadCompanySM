@@ -7,14 +7,14 @@
   <Synapse name="spawnmanager" enabled="false" beats="1"/> <!-- todo: fix -->
   
   <!--Character Management-->
-  <Synapse name="bagmonitor" enabled="true" beats="60"/>
-  <Synapse name="buffmonitor" enabled="true" beats="60"/>
-  <Synapse name="deadiddead" enabled="true" beats="15"/>
-  <Synapse name="deathwatch" enabled="true" beats="60"/>
-  <Synapse name="equipmentmonitor" enabled="true" beats="60"/>
-  <Synapse name="positiontracker" enabled="true" beats="60"/>
+  <Synapse name="bagmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
+  <Synapse name="buffmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
+  <Synapse name="deadiddead" enabled="false" beats="15"/><!-- todo: not implemented -->
+  <Synapse name="deathwatch" enabled="false" beats="60"/><!-- todo: not implemented -->
+  <Synapse name="equipmentmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
+  <Synapse name="positiontracker" enabled="false" beats="60"/><!-- todo: not implemented -->
   <Synapse name="questmonitor" enabled="false" beats="15"/><!-- todo: fix -->
-  <Synapse name="toolbeltmonitor" enabled="true" beats="60"/>
+  <Synapse name="toolbeltmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
 
 
   <!--Admin Functions-->
@@ -22,10 +22,10 @@
   <Synapse name="trashcollector" enabled="true" beats="1200"/>
 
   <!--Web App Integration-->
-  <Synapse name="broadcastapi" enabled="false" beats="5"/>
+  <Synapse name="broadcastapi" enabled="false" beats="5"/><!-- todo: not implemented -->
   
   <!--Messaging Systems-->
-  <Synapse name="motd" enabled="true" beats="20"/>
+  <Synapse name="motd" enabled="false" beats="20"/><!-- todo: not implemented -->
   
   <!--Logging-->
   

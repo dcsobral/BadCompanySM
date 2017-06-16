@@ -73,19 +73,73 @@ namespace BCM.Commands
     {
       Dictionary<string, string> data = new Dictionary<string, string>();
 
-      Dictionary<string, string> info = new ClientInfoList(_pInfo, _options).GetInfo();
-      Dictionary<string, string> stats = new StatsList(_pInfo, _options).GetStats();
-      foreach (string key in info.Keys)
+      if (_options.ContainsKey("details"))
       {
-        data.Add(key, info[key]);
-      }
-      foreach (string key in stats.Keys)
-      {
-        if (!data.ContainsKey(key))
+        data.Add("playerInfo", BCUtils.toJson(new ClientInfoList(_pInfo, _options).GetInfo()) ?? "");
+        //data.Add("playerStats", BCUtils.toJson(new StatsList(_pInfo, _options).GetStats()) ?? "");
+        //data.Add("playersGamestage", BCUtils.toJson(new ListPlayersGamestage().jsonPlayer(_pInfo)) ?? "");
+
+        if (_options.ContainsKey("1"))
         {
-          data.Add(key, stats[key]);
+          data.Add("playerBag", BCUtils.toJson(new ListPlayersBag().jsonPlayer(_pInfo)) ?? "");
+        }
+        if (_options.ContainsKey("2"))
+        {
+          data.Add("playerBuffs", BCUtils.toJson(new ListPlayersBuffs().jsonPlayer(_pInfo)) ?? "");
+        }
+        if (_options.ContainsKey("3"))
+        {
+          data.Add("playerCraftingQueue", BCUtils.toJson(new ListPlayersCraftingQueue().jsonPlayer(_pInfo)) ?? "");
+        }
+        if (_options.ContainsKey("4"))
+        {
+          data.Add("playersEquipment", BCUtils.toJson(new ListPlayersEquipment().jsonPlayer(_pInfo)) ?? "");
+        }
+        if (_options.ContainsKey("5"))
+        {
+          data.Add("playersFavRecipes", BCUtils.toJson(new ListPlayersFavRecipes().jsonPlayer(_pInfo)) ?? "");
+        }
+        if (_options.ContainsKey("6"))
+        {
+          data.Add("playersQuests", BCUtils.toJson(new ListPlayersQuests().jsonPlayer(_pInfo)) ?? "");
+        }
+        if (_options.ContainsKey("7"))
+        {
+          data.Add("playersRecipes", BCUtils.toJson(new ListPlayersRecipes().jsonPlayer(_pInfo)) ?? "");
+        }
+        if (_options.ContainsKey("8"))
+        {
+          data.Add("playersSkills", BCUtils.toJson(new ListPlayersSkills().jsonPlayer(_pInfo)) ?? "");
+        }
+        if (_options.ContainsKey("9"))
+        {
+          //data.Add("playersSpawns", BCUtils.toJson(new ListPlayersSpawns().jsonPlayer(_pInfo)) ?? "");
+        }
+        if (_options.ContainsKey("a"))
+        {
+          data.Add("playersToolbelt", BCUtils.toJson(new ListPlayersToolbelt().jsonPlayer(_pInfo)) ?? "");
+        }
+          //data.Add("playersWaypoints", BCUtils.toJson(new ListPlayersWaypoints().jsonPlayer(_pInfo)) ?? "");
+
+
+        }
+        else
+      {
+        Dictionary<string, string> info = new ClientInfoList(_pInfo, _options).GetInfo();
+        Dictionary<string, string> stats = new StatsList(_pInfo, _options).GetStats();
+        foreach (string key in info.Keys)
+        {
+          data.Add(key, info[key]);
+        }
+        foreach (string key in stats.Keys)
+        {
+          if (!data.ContainsKey(key))
+          {
+            data.Add(key, stats[key]);
+          }
         }
       }
+
       return data;
     }
 

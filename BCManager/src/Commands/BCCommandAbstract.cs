@@ -34,12 +34,12 @@ namespace BCM.Commands
       }
     }
 
-    public override void Execute(List<string> _p, CommandSenderInfo _s)
+    public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
     {
-      _senderInfo = _s;
-      _params = new List<string>();
+      this._senderInfo = _senderInfo;
+      this._params = new List<string>();
       _options = new Dictionary<string, string>();
-      ParseParams(_p);
+      ParseParams(_params);
       try
       {
         Process();
