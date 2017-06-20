@@ -34,8 +34,9 @@ namespace BCM.Commands
               RWG2.HubCell hubCell = new RWG2.HubCell(v);
               hubCell.Read(binaryReader);
               binaryReader.Close();
+
               //HCD.Add(v, hubCell);
-              foreach (RWG2.HubCell.Lot lot in hubCell.lots)
+              foreach (RWG2.HubCell.Lot lot in hubCell.GetAllLots())
               {
                 HCDLotName.Add(lot.PrefabName);
                 HCDLotPos.Add(lot.PrefabSpawnPos);

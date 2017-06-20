@@ -133,6 +133,7 @@
     <Compile Include="src\EventSystem\Neurons\SpawnManager.cs" />
     <Compile Include="src\EventSystem\EntitySpawner.cs" />
     <Compile Include="src\EventSystem\Neurons\SaveWorld.cs" />
+    <Compile Include="src\Functions\BCChunks.cs" />
     <Compile Include="src\Functions\SpawnPoint.cs" />
     <Compile Include="src\Functions\Convert.cs" />
     <Compile Include="src\Functions\GetPlayer.cs" />
