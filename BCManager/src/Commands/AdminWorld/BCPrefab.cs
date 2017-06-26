@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Threading;
 using UnityEngine;
 
 namespace BCM.Commands
@@ -24,28 +22,30 @@ namespace BCM.Commands
       {
         return false;
       }
-      _x = (int)_e.position.x - (_p.size.x / 2);
-      _y = (int)_e.position.y;
-      _z = (int)_e.position.z - (_p.size.z / 2);
+      var loc = new Vector3i((int)Math.Floor(_e.serverPos.x / 32f), (int)Math.Floor(_e.serverPos.y / 32f), (int)Math.Floor(_e.serverPos.z / 32f));
+
+      _x = loc.x - (_p.size.x / 2);
+      _y = loc.y;
+      _z = loc.z - (_p.size.z / 2);
       if (_options.ContainsKey("cornersw") || _options.ContainsKey("ne"))
       {
-        _x = (int)_e.position.x;
-        _z = (int)_e.position.z;
+        _x = loc.x;
+        _z = loc.z;
       }
       else if (_options.ContainsKey("cornerse") || _options.ContainsKey("nw"))
       {
-        _x = (int)_e.position.x - _p.size.x;
-        _z = (int)_e.position.z;
+        _x = loc.x - _p.size.x;
+        _z = loc.z;
       }
       else if (_options.ContainsKey("cornernw") || _options.ContainsKey("se"))
       {
-        _x = (int)_e.position.x;
-        _z = (int)_e.position.z - _p.size.z;
+        _x = loc.x;
+        _z = loc.z - _p.size.z;
       }
       else if (_options.ContainsKey("cornerne") || _options.ContainsKey("sw"))
       {
-        _x = (int)_e.position.x - _p.size.x;
-        _z = (int)_e.position.z - _p.size.z;
+        _x = loc.x - _p.size.x;
+        _z = loc.z - _p.size.z;
       }
 
       return true;
@@ -63,16 +63,22 @@ namespace BCM.Commands
             return false;
           }
         }
-
-        // specific spawnpoint
-        if (_params.Count == 5)
+        else if (_params.Count == 5)
         {
+          // specific spawnpoint
           if (!int.TryParse(_params[1], out _x) || !int.TryParse(_params[2], out _y) || !int.TryParse(_params[3], out _z) || !int.TryParse(_params[4], out _r))
           {
             SendOutput("One of <x> <y> <z> <rot> params could not be parsed as a number.");
             return false;
           }
         }
+        else if (_params.Count != 6)
+        {
+          SendOutput("Error: Incorrect command format.");
+          SendOutput(GetHelp());
+          return false;
+        }
+
 
         // spin the prefab
         for (int r = 0; r < _r % 4; r++)
@@ -83,20 +89,22 @@ namespace BCM.Commands
 
       //bounds
       //todo: make overridable (prefab wont replace blocks outside bounds but will partial spawn)
-      if (_y < 3)
+      if (_y < 0)
       {
-        _y = 3;
+        SdtdConsole.Instance.Output("Y position is too low by " + (_y * -1).ToString() + " blocks");
       }
       if (_y + _prefab.size.y > 255)
       {
-        _y = 255 - _prefab.size.y;
+        SdtdConsole.Instance.Output("Y position is too high by " + (_y + _prefab.size.y - 255).ToString() + " blocks");
       }
 
       return true;
     }
 
-    private static void BlockTranslations(Prefab prefab)
+    private static void BlockTranslations(Prefab prefab, Vector3i pos)
     {
+      // todo: custom block map via configs and select with /map=<mapname>, also a few options like wood->metal->concrete->steel upgrades (/upgrade=2 (steps))
+
       //BLOCK TRANSLATIONS
       LootPlaceholderMap _map = LootContainer.lootPlaceholderMap;
       for (int px = 0; px < prefab.size.x; px++)
@@ -106,12 +114,17 @@ namespace BCM.Commands
           for (int pz = 0; pz < prefab.size.z; pz++)
           {
             BlockValue bv = prefab.GetBlock(px, py, pz);
-            // todo: copy entities to world?
             // ENTITIES
-
+            List<EntityCreationData> entities = prefab.GetEntities();
+            foreach (EntityCreationData _ecd in entities)
+            {
+              _ecd.id = -1;
+              Entity entity = EntityFactory.CreateEntity(_ecd);
+              entity.SetPosition(entity.position + pos.ToVector3());
+              GameManager.Instance.World.SpawnEntityInWorld(entity);
+            }
 
             // LOOT PLACEHOLDERS
-            // todo: custom block map via configs and select with /map=<mapname>
             if (bv.type != 0)
             {
               System.Random random = new System.Random(Guid.NewGuid().GetHashCode());
@@ -135,22 +148,31 @@ namespace BCM.Commands
       }
 
       //GET AFFECTED CHUNKS
-      Dictionary<long, Chunk> chunks = new Dictionary<long, Chunk>();
+      Dictionary<long, Chunk> modifiedChunks = new Dictionary<long, Chunk>();
       for (int cx = -1; cx <= prefab.size.x + 16; cx = cx + 16)
       {
         for (int cz = -1; cz <= prefab.size.z + 16; cz = cz + 16)
         {
-          // todo: pre generate chunks required
           if (GameManager.Instance.World.IsChunkAreaLoaded(x + cx, y, z + cz))
           {
             Chunk _chunk = GameManager.Instance.World.GetChunkFromWorldPos(x + cx, y, z + cz) as Chunk;
-            if (!chunks.ContainsKey(_chunk.Key))
+            if (!modifiedChunks.ContainsKey(_chunk.Key))
             {
-              chunks.Add(_chunk.Key, _chunk);
+              modifiedChunks.Add(_chunk.Key, _chunk);
             }
           }
           else
           {
+            // todo: generate and observe chunks required
+
+            //var mapVisitor = new MapVisitor(new Vector3i(x, 0, z), new Vector3i(x + prefab.size.x, 0, z + prefab.size.z));
+            //mapVisitor.OnVisitChunk += new MapVisitor.VisitChunkDelegate(CreateUndoChunkBlocks);
+            //mapVisitor.OnVisitChunk += new MapVisitor.VisitChunkDelegate(CreateUndoChunkTileEntities);
+            //mapVisitor.OnVisitChunk += new MapVisitor.VisitChunkDelegate(CreateUndoChunkSleepers);
+            //mapVisitor.OnVisitChunk += new MapVisitor.VisitChunkDelegate(UpdateChunkBlocks);
+            //mapVisitor.OnVisitMapDone += new MapVisitor.VisitMapDoneDelegate(ReloadChunksForClients);
+            //mapVisitor.Start();
+
             SdtdConsole.Instance.Output("Unable to load chunk for prefab @ " + (x + cx) + "," + (z + cz));
           }
         }
@@ -158,108 +180,107 @@ namespace BCM.Commands
 
       //INSERT PREFAB
       prefab.CopyIntoLocal(GameManager.Instance.World.ChunkCache, pos, true, true);
+      
+      BCChunks.ReloadForClients(modifiedChunks);
 
-      //RESET STABILITY
-      StabilityInitializer _si = new StabilityInitializer(GameManager.Instance.World);
-      foreach (Chunk _chunk in chunks.Values)
+      //todo: after chunks have loaded on client need to check for falling and telelport on top.
+      //Vector3 clientpos = GameManager.Instance.World.Players.dict[client.entityId].position;
+      //clientpos.y = -1;
+      //NetPackageTeleportPlayer netPackageTeleportPlayer = new NetPackageTeleportPlayer(clientpos);
+      //client.SendPackage(netPackageTeleportPlayer);
+
+    }
+
+    private void CreateUndo(EntityPlayer sender, Prefab prefab, Vector3i pos)
+    {
+      string steamId = "_server";
+      if (_senderInfo.RemoteClientInfo != null)
       {
-        _chunk.ResetStability();
+        steamId = _senderInfo.RemoteClientInfo.ownerId.ToString();
       }
-      foreach (Chunk _chunk in chunks.Values)
+
+      Prefab _areaCache = new Prefab();
+      int _userID = 0; // id will be 0 for web console issued commands
+      _areaCache.CopyFromWorld(GameManager.Instance.World, pos, new Vector3i(pos.x + prefab.size.x, pos.y + prefab.size.y, pos.z + prefab.size.z));
+      _areaCache.bCopyAirBlocks = true;
+
+      if (sender != null)
       {
-        _si.DistributeStability(_chunk);
-        _chunk.NeedsRegeneration = true;
+        _userID = sender.entityId;
       }
+      string _filename = steamId + "_" + DateTime.Now.ToFileTime().ToString();
+      Directory.CreateDirectory(Utils.GetGameDir("Data/Prefabs/BCM"));
+      _areaCache.Save(Utils.GetGameDir("Data/Prefabs/BCM"), _filename);
 
-      // todo: confirm - a list of chunks loaded, is it for the server or just that player?
-      //HashSet<long> cl = sender.ChunkObserver.chunksLoaded;
-      //foreach (long l in cl)
-      //{
-      //  //Log.Out("long:" + l.ToString());
-      //  Chunk cs = GameManager.Instance.World.GetChunkSync(l) as Chunk;
-      //  //Log.Out("cs:" + cs.X.ToString() + " " + cs.Z.ToString());
-      //}
-
-      // REFRESH CLIENTS CHUNKS
-      List<ClientInfo> clients = ConnectionManager.Instance.GetClients();
-      List<ClientInfo> reloadforclients = new List<ClientInfo>();
-      foreach (ClientInfo client in clients)
+      if (_cache.ContainsKey(_userID))
       {
-        EntityPlayer clientEntity = GameManager.Instance.World.Entities.dict[client.entityId] as EntityPlayer;
-        float distance = Vector3.Distance(clientEntity.position, pos.ToVector3());
-        // todo: change to use clientEntity.ChunkObserver.chunksLoaded list to see if client has chunk loaded and requires refresh
-        if (distance < 200)
+        var pl = _cache[_userID];
+        pl.Add(new PrefabCache { filename = _filename, pos = pos });
+      }
+      else
+      {
+        _cache.Add(_userID, new List<PrefabCache> { new PrefabCache { filename = _filename, pos = pos } });
+      }
+    }
+
+    private void UndoInsert(EntityPlayer sender)
+    {
+      string dirbase = "Data/Prefabs/BCM";
+      int _userID = 0;
+      if (sender != null)
+      {
+        _userID = sender.entityId;
+      }
+      if (_cache.ContainsKey(_userID))
+      {
+        //history exists
+        if (_cache[_userID].Count > 0)
         {
-          reloadforclients.Add(client);
-          //Log.Out(Config.ModPrefix + " Reloading " + chunks.Count + " chunks for " + client.playerName + ":" + distance);
-          SdtdConsole.Instance.Output(Config.ModPrefix + " Reloading " + chunks.Count + " chunks for " + client.playerName + ":" + distance);
-          foreach (Chunk _chunk in chunks.Values)
+          var prefabCache = _cache[_userID][_cache[_userID].Count - 1];
+          if (prefabCache != null)
           {
-            client.SendPackage(new NetPackageChunkRemove(_chunk.Key));
+            Prefab _p = new Prefab();
+            _p.Load(Utils.GetGameDir(dirbase), prefabCache.filename);
+            InsertPrefab(_p, prefabCache.pos.x, prefabCache.pos.y, prefabCache.pos.z, prefabCache.pos);
+
+            //workaround for multi dim blocks, insert undo prefab twice
+            //todo: clear all blocks (turn to air) before inserting the prefab instead
+            InsertPrefab(_p, prefabCache.pos.x, prefabCache.pos.y, prefabCache.pos.z, prefabCache.pos);
+          }
+          _cache[_userID].RemoveAt(_cache[_userID].Count - 1);
+          if (Utils.FileExists(Utils.GetGameDir(dirbase + prefabCache.filename + ".tts")))
+          {
+            Utils.FileDelete(Utils.GetGameDir(dirbase + prefabCache.filename + ".tts"));
+          }
+          if (Utils.FileExists(Utils.GetGameDir(dirbase + prefabCache.filename + ".xml")))
+          {
+            Utils.FileDelete(Utils.GetGameDir(dirbase + prefabCache.filename + ".xml"));
           }
         }
-      }
-
-      // delay to allow packets to reach clients
-      Thread.Sleep(50);
-      foreach (ClientInfo client in reloadforclients)
-      {
-        foreach (Chunk _chunk in chunks.Values)
-        {
-          client.SendPackage(new NetPackageChunk(_chunk));
-        }
-        //todo: after chunks have loaded on client need to check for falling and telelport on top.
-        //Vector3 clientpos = GameManager.Instance.World.Players.dict[client.entityId].position;
-        //clientpos.y = -1;
-        //NetPackageTeleportPlayer netPackageTeleportPlayer = new NetPackageTeleportPlayer(clientpos);
-        //client.SendPackage(netPackageTeleportPlayer);
       }
     }
 
     public override void Process()
     {
-      // todo: allow for partial names for prefab, provide list if more then one result, allow for partial + # from list to specify
-      // todo: refresh nearest prefab
-      // todo: store last x commands for each player, with linked undo data add a repeat option so that prefab inserts at a players location can be repeated at the same location even if player moves
+      // todo: clear out miltidim blocks properly
+      // todo: remove LCB's from persistent players
+      // todo: remove loot container contents before inserting new prefab
+      // todo: add map visitor to load chunks if required
+
+      // optional todo: allow for partial names for prefab, provide list if more then one result, allow for partial + # from list to specify
+      // optional todo: refresh nearest prefab
+      // optional todo: store last x commands for each player, with linked undo data add a repeat option so that prefab inserts at a players location can be repeated at the same location even if player moves
+
 
       EntityPlayer sender = null;
-      string steamId = "_server";
       if (_senderInfo.RemoteClientInfo != null)
       {
         sender = GameManager.Instance.World.Entities.dict[_senderInfo.RemoteClientInfo.entityId] as EntityPlayer;
-        steamId = _senderInfo.RemoteClientInfo.ownerId.ToString();
       }
 
       if (_options.ContainsKey("undo"))
       {
-        int _userID = 0;
-        if (sender != null)
-        {
-          _userID = sender.entityId;
-        }
-        if (_cache.ContainsKey(_userID))
-        {
-          //history exists
-          if (_cache[_userID].Count > 0)
-          {
-            var prefabCache = _cache[_userID][_cache[_userID].Count - 1];
-            if (prefabCache != null)
-            {
-              Prefab _p = new Prefab();
-              _p.Load(Utils.GetGameDir("Data/Prefabs/BCM"), prefabCache.filename);
-              InsertPrefab(_p, prefabCache.pos.x, prefabCache.pos.y, prefabCache.pos.z, prefabCache.pos);
-            }
-            _cache[_userID].RemoveAt(_cache[_userID].Count - 1);
-            if (Utils.FileExists(Utils.GetGameDir("Data/Prefabs/BCM/" + prefabCache.filename + ".tts")))
-            {
-              Utils.FileDelete(Utils.GetGameDir("Data/Prefabs/BCM/" + prefabCache.filename + ".tts"));
-            }
-            if (Utils.FileExists(Utils.GetGameDir("Data/Prefabs/BCM/" + prefabCache.filename + ".xml")))
-            {
-              Utils.FileDelete(Utils.GetGameDir("Data/Prefabs/BCM/" + prefabCache.filename + ".xml"));
-            }
-          }
-        }
+        UndoInsert(sender);
         return;
       }
 
@@ -271,10 +292,6 @@ namespace BCM.Commands
           int rot = 0;
           int x = 0, y = 0, z = 0;
           Vector3i pos = new Vector3i(0, 0, 0);
-
-          //todo: is this needed? seems broken
-          //bool bPhysicsActive = GameManager.bPhysicsActive;
-          //GameManager.bPhysicsActive = false;
 
           if (!GetXYZPreEnt(prefab, sender, ref x, ref y, ref z) && _params.Count < 5)
           {
@@ -288,16 +305,13 @@ namespace BCM.Commands
 
           // todo: create an entity observer and spawn prefab once chunks are loaded?
 
-
-          if (_options.ContainsKey("offset"))
+          if (_options.ContainsKey("nooffset"))
           {
-            //Chunk c = GameManager.Instance.World.GetChunkFromWorldPos(x, y, z) as Chunk;
-            //int h = c.GetTerrainHeight(0, 0);
-            pos = new Vector3i(x, y + prefab.yOffset, z);
+            pos = new Vector3i(x, y, z);
           }
           else
           {
-            pos = new Vector3i(x, y, z);
+            pos = new Vector3i(x, y + prefab.yOffset, z);
           }
 
           if (_options.ContainsKey("air"))
@@ -308,46 +322,33 @@ namespace BCM.Commands
           {
             prefab.bCopyAirBlocks = false;
           }
+          if (_options.ContainsKey("sleepers"))
+          {
+            prefab.bSleeperVolumes = true;
+          }
+          if (_options.ContainsKey("nosleepers"))
+          {
+            prefab.bSleeperVolumes = false;
+          }
 
           // todo: create a copy of the chunks and the bounded dimensions of the prefab size for an undo
           //       should work better than a prefab copy undo as it will preserve block ownership and state?
-          // todo: option to carve terrain where prefab will spawn, maybe reapply decorations?
-          //       insert lot into cell data and regenerate chunk area from world/seed defaults
+          // optional todo: option to carve terrain where prefab will spawn, maybe reapply decorations?
+          //                insert lot into cell data and regenerate chunk area from world/seed defaults
 
-          BlockTranslations(prefab);
+          BlockTranslations(prefab, pos);
 
-          //UNDO
+          //CREATE UNDO
           //create backup of area prefab will insert to
-          Prefab _areaCache = new Prefab();
-
           if (!_options.ContainsKey("noundo"))
           {
-            int _userID = 0; // id will be 0 for web console issued commands
-            _areaCache.CopyFromWorld(GameManager.Instance.World, pos, new Vector3i(pos.x + prefab.size.x, pos.y + prefab.size.y, pos.z + prefab.size.z));
-            _areaCache.bCopyAirBlocks = true;
-
-            if (sender != null)
-            {
-              _userID = sender.entityId;
-            }
-            string _filename = steamId + "_" + DateTime.Now.ToFileTime().ToString();
-            Directory.CreateDirectory(Utils.GetGameDir("Data/Prefabs/BCM"));
-            _areaCache.Save(Utils.GetGameDir("Data/Prefabs/BCM"), _filename);
-
-            if (_cache.ContainsKey(_userID))
-            {
-              var pl = _cache[_userID];
-              pl.Add(new PrefabCache { filename = _filename, pos = pos });
-            }
-            else
-            {
-              _cache.Add(_userID, new List<PrefabCache> { new PrefabCache { filename = _filename, pos = pos } });
-            }
+            CreateUndo(sender, prefab, pos);
           }
 
           // SPAWN PREFAB
           Log.Out(Config.ModPrefix + "Spawning prefab " + prefab.filename + " @ " + pos + ", size=" + prefab.size);
           SdtdConsole.Instance.Output("Spawning prefab " + prefab.filename + " @ " + pos + ", size=" + prefab.size);
+          SdtdConsole.Instance.Output("use bc-insert /undo to revert the changes");
 
           InsertPrefab(prefab, x, y, z, pos);
 
@@ -361,16 +362,6 @@ namespace BCM.Commands
       {
         // todo: list prefabs
       }
-
-      //DynamicPrefabDecorator dynamicPrefabDecorator = GameManager.Instance.GetDynamicPrefabDecorator();
-      //Dictionary<string, Prefab> prefabDict = dynamicPrefabDecorator.GetAllPrefabs(); // a list of prefabs currently loaded in chunks
-      //foreach (Prefab prefab in prefabDict.Values)
-      //{
-      //  SdtdConsole.Instance.Output(prefab.filename);
-      //}
-      //dynamicPrefabDecorator.RemovePrefab(GameManager.Instance.World, prefab, true);
-      //dynamicPrefabDecorator.CopyPrefabIntoWorld(GameManager.Instance.World, prefab, prefab.lastCopiedPrefabPosition, 0);//prefab.rotation
     }
-
   }
 }

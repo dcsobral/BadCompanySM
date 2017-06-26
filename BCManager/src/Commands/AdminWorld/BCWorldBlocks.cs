@@ -26,12 +26,26 @@ namespace BCM.Commands
         //  /random=1,2,3,4,5 a list of blocks to use for /fill and /swap to randomly replace blocks in target area
         //  /circle - instead of two vector3i provide a single vector3i and an inner+outer radius and height, optionally a pair of values for arc degrees
         //  /prefab - a prefab to insert repeatedly within the area
-        
+
+
+        //loc - shows player current location (/worldpos /etc), and sets the pos for prafab and block commands
+        //bc-rb, bc-renderblocks, bc-block, block
+        //bc-block upgrade - upgrades the blocks 1 step within an area
+        //bc-block repair - repairs all blocks in the area
+        //bc-block swap - swaps source block with target block for blocks in the area
+        //bc-block randomdam - randomly damages all blocks in the area
+        //bc-block downgrade /nodestroy - downgrades all blocks in area, optional for no destroy but only those not on the last stage
+        //bc-block insert /fill=terrain /fill=air /fill=cube[/texture=0,1,2,3,4,5] [default]/fill=all - changes all blocks in an area with the block specified, options act as filters what blocks get replaced in the target area
+        //bc-block prefab /nopartial /2d - renders a prefab in the area defined repeating the prefab to fill the area, optional on nopartial to prevent the insertion of partial prefabs at the edges of the area. 2d optional to only draw 1 layer of prefabs rather than stacking them (default)
+        //bc-chunk reset - resets the chunk to its rwg original state
+        //bc-chunk reload <player> - reloads the chunks in that players loaded chunk list
+
+
       }
 
       if (_params.Count != 7)
       {
-        SendOutput("Param error, use bc-wblocks <x1> <y1> <z1> <x2> <y2> <z2> [/options]");
+        SendOutput("Param error, use bc-wblocks <type> <x1> <y1> <z1> <x2> <y2> <z2> [/options]");
       }
       else
       {

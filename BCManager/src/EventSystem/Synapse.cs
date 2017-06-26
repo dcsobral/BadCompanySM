@@ -49,6 +49,13 @@ namespace BCM
           neurons.Add(new ToolbeltMonitor());
           break;
 
+        case "pingkicker":
+          neurons.Add(new PingKicker());
+          break;
+
+        case "mapexplorer":
+          neurons.Add(new MapExplorer());
+          break;
         case "saveworld":
           neurons.Add(new SaveWorld());
           break;

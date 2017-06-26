@@ -27,17 +27,6 @@
   <Command name="ListPlayersToolbelt" commands="bc-lptools,bc-lptool" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersWaypoints" commands="bc-lpwayp,bc-lpwayps,bc-lpwaypoints" defaultpermissionlevel="0" defaultoptions="online"/>
 
-  <!-- Admin Players -->
-  <Command name="GiveQuestToPlayer" commands="bc-gpq,bc-gpquest" defaultpermissionlevel="0" defaultoptions=""/>
-  <Command name="RemoveQuestFromPlayer" commands="bc-rpq,bc-rpquest" defaultpermissionlevel="0" defaultoptions=""/>
-  <Command name="GiveBuffToPlayer" commands="bc-gpb,bc-gpbuff" defaultpermissionlevel="0" defaultoptions=""/>
-  <Command name="RemoveBuffFromPlayer" commands="bc-rpb,bc-rpbuff" defaultpermissionlevel="0" defaultoptions=""/>
-  
-  <!-- Admin Entities -->
-  <Command name="ListEntities" commands="bc-le" defaultpermissionlevel="0" defaultoptions="nl,alive"/>
-  <Command name="GiveBuffToEntity" commands="bc-geb,bc-gebuff" defaultpermissionlevel="0" defaultoptions=""/>
-  <Command name="RemoveBuffFromEntity" commands="bc-reb,bc-debuff,bc-rembuff" defaultpermissionlevel="0" defaultoptions=""/>
-
   <!-- GAME OBJECTS -->
   <Command name="ListTime" commands="bc-time" defaultpermissionlevel="0" defaultoptions="nl"/>
   <Command name="ListVersions" commands="bc-version" defaultpermissionlevel="0" defaultoptions="nl"/>
@@ -62,14 +51,30 @@
   <Command name="ListAssets" commands="bc-assets" defaultpermissionlevel="0" defaultoptions="csv"/>
   <Command name="ListRWG" commands="bc-rwg" defaultpermissionlevel="0" defaultoptions="csv"/>
 
-
   <!--<Command name="ListGamestages" commands="bc-gamestages" defaultpermissionlevel="0"/>-->
   <!--<Command name="ListNPCs" commands="bc-npcs" defaultpermissionlevel="0"/>-->
   <!--<Command name="ListTraders" commands="bc-traders" defaultpermissionlevel="0"/>-->
+  <!--<Command name="ListUtilityAI" commands="bc-uai" defaultpermissionlevel="0"/>-->
+  <!--<Command name="ListSounds" commands="bc-sounds" defaultpermissionlevel="0"/>-->
+  <!--<Command name="ListVehicles" commands="bc-vehicles" defaultpermissionlevel="0"/>-->
+  <!--<Command name="ListWeather" commands="bc-weather" defaultpermissionlevel="0"/>-->
+
+  <!-- Admin Players -->
+  <Command name="GiveQuestToPlayer" commands="bc-gpq,bc-gpquest" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="RemoveQuestFromPlayer" commands="bc-rpq,bc-rpquest" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="GiveBuffToPlayer" commands="bc-gpb,bc-gpbuff" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="RemoveBuffFromPlayer" commands="bc-rpb,bc-rpbuff" defaultpermissionlevel="0" defaultoptions=""/>
+  
+  <!-- Admin Entities -->
+  <Command name="ListEntities" commands="bc-le" defaultpermissionlevel="0" defaultoptions="nl,alive"/>
+  <Command name="GiveBuffToEntity" commands="bc-geb,bc-gebuff" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="RemoveBuffFromEntity" commands="bc-reb,bc-debuff,bc-rembuff" defaultpermissionlevel="0" defaultoptions=""/>
 
   <!-- Admin World -->
-  <Command name="BCPrefab" commands="bc-prefab,pre" defaultpermissionlevel="0" defaultoptions=""/>
-  <Command name="BCExport" commands="bc-export,ex" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCPrefab" commands="bc-import,import" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCExport" commands="bc-export,export" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCWorldBlocks" commands="bc-wblocks,block" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCLocation" commands="bc-loc,loc,pos" defaultpermissionlevel="1000" defaultoptions=""/>
 
   <!-- UTILITY -->
   <Command name="Settings" commands="bc-settings,set" defaultpermissionlevel="0"/>

@@ -15,11 +15,13 @@
   <Synapse name="positiontracker" enabled="false" beats="60"/><!-- todo: not implemented -->
   <Synapse name="questmonitor" enabled="false" beats="15"/><!-- todo: fix -->
   <Synapse name="toolbeltmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
-
+  <Synapse name="pingkicker" enabled="false" beats="60"/><!-- todo: not implemented -->
 
   <!--Admin Functions-->
   <Synapse name="saveworld" enabled="true" beats="600"/>
-  <Synapse name="trashcollector" enabled="true" beats="1200"/>
+  <Synapse name="trashcollector" enabled="true" beats="1250"/>
+  <Synapse name="mapexplorer" enabled="false" beats="5"/>
+  
 
   <!--Web App Integration-->
   <Synapse name="broadcastapi" enabled="false" beats="5"/><!-- todo: not implemented -->

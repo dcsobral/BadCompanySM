@@ -35,6 +35,7 @@ namespace BCM.Models
         info.Add("SessionPlayTime", ((Time.timeSinceLevelLoad - _pInfo.EP.CreationTimeSinceLevelLoad) / 60).ToString("F1") + "");
       }
       info.Add("Position", (_pInfo.EP != null ? Convert.PosToStr(_pInfo.EP.position, postype) : (_pInfo.PDF != null ? Convert.PosToStr(_pInfo.PDF.ecd.pos, postype) : "")));
+      info.Add("UndergroundDistance", (_pInfo.EP != null ? (_pInfo.EP.position.y - (int)Math.Floor(_pInfo.EP.serverPos.y / 32f)).ToString() : "0"));
       info.Add("Rotation", (_pInfo.EP != null ? Convert.PosToStr(_pInfo.EP.rotation, postype) : (_pInfo.PDF != null ? Convert.PosToStr(_pInfo.PDF.ecd.rot, postype) : "")));
 
     }

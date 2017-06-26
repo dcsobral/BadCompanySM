@@ -66,6 +66,7 @@
     <Compile Include="src\Commands\AdminEntities\RemoveBuffFromEntity.cs" />
     <Compile Include="src\Commands\AdminPlayers\GiveBuffToPlayer.cs" />
     <Compile Include="src\Commands\AdminPlayers\RemoveBuffFromPlayer.cs" />
+    <Compile Include="src\Commands\AdminWorld\BCLocation.cs" />
     <Compile Include="src\Commands\AdminWorld\BCWorldBlocks.cs" />
     <Compile Include="src\Commands\AdminWorld\BCExport.cs" />
     <Compile Include="src\Commands\AdminWorld\BCPrefab.cs" />
@@ -126,15 +127,16 @@
     <Compile Include="src\EventSystem\Models\HordeSpawner.cs" />
     <Compile Include="src\EventSystem\Models\Spawn.cs" />
     <Compile Include="src\EventSystem\Neurons\BroadcastAPI.cs" />
+    <Compile Include="src\EventSystem\Neurons\MapExplorer.cs" />
     <Compile Include="src\EventSystem\Neurons\Motd.cs" />
     <Compile Include="src\EventSystem\Neurons\DeathWatch.cs" />
     <Compile Include="src\EventSystem\Neurons\SaveBackup.cs" />
     <Compile Include="src\EventSystem\Neurons\InactiveEntityMonitor.cs" />
+    <Compile Include="src\EventSystem\Neurons\PingKicker.cs" />
     <Compile Include="src\EventSystem\Neurons\SpawnManager.cs" />
     <Compile Include="src\EventSystem\EntitySpawner.cs" />
     <Compile Include="src\EventSystem\Neurons\SaveWorld.cs" />
     <Compile Include="src\Functions\BCChunks.cs" />
-    <Compile Include="src\Functions\SpawnPoint.cs" />
     <Compile Include="src\Functions\Convert.cs" />
     <Compile Include="src\Functions\GetPlayer.cs" />
     <Compile Include="src\Functions\ObjectCopier.cs" />
