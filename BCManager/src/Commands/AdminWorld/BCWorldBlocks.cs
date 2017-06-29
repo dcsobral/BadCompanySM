@@ -192,8 +192,6 @@ namespace BCM.Commands
         _bv = Block.GetBlockValue(blockname);
       }
 
-      SendOutput("Inserted block '" + _bv.Block.GetBlockName() + "' @ " + p3 + " to " + p4);
-
       //Make prefab
       Prefab _prefab = new Prefab(size);
       if (_options.ContainsKey("swap"))
@@ -246,9 +244,6 @@ namespace BCM.Commands
       }
 
 
-      _prefab.filename = "somerandomname";
-      //does there need to be an xml file for it?
-
       //todo: make a function that can be called on Import to place the prefab, returns the undo data to be stored in this func for bc-block /undo
       _prefab.bCopyAirBlocks = true;
       _prefab.bExcludeDistantPOIMesh = true;
@@ -280,12 +275,13 @@ namespace BCM.Commands
           }
           else
           {
-            SdtdConsole.Instance.Output("Unable to load chunk for prefab @ " + (p3.x + cx) + "," + (p3.z + cz));
+            SdtdConsole.Instance.Output("Unable to load chunk for insert @ " + (p3.x + cx) + "," + (p3.z + cz));
           }
         }
       }
 
-      SdtdConsole.Instance.Output("use bc-block /undo to revert the changes");
+      SendOutput("Inserting block '" + _bv.Block.GetBlockName() + "' @ " + p3 + " to " + p4);
+      SendOutput("Use bc-wblock /undo to revert the changes");
 
       //INSERT PREFAB
       _prefab.CopyIntoLocal(GameManager.Instance.World.ChunkCache, p3, true, true);
