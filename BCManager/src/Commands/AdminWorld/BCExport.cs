@@ -10,9 +10,8 @@ namespace BCM.Commands
   {
     public override void Process()
     {
-      Vector3i p1 = new Vector3i(0, 0, 0);
-      Vector3i p2 = new Vector3i(0, 0, 0);
-      //int x1 = 0, x2 = 0, y1 = 0, y2 = 0, z1 = 0, z2 = 0;
+      Vector3i p1 = new Vector3i(int.MinValue, 0, int.MinValue);
+      Vector3i p2 = new Vector3i(int.MinValue, 0, int.MinValue);
       string filename = null;
 
       if (_params.Count == 1)
@@ -46,6 +45,12 @@ namespace BCM.Commands
         if (steamId != null)
         {
           p1 = BCLocation.GetPos(steamId);
+          if (p1.x == int.MinValue)
+          {
+            SendOutput("No location stored. Use bc-loc to store a location.");
+
+            return;
+          }
           p2 = currentPos;
 
           filename = _params[0];

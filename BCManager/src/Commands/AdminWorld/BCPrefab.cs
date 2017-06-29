@@ -105,6 +105,12 @@ namespace BCM.Commands
     {
       // todo: custom block map via configs and select with /map=<mapname>, also a few options like wood->metal->concrete->steel upgrades (/upgrade=2 (steps))
 
+      // ENTITIES
+      List<int> entities = new List<int>();
+      bool bSpawnEnemies = true;//todo: toggle for sleepers?
+      //entities.Clear();
+      prefab.CopyEntitiesIntoWorld(GameManager.Instance.World, pos, entities, bSpawnEnemies);
+
       //BLOCK TRANSLATIONS
       LootPlaceholderMap _map = LootContainer.lootPlaceholderMap;
       for (int px = 0; px < prefab.size.x; px++)
@@ -115,14 +121,15 @@ namespace BCM.Commands
           {
             BlockValue bv = prefab.GetBlock(px, py, pz);
             // ENTITIES
-            List<EntityCreationData> entities = prefab.GetEntities();
-            foreach (EntityCreationData _ecd in entities)
-            {
-              _ecd.id = -1;
-              Entity entity = EntityFactory.CreateEntity(_ecd);
-              entity.SetPosition(entity.position + pos.ToVector3());
-              GameManager.Instance.World.SpawnEntityInWorld(entity);
-            }
+            //List<EntityCreationData> entities = prefab.GetEntities();
+            //foreach (EntityCreationData _ecd in entities)
+            //{
+            //  _ecd.id = -1;
+            //  Entity entity = EntityFactory.CreateEntity(_ecd);
+            //  entity.SetPosition(entity.position + pos.ToVector3());
+            //  GameManager.Instance.World.SpawnEntityInWorld(entity);
+            //}
+
 
             // LOOT PLACEHOLDERS
             if (bv.type != 0)
@@ -139,7 +146,7 @@ namespace BCM.Commands
       }
     }
 
-    private static void InsertPrefab(Prefab prefab, int x, int y, int z, Vector3i pos)
+    public static void InsertPrefab(Prefab prefab, int x, int y, int z, Vector3i pos)
     {
       if (prefab == null)
       {
@@ -181,6 +188,7 @@ namespace BCM.Commands
       //INSERT PREFAB
       prefab.CopyIntoLocal(GameManager.Instance.World.ChunkCache, pos, true, true);
       
+      //RELOAD CHUNKS
       BCChunks.ReloadForClients(modifiedChunks);
 
       //todo: after chunks have loaded on client need to check for falling and telelport on top.
@@ -348,7 +356,7 @@ namespace BCM.Commands
           // SPAWN PREFAB
           Log.Out(Config.ModPrefix + "Spawning prefab " + prefab.filename + " @ " + pos + ", size=" + prefab.size);
           SdtdConsole.Instance.Output("Spawning prefab " + prefab.filename + " @ " + pos + ", size=" + prefab.size);
-          SdtdConsole.Instance.Output("use bc-insert /undo to revert the changes");
+          SdtdConsole.Instance.Output("use bc-import /undo to revert the changes");
 
           InsertPrefab(prefab, x, y, z, pos);
 
