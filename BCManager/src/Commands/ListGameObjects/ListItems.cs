@@ -32,9 +32,21 @@ namespace BCM.Commands
       string output = "";
       if (_options.ContainsKey("json"))
       {
-        output = BCUtils.toJson(jsonObject());
-        SendOutput(output);
-      } else
+        if (_options.ContainsKey("tag"))
+        {
+          if (_options["tag"] == null)
+          {
+            _options["tag"] = "bc-items";
+          }
+
+          SendOutput("{\"tag\":\"" + _options["tag"] + "\",\"data\":" + BCUtils.toJson(jsonObject()) + "}");
+        }
+        else
+        {
+          SendOutput(BCUtils.toJson(jsonObject()));
+        }
+      }
+      else
       {
         for (var i = 0; i <= ItemClass.list.Length - 1; i++)
         {

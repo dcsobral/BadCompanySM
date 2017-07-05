@@ -115,8 +115,19 @@ namespace BCM.Commands
       string output = "";
       if (_options.ContainsKey("json"))
       {
-        output = BCUtils.toJson(jsonObject());
-        SendOutput(output);
+        if (_options.ContainsKey("tag"))
+        {
+          if (_options["tag"] == null)
+          {
+            _options["tag"] = "bc-biomes";
+          }
+
+          SendOutput("{\"tag\":\"" + _options["tag"] + "\",\"data\":" + BCUtils.toJson(jsonObject()) + "}");
+        }
+        else
+        {
+          SendOutput(BCUtils.toJson(jsonObject()));
+        }
       }
       else
       {

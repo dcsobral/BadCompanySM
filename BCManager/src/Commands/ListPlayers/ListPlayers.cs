@@ -58,7 +58,7 @@ namespace BCM.Commands
         {
           if (_options.ContainsKey("tag"))
           {
-            if (_options["tag"] == "")
+            if (_options["tag"] == null)
             {
               _options["tag"] = "bc-lp";
             }

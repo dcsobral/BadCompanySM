@@ -55,7 +55,20 @@ namespace BCM.Commands
       output = output.Substring(0, output.Length - 1);
       output += "}";
 
-      SdtdConsole.Instance.Output(output);
+      if (_options.ContainsKey("tag"))
+      {
+        if (_options["tag"] == null)
+        {
+          _options["tag"] = "bc-pfinfo";
+        }
+
+        SendOutput("{\"tag\":\"" + _options["tag"] + "\",\"data\":" + output + "}");
+      }
+      else
+      {
+        SendOutput(output);
+      }
+
 
     }
   }

@@ -219,8 +219,20 @@ namespace BCM.Commands
       //}
       //data.Add("Prefabs", BCUtils.toJson(_prefabs));
 
-      output = BCUtils.toJson(data);
-      SendOutput(output);
+      if (_options.ContainsKey("tag"))
+      {
+        if (_options["tag"] == null)
+        {
+          _options["tag"] = "bc-rwg";
+        }
+
+        SendOutput("{\"tag\":\"" + _options["tag"] + "\",\"data\":" + BCUtils.toJson(data) + "}");
+      }
+      else
+      {
+        SendOutput(BCUtils.toJson(data));
+      }
+
     }
   }
 }
