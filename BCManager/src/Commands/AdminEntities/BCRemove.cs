@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BCM.Commands
 {
-  public class RemoveEntities : BCCommandAbstract
+  public class BCRemove : BCCommandAbstract
   {
     public override void Process()
     {

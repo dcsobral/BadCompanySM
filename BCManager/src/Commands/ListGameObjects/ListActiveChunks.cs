@@ -29,12 +29,12 @@ namespace BCM.Commands
             chunk.Add("x", current.X.ToString());
             chunk.Add("z", current.Z.ToString());
             chunk.Add("displayed", current.IsDisplayed.ToString());
-            chunk.Add("meshlayercount", current.MeshLayerCount.ToString());
+            //chunk.Add("meshlayercount", current.MeshLayerCount.ToString());
 
-            //calc
-            //details.Add("usedMem", current.GetUsedMem().ToString());
-            //details.Add("mem", (current.GetUsedMem() / 1024).ToString());
-            chunk.Add("chunkmem", (current.GetUsedMem() / 1048576).ToString() + "MB");
+            chunk.Add("usedMem", current.GetUsedMem().ToString());
+            chunk.Add("DominantBiome", current.DominantBiome.ToString());
+            //chunk.Add("mem", (current.GetUsedMem() / 1024).ToString());
+            //chunk.Add("chunkmem", (current.GetUsedMem() / 1048576).ToString() + "MB");
             chunks.Add(num++.ToString(),BCUtils.toJson(chunk));
           }
           data.Add("chunks", BCUtils.toJson(chunks));

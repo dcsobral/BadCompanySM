@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace BCM.Commands
 {
-  public class BCPrefab : BCCommandAbstract
+  public class BCImport : BCCommandAbstract
   {
     public class PrefabCache
     {
@@ -107,9 +107,9 @@ namespace BCM.Commands
 
       // ENTITIES
       List<int> entities = new List<int>();
-      bool bSpawnEnemies = true;//todo: toggle for sleepers?
+//      bool bSpawnEnemies = true;//todo: toggle for sleepers?
       //entities.Clear();
-      prefab.CopyEntitiesIntoWorld(GameManager.Instance.World, pos, entities, bSpawnEnemies);
+      prefab.CopyEntitiesIntoWorld(GameManager.Instance.World, pos, entities, prefab.bSleeperVolumes);// bSpawnEnemies
 
       //BLOCK TRANSLATIONS
       LootPlaceholderMap _map = LootContainer.lootPlaceholderMap;
@@ -199,7 +199,7 @@ namespace BCM.Commands
 
     }
 
-    private void CreateUndo(EntityPlayer sender, Prefab prefab, Vector3i pos)
+    private void CreateUndo(EntityPlayer sender, Vector3i size, Vector3i pos)
     {
       string steamId = "_server";
       if (_senderInfo.RemoteClientInfo != null)
@@ -209,7 +209,7 @@ namespace BCM.Commands
 
       Prefab _areaCache = new Prefab();
       int _userID = 0; // id will be 0 for web console issued commands
-      _areaCache.CopyFromWorld(GameManager.Instance.World, pos, new Vector3i(pos.x + prefab.size.x, pos.y + prefab.size.y, pos.z + prefab.size.z));
+      _areaCache.CopyFromWorld(GameManager.Instance.World, pos, new Vector3i(pos.x + size.x, pos.y + size.y, pos.z + size.z));
       _areaCache.bCopyAirBlocks = true;
 
       if (sender != null)
@@ -350,7 +350,7 @@ namespace BCM.Commands
           //create backup of area prefab will insert to
           if (!_options.ContainsKey("noundo"))
           {
-            CreateUndo(sender, prefab, pos);
+            CreateUndo(sender, prefab.size, pos);
           }
 
           // SPAWN PREFAB

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace BCM.Models
 {
@@ -31,6 +30,7 @@ namespace BCM.Models
       {
         postype = "csvpos";
       }
+
       return postype;
     }
 

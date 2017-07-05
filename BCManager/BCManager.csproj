@@ -61,15 +61,18 @@
   <ItemGroup>
     <Compile Include="src\API.cs" />
     <Compile Include="src\Classes\EntityZombie.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCSpawn.cs" />
     <Compile Include="src\Commands\AdminEntities\GiveBuffToEntity.cs" />
-    <Compile Include="src\Commands\AdminEntities\RemoveEntities.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCRemove.cs" />
     <Compile Include="src\Commands\AdminEntities\RemoveBuffFromEntity.cs" />
     <Compile Include="src\Commands\AdminPlayers\GiveBuffToPlayer.cs" />
     <Compile Include="src\Commands\AdminPlayers\RemoveBuffFromPlayer.cs" />
+    <Compile Include="src\Commands\AdminWorld\BCVisitRegion.cs" />
+    <Compile Include="src\Commands\AdminWorld\BCReset.cs" />
     <Compile Include="src\Commands\AdminWorld\BCLocation.cs" />
     <Compile Include="src\Commands\AdminWorld\BCWorldBlocks.cs" />
     <Compile Include="src\Commands\AdminWorld\BCExport.cs" />
-    <Compile Include="src\Commands\AdminWorld\BCPrefab.cs" />
+    <Compile Include="src\Commands\AdminWorld\BCImport.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListActiveChunks.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListRWG.cs" />
@@ -116,7 +119,6 @@
     <Compile Include="src\Commands\Neurons\BroadcastAPI.cs" />
     <Compile Include="src\Commands\Settings\Settings.cs" />
     <Compile Include="src\Commands\Test.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersExtensive.cs" />
     <Compile Include="src\Commands\AdminEntities\ListEntities.cs" />
     <Compile Include="src\Commands\ListPlayers\ListPlayersGamestage.cs" />
     <Compile Include="src\Commands\Utility\MemTrash.cs" />
@@ -606,6 +608,18 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Config\Commands\en\Help\BCWorldBlocks.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\Commands\en\Help\BCLocation.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\Commands\en\Help\BCImport.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\Commands\en\Help\BCExport.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="Config\Motd.xml" />
   </ItemGroup>
   <ItemGroup>

@@ -56,8 +56,20 @@ namespace BCM.Commands
         }
         if (_options.ContainsKey("json"))
         {
-          SendOutput(BCUtils.toJson(data));
-        } else if (players.Count > 0) {
+          if (_options.ContainsKey("tag"))
+          {
+            if (_options["tag"] == "")
+            {
+              _options["tag"] = "bc-lp";
+            }
+
+            SendOutput("{\"tag\":\"" + _options["tag"] + "\",\"data\":" + BCUtils.toJson(data) + "}");
+          } else
+          {
+            SendOutput(BCUtils.toJson(data));
+          }
+        }
+        else if (players.Count > 0) {
           SendOutput("Total of " + players.Count + " player data files");
         }
       }
@@ -75,54 +87,60 @@ namespace BCM.Commands
       if (_options.ContainsKey("details"))
       {
         data.Add("playerInfo", BCUtils.toJson(new ClientInfoList(_pInfo, _options).GetInfo()) ?? "");
-        //data.Add("playerStats", BCUtils.toJson(new StatsList(_pInfo, _options).GetStats()) ?? "");
-        //data.Add("playersGamestage", BCUtils.toJson(new ListPlayersGamestage().jsonPlayer(_pInfo)) ?? "");
-
-        if (_options.ContainsKey("1"))
+        if (_options.ContainsKey("st") || _options.ContainsKey("full"))
+        {
+          data.Add("playerStats", BCUtils.toJson(new StatsList(_pInfo, _options).GetStats()) ?? "");
+        }
+        if (_options.ContainsKey("gs") || _options.ContainsKey("full"))
+        {
+          data.Add("playersGamestage", BCUtils.toJson(new ListPlayersGamestage().jsonPlayer(_pInfo)) ?? "");
+        }
+        if (_options.ContainsKey("bg") || _options.ContainsKey("full"))
         {
           data.Add("playerBag", BCUtils.toJson(new ListPlayersBag().jsonPlayer(_pInfo)) ?? "");
         }
-        if (_options.ContainsKey("2"))
+        if (_options.ContainsKey("bu") || _options.ContainsKey("full"))
         {
           data.Add("playerBuffs", BCUtils.toJson(new ListPlayersBuffs().jsonPlayer(_pInfo)) ?? "");
         }
-        if (_options.ContainsKey("3"))
+        if (_options.ContainsKey("cq") || _options.ContainsKey("full"))
         {
           data.Add("playerCraftingQueue", BCUtils.toJson(new ListPlayersCraftingQueue().jsonPlayer(_pInfo)) ?? "");
         }
-        if (_options.ContainsKey("4"))
+        if (_options.ContainsKey("pe") || _options.ContainsKey("full"))
         {
           data.Add("playersEquipment", BCUtils.toJson(new ListPlayersEquipment().jsonPlayer(_pInfo)) ?? "");
         }
-        if (_options.ContainsKey("5"))
+        if (_options.ContainsKey("fr") || _options.ContainsKey("full"))
         {
           data.Add("playersFavRecipes", BCUtils.toJson(new ListPlayersFavRecipes().jsonPlayer(_pInfo)) ?? "");
         }
-        if (_options.ContainsKey("6"))
+        if (_options.ContainsKey("pq") || _options.ContainsKey("full"))
         {
           data.Add("playersQuests", BCUtils.toJson(new ListPlayersQuests().jsonPlayer(_pInfo)) ?? "");
         }
-        if (_options.ContainsKey("7"))
+        if (_options.ContainsKey("pr") || _options.ContainsKey("full"))
         {
           data.Add("playersRecipes", BCUtils.toJson(new ListPlayersRecipes().jsonPlayer(_pInfo)) ?? "");
         }
-        if (_options.ContainsKey("8"))
+        if (_options.ContainsKey("ps") || _options.ContainsKey("full"))
         {
           data.Add("playersSkills", BCUtils.toJson(new ListPlayersSkills().jsonPlayer(_pInfo)) ?? "");
         }
-        if (_options.ContainsKey("9"))
+        if (_options.ContainsKey("sp") || _options.ContainsKey("full"))
         {
-          //data.Add("playersSpawns", BCUtils.toJson(new ListPlayersSpawns().jsonPlayer(_pInfo)) ?? "");
+          data.Add("playersSpawns", BCUtils.toJson(new ListPlayersSpawns().jsonPlayer(_pInfo)) ?? "");
         }
-        if (_options.ContainsKey("a"))
+        if (_options.ContainsKey("tb") || _options.ContainsKey("full"))
         {
           data.Add("playersToolbelt", BCUtils.toJson(new ListPlayersToolbelt().jsonPlayer(_pInfo)) ?? "");
         }
-          //data.Add("playersWaypoints", BCUtils.toJson(new ListPlayersWaypoints().jsonPlayer(_pInfo)) ?? "");
-
-
+        if (_options.ContainsKey("wp") || _options.ContainsKey("full"))
+        {
+          data.Add("playersWaypoints", BCUtils.toJson(new ListPlayersWaypoints().jsonPlayer(_pInfo)) ?? "");
         }
-        else
+      }
+      else
       {
         Dictionary<string, string> info = new ClientInfoList(_pInfo, _options).GetInfo();
         Dictionary<string, string> stats = new StatsList(_pInfo, _options).GetStats();

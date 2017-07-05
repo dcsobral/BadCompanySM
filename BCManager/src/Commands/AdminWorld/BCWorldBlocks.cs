@@ -16,9 +16,8 @@ namespace BCM.Commands
     }
 
     public Dictionary<int, List<PrefabCache>> _cache = new Dictionary<int, List<PrefabCache>>();
-
-
-    private void CreateUndo(EntityPlayer sender, Prefab prefab, Vector3i pos)
+    
+    private void CreateUndo(EntityPlayer sender, Vector3i size, Vector3i pos)
     {
       string steamId = "_server";
       if (_senderInfo.RemoteClientInfo != null)
@@ -28,7 +27,7 @@ namespace BCM.Commands
 
       Prefab _areaCache = new Prefab();
       int _userID = 0; // id will be 0 for web console issued commands
-      _areaCache.CopyFromWorld(GameManager.Instance.World, pos, new Vector3i(pos.x + prefab.size.x, pos.y + prefab.size.y, pos.z + prefab.size.z));
+      _areaCache.CopyFromWorld(GameManager.Instance.World, pos, new Vector3i(pos.x + size.x, pos.y + size.y, pos.z + size.z));
       _areaCache.bCopyAirBlocks = true;
 
       if (sender != null)
@@ -68,11 +67,13 @@ namespace BCM.Commands
           {
             Prefab _p = new Prefab();
             _p.Load(Utils.GetGameDir(dirbase), prefabCache.filename);
-            BCPrefab.InsertPrefab(_p, prefabCache.pos.x, prefabCache.pos.y, prefabCache.pos.z, prefabCache.pos);
+            BCImport.InsertPrefab(_p, prefabCache.pos.x, prefabCache.pos.y, prefabCache.pos.z, prefabCache.pos);
 
             //workaround for multi dim blocks, insert undo prefab twice
-            //todo: clear all blocks (turn to air) before inserting the prefab instead
-            BCPrefab.InsertPrefab(_p, prefabCache.pos.x, prefabCache.pos.y, prefabCache.pos.z, prefabCache.pos);
+            //todo: clear all blocks (turn to air) before inserting the prefab instead?
+            //      multidim blocks with parent blocks outside the area need to be stored in undo data and then removed
+            //      other multidim blocks need to have checks for child block and if found remove parent and all children 
+            BCImport.InsertPrefab(_p, prefabCache.pos.x, prefabCache.pos.y, prefabCache.pos.z, prefabCache.pos);
           }
           _cache[_userID].RemoveAt(_cache[_userID].Count - 1);
           if (Utils.FileExists(Utils.GetGameDir(dirbase + prefabCache.filename + ".tts")))
@@ -89,11 +90,15 @@ namespace BCM.Commands
 
     public override void Process()
     {
+      //todo: multidim blocks
+      //      claim stones replaced need to be removed from persistent data.
+      //      map visitor for unloaded chunks
+      //todo: damage
       Vector3i p1 = new Vector3i(int.MinValue, 0, int.MinValue);
       Vector3i p2 = new Vector3i(int.MinValue, 0, int.MinValue);
       string blockname = null;
+      string blockname2 = null;
       int _blockID = 0;
-
 
       //get loc and player current pos
       EntityPlayer sender = null;
@@ -126,7 +131,7 @@ namespace BCM.Commands
         return;
       }
 
-      if (_params.Count == 1)
+      if (_params.Count == 1 || _params.Count == 2)
       {
 
         if (steamId != null)
@@ -140,6 +145,10 @@ namespace BCM.Commands
           }
 
           blockname = _params[0];
+          if (_params.Count == 2)
+          {
+            blockname2 = _params[1];
+          }
         }
         else
         {
@@ -148,7 +157,7 @@ namespace BCM.Commands
           return;
         }
       }
-      else if (_params.Count == 7)
+      else if (_params.Count == 7 || _params.Count == 8)
       {
         //parse params
         if (!int.TryParse(_params[0], out p1.x) || !int.TryParse(_params[1], out p1.y) || !int.TryParse(_params[2], out p1.z) || !int.TryParse(_params[3], out p2.x) || !int.TryParse(_params[4], out p2.y) || !int.TryParse(_params[5], out p2.z))
@@ -158,6 +167,10 @@ namespace BCM.Commands
           return;
         }
         blockname = _params[6];
+        if (_params.Count == 8)
+        {
+          blockname2 = _params[7];
+        }
       }
       else
       {
@@ -174,14 +187,14 @@ namespace BCM.Commands
         (p1.y < p2.y ? p1.y : p2.y),
         (p1.z < p2.z ? p1.z : p2.z)
       );
+      //todo: check that can just use p3 + size instead
       var p4 = new Vector3i(
         (p1.x == p2.x ? p1.x + 1 : p1.x > p2.x ? p1.x : p2.x),
         (p1.y == p2.y ? p1.y + 1 : p1.y > p2.y ? p1.y : p2.y),
         (p1.z == p2.z ? p1.z + 1 : p1.z > p2.z ? p1.z : p2.z)
       );
 
-
-      //Get BlockValue
+      //**************** GET BLOCKVALUE
       BlockValue _bv = BlockValue.Air;
       if (int.TryParse(blockname, out _blockID))
       {
@@ -192,11 +205,28 @@ namespace BCM.Commands
         _bv = Block.GetBlockValue(blockname);
       }
 
-      //Make prefab
-      Prefab _prefab = new Prefab(size);
+      //**************** CREATE PREFAB
+      //Prefab _prefab = new Prefab(size);
+      //_prefab.bCopyAirBlocks = true;
+      //_prefab.bExcludeDistantPOIMesh = true;
+      //_prefab.distantPOIYOffset = 0;
+      //_prefab.bAllowTopSoilDecorations = false;
+      //_prefab.bTraderArea = false;
+      //_prefab.SleeperVolumesStart = new List<Vector3i>();
+
+      Dictionary<long, Chunk> modifiedChunks = GetAffectedChunks(p3, size);
+
+      //CREATE UNDO
+      //create backup of area prefab will insert to
+      if (!_options.ContainsKey("noundo"))
+      {
+        //todo: use BlockTools.CopyIntoStorage to get prefab, then save to cache
+        CreateUndo(sender, size, p3);
+      }
+
       if (_options.ContainsKey("swap"))
       {
-
+        if (!SwapBlocks(size, p3, p4, _bv, blockname2, modifiedChunks)) { return; }
       }
       else if (_options.ContainsKey("chown"))
       {
@@ -206,64 +236,23 @@ namespace BCM.Commands
       {
         //options: randomise, smooth, default
       }
-      else
-      //if (_options.ContainsKey("fill"))
+      else if (_options.ContainsKey("scan"))
       {
-        for (int i = 0; i < size.x; i++)
-        {
-          for (int j = 0; j < size.y; j++)
-          {
-            for (int k = 0; k < size.z; k++)
-            {
-              _prefab.SetBlock(i, j, k, _bv);
-
-              //sbyte density = this.GetDensity(i, k, j);
-              Block block2 = Block.list[_bv.type];
-              if (block2 == null)
-              {
-                SdtdConsole.Instance.Output("Unable to find block by id or name");
-
-                return;
-              }
-              if (block2.shape.IsTerrain())
-              {
-                _prefab.SetDensity(i, k, j, MarchingCubes.DensityTerrain);//-128
-              }
-              else
-              {
-                if (_bv.Equals(BlockValue.Air))
-                {
-                  _prefab.SetDensity(i, k, j, MarchingCubes.DensityAir);//127
-                }
-                //_prefab.SetDensity(i, k, j, 1);
-              }
-              //_prefab.SetTexture(i, j, k, 0);
-            }
-          }
-        }
+        if (!ScanBlocks(size, p3, _bv)) { return; }
       }
-
-
-      //todo: make a function that can be called on Import to place the prefab, returns the undo data to be stored in this func for bc-block /undo
-      _prefab.bCopyAirBlocks = true;
-      _prefab.bExcludeDistantPOIMesh = true;
-      _prefab.distantPOIYOffset = 0;
-      _prefab.bAllowTopSoilDecorations = false;
-      _prefab.bTraderArea = false;
-      _prefab.SleeperVolumesStart = new List<Vector3i>();
-
-      //CREATE UNDO
-      //create backup of area prefab will insert to
-      if (!_options.ContainsKey("noundo"))
+      else //if (_options.ContainsKey("fill"))
       {
-        CreateUndo(sender, _prefab, p3);
+        if (!FillBlocks(size, p3, p4, _bv, /*_prefab, */modifiedChunks)) { return; }
       }
+    }
 
+    private static Dictionary<long, Chunk> GetAffectedChunks(Vector3i p3, Vector3i size)
+    {
       //GET AFFECTED CHUNKS
       Dictionary<long, Chunk> modifiedChunks = new Dictionary<long, Chunk>();
-      for (int cx = -1; cx <= _prefab.size.x + 16; cx = cx + 16)
+      for (int cx = -1; cx <= size.x + 16; cx = cx + 16)
       {
-        for (int cz = -1; cz <= _prefab.size.z + 16; cz = cz + 16)
+        for (int cz = -1; cz <= size.z + 16; cz = cz + 16)
         {
           if (GameManager.Instance.World.IsChunkAreaLoaded(p3.x + cx, p3.y, p3.z + cz))
           {
@@ -275,20 +264,263 @@ namespace BCM.Commands
           }
           else
           {
+            //GameManager.Instance.World.m_ChunkManager.ReloadAllChunks();
+            //var key = WorldChunkCache.MakeChunkKey(World.toChunkXZ(p3.x), World.toChunkXZ(p3.z));
             SdtdConsole.Instance.Output("Unable to load chunk for insert @ " + (p3.x + cx) + "," + (p3.z + cz));
           }
         }
       }
 
-      SendOutput("Inserting block '" + _bv.Block.GetBlockName() + "' @ " + p3 + " to " + p4);
+      return modifiedChunks;
+    }
+
+    private bool SwapBlocks(Vector3i size, Vector3i p3, Vector3i p4, BlockValue _newbv, string blockname, Dictionary<long, Chunk> modifiedChunks)
+    {
+      int _blockID = 0;
+      BlockValue _targetbv = BlockValue.Air;
+      if (int.TryParse(blockname, out _blockID))
+      {
+        _targetbv = Block.GetBlockValue(_blockID);
+      }
+      else
+      {
+        _targetbv = Block.GetBlockValue(blockname);
+      }
+
+      var _clrIdx = 0;
+      var counter = 0;
+
+      Block block1 = Block.list[_targetbv.type];
+      if (block1 == null)
+      {
+        SdtdConsole.Instance.Output("Unable to find target block by id or name");
+
+        return false;
+      }
+
+      Block block2 = Block.list[_newbv.type];
+      if (block2 == null)
+      {
+        SdtdConsole.Instance.Output("Unable to find replacement block by id or name");
+
+        return false;
+      }
+      
+      for (int i = 0; i < size.x; i++)
+      {
+        for (int j = 0; j < size.y; j++)
+        {
+          for (int k = 0; k < size.z; k++)
+          {
+            sbyte _density = 1;
+            long _textureFull = 0L;
+
+            if (_newbv.Equals(BlockValue.Air))
+            {
+              _density = MarchingCubes.DensityAir;
+            }
+            else if (block1.shape.IsTerrain())
+            {
+              _density = MarchingCubes.DensityTerrain;
+            }
+            else if (!block1.shape.IsTerrain())
+            {
+              _density = 1;
+            }
+
+            Vector3i p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            if (GameManager.Instance.World.GetBlock(p5).Block.GetBlockName() == block1.GetBlockName())
+            {
+              GameManager.Instance.World.SetBlock(_clrIdx, p5, _newbv, false, false);
+              GameManager.Instance.World.SetDensity(_clrIdx, p5, _density, false);
+              GameManager.Instance.World.SetTexture(_clrIdx, p5.x, p5.y, p5.z, _textureFull);
+              counter++;
+            }
+          }
+        }
+      }
+
+      SendOutput("Replaced " + counter + " '" + block1.GetBlockName() + "' blocks with '" + block2.GetBlockName() + "' @ " + p3 + " to " + p4);
       SendOutput("Use bc-wblock /undo to revert the changes");
 
       //INSERT PREFAB
-      _prefab.CopyIntoLocal(GameManager.Instance.World.ChunkCache, p3, true, true);
+      //_prefab.CopyIntoLocal(GameManager.Instance.World.ChunkCache, p3, true, true);
 
       //RELOAD CHUNKS
       BCChunks.ReloadForClients(modifiedChunks);
 
+      return true;
+    }
+
+    private bool FillBlocks(Vector3i size, Vector3i p3, Vector3i p4, BlockValue _bv, Dictionary<long, Chunk> modifiedChunks)
+    {
+      var _clrIdx = 0;
+
+      Block block1 = Block.list[_bv.type];
+      if (block1 == null)
+      {
+        SdtdConsole.Instance.Output("Unable to find block by id or name");
+
+        return false;
+      }
+
+      //MULTIDIM REMOVE
+      for (int i = 0; i < size.x; i++)
+      {
+        for (int k = 0; k < size.z; k++)
+        {
+          for (int j = 0; j < size.y; j++) {
+            Vector3i p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+
+            Chunk _chunk = GameManager.Instance.World.GetChunkFromWorldPos(p5) as Chunk;
+            var _bv_curr = GameManager.Instance.World.GetBlock(p5);
+            if (!_bv_curr.ischild)
+            {
+              _bv_curr.Block.shape.OnBlockRemoved(GameManager.Instance.World, _chunk, p5, _bv_curr);
+              if (_bv_curr.Block.isMultiBlock)
+              {
+                _bv_curr.Block.multiBlockPos.RemoveChilds(GameManager.Instance.World, _chunk.ClrIdx, p5, _bv_curr);
+              }
+            }
+            else if (_bv_curr.Block.isMultiBlock)
+            {
+              _bv_curr.Block.multiBlockPos.RemoveParentBlock(GameManager.Instance.World, _chunk.ClrIdx, p5, _bv_curr);
+            }
+            //todo: need to store these blocks in undo data if parent is outside area
+          }
+        }
+      }
+      
+      //repeat process twice because of issues with multidim
+      for (int a = 0; a < 2; a++)
+      {
+        for (int j = 0; j < size.y; j++)
+        {
+          for (int i = 0; i < size.x; i++)
+          {
+            for (int k = 0; k < size.z; k++)
+            {
+              sbyte _density = 1;
+              long _textureFull = 0L;
+
+              if (_bv.Equals(BlockValue.Air))
+              {
+                _density = MarchingCubes.DensityAir;
+              }
+              else if (block1.shape.IsTerrain())
+              {
+                _density = MarchingCubes.DensityTerrain;
+              }
+              else if (!block1.shape.IsTerrain())
+              {
+                _density = 1;
+              }
+
+              Vector3i p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+              GameManager.Instance.World.SetBlock(_clrIdx, p5, _bv, false, false);
+              GameManager.Instance.World.SetDensity(_clrIdx, p5, _density, false);
+              GameManager.Instance.World.SetTexture(_clrIdx, p5.x, p5.y, p5.z, _textureFull);
+            }
+          }
+        }
+      }
+
+      SendOutput("Inserting block '" + block1.GetBlockName() + "' @ " + p3 + " to " + p4);
+      SendOutput("Use bc-wblock /undo to revert the changes");
+
+      //RELOAD CHUNKS
+      BCChunks.ReloadForClients(modifiedChunks);
+
+      return true;
+    }
+
+    private bool ScanBlocks(Vector3i size, Vector3i p3, BlockValue _bv)
+    {
+      SdtdConsole.Instance.Output("Command Unavilable. To be implemented.");
+      return false;
+
+      Block block1 = Block.list[_bv.type];
+      if (block1 == null && _params[0] != "*")
+      {
+        SdtdConsole.Instance.Output("Unable to find block by id or name");
+
+        return false;
+      }
+
+      var stats = new Dictionary<string, int>();
+      //var density = new Dictionary<string, List<int>>();
+      var _clrIdx = 0;
+      for (int j = 0; j < size.y; j++) 
+      {
+        for (int i = 0; i < size.x; i++) 
+        {
+          for (int k = 0; k < size.z; k++)
+          {
+            Vector3i p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            var b = GameManager.Instance.World.GetBlock(_clrIdx, p5);
+            //var d = GameManager.Instance.World.GetDensity(_clrIdx, p5);
+            //var t = GameManager.Instance.World.GetTexture(i + p3.x, j + p3.y, k + p3.z);
+            if (_params[0] == "*")
+            {
+              if (b.Block.GetBlockName() != null)
+              {
+                stats[b.Block.GetBlockName()] = stats[b.Block.GetBlockName()] + 1;// + "_t_" + t.ToString()
+                //density[b.Block.GetBlockName()].Add(d);
+              }
+            }
+            else if (block1.GetBlockName() == b.Block.GetBlockName())
+            {
+              if (b.Block.GetBlockName() != null)
+              {
+                stats[b.Block.GetBlockName()] = stats[b.Block.GetBlockName()] + 1;
+                //density[b.Block.GetBlockName()].Add(d);
+              }
+            }
+          }
+        }
+      }
+
+      if (block1 != null)
+      {
+        SendOutput("Block stats for block " + block1.GetBlockName());
+      }
+      else
+      {
+        SendOutput("Block stats for all blocks");
+      }
+      foreach (var stat in stats)
+      {
+        SendOutput(stat.Key + ":" + stat.Value.ToString());
+      }
+      //if (_options.ContainsKey("density"))
+      //{
+      //  if (block1 != null)
+      //  {
+      //    SendOutput("Block density for block " + block1.GetBlockName());
+      //  }
+      //  else
+      //  {
+      //    SendOutput("Block density for all blocks");
+      //  }
+      //  foreach (var den in density)
+      //  {
+      //    string o = "";
+      //    int t = 0;
+      //    den.Value.Sort();
+      //    foreach (var i in den.Value)
+      //    {
+      //      o += i.ToString() + ",";
+      //      t += i;
+      //    }
+      //    SendOutput(den.Key + ":" + o.Substring(0, o.Length - 2) + " - Av:" + (t / den.Value.Count).ToString());
+      //  }
+      //}
+
+      return true;
+    }
+
+    private void Notes ()
+    {
       //  //bc-wblocks - lists options / help details (see below)
       //  //  <co-ords> = 2x vector3i pos
 
@@ -316,10 +548,6 @@ namespace BCM.Commands
       //  //bc-block prefab /nopartial /2d - renders a prefab in the area defined repeating the prefab to fill the area, optional on nopartial to prevent the insertion of partial prefabs at the edges of the area. 2d optional to only draw 1 layer of prefabs rather than stacking them (default)
       //  //bc-chunk reset - resets the chunk to its rwg original state
       //  //bc-chunk reload <player> - reloads the chunks in that players loaded chunk list
-
-
-
-
     }
   }
 }

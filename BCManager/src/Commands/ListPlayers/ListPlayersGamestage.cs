@@ -7,7 +7,12 @@ namespace BCM.Commands
   {
     public override Dictionary<string, string> jsonPlayer(PlayerInfo _pInfo)
     {
-      return null;
+      Dictionary<string, string> data = new Dictionary<string, string>();
+
+      Dictionary<string, string> stats = new StatsList(_pInfo, _options).GetStats();
+      data.Add(_pInfo._steamId, stats["Gamestage"]);
+
+      return data;
     }
     public override string displayPlayer(PlayerInfo _pInfo)
     {

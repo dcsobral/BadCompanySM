@@ -14,7 +14,6 @@
   <Command name="ListPlayersClientInfo" commands="bc-lpci,bc-lpcinfo" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersCraftingQueue" commands="bc-lpcrafts,bc-lpcraft" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersEquipment" commands="bc-lpequip" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersExtensive" commands="bc-lpx,bc-x" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersFavRecipes" commands="bc-lpfavs,bc-lpfav" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersGamestage" commands="bc-lpgs,bc-gs" defaultpermissionlevel="0" defaultoptions="online"/>
   <Command name="ListPlayersId" commands="bc-lpids,bc-lpid" defaultpermissionlevel="0" defaultoptions="online"/>
@@ -69,12 +68,15 @@
   <Command name="ListEntities" commands="bc-le" defaultpermissionlevel="0" defaultoptions="nl,alive"/>
   <Command name="GiveBuffToEntity" commands="bc-geb,bc-gebuff" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="RemoveBuffFromEntity" commands="bc-reb,bc-debuff,bc-rembuff" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCRemove" commands="bc-remove,remove" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCSpawn" commands="bc-spawn,spawn" defaultpermissionlevel="0" defaultoptions=""/>
 
   <!-- Admin World -->
-  <Command name="BCPrefab" commands="bc-import,import" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCImport" commands="bc-import,import" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCExport" commands="bc-export,export" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCWorldBlocks" commands="bc-wblocks,block" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCLocation" commands="bc-loc,loc,pos" defaultpermissionlevel="1000" defaultoptions=""/>
+  <Command name="BCVisitRegion" commands="bc-visitregion,visit" defaultpermissionlevel="0" defaultoptions=""/>
 
   <!-- UTILITY -->
   <Command name="Settings" commands="bc-settings,set" defaultpermissionlevel="0"/>

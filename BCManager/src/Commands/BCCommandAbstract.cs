@@ -7,8 +7,8 @@ namespace BCM.Commands
   public class BCCommandAbstract : ConsoleCmdAbstract
   {
     public CommandSenderInfo _senderInfo;
-    public List<string> _params = null;
-    public Dictionary<string,string> _options = null;
+    public List<string> _params = new List<string>();
+    public Dictionary<string,string> _options = new Dictionary<string, string>();
     public string _sep = "";
 
     public override string GetDescription()
