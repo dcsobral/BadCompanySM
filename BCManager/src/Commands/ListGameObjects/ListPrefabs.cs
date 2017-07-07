@@ -11,7 +11,16 @@ namespace BCM.Commands
       Dictionary<string, string> data = new Dictionary<string, string>();
 
       string prefabsGameDir = Utils.GetGameDir("Data/Prefabs");
-      List<string> prefabs = GetStoredPrefabs(prefabsGameDir);
+
+      List<string> prefabs = new List<string>();
+      if (_params.Count > 0)
+      {
+        prefabs = GetStoredPrefabs(prefabsGameDir, _params[0]);
+      }
+      else
+      {
+        prefabs = GetStoredPrefabs(prefabsGameDir);
+      }
 
       var i = 0;
       foreach (string _name in prefabs)
@@ -32,14 +41,14 @@ namespace BCM.Commands
             details.Add("distantPOIYOffset", prefab.distantPOIYOffset.ToString());
             details.Add("rotationToFaceNorth", prefab.rotationToFaceNorth.ToString());
             details.Add("size", (prefab.size != null ? prefab.size.x.ToString() + "-" + prefab.size.y.ToString() : ""));
-            details.Add("StaticSpawnerClass", (prefab.StaticSpawnerClass != null ? prefab.StaticSpawnerClass : ""));
-            details.Add("StaticSpawnerCreated", prefab.StaticSpawnerCreated.ToString());
-            details.Add("StaticSpawnerSize", (prefab.StaticSpawnerSize != null ? prefab.StaticSpawnerSize.x.ToString() + "-" + prefab.StaticSpawnerSize.y.ToString() + "-" + prefab.StaticSpawnerSize.z.ToString() : ""));
-            details.Add("StaticSpawnerTrigger", prefab.StaticSpawnerTrigger.ToString());
+            //details.Add("StaticSpawnerClass", (prefab.StaticSpawnerClass != null ? prefab.StaticSpawnerClass : ""));
+            //details.Add("StaticSpawnerCreated", prefab.StaticSpawnerCreated.ToString());
+            //details.Add("StaticSpawnerSize", (prefab.StaticSpawnerSize != null ? prefab.StaticSpawnerSize.x.ToString() + "-" + prefab.StaticSpawnerSize.y.ToString() + "-" + prefab.StaticSpawnerSize.z.ToString() : ""));
+            //details.Add("StaticSpawnerTrigger", prefab.StaticSpawnerTrigger.ToString());
             details.Add("TraderAreaProtect", (prefab.TraderAreaProtect != null ? prefab.TraderAreaProtect.x.ToString() + "-" + prefab.TraderAreaProtect.y.ToString() + "-" + prefab.TraderAreaProtect.z.ToString() : ""));
             details.Add("TraderAreaTeleportCenter", (prefab.TraderAreaTeleportCenter != null ? prefab.TraderAreaTeleportCenter.x.ToString() + "-" + prefab.TraderAreaTeleportCenter.y.ToString() + "-" + prefab.TraderAreaTeleportCenter.z.ToString() : ""));
             details.Add("TraderAreaTeleportSize", (prefab.TraderAreaTeleportSize != null ? prefab.TraderAreaTeleportSize.x.ToString() + "-" + prefab.TraderAreaTeleportSize.y.ToString() + "-" + prefab.TraderAreaTeleportSize.z.ToString() : ""));
-            details.Add("Transient_NumSleeperSpawns", prefab.Transient_NumSleeperSpawns.ToString());
+            //details.Add("Transient_NumSleeperSpawns", prefab.Transient_NumSleeperSpawns.ToString());
             details.Add("yOffset", prefab.yOffset.ToString());
 
             Dictionary<string, Dictionary<string,string>> _sleeperVolumes = new Dictionary<string, Dictionary<string, string>>();
@@ -178,37 +187,71 @@ namespace BCM.Commands
             }
             details.Add("Entities", BCUtils.toJson(_entities));
 
-            //List<string> _blocks = new List<string>();
-            //for (var x = 0; x < prefab.size.x; x++)
-            //{
-            //  for (var y = 0; y < prefab.size.y; y++)
-            //  {
-            //    for (var z = 0; z < prefab.size.z; z++)
-            //    {
-            //      Dictionary<string, string> _block = new Dictionary<string, string>();
-            //      BlockValue Block = prefab.GetBlock(x, y, z);
-            //      //_block.Add("pos", x.ToString() + "-" + y.ToString() + "-" + z.ToString());
-            //      //_block.Add("type", Block.type.ToString());
-            //      //_block.Add("rotation", Block.rotation.ToString());
-            //      //_block.Add("damage", Block.damage.ToString());
-            //      //_block.Add("decalface", Block.decalface.ToString());
-            //      //_block.Add("decaltex", Block.decaltex.ToString());
-            //      //_block.Add("texture", prefab.GetTexture(x, y, z).ToString());
-            //      //_block.Add("density", prefab.GetDensity(x, y, z).ToString());
+            if (_options.ContainsKey("blocks") && prefabs.Count == 1)
+            {
+              List<string> _blocks = new List<string>();
+              for (var x = 0; x < prefab.size.x; x++)
+              {
+                for (var y = 0; y < prefab.size.y; y++)
+                {
+                  for (var z = 0; z < prefab.size.z; z++)
+                  {
+                    Dictionary<string, string> _block = new Dictionary<string, string>();
+                    BlockValue Block = prefab.GetBlock(x, y, z);
+                    _block.Add("p", x.ToString() + "," + y.ToString() + "," + z.ToString());
+                    _block.Add("id", Block.type.ToString());
+                    _block.Add("r", Block.rotation.ToString());
+                    _block.Add("dm", Block.damage.ToString());
+                    //_block.Add("df", Block.decalface.ToString());
+                    //_block.Add("dt", Block.decaltex.ToString());
+                    _block.Add("tx", prefab.GetTexture(x, y, z).ToString());
+                    _block.Add("dn", prefab.GetDensity(x, y, z).ToString());
+                    _blocks.Add(BCUtils.toJson(_block));
+                  }
+                }
+              }
+              details.Add("Blocks", BCUtils.toJson(_blocks));
+            }
 
-            //      _block.Add("p", x.ToString() + "-" + y.ToString() + "-" + z.ToString());
-            //      _block.Add("t", Block.type.ToString());
-            //      _block.Add("r", Block.rotation.ToString());
-            //      _block.Add("dm", Block.damage.ToString());
-            //      _block.Add("df", Block.decalface.ToString());
-            //      _block.Add("dt", Block.decaltex.ToString());
-            //      _block.Add("tx", prefab.GetTexture(x, y, z).ToString());
-            //      _block.Add("dn", prefab.GetDensity(x, y, z).ToString());
-            //      _blocks.Add(BCUtils.toJson(_block));
-            //    }
-            //  }
-            //}
-            //details.Add("Blocks", BCUtils.toJson(_blocks));
+            if (_options.ContainsKey("stats") && prefabs.Count == 1)
+            {
+              Dictionary<int, int> _stats = new Dictionary<int, int>();
+
+              for (var x = 0; x < prefab.size.x; x++)
+              {
+                for (var y = 0; y < prefab.size.y; y++)
+                {
+                  for (var z = 0; z < prefab.size.z; z++)
+                  {
+                    BlockValue block = prefab.GetBlock(x, y, z);
+                    if (_stats.ContainsKey(block.type))
+                    {
+                      _stats[block.type] += 1;
+                    }
+                    else
+                    {
+                      _stats.Add(block.type, 1);
+                    }
+                  }
+                }
+              }
+              Dictionary<string,string> _statsStr = new Dictionary<string, string>();
+
+              foreach (var _stat in _stats)
+              {
+                if (ItemClass.list[_stat.Key] != null)
+                {
+                  var name = ItemClass.list[_stat.Key].Name;
+                  if (name == null || name == "")
+                  {
+                    name = "air";
+                  }
+                  _statsStr[name] = _stat.Value.ToString();
+                }
+              }
+
+              details.Add("BlockStats", BCUtils.toJson(_statsStr));
+            }
 
             data.Add(i.ToString(), BCUtils.toJson(details));
             i++;
@@ -307,9 +350,9 @@ namespace BCM.Commands
       }
 
     }
-    public static List<string> GetStoredPrefabs(string prefabsGameDir)
+    public static List<string> GetStoredPrefabs(string prefabsGameDir, string _search = "*")
     {
-      string[] files = Directory.GetFiles(prefabsGameDir);
+      string[] files = Directory.GetFiles(prefabsGameDir, _search);
       List<string> prefabs = new List<string>();
 
       for (int i = files.Length - 1; i >= 0; i--)

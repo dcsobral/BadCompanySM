@@ -18,10 +18,10 @@ namespace BCM.Commands
       if (_options.ContainsKey("stop"))
       {
 
-        if (this.mapVisitor != null)
+        if (mapVisitor != null)
         {
-          this.mapVisitor.Stop();
-          this.mapVisitor = null;
+          mapVisitor.Stop();
+          mapVisitor = null;
 
           SendOutput("VisitRegion stopped.");
           return;
@@ -32,9 +32,9 @@ namespace BCM.Commands
 
       int x;
       int z;
-      if (this.mapVisitor != null && this.mapVisitor.IsRunning())
+      if (mapVisitor != null && mapVisitor.IsRunning())
       {
-        SendOutput("VisitMap already running. You can stop it with \"bc-visitregion stop\".");
+        SendOutput("VisitMap already running. You can stop it with \"bc-visit /stop\".");
       }
       else if (!int.TryParse(_params[0], out x)) //todo: check for in range (-20 to 20?)
       {
@@ -55,11 +55,11 @@ namespace BCM.Commands
           SendOutput("Note: The given z1 coordinate is beyond the recommended range (-20 to 19)");
         }
 
-        this.mapVisitor = new MapVisitor(new Vector3i(x * 512, 0, z * 512), new Vector3i(x * 512 + 511, 0, z * 512 + 511));
-        this.mapVisitor.OnVisitChunk += new MapVisitor.VisitChunkDelegate(this.ReportStatus);
-        this.mapVisitor.OnVisitChunk += new MapVisitor.VisitChunkDelegate(this.GetMapColors);
-        this.mapVisitor.OnVisitMapDone += new MapVisitor.VisitMapDoneDelegate(this.md0008);
-        this.mapVisitor.Start();
+        mapVisitor = new MapVisitor(new Vector3i(x * 512, 0, z * 512), new Vector3i(x * 512 + 511, 0, z * 512 + 511));
+        mapVisitor.OnVisitChunk += new MapVisitor.VisitChunkDelegate(ReportStatus);
+        mapVisitor.OnVisitChunk += new MapVisitor.VisitChunkDelegate(GetMapColors);
+        mapVisitor.OnVisitMapDone += new MapVisitor.VisitMapDoneDelegate(ReportCompletion);
+        mapVisitor.Start();
       }
     }
 
@@ -83,7 +83,7 @@ namespace BCM.Commands
       chunk.GetMapColors();
     }
 
-    private void md0008(int total, float elapsedTime)
+    private void ReportCompletion(int total, float elapsedTime)
     {
       Log.Out("VisitRegion done, visited {0} chunks in {1} seconds (average {2} chunks/sec).", new object[]
       {
@@ -91,7 +91,7 @@ namespace BCM.Commands
         elapsedTime.ToString("0.00"),
         ((float)total / elapsedTime).ToString("0.00")
       });
-      this.mapVisitor = null;
+      mapVisitor = null;
     }
   }
 }

@@ -290,6 +290,7 @@ namespace BCM.Commands
       var _clrIdx = 0;
       var counter = 0;
 
+      //todo: fix this code
       Block block1 = Block.list[_targetbv.type];
       if (block1 == null)
       {
@@ -436,9 +437,6 @@ namespace BCM.Commands
 
     private bool ScanBlocks(Vector3i size, Vector3i p3, BlockValue _bv)
     {
-      SdtdConsole.Instance.Output("Command Unavilable. To be implemented.");
-      return false;
-
       Block block1 = Block.list[_bv.type];
       if (block1 == null && _params[0] != "*")
       {
@@ -450,9 +448,9 @@ namespace BCM.Commands
       var stats = new Dictionary<string, int>();
       //var density = new Dictionary<string, List<int>>();
       var _clrIdx = 0;
-      for (int j = 0; j < size.y; j++) 
+      for (int j = 0; j < size.y; j++)
       {
-        for (int i = 0; i < size.x; i++) 
+        for (int i = 0; i < size.x; i++)
         {
           for (int k = 0; k < size.z; k++)
           {
@@ -460,20 +458,39 @@ namespace BCM.Commands
             var b = GameManager.Instance.World.GetBlock(_clrIdx, p5);
             //var d = GameManager.Instance.World.GetDensity(_clrIdx, p5);
             //var t = GameManager.Instance.World.GetTexture(i + p3.x, j + p3.y, k + p3.z);
-            if (_params[0] == "*")
+            string name = "";
+            if (ItemClass.list[b.type] != null)
             {
-              if (b.Block.GetBlockName() != null)
+              name = ItemClass.list[b.type].Name;
+              if (name == null || name == "")
               {
-                stats[b.Block.GetBlockName()] = stats[b.Block.GetBlockName()] + 1;// + "_t_" + t.ToString()
-                //density[b.Block.GetBlockName()].Add(d);
+                name = "air";
               }
             }
-            else if (block1.GetBlockName() == b.Block.GetBlockName())
+
+            if (_params[0] == "*")
             {
-              if (b.Block.GetBlockName() != null)
+              if (stats.ContainsKey(name))
               {
-                stats[b.Block.GetBlockName()] = stats[b.Block.GetBlockName()] + 1;
-                //density[b.Block.GetBlockName()].Add(d);
+                stats[name] += 1;
+              }
+              else
+              {
+                stats.Add(name, 1);
+              }
+            }
+            else
+            {
+              if (name == _bv.Block.GetBlockName())
+              {
+                if (stats.ContainsKey(name))
+                {
+                  stats[name] += 1;
+                }
+                else
+                {
+                  stats.Add(name, 1);
+                }
               }
             }
           }
