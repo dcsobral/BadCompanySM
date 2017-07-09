@@ -63,7 +63,8 @@
   <Command name="RemoveQuestFromPlayer" commands="bc-rpq,bc-rpquest" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="GiveBuffToPlayer" commands="bc-gpb,bc-gpbuff" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="RemoveBuffFromPlayer" commands="bc-rpb,bc-rpbuff" defaultpermissionlevel="0" defaultoptions=""/>
-  
+  <Command name="SetSkillOnPlayer" commands="bc-setskill,setskill" defaultpermissionlevel="0" defaultoptions=""/>
+
   <!-- Admin Entities -->
   <Command name="ListEntities" commands="bc-le" defaultpermissionlevel="0" defaultoptions="nl,alive"/>
   <Command name="GiveBuffToEntity" commands="bc-geb,bc-gebuff" defaultpermissionlevel="0" defaultoptions=""/>

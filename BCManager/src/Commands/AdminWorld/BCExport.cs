@@ -10,6 +10,8 @@ namespace BCM.Commands
   {
     public override void Process()
     {
+      //todo: report location and size exported
+
       Vector3i p1 = new Vector3i(int.MinValue, 0, int.MinValue);
       Vector3i p2 = new Vector3i(int.MinValue, 0, int.MinValue);
       string filename = null;

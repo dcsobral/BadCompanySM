@@ -6,8 +6,8 @@ namespace BCM.Commands
     {
       if (_params.Count != 2)
       {
-        SdtdConsole.Instance.Output("Invalid arguments");
-        SdtdConsole.Instance.Output(GetHelp());
+        SendOutput("Invalid arguments");
+        SendOutput(GetHelp());
       }
       else
       {
@@ -19,18 +19,18 @@ namespace BCM.Commands
         {
           if (count > 1)
           {
-            SdtdConsole.Instance.Output("Multiple matches found: " + count);
+            SendOutput("Multiple matches found: " + count);
           }
           else
           {
-            SdtdConsole.Instance.Output("Playername or entity ID not found.");
+            SendOutput("Playername or entity ID not found.");
           }
         }
         else
         {
           if (_senderInfo.IsLocalGame)
           {
-            SdtdConsole.Instance.Output("Use the \"givequest\" command for the local player.");
+            SendOutput("Use the \"givequest\" command for the local player.");
           }
           else if (clientInfo.playerId != null)
           {

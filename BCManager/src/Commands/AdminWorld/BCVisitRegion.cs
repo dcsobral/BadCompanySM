@@ -34,7 +34,7 @@ namespace BCM.Commands
       int z;
       if (mapVisitor != null && mapVisitor.IsRunning())
       {
-        SendOutput("VisitMap already running. You can stop it with \"bc-visit /stop\".");
+        SendOutput("VisitMap already running. You can stop it with \"bc-visitregion /stop\".");
       }
       else if (!int.TryParse(_params[0], out x)) //todo: check for in range (-20 to 20?)
       {

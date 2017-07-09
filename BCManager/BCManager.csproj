@@ -65,6 +65,7 @@
     <Compile Include="src\Commands\AdminEntities\GiveBuffToEntity.cs" />
     <Compile Include="src\Commands\AdminEntities\BCRemove.cs" />
     <Compile Include="src\Commands\AdminEntities\RemoveBuffFromEntity.cs" />
+    <Compile Include="src\Commands\AdminPlayers\SetSkillOnPlayer.cs" />
     <Compile Include="src\Commands\AdminPlayers\GiveBuffToPlayer.cs" />
     <Compile Include="src\Commands\AdminPlayers\RemoveBuffFromPlayer.cs" />
     <Compile Include="src\Commands\AdminWorld\BCVisitRegion.cs" />
@@ -618,6 +619,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Config\Commands\en\Help\BCExport.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\Commands\en\Help\SetSkillOnPlayer.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Config\Motd.xml" />
