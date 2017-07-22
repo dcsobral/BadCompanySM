@@ -6,17 +6,55 @@ namespace BCM.Models
   [Serializable]
   public class AbstractList
   {
-    public Dictionary<string, string> options = new Dictionary<string, string>();
+    private Dictionary<string, string> options = new Dictionary<string, string>();
 
     public AbstractList(PlayerInfo _pInfo)
     {
       Load(_pInfo);
     }
 
+    public AbstractList()
+    {
+    }
+
     public AbstractList(PlayerInfo _pInfo, Dictionary<string, string> _options)
     {
       options = _options;
       Load(_pInfo);
+    }
+
+    public bool isOption(string key, bool isOr = true)
+    {
+      var _o = !isOr;
+      var keys = key.Split(' ');
+      if (keys.Length > 1)
+      {
+        foreach(var k in keys)
+        {
+          if (isOr)
+          {
+            _o |= options.ContainsKey(k);
+          }
+          else
+          {
+            _o &= options.ContainsKey(k);
+          }
+        }
+        return _o;
+      }
+      else
+      {
+        return options.ContainsKey(key);
+      }
+    }
+
+    public string OptionValue(string key)
+    {
+      if (options.ContainsKey(key))
+      {
+        return options[key];
+      }
+      return null;
     }
 
     public string GetPosType()
@@ -36,7 +74,6 @@ namespace BCM.Models
 
     public virtual void Load(PlayerInfo _pInfo)
     {
-      //string postype = GetPosType();
     }
 
     public virtual string Display(string sep = " ")

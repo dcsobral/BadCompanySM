@@ -65,20 +65,158 @@ namespace BCM.Commands
         output += "\n";
       }
 
-      //UIATLAS
-      if (_options.ContainsKey("uiatlas"))
+      //MESHES
+      if (_options.ContainsKey("meshes"))
       {
-        output += "UIAtlas:\n";
-        Dictionary<string, UISpriteData> _UIAtlas = LoadUIAtlas();
-        foreach (UISpriteData sprite in _UIAtlas.Values)
+        //output += MeshDescription.meshes.Length;
+        foreach (MeshDescription meshDesc in MeshDescription.meshes)
         {
-          if (sprite != null)
+          if (meshDesc != null)
           {
-            output += sprite.name + _sep;
+            output += "TextureAtlasClass:" + meshDesc.TextureAtlasClass + ",";
+            output += "Name:" + meshDesc.Name + ",";
+            output += "meshType:" + meshDesc.meshType.ToString() + ",";
+            output += "bCastShadows:" + meshDesc.bCastShadows.ToString() + ",";
+            output += "BlendMode:" + meshDesc.BlendMode.ToString() + ",";
+            output += "Tag:" + meshDesc.Tag.ToString() + ",";
+            output += "ColliderLayerName:" + meshDesc.ColliderLayerName + ",";
+
+            output += "SecondaryShader:" + meshDesc.SecondaryShader + ",";
+            output += "ShaderName:" + meshDesc.ShaderName + ",";
+            output += "ShaderNameDistant:" + meshDesc.ShaderNameDistant + ",";
+                        
+            if (meshDesc.MetaData != null)
+            {
+              output += "MetaDataName:" + meshDesc.MetaData.name + ",";
+              output += "MetaDataText:" + meshDesc.MetaData.text + ",";
+            }
           }
+          output += _sep;
         }
-        output += "\n";
       }
+
+      //ITEM ICONS
+      if (_options.ContainsKey("itemicons"))
+      {
+        GameObject gameObject = GameObject.Find("/NGUI Root (2D)/ItemIconAtlas");
+        if (gameObject == null)
+        {
+          SendOutput("Atlas object not found");
+          return;
+        }
+        DynamicUIAtlas component = gameObject.GetComponent<DynamicUIAtlas>();
+
+        if (component == null)
+        {
+          SendOutput("Atlas component not found");
+
+          return;
+        }
+
+        string prebakedAtlas = component.PrebakedAtlas;
+        List<UISpriteData> list;
+        int num;
+        int num2;
+        if (!DynamicUIAtlasTools.ReadPrebakedAtlasDescriptor(prebakedAtlas, out list, out num, out num2))
+        {
+          SendOutput("Could not read dynamic atlas descriptor");
+
+          return;
+        }
+        Texture2D texture2D;
+        if (!DynamicUIAtlasTools.ReadPrebakedAtlasTexture(prebakedAtlas, out texture2D))
+        {
+          SendOutput("Could not read dynamic atlas texture");
+
+          return;
+        }
+
+        for (int i = 0; i < list.Count; i++)
+        {
+          UISpriteData uISpriteData = list[i];
+          output += uISpriteData.name + _sep;
+        }
+        Resources.UnloadAsset(texture2D);
+      }
+
+
+      //UIAtlas
+      if (_options.ContainsKey("uiatlas") && false)//not correct game object?
+      {
+        GameObject gameObject = GameObject.Find("UIAtlas_GUI_2");
+        if (gameObject == null)
+        {
+          SendOutput("Atlas object not found");
+          return;
+        }
+        DynamicUIAtlas component = gameObject.GetComponent<DynamicUIAtlas>();
+
+        if (component == null)
+        {
+          SendOutput("Atlas component not found");
+
+          return;
+        }
+
+        string prebakedAtlas = component.PrebakedAtlas;
+        List<UISpriteData> list;
+        int num;
+        int num2;
+        if (!DynamicUIAtlasTools.ReadPrebakedAtlasDescriptor(prebakedAtlas, out list, out num, out num2))
+        {
+          SendOutput("Could not read dynamic atlas descriptor");
+
+          return;
+        }
+        Texture2D texture2D;
+        if (!DynamicUIAtlasTools.ReadPrebakedAtlasTexture(prebakedAtlas, out texture2D))
+        {
+          SendOutput("Could not read dynamic atlas texture");
+
+          return;
+        }
+
+        for (int i = 0; i < list.Count; i++)
+        {
+          UISpriteData uISpriteData = list[i];
+          output += uISpriteData.name + _sep;
+        }
+        Resources.UnloadAsset(texture2D);
+      }
+
+      //RESOURCES
+      if (_options.ContainsKey("resources"))
+      {
+        var objs = Resources.LoadAll("");
+        //var objs = Resources.LoadAll< Texture2D>("");
+        //var objs = GameObject.FindObjectsOfType<UIAtlas>();
+        output += "ResourceCount:" + objs.Length + ",";
+
+        output += "Resources:[";
+
+        foreach (var obj in objs)
+        {
+          output += obj.name + "(" + obj.GetType() + "),";
+          //output += obj.ToString();
+        }
+        output.Substring(0, output.Length - 2);
+        output += "]";
+      }
+
+      //UIATLAS
+      //if (_options.ContainsKey("uiatlas"))
+      //{
+      //  output += "UIAtlas:\n";
+      //  Dictionary<string, UISpriteData> _UIAtlas = LoadUIAtlas();
+      //  foreach (UISpriteData sprite in _UIAtlas.Values)
+      //  {
+      //    if (sprite != null)
+      //    {
+      //      output += sprite.name + _sep;
+      //    }
+      //  }
+      //  output += "\n";
+      //}
 
       SendOutput(output);
     }

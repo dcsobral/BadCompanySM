@@ -18,10 +18,14 @@ namespace BCM
     public void WireNeurons()
     {
       // todo: change to use the config files to define which neurons should be wired for a synapse
+      //todo: add a check for init before world awake, if set to false, then delay wiring until world has loaded
       switch (name)
       {
         case "spawnmanager":
           neurons.Add(new SpawnManager());
+          break;
+        case "entityspawnmutator":
+          neurons.Add(new EntitySpawnMutator());
           break;
 
         case "bagmonitor":
@@ -76,6 +80,7 @@ namespace BCM
           break;
       }
     }
+
     public bool FireNeurons(int b)
     {
       if ((b >= lastfired + beats) && IsEnabled)

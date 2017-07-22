@@ -52,29 +52,29 @@ namespace BCM.Neurons
       return false;
     }
 
-    private Dictionary<string, string> jsonPlayer(PlayerInfo _pInfo)
-    {
-      Dictionary<string, string> _options = new Dictionary<string, string>();
-      _options.Add("json", null);
+    //private Dictionary<string, string> jsonPlayer(PlayerInfo _pInfo)
+    //{
+    //  Dictionary<string, string> _options = new Dictionary<string, string>();
+    //  _options.Add("json", null);
 
 
-      Dictionary<string, string> data = new Dictionary<string, string>();
+    //  Dictionary<string, string> data = new Dictionary<string, string>();
 
-      Dictionary<string, string> info = new ClientInfoList(_pInfo, _options).GetInfo();
-      Dictionary<string, string> stats = new StatsList(_pInfo, _options).GetStats();
-      foreach (string key in info.Keys)
-      {
-        data.Add(key, info[key]);
-      }
-      foreach (string key in stats.Keys)
-      {
-        if (!data.ContainsKey(key))
-        {
-          data.Add(key, stats[key]);
-        }
-      }
-      return data;
-    }
+    //  Dictionary<string, string> info = new ClientInfoList(_pInfo, _options).GetInfo();
+    //  Dictionary<string, string> stats = new StatsList(_pInfo, _options).GetStats();
+    //  foreach (string key in info.Keys)
+    //  {
+    //    data.Add(key, info[key]);
+    //  }
+    //  foreach (string key in stats.Keys)
+    //  {
+    //    if (!data.ContainsKey(key))
+    //    {
+    //      data.Add(key, stats[key]);
+    //    }
+    //  }
+    //  return data;
+    //}
 
     private static string build(Dictionary<string, string> _query)
     {
@@ -100,7 +100,7 @@ namespace BCM.Neurons
         foreach (ClientInfo _ci in clients)
         {
           var _id = _ci.steamId.ToString();
-          data.Add(_id, jsonPlayer(new GetPlayer().BySteamId(_id)));
+          //data.Add(_id, jsonPlayer(new GetPlayer().BySteamId(_id)));
         }
         var output = BCUtils.toJson(data);
 

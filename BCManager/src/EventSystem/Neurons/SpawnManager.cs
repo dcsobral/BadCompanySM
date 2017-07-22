@@ -9,61 +9,64 @@ namespace BCM.Neurons
   public class SpawnManager : NeuronAbstract
   {
     BCMSettings _settings;
-    //Dictionary<string, int> EntityClassList = new Dictionary<string, int>();
-    string _neuronname = "SpawnManager";
+    string _function = "SpawnManager";
+    string _entitiesCollection = "Entities";
+    string _playersCollection = "Players";
 
     public SpawnManager()
     {
     }
 
-    private void spawnForPlayer (int playerEntityId, Dictionary<string,string> _spawnerSettings)
+    private void SpawnForEntity (int targetEntityId, Dictionary<string,string> _spawnerSettings)
     {
-      EntityPlayer ep;
-      if (GameManager.Instance.World.Players.dict.ContainsKey(playerEntityId))
+      Entity targetEntity;
+      if (GameManager.Instance.World.Entities.dict.ContainsKey(targetEntityId))
       {
-        ep = GameManager.Instance.World.Players.dict[playerEntityId];
+        targetEntity = GameManager.Instance.World.Entities.dict[targetEntityId];
 
-        //EntitySpawner.hordeSpawners
-        //if (x[ep.entityId])
-        //{
-        //  //already 
-        //  return;
-        //}
+        if (targetEntity == null)
+        {
+          Log.Out("Target entity was not found in world");
+
+          return;
+        }
 
         //if player is dead turn off spawner if set with end_on_death flag (default == true)
-        if (ep.IsDead())
+        if (targetEntity.IsDead())
         {
           if (!_spawnerSettings.ContainsKey("end_on_death") || _spawnerSettings["end_on_death"] == "true")
           {
             _spawnerSettings["enabled"] = "false";
+
             return;
           }
         }
 
         Spawn spawn = new Spawn();
+        spawn.entityId = 0;
+        spawn.spawnerId = targetEntity.entityId;
+        spawn.targetId = targetEntity.entityId;
+        spawn.pos.x = targetEntity.position.x;
+        spawn.pos.y = targetEntity.position.y;
+        spawn.pos.z = targetEntity.position.z;
 
-        // todo: type or group defined in the command settings
         // todo: delay between spawns based on command settings
 
-
-
-        string _groupname = "ZombiesAll";
+        string _groupname = null;
         _spawnerSettings.TryGetValue("group", out _groupname);
+
+        if (_groupname == null)
+        {
+          _groupname = "ZombiesAll";
+        }
 
         if (EntityGroups.list.ContainsKey(_groupname))
         {
           spawn.entityClassId = EntityGroups.GetRandomFromGroup(_groupname);
         }
 
-
         if (EntityClass.list.ContainsKey(spawn.entityClassId))
         {
-          spawn.entityId = 0;
-          //player hordes are assigned to entityid as spawner id
-          spawn.spawnerId = ep.entityId;
-          spawn.targetId = ep.entityId;
-          spawn.pos = ep.position;
-
           spawn.minRange = 40;
           if (_spawnerSettings.ContainsKey("minrange"))
           {
@@ -76,10 +79,10 @@ namespace BCM.Neurons
             int.TryParse(_spawnerSettings["maxrange"], out spawn.maxRange);
           }
 
-          spawn.bIsChunkObserver = true;
+          spawn.isObserver = true;
           if (_spawnerSettings.ContainsKey("observe"))
           {
-            bool.TryParse(_spawnerSettings["observe"], out spawn.bIsChunkObserver);
+            bool.TryParse(_spawnerSettings["observe"], out spawn.isObserver);
           }
 
           spawn.isFeral = false;
@@ -129,12 +132,12 @@ namespace BCM.Neurons
       }
       else
       {
-        Log.Out(Config.ModPrefix + " Player not found: " + playerEntityId);
+        Log.Out(Config.ModPrefix + " Player not found: " + targetEntityId);
       }
     }
     public override bool Fire(int b)
     {
-      if (PersistentContainer.IsLoaded)
+      if (API.IsAlive && PersistentContainer.IsLoaded)
       {
         _settings = PersistentContainer.Instance.Settings;
         int onlineplayercount = 0;
@@ -148,81 +151,30 @@ namespace BCM.Neurons
         }
         if (onlineplayercount > 0)
         {
-
-          //ALL ENTITES
-          //if (EntityClassList.Count == 0)
-          //{
-          //  if (EntityClass.list.Count > 0)
-          //  {
-          //    foreach (int entityClassID in EntityClass.list.Keys)
-          //    {
-          //      if (EntityClass.list[entityClassID].bAllowUserInstantiate)
-          //      {
-          //        EntityClassList.Add(EntityClass.list[entityClassID].entityClassName, entityClassID);
-          //      }
-          //    }
-          //  }
-          //  else
-          //  {
-          //    Log.Out(Config.ModPrefix + " No EntityClasses found.");
-          //  }
-          //}
-
-
-          // PLAYER TARGETED SPAWNING
-          string _collectionName = "Players";
-          string _functionName = "SpawnManager";
-
-//          var _players = GameManager.Instance.World.GetPlayers();
-
-          var _clients = ConnectionManager.Instance.GetClients();
-
-          foreach (ClientInfo _client in _clients)
+          // ENTITY TARGETED SPAWNING
+          foreach (int _entityId in GameManager.Instance.World.Entities.dict.Keys)
           {
-            var _spawnerSettings = _settings.GetFunction(_collectionName, _client.playerId, _functionName);
+            var _spawnerSettings = _settings.GetFunction(_entitiesCollection, _entityId.ToString(), _function);
             if (_spawnerSettings != null && _spawnerSettings.ContainsKey("enabled") && _spawnerSettings["enabled"] == "true")
             {
-
-              //EntitySpawner.hordeSpawners[spawn.spawnerId]
-
-              spawnForPlayer(_client.entityId, _spawnerSettings);
+              SpawnForEntity(_entityId, _spawnerSettings);
             }
           }
 
-
-          //Dictionary<string, string> players = null;
-          ////Dictionary<string, string> players = _settings.GetCollection(settingnode);
-          //if (players != null)
-          //{
-          //  if (players.Count > 0)
-          //  {
-
-          //    foreach (string entityid in players.Keys)
-          //    {
-          //      int ent = -1;
-          //      if (int.TryParse(entityid, out ent))
-          //      {
-          //        string jsondata = "";// _settings.GetValue(settingnode, entityid);
-          //        bool spawnon = false;
-          //        Dictionary<string, string> playerdata = JsonUtility.FromJson<Dictionary<string, string>>(jsondata);
-          //        if (playerdata.ContainsKey("enabled"))
-          //        {
-          //          bool.TryParse(playerdata["enabled"], out spawnon);
-          //          if (spawnon == true)
-          //          {
-          //            spawnForPlayer(ent, playerdata);
-          //          }
-          //        }
-          //      }
-          //    }
-
-          //  }
-          //}
-
+          // PLAYER TARGETED SPAWNING
+          var _clients = ConnectionManager.Instance.GetClients();
+          foreach (ClientInfo _client in _clients)
+          {
+            var _spawnerSettings = _settings.GetFunction(_playersCollection, _client.playerId, _function);
+            if (_spawnerSettings != null && _spawnerSettings.ContainsKey("enabled") && _spawnerSettings["enabled"] == "true")
+            {
+              SpawnForEntity(_client.entityId, _spawnerSettings);
+            }
+          }
+          
           //AREA SPAWNERS
           // todo:
-
-
+          
           return true;
         }
       }

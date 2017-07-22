@@ -8,15 +8,13 @@ namespace BCM
     public int entityId;
     public int targetId;
     public int entityClassId;
-    public Vector3 pos;
+    public BCMVector3 pos;
     public int minRange;
     public int maxRange;
-    public bool bIsChunkObserver;
+    public bool isObserver;
     public bool isFeral;
     public float speedMul;
     public float speedBase;
     public bool nightRun;
-    //public float speedApproach;
-    //public float speedApproachNight;
   }
 }

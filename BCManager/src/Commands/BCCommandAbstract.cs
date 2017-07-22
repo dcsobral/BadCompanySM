@@ -51,6 +51,13 @@ namespace BCM.Commands
       }
     }
 
+    public virtual void Process(Dictionary<string, string> _o, List<string> _p)
+    {
+      _options = _o;
+      _params = _p;
+      Process();
+    }
+
     public virtual void Process()
     {
       // function to override in extention commands instead of Execute
@@ -93,8 +100,9 @@ namespace BCM.Commands
 
       string defaultoptions = Config.GetDefaultOptions(GetType().Name);
       string[] addDefaults = defaultoptions.Split(',');
-      foreach (string add in addDefaults)
+      foreach (string def in addDefaults)
       {
+        string add = def.Trim();
         if (
           (add == "online" && (_options.ContainsKey("offline") || _options.ContainsKey("all")))
           ||
@@ -136,6 +144,30 @@ namespace BCM.Commands
       }
 
     }
+
+    public void SendJson(object data)
+    {
+      LitJson.JsonWriter _writer = new LitJson.JsonWriter();
+      if (_options.ContainsKey("pp") && !_options.ContainsKey("1l"))
+      {
+        _writer.IndentValue = 2;
+        _writer.PrettyPrint = true;
+      }
+
+      var jsonOut = new Dictionary<string, object>();
+      if (_options.ContainsKey("tag"))
+      {
+        jsonOut.Add("tag", _options["tag"]);
+        jsonOut.Add("data", data);
+        LitJson.JsonMapper.ToJson(jsonOut, _writer);
+      }else
+      {
+        LitJson.JsonMapper.ToJson(data, _writer);
+      }
+
+      SendOutput(_writer.ToString());
+    }
+
     public void SendOutput(string output)
     {
       if (_options.ContainsKey("log"))

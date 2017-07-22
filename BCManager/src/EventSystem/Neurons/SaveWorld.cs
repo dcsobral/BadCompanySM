@@ -9,16 +9,23 @@ namespace BCM.Neurons
     }
     public override bool Fire(int b)
     {
-      if (!Steam.Network.IsServer)
+      if (ConnectionManager.Instance.GetClients().Count > 0)
       {
-        Log.Out(Config.ModPrefix + "World save failed. Not a network server");
-        return false;
-      }
-      GameManager.Instance.SaveLocalPlayerData();
-      GameManager.Instance.SaveWorld();
+        if (!Steam.Network.IsServer)
+        {
+          Log.Out(Config.ModPrefix + "World save failed. Not a network server");
 
-      Log.Out(Config.ModPrefix + " World saved");
-      return true;
+          return false;
+        }
+        GameManager.Instance.SaveLocalPlayerData();
+        GameManager.Instance.SaveWorld();
+
+        Log.Out(Config.ModPrefix + " World saved");
+
+        return true;
+      }
+
+      return false;
     }
   }
 }

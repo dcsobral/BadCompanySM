@@ -97,6 +97,10 @@ namespace BCM.Commands
         //todo: check constraints
         SendOutput("Setting player '" + clientInfo.playerName + "' skill '" + skillName + "' to level: " + level);
         clientInfo.SendPackage(new NetPackageEntitySetSkillLevelClient(clientInfo.entityId, skillByName.Id, level));
+
+
+        //GameManager.ShowTooltipWithAlert(this as EntityPlayerLocal, string.Format(Localization.Get("ttLevelUp", string.Empty), level2.ToString(), this.SkillPoints), "levelupplayer");
+
       }
       return true;
     }

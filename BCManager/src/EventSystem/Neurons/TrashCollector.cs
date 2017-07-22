@@ -11,7 +11,7 @@ namespace BCM.Neurons
     {
       GC.Collect();
       GC.WaitForPendingFinalizers();
-      Log.Out(Config.ModPrefix + " Trash Disposed");
+      //Log.Out(Config.ModPrefix + " Trash Disposed");
       return true;
     }
   }

@@ -4,8 +4,9 @@
   <Heartbeat isalive="true"/>
   <BPM rate="60"/>
   <!--Spawn System-->
-  <Synapse name="spawnmanager" enabled="false" beats="1"/> <!-- todo: fix -->
-  
+  <Synapse name="spawnmanager" enabled="false" beats="1"/> <!-- experimental synapse, use at own risk -->
+  <Synapse name="entityspawnmutator" enabled="true" beats="5"/>
+
   <!--Character Management-->
   <Synapse name="bagmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
   <Synapse name="buffmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
@@ -19,9 +20,8 @@
 
   <!--Admin Functions-->
   <Synapse name="saveworld" enabled="true" beats="600"/>
-  <Synapse name="trashcollector" enabled="true" beats="1250"/>
+  <Synapse name="trashcollector" enabled="false" beats="1250"/> <!-- not needed? -->
   <Synapse name="mapexplorer" enabled="false" beats="5"/>
-  
 
   <!--Web App Integration-->
   <Synapse name="broadcastapi" enabled="false" beats="5"/><!-- todo: not implemented -->

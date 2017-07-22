@@ -94,6 +94,8 @@ namespace BCM.Commands
       //      claim stones replaced need to be removed from persistent data.
       //      map visitor for unloaded chunks
       //todo: damage
+      //todo: use Chunk.RecalcHeightAt(int _x, int _yMaxStart, int _z)
+      //todo: 
       Vector3i p1 = new Vector3i(int.MinValue, 0, int.MinValue);
       Vector3i p2 = new Vector3i(int.MinValue, 0, int.MinValue);
       string blockname = null;

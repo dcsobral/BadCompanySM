@@ -13,7 +13,6 @@ namespace BCM.Commands
   {
     public override void Process()
     {
-      string output = "";
       Dictionary<string, string> data = new Dictionary<string, string>();
 
       data.Add("CurrentRuleset", (RWGRules.Instance.CurrentRuleset.Name != null ? RWGRules.Instance.CurrentRuleset.Name : ""));

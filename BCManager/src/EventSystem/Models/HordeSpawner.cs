@@ -14,7 +14,7 @@ namespace BCM
     public int wave;
     public int waveCount;
     public int waveDelay;
-    public Vector3 fixedPos;
-    public Dictionary<int, Spawn> spawns;
+    public BCMVector3 fixedPos;
+    public Dictionary<string, Spawn> spawns;
   }
 }

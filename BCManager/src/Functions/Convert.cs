@@ -31,7 +31,7 @@ namespace BCM
       }
       else if (postype == "csvpos")
       {
-        position = string.Format("{0:F0}, {1:F0}, {2:F0}", v.x, v.y, v.z);
+        position = string.Format("{0:F0},{1:F0},{2:F0}", v.x, v.y, v.z);
       }
       else
       {

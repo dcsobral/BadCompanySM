@@ -110,7 +110,7 @@ namespace BCM.Commands
       entitydata += ", Rot=";
       entitydata += entity.rotation;
       entitydata += ", Lifetime=";
-      entitydata += ((entity.lifetime != 3.40282347E+38f) ? entity.lifetime.ToString("0.0") : "Max");
+      entitydata += ((entity.lifetime != float.MaxValue) ? entity.lifetime.ToString("0.0") : "Max");
       entitydata += ", Remote=";
       entitydata += entity.isEntityRemote;
       entitydata += ", Dead=";

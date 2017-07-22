@@ -8,7 +8,7 @@ namespace BCM
   public class API : ModApiAbstract
   {
     public static EntitySpawner entitySpawner = new EntitySpawner();
-    public bool IsAlive = false;
+    public static bool IsAlive = false;
 
     public API()
     {
@@ -46,7 +46,7 @@ namespace BCM
 
     public override void PlayerLogin(ClientInfo _cInfo, string _compatibilityVersion)
     {
-      //_cInfo.SendPackage(new NetPackageConsoleCmdClient("dm", true));
+
     }
 
     public override void PlayerSpawning(ClientInfo _cInfo, int _chunkViewDim, PlayerProfile _playerProfile)
@@ -58,7 +58,7 @@ namespace BCM
       }
       catch (Exception e)
       {
-        Log.Out("" + Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        Log.Out(Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
       }
     }
 
@@ -94,6 +94,11 @@ namespace BCM
     //public override void GameStartDone() {
     //}
 
+    public override void PlayerSpawnedInWorld(ClientInfo _cInfo, RespawnType _respawnReason, Vector3i _pos)
+    {
+      //_cInfo.SendPackage(new NetPackageConsoleCmdClient("dm", true));
+      //Log.Out(Config.ModPrefix + " Player Spawned: " + _cInfo.entityId + " @" + _pos.x.ToString() + " " + _pos.y.ToString() + " " + _pos.z.ToString());
+    }
 
   }
 }

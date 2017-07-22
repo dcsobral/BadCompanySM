@@ -18,6 +18,7 @@ namespace BCM.Commands
 
     private bool GetXYZPreEnt(Prefab _p, Entity _e, ref int _x, ref int _y, ref int _z)
     {
+      //todo: use loc position for imports with /loc option
       if (_e == null)
       {
         return false;
@@ -190,13 +191,6 @@ namespace BCM.Commands
       
       //RELOAD CHUNKS
       BCChunks.ReloadForClients(modifiedChunks);
-
-      //todo: after chunks have loaded on client need to check for falling and telelport on top.
-      //Vector3 clientpos = GameManager.Instance.World.Players.dict[client.entityId].position;
-      //clientpos.y = -1;
-      //NetPackageTeleportPlayer netPackageTeleportPlayer = new NetPackageTeleportPlayer(clientpos);
-      //client.SendPackage(netPackageTeleportPlayer);
-
     }
 
     private void CreateUndo(EntityPlayer sender, Vector3i size, Vector3i pos)

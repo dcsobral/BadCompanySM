@@ -8,7 +8,7 @@ namespace BCM
   public class EntitySpawner
   {
     public static Queue<Spawn> spawnQueue = new Queue<Spawn>();
-    public static Dictionary<int, HordeSpawner> hordeSpawners = new Dictionary<int, HordeSpawner>();
+    public static Dictionary<string, HordeSpawner> hordeSpawners = new Dictionary<string, HordeSpawner>();
     public long lasttick = DateTime.Now.Ticks;
 
     public EntitySpawner()
@@ -35,7 +35,7 @@ namespace BCM
                 Spawn spawn = spawnQueue.Dequeue();
 
                 Vector3 pos = new Vector3(0, 0, 0);
-                if (GameManager.Instance.World.GetRandomSpawnPositionMinMaxToPosition(spawn.pos, spawn.minRange, spawn.maxRange, false, out pos, true))
+                if (GameManager.Instance.World.GetRandomSpawnPositionMinMaxToPosition(new Vector3(spawn.pos.x, spawn.pos.y, spawn.pos.z), spawn.minRange, spawn.maxRange, false, out pos, true))
                 {
 
                   //todo: change to use EntityCreationData method?
@@ -53,26 +53,29 @@ namespace BCM
                     //}
                     lock (hordeSpawners)
                     {
+                      //todo: increase counters and disable spawner if limits reached, alter settings if next wave etc
+
                       spawn.entityId = _entity.entityId;
-                      if (hordeSpawners.ContainsKey(spawn.spawnerId))
+                      if (hordeSpawners.ContainsKey(spawn.spawnerId.ToString()))
                       {
-                        hordeSpawners[spawn.spawnerId].spawns.Add(_entity.entityId, spawn);
+                        hordeSpawners[spawn.spawnerId.ToString()].spawns.Add(_entity.entityId.ToString(), spawn);
                       }
                       else
                       {
                         HordeSpawner hs = new HordeSpawner();
-                        hs.spawns.Add(_entity.entityId, spawn);
-                        hordeSpawners.Add(spawn.spawnerId, hs);
+                        hs.spawns = new Dictionary<string, Spawn>();
+                        hs.spawns.Add(_entity.entityId.ToString(), spawn);
+                        hordeSpawners.Add(spawn.spawnerId.ToString(), hs);
                       }
                     }
 
-                    _entity.bIsChunkObserver = spawn.bIsChunkObserver;
+                    _entity.bIsChunkObserver = spawn.isObserver;
                     //will make them move at night speed
                     _entity.isFeral = spawn.isFeral;
                     _entity.speedApproach = _entity.speedApproach * spawn.speedMul;
                     if (spawn.speedBase != 0)
                     {
-                      _entity.speedApproach = spawn.speedBase;
+                      _entity.speedApproach = spawn.speedBase * spawn.speedMul;
                     }
                     if (spawn.nightRun)
                     {
@@ -89,6 +92,7 @@ namespace BCM
                     {
                       if (!_entity.addedToChunk)
                       {
+                        //todo: need to generate chunk and delay spawn if chunk isnt loaded?
                         Chunk chunk = (Chunk)GameManager.Instance.World.GetChunkFromWorldPos(_entity.GetBlockPosition());
                         if (chunk != null)
                         {
@@ -103,7 +107,7 @@ namespace BCM
                     GameManager.Instance.World.entityDistributer.Add(_entity);
                     _entity.Spawned = true;
                     GameManager.Instance.World.aiDirector.AddEntity(_entity);
-                    _entity.SetInvestigatePosition(spawn.pos, 6000);
+                    _entity.SetInvestigatePosition(new Vector3(spawn.pos.x, spawn.pos.y, spawn.pos.z), 6000);
                   }
                 }
                 else

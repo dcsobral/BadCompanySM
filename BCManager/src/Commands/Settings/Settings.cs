@@ -13,6 +13,8 @@ namespace BCM.Commands
 
       if (_params.Count == 0)
       {
+        //todo: a method to clear values
+
         List<string> collectionNames = _settings.GetCollectionNames();
         output += "[";
 
