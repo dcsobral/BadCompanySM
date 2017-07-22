@@ -38,6 +38,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\7dtd-binaries\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="LitJson">
+      <HintPath>..\7dtd-binaries\LitJson.dll</HintPath>
+    </Reference>
     <Reference Include="LogLibrary">
       <HintPath>..\7dtd-binaries\LogLibrary.dll</HintPath>
     </Reference>
@@ -61,6 +64,8 @@
   <ItemGroup>
     <Compile Include="src\API.cs" />
     <Compile Include="src\Classes\EntityZombie.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCHordeSpawners.cs" />
+    <Compile Include="src\Commands\AdminWorld\BCTileEntity.cs" />
     <Compile Include="src\Commands\AdminEntities\BCSpawn.cs" />
     <Compile Include="src\Commands\AdminEntities\GiveBuffToEntity.cs" />
     <Compile Include="src\Commands\AdminEntities\BCRemove.cs" />
@@ -82,8 +87,8 @@
     <Compile Include="src\Commands\ListGameObjects\ListItemClass.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListHubCellData.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListPrefabs.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListBlocks.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListItems.cs" />
+    <Compile Include="src\Commands\Legacy\ListBlocks.cs" />
+    <Compile Include="src\Commands\Legacy\ListItems.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListEntityClasses.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListEntityGroups.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListMaterials.cs" />
@@ -100,34 +105,36 @@
     <Compile Include="src\Commands\AdminPlayers\GiveQuestToPlayer.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListPlayerFilesInfo.cs" />
     <Compile Include="src\Commands\ListGameObjects\ListAssets.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayers.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersBag.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersBuffs.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersPosition.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersId.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersCraftingQueue.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersEquipment.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersClientInfo.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersFavRecipes.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersQuests.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersSkills.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersSpawns.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersStats.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersToolbelt.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersRecipes.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersWaypoints.cs" />
+    <Compile Include="src\Commands\ListGameObjects\ListPlayers.cs" />
+    <Compile Include="src\Commands\ListPlayersAlias\ListPlayersGamestage.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersBag.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersBuffs.cs" />
+    <Compile Include="src\Commands\ListPlayersAlias\ListPlayersPosition.cs" />
+    <Compile Include="src\Commands\ListPlayersAlias\ListPlayersId.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersCraftingQueue.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersEquipment.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersClientInfo.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersFavRecipes.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersQuests.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersSkills.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersSpawns.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersStats.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersToolbelt.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersRecipes.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersWaypoints.cs" />
     <Compile Include="src\Commands\BCHelp.cs" />
     <Compile Include="src\Commands\Neurons\BroadcastAPI.cs" />
     <Compile Include="src\Commands\Settings\Settings.cs" />
     <Compile Include="src\Commands\Test.cs" />
     <Compile Include="src\Commands\AdminEntities\ListEntities.cs" />
-    <Compile Include="src\Commands\ListPlayers\ListPlayersGamestage.cs" />
+    <Compile Include="src\Commands\Legacy\ListPlayersGamestageLegacy.cs" />
     <Compile Include="src\Commands\Utility\MemTrash.cs" />
     <Compile Include="src\Config\Command.cs" />
     <Compile Include="src\Config\Config.cs" />
     <Compile Include="src\DataManager.cs" />
     <Compile Include="src\EventSystem\LogCache.cs" />
     <Compile Include="src\EventSystem\Models\HordeSpawner.cs" />
+    <Compile Include="src\EventSystem\Models\BCMVector3.cs" />
     <Compile Include="src\EventSystem\Models\Spawn.cs" />
     <Compile Include="src\EventSystem\Neurons\BroadcastAPI.cs" />
     <Compile Include="src\EventSystem\Neurons\MapExplorer.cs" />
@@ -139,6 +146,7 @@
     <Compile Include="src\EventSystem\Neurons\SpawnManager.cs" />
     <Compile Include="src\EventSystem\EntitySpawner.cs" />
     <Compile Include="src\EventSystem\Neurons\SaveWorld.cs" />
+    <Compile Include="src\EventSystem\Neurons\EntitySpawnMutator.cs" />
     <Compile Include="src\Functions\BCChunks.cs" />
     <Compile Include="src\Functions\Convert.cs" />
     <Compile Include="src\Functions\GetPlayer.cs" />
@@ -146,13 +154,14 @@
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\Functions\PlayerDataReader.cs" />
-    <Compile Include="src\Models\BCMItemClass.cs" />
-    <Compile Include="src\Models\BCMQuest.cs" />
-    <Compile Include="src\Models\BCMItem.cs" />
-    <Compile Include="src\Models\ClientInfoList.cs" />
+    <Compile Include="src\Models\Legacy\BCMItemClass.cs" />
+    <Compile Include="src\Models\Legacy\BCMQuestLegacy.cs" />
+    <Compile Include="src\Models\Legacy\BCMItem.cs" />
+    <Compile Include="src\Models\Legacy\ClientInfoList.cs" />
     <Compile Include="src\Models\AbstractList.cs" />
-    <Compile Include="src\Models\BCMBuff.cs" />
-    <Compile Include="src\Models\StatsList.cs" />
+    <Compile Include="src\Models\Legacy\BCMBuff.cs" />
+    <Compile Include="src\Models\BCMPlayer.cs" />
+    <Compile Include="src\Models\Legacy\StatsList.cs" />
     <Compile Include="src\EventSystem\NeuronAbstract.cs" />
     <Compile Include="src\EventSystem\Neurons\TrashCollector.cs" />
     <Compile Include="src\EventSystem\Neurons\BagMonitor.cs" />
@@ -165,17 +174,17 @@
     <Compile Include="src\EventSystem\Synapse.cs" />
     <Compile Include="src\EventSystem\Brain.cs" />
     <Compile Include="src\EventSystem\Heartbeat.cs" />
-    <Compile Include="src\Models\EquipmentList.cs" />
-    <Compile Include="src\Models\BagList.cs" />
-    <Compile Include="src\Models\ToolbeltList.cs" />
-    <Compile Include="src\Models\CraftingQueue.cs" />
-    <Compile Include="src\Models\FavoriteRecipeList.cs" />
-    <Compile Include="src\Models\WaypointList.cs" />
-    <Compile Include="src\Models\UnlockedRecipeList.cs" />
-    <Compile Include="src\Models\SpawnpointList.cs" />
-    <Compile Include="src\Models\SkillList.cs" />
-    <Compile Include="src\Models\QuestList.cs" />
-    <Compile Include="src\Models\BuffList.cs" />
+    <Compile Include="src\Models\Legacy\EquipmentList.cs" />
+    <Compile Include="src\Models\Legacy\BagList.cs" />
+    <Compile Include="src\Models\Legacy\ToolbeltList.cs" />
+    <Compile Include="src\Models\Legacy\CraftingQueue.cs" />
+    <Compile Include="src\Models\Legacy\FavoriteRecipeList.cs" />
+    <Compile Include="src\Models\Legacy\WaypointList.cs" />
+    <Compile Include="src\Models\Legacy\UnlockedRecipeList.cs" />
+    <Compile Include="src\Models\Legacy\SpawnpointList.cs" />
+    <Compile Include="src\Models\Legacy\SkillList.cs" />
+    <Compile Include="src\Models\Legacy\QuestList.cs" />
+    <Compile Include="src\Models\Legacy\BuffList.cs" />
     <Compile Include="src\PersistentData\BCMSettings.cs" />
     <Compile Include="src\PersistentData\Player.cs" />
     <Compile Include="src\PersistentData\PersistentContainer.cs" />
