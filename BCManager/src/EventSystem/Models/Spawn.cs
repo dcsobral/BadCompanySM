@@ -8,7 +8,7 @@ namespace BCM
     public int entityId;
     public int targetId;
     public int entityClassId;
-    public BCMVector3 pos;
+    public Vector3 pos;
     public int minRange;
     public int maxRange;
     public bool isObserver;

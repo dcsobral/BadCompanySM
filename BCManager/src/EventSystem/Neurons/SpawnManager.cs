@@ -46,9 +46,11 @@ namespace BCM.Neurons
         spawn.entityId = 0;
         spawn.spawnerId = targetEntity.entityId;
         spawn.targetId = targetEntity.entityId;
-        spawn.pos.x = targetEntity.position.x;
-        spawn.pos.y = targetEntity.position.y;
-        spawn.pos.z = targetEntity.position.z;
+        spawn.pos = targetEntity.position;
+
+        //spawn.pos.x = targetEntity.position.x;
+        //spawn.pos.y = targetEntity.position.y;
+        //spawn.pos.z = targetEntity.position.z;
 
         // todo: delay between spawns based on command settings
 

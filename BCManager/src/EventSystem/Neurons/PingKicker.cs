@@ -46,6 +46,13 @@ namespace BCM.Neurons
       }
 
       //todo: check player pings vs limit and whilelists, kick any that fail test
+      foreach (var c in pingCache)
+      {
+        if (c.Value < 0)
+        {
+          //do kick
+        }
+      }
 
       return true;
     }
