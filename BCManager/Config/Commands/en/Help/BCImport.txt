@@ -5,7 +5,7 @@
             1. {command} <filename> [rot]
             2. {command} <filename> <x1> <y1> <z1> [rot]
       Notes:
-            1. This command will import prefab named <filename> (leave the .ttp off) centered on your current position and rotation(0-3) 
+            1. This command will import prefab named <filename> (leave the .tts off) centered on your current position and rotation(0-3) 
             2. Alternatively use the 4 numbers to specify a location and rotation(0-3) 
             Use bc-help to get a list of common /options
             Use bc-location (loc or pos also work) to display and store your current location

@@ -139,8 +139,8 @@ namespace BCM.Models
     public double TotalPlayTime;
     public string LastOnline;
     public int Underground;
-    public BCMVector3i Position;
-    public BCMVector3i Rotation;
+    public BCMVector3i Position;// todo: add options for format (vector3i, vector3, string3i, string3) - doubles to 2dp
+    public BCMVector3i Rotation;// todo: add options for format (vector3i, vector3, string3i, string3) - doubles to 2dp
 
     //STATS
     public int Health;
@@ -313,7 +313,7 @@ namespace BCM.Models
     }
     public List<BCMVector3i> Spawnpoints;
     public List<BCMWaypoint> Waypoints;
-    public BCMVector3i Marker;
+    public BCMVector3i Marker;// todo: add options for format (vector3i, vector3, string3i, string3) - doubles to 2dp
     #endregion;
 
     public BCMPlayer() : base()

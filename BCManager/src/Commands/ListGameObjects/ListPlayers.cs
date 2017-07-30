@@ -31,6 +31,13 @@ namespace BCM.Commands
 
     public override void Process()
     {
+      if (GameManager.Instance.World == null)
+      {
+        SendOutput("The world isn't loaded");
+
+        return;
+      }
+
       if (_options.ContainsKey("filters"))
       {
         Filters();

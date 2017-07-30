@@ -10,6 +10,7 @@ namespace BCM
     public bool IsEnabled;
     public int beats;
     public int lastfired;
+    public string options;
     public List<NeuronAbstract> neurons = new List<NeuronAbstract>();
 
     public Synapse()
@@ -25,7 +26,7 @@ namespace BCM
           neurons.Add(new SpawnManager());
           break;
         case "entityspawnmutator":
-          neurons.Add(new EntitySpawnMutator());
+          neurons.Add(new EntitySpawnMutator(this));
           break;
 
         case "bagmonitor":

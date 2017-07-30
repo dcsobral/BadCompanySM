@@ -59,12 +59,14 @@
   <ItemGroup>
     <None Include="ModInfo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\API.cs" />
     <Compile Include="src\Classes\EntityZombie.cs" />
     <Compile Include="src\Commands\AdminEntities\BCHordeSpawners.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCGetSpawn.cs" />
     <Compile Include="src\Commands\AdminWorld\BCTileEntity.cs" />
     <Compile Include="src\Commands\AdminEntities\BCSpawn.cs" />
     <Compile Include="src\Commands\AdminEntities\GiveBuffToEntity.cs" />

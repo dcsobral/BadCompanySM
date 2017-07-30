@@ -25,39 +25,68 @@ namespace BCM
       Dictionary<ClientInfo, List<long>> reloadforclients = new Dictionary<ClientInfo, List<long>>();
       foreach (ClientInfo client in clients)
       {
-        if (GameManager.Instance.World.Entities.dict.ContainsKey(client.entityId))
+        try
         {
-          EntityPlayer EP = GameManager.Instance.World.Entities.dict[client.entityId] as EntityPlayer;
-
-          if (EP != null)
+          if (GameManager.Instance.World.Entities.dict.ContainsKey(client.entityId))
           {
-            //todo: need a lock here?
-            HashSet<long> chunksLoaded = EP.ChunkObserver.chunksLoaded;
-            foreach (long _chunkKey in chunksLoaded)
+
+            EntityPlayer EP = null;
+            try
             {
-              if (chunks.ContainsKey(_chunkKey))
+              EP = GameManager.Instance.World.Entities.dict[client.entityId] as EntityPlayer;
+            }
+            catch (Exception ex)
+            {
+              Log.Out(Config.ModPrefix + " Unable to get player entity for " + client.playerName + "\n" + ex);
+            }
+
+            if (EP != null)
+            {
+              //todo: need a lock here?
+              HashSet<long> chunksLoaded = new HashSet<long>();
+              try
               {
-                try
+                chunksLoaded = EP.ChunkObserver.chunksLoaded;
+              }
+              catch (Exception ex)
+              {
+                Log.Out(Config.ModPrefix + " Error getting chunks loaded for " + client.playerName + "\n" + ex);
+              }
+
+              foreach (long _chunkKey in chunksLoaded)
+              {
+                if (chunks.ContainsKey(_chunkKey))
                 {
-                  client.SendPackage(new NetPackageChunkRemove(_chunkKey));
-                  if (reloadforclients.ContainsKey(client))
+                  try
                   {
-                    reloadforclients[client].Add(_chunkKey);
+                    client.SendPackage(new NetPackageChunkRemove(_chunkKey));
+                    if (reloadforclients.ContainsKey(client))
+                    {
+                      reloadforclients[client].Add(_chunkKey);
+                    }
+                    else
+                    {
+                      reloadforclients.Add(client, new List<long> { _chunkKey });
+                    }
                   }
-                  else
+                  catch (Exception ex)
                   {
-                    reloadforclients.Add(client, new List<long> { _chunkKey });
+                    Log.Out(Config.ModPrefix + " Error removing chunk " + _chunkKey + " for " + client.playerName + ":\n" + ex);
                   }
-                }
-                catch (Exception ex)
-                {
-                  Log.Out(Config.ModPrefix + " Error removing chunk " + _chunkKey + " for " + client.playerName + ":\n" + ex);
                 }
               }
+              if (reloadforclients.ContainsKey(client))
+              {
+                Log.Out(Config.ModPrefix + " Reloading " + reloadforclients[client].Count.ToString() + "/" + EP.ChunkObserver.chunksLoaded.Count.ToString() + " chunks for " + client.playerName);
+              }
             }
-            Log.Out(Config.ModPrefix + " Reloading " + reloadforclients[client].Count.ToString() + "/" + EP.ChunkObserver.chunksLoaded.Count.ToString() + " chunks for " + client.playerName);
+
           }
 
+        }
+        catch (Exception ex)
+        {
+          Log.Out(Config.ModPrefix + " Error removing chunks for " + client.playerName + ":\n" + ex);
         }
       }
 
@@ -65,34 +94,54 @@ namespace BCM
       Thread.Sleep(50);
       foreach (ClientInfo client in reloadforclients.Keys)
       {
-        if (reloadforclients[client] != null)
+        try
         {
-          foreach (long _chunkKey in reloadforclients[client])
+
+          if (reloadforclients[client] != null)
           {
-            var chunkCache = GameManager.Instance.World.ChunkClusters[0];
-            if (chunkCache != null)
+            foreach (long _chunkKey in reloadforclients[client])
             {
-              var chunkKeys = chunkCache.GetChunkKeysCopySync();
-              EntityPlayer EP = GameManager.Instance.World.Entities.dict[client.entityId] as EntityPlayer;
-              //todo: verify if the above remove chunk takes them out of the EP.ChunkObserver.chunksLoaded dict
-              if (chunkKeys.Contains(_chunkKey) && EP != null && EP.ChunkObserver.chunksLoaded.Contains(_chunkKey))
+              //move to outside loop?
+              var chunkCache = GameManager.Instance.World.ChunkClusters[0];
+              if (chunkCache != null)
               {
-                var c = chunkCache.GetChunkSync(_chunkKey);
-                if (c != null)
+                var chunkKeys = chunkCache.GetChunkKeysCopySync();
+                EntityPlayer EP = null;
+                try
                 {
-                  try
+                  EP = GameManager.Instance.World.Entities.dict[client.entityId] as EntityPlayer;
+                }
+                catch (Exception ex)
+                {
+                  Log.Out(Config.ModPrefix + " Unable to get player entity for " + client.playerName + "\n" + ex);
+                }
+                if (EP != null)
+                {
+                  if (chunkKeys.Contains(_chunkKey) && EP.ChunkObserver.chunksLoaded.Contains(_chunkKey))
                   {
-                    client.SendPackage(new NetPackageChunk(c));
-                  }
-                  catch (Exception ex)
-                  {
-                    Log.Out(Config.ModPrefix + " Error reloading chunk " + _chunkKey + " for " + client.playerName + ":\n" + ex);
+                    var c = chunkCache.GetChunkSync(_chunkKey);
+                    if (c != null)
+                    {
+                      try
+                      {
+                        client.SendPackage(new NetPackageChunk(c));
+                      }
+                      catch (Exception ex)
+                      {
+                        Log.Out(Config.ModPrefix + " Error reloading chunk " + _chunkKey + " for " + client.playerName + ":\n" + ex);
+                      }
+                    }
                   }
                 }
               }
             }
           }
         }
+        catch (Exception ex)
+        {
+          Log.Out(Config.ModPrefix + " Error resending chunks for " + client.playerName + ":\n" + ex);
+        }
+
       }
 
       return true;

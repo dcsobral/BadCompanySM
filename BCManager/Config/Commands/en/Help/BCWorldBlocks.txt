@@ -10,7 +10,7 @@
       Notes:
             Use bc-help to get a list of common /options
             default mode is fill - the block specified is rendered into the area given or the area between the stored loc (see bc-location) and your current location
-            /swap - replaces the first block specified with the second block specified within the area given
+            /swap - replaces the second block specified with the first block specified within the area given
             /scan - gives stats on blocks within the area given - param * for block name will give stats on all blocks, warning: this will overflow your console if done in a large area
             /density will provide a second output of the densities in the area
             /undo will override any other param or option and undo the last import

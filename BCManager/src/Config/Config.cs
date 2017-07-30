@@ -138,6 +138,12 @@ namespace BCM
                 Log.Out("" + ModPrefix + " Unable to load Synapse 'beats' in element #" + count + ", value not a valid int in " + systemFile);
               }
             }
+
+            if (_s.HasAttribute("options"))
+            {
+              _synapse.options = _s.GetAttribute("options");
+            }
+
             _synapse.WireNeurons();
             Brain.BondSynapse(_synapse);
           }

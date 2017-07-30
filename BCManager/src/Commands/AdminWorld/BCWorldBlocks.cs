@@ -95,7 +95,12 @@ namespace BCM.Commands
       //      map visitor for unloaded chunks
       //todo: damage
       //todo: use Chunk.RecalcHeightAt(int _x, int _yMaxStart, int _z)
-      //todo: 
+
+      //todo: change command to load chunks and offload the setblockrpc calls to a subthread that waits for all chunks to load
+      //      limit size to 512 x 512
+      //      allow /y=-1 too be used to offset the insert when using player locs to allow sub areas to be accessed without underground clipping
+      //      /y=terrain to set the bottom y co-ord to the lowest non terrain block -1
+
       Vector3i p1 = new Vector3i(int.MinValue, 0, int.MinValue);
       Vector3i p2 = new Vector3i(int.MinValue, 0, int.MinValue);
       string blockname = null;
@@ -421,6 +426,7 @@ namespace BCM.Commands
 
               Vector3i p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
               GameManager.Instance.World.SetBlock(_clrIdx, p5, _bv, false, false);
+              //GameManager.Instance.World.SetBlockRPC(_clrIdx, p5, _bv);
               GameManager.Instance.World.SetDensity(_clrIdx, p5, _density, false);
               GameManager.Instance.World.SetTexture(_clrIdx, p5.x, p5.y, p5.z, _textureFull);
             }

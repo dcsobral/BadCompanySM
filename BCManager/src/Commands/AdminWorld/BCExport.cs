@@ -82,8 +82,7 @@ namespace BCM.Commands
 
         return;
       }
-
-
+      
       if (filename != null)
       {
         Prefab _prefab = new Prefab();
@@ -92,6 +91,8 @@ namespace BCM.Commands
 
         _prefab.filename = filename;
         _prefab.bCopyAirBlocks = true;
+        _prefab.addAllChildBlocks();//credit: DJKRose
+
         //todo: parse additional config from options
 
         string _dir = "Data/Prefabs";

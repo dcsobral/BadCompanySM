@@ -75,6 +75,7 @@
   <Command name="RemoveBuffFromEntity" commands="bc-reb,bc-debuff,bc-rembuff" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCRemove" commands="bc-remove,remove" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCSpawn" commands="bc-spawn,spawn" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCGetSpawn" commands="bc-getspawn" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCHordeSpawners" commands="bc-showspawn,manager,shsm" defaultpermissionlevel="0" defaultoptions=""/>
 
   <!-- Admin World -->
