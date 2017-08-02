@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Motd>
+  <!-- enable the below line to ignore the Defaults/Motd.xml and only use this files settings -->
+  <!--<nodefaults enabled="true"/>-->
+  
+  <!-- name = used as a hook for enabling via console -->
+  <!-- enabled = determine if message is included in rotation -->
+  <!-- delay = minimum delay (seconds) between display of multiple messages in the same day message -->
+  <!-- prob = chance of message being selected randomly weighted vs other probs-->
+  <!-- ondays = a number pair in the form of cycle_day/cycle_length  -->
+  <!--        - the first number determines which day from 1 to cycle_length in the cycle the motd must be displayed -->
+  <!--        - the second number determines the number of game days in a cycle -->
+  <!--        - ex: 6/7 means the message will display the day before each horde night, 7/7 would appear on the morning of horde night -->
+  <!--        -  -->
+  <!-- type = csv on the types for the motd [on_gameday,on_login,on_random]  -->
+  <!--      - the on_login type will display at any time of day when a client connects to the game server -->
+  <!-- color = chat text color -->
+  <default motdtime="7:00"/>
+  <on_random randomperday="2" motdtime="7:00"/>
+  <!--mpm="5"-->
+  <!-- randomperday = number of on_random type messages to display each new game day -->
+  <!-- motdtime = the game time to display the motd, this may be offset a little if the beats per fire for the motd synapse is to high -->
+  
+  <Message name="loginmotd" enabled="true" color="#ffffff" type="on_login">
+    This is the login banner Motd
+  </Message>
+  <Message name="bloodmoon0" enabled="true" prob="1" ondays="7/7" color="#ff0000" type="on_gameday,on_login">
+    Blood Moon Tonight!!!
+  </Message>
+  <Message name="bloodmoon1" enabled="true" prob="1" ondays="6/7" color="#ff0000" type="on_gameday">
+    Blood Moon Tomorrow.
+  </Message>
+  <Message name="message1" enabled="true" delay="15" prob="1" type="on_random">
+    This is the first Motd
+  </Message>
+  <Message name="message2" enabled="true" delay="15" prob="1" type="on_random">
+    This is the second Motd
+  </Message>
+  <Message name="message3" enabled="true" delay="15" prob="1" type="on_random">
+    This is the third Motd. testing the char limit. testing the char limit. testing the char limit. testing the char limit. testing the char limit!!
+  </Message>
+  <Message name="message4" enabled="true" delay="15" prob="1" type="on_random">
+    This is the fourth Motd
+  </Message>
+  <Message name="message5" enabled="true" delay="15" prob="1" type="on_random">
+    This is the fifth Motd
+  </Message>
+  <Message name="message6" enabled="true" delay="15" prob="1" type="on_random">
+    This is the sixth Motd
+  </Message>
+  <Message name="message7" enabled="true" delay="15" prob="1" type="on_random">
+    This is the seventh Motd
+  </Message>
+</Motd>

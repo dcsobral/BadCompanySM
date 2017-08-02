@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xml>
+  <ModInfo>
+    <Name value="Bad Company Manager"/>
+    <Description value="Stompys Bad Company Manager for Dedicated Servers"/>
+    <Author value="StompyNZ"/>
+    <Version value="1.6.1_b1.5"/>
+    <Website value="https://github.com/7days2mod/BadCompanySM"/>
+  </ModInfo>
+</xml>

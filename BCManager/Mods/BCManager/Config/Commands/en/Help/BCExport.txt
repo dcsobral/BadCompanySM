@@ -1,0 +1,12 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} <filename>
+            2. {command} <x1> <y1> <z1> <x2> <y2> <z2> <filename>
+      Notes:
+            1. This command will export the area between your current position and the stored loc (see bc-location)
+            2. Alternatively use the 6 numbers to specify two locations and export the area between them.
+            Use bc-help to get a list of common /options
+            Use bc-location (loc or pos also work) to display and store your current location
+            Use bc-prefabs to get a list of prefabs in the Data/Prefabs folder

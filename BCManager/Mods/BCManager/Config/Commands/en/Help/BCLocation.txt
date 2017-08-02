@@ -1,0 +1,8 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command}
+      Notes:
+            Use this command to get your current position, and if in god mode your distance underground.
+            It will also store your location for use with other commands such as bc-export and bc-wblocks
