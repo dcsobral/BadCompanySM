@@ -1,5 +1,4 @@
 using BCM.Models;
-using System.Collections.Generic;
 
 namespace BCM.Commands
 {

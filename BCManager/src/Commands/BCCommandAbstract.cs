@@ -83,12 +83,12 @@ namespace BCM.Commands
         {
           if (_param.IndexOf('=', 1) != -1)
           {
-            string[] p1 = _param.Substring(1).Split('=');
+            string[] p1 = _param.Substring(1).ToLower().Split('=');
             _options.Add(p1[0], p1[1]);
           }
           else
           {
-            _options.Add(_param.Substring(1), null);
+            _options.Add(_param.Substring(1).ToLower(), null);
           }
         }
         else
@@ -102,7 +102,7 @@ namespace BCM.Commands
       string[] addDefaults = defaultoptions.Split(',');
       foreach (string def in addDefaults)
       {
-        string add = def.Trim();
+        string add = def.Trim().ToLower();
         if (
           (add == "online" && (_options.ContainsKey("offline") || _options.ContainsKey("all")))
           ||
@@ -114,9 +114,11 @@ namespace BCM.Commands
           ||
           (add == "details" && _options.ContainsKey("nodetails"))
           ||
-          (add == "csvpos" && _options.ContainsKey("spacepos"))
+          (add == "strpos" && _options.ContainsKey("vectors"))
           ||
-          (add == "worldpos" && _options.ContainsKey("spacepos"))
+          (add == "strpos" && _options.ContainsKey("csvpos"))
+          ||
+          (add == "strpos" && _options.ContainsKey("worldpos"))
           ||
           (_options.ContainsKey(add))
           )
@@ -160,12 +162,13 @@ namespace BCM.Commands
         jsonOut.Add("tag", _options["tag"]);
         jsonOut.Add("data", data);
         LitJson.JsonMapper.ToJson(jsonOut, _writer);
-      }else
+      }
+      else
       {
         LitJson.JsonMapper.ToJson(data, _writer);
       }
 
-      SendOutput(_writer.ToString());
+      SendOutput(_writer.ToString().TrimStart());
     }
 
     public void SendOutput(string output)

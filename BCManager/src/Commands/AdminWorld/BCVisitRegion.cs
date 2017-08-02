@@ -99,7 +99,7 @@ namespace BCM.Commands
 
       if (lastSender != null)
       {
-        lastSender.SendPackage(new NetPackageGameMessage(EnumGameMessages.Chat, "Visit Region Completed", "Server", false, "", false));
+        lastSender.SendPackage(new NetPackageGameMessage(EnumGameMessages.Chat, "(PM) Visit Region Completed", "Server", false, "", false));
         lastSender = null;
       }
       mapVisitor = null;

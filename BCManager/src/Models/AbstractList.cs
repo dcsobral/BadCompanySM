@@ -8,13 +8,19 @@ namespace BCM.Models
   {
     private Dictionary<string, string> options = new Dictionary<string, string>();
 
+    public AbstractList()
+    {
+    }
+
     public AbstractList(PlayerInfo _pInfo)
     {
       Load(_pInfo);
     }
 
-    public AbstractList()
+    public AbstractList(Dictionary<string, string> _options)
     {
+      options = _options;
+      Load();
     }
 
     public AbstractList(PlayerInfo _pInfo, Dictionary<string, string> _options)
@@ -54,7 +60,7 @@ namespace BCM.Models
       {
         return options[key];
       }
-      return null;
+      return "";
     }
 
     public string GetPosType()
@@ -70,6 +76,10 @@ namespace BCM.Models
       }
 
       return postype;
+    }
+
+    public virtual void Load()
+    {
     }
 
     public virtual void Load(PlayerInfo _pInfo)

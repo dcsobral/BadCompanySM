@@ -63,8 +63,23 @@ namespace BCM.Commands
         string _steamId = "";
         if (GetEntity.GetBySearch(_params[0], out _steamId, "CON"))
         {
-          var data = new BCMPlayer(new GetPlayer().BySteamId(_steamId), _options);
-          SendJson(data.Data());
+          var player = new BCMPlayer(new GetPlayer().BySteamId(_steamId), _options);
+
+          if (_options.ContainsKey("nokeys"))
+          {
+            List<List<object>> keyless = new List<List<object>>();
+            List<object> obj = new List<object>();
+            foreach (var d in player.Data())
+            {
+              obj.Add(d.Value);
+            }
+            keyless.Add(obj);
+            SendJson(keyless);
+          }
+          else
+          {
+            SendJson(player.Data());
+          }
         }
       }
       else
@@ -75,12 +90,33 @@ namespace BCM.Commands
 
         List<string> players = GetEntity.GetStoredPlayers(_options);
         Dictionary<string, Dictionary<string, object>> data = new Dictionary<string, Dictionary<string, object>>();
+        List<List<object>> keyless = new List<List<object>>();
         foreach (string _steamId in players)
         {
           var player = new BCMPlayer(new GetPlayer().BySteamId(_steamId), _options);
-          data.Add(_steamId, player.Data());
+          if (_options.ContainsKey("nokeys"))
+          {
+            var obj = new List<object>();
+            foreach (var d in player.Data())
+            {
+              obj.Add(d.Value);
+            }
+            keyless.Add(obj);
+          }
+          else
+          {
+            data.Add(_steamId, player.Data());
+          }
         }
-        SendJson(data);
+
+        if (_options.ContainsKey("nokeys"))
+        {
+          SendJson(keyless);
+        }
+        else
+        {
+          SendJson(data);
+        }
       }
     }
   }

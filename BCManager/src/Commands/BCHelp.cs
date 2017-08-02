@@ -27,14 +27,17 @@ namespace BCM.Commands
       SdtdConsole.Instance.Output("/online => For ListPlayers commands it will display only online players (default shows all players)");
       SdtdConsole.Instance.Output("/offline => For ListPlayers commands it will display only offline players");
       SdtdConsole.Instance.Output("/all => Override command default settings for /online or /offline");
-      //      SdtdConsole.Instance.Output("/json => for commands that support it, will return the data in json encoded format");
+      //SdtdConsole.Instance.Output("/json => for commands that support it, will return the data in json encoded format");
       SdtdConsole.Instance.Output("***Output Format Options***");
-      SdtdConsole.Instance.Output("/nl => Uses a newline to seperate items (can be combined with /csv)");
-      SdtdConsole.Instance.Output("/csv => Uses a comma to seperate items (can be combined with /nl)");
-      SdtdConsole.Instance.Output("/nocsv or /nonl => Override command default settins for /csv and /nl");
+      SdtdConsole.Instance.Output("/1l => Returns json output on a single line (for server managers)");
+      SdtdConsole.Instance.Output("/pp => Returns json output with print pretty enabled (default: on)");
+      //SdtdConsole.Instance.Output("/nl => Uses a newline to seperate items (can be combined with /csv)");
+      //SdtdConsole.Instance.Output("/csv => Uses a comma to seperate items (can be combined with /nl)");
+      //SdtdConsole.Instance.Output("/nocsv or /nonl => Override command default settins for /csv and /nl");
+      SdtdConsole.Instance.Output("/vectors => Returns all BCM Vectors as x y z objects rather than single string");
       SdtdConsole.Instance.Output("/csvpos =>  Converts all Vector3 co-ords to csv seperated (default is space seperated)");
       SdtdConsole.Instance.Output("/worldpos => Converts all Vector3 co-ords to Map Co-ords");
-      SdtdConsole.Instance.Output("/spacepos => Override command default settins for /csvpos or /worldpos");
+      SdtdConsole.Instance.Output("/strpos => Override command default settings for /csvpos or /worldpos");
     }
   }
 }

@@ -1,32 +1,37 @@
-//using BCM.Models;
-//using System;
-//using System.Collections.Generic;
-//using UnityEngine;
+using BCM.Models;
 
-//namespace BCM.Commands
-//{
-//  public class ListPlayersPosition : ListPlayers
-//  {
-//    public override Dictionary<string, string> jsonPlayer(PlayerInfo _pInfo)
-//    {
-//      var data = new Dictionary<string, string>();
-//      data.Add("error", "Not Implemented");
-//      return data;
-//    }
-//    public override string displayPlayer(PlayerInfo _pInfo)
-//    {
-//      if (_options.ContainsKey("fast"))
-//      {
-//        Vector3 p;
-//        p = _pInfo.EP != null ? _pInfo.EP.position : (_pInfo.PDF != null ? _pInfo.PDF.ecd.pos : new Vector3(int.MinValue, 0, int.MinValue));
+namespace BCM.Commands
+{
+  public class ListPlayersPosition : ListPlayers
+  {
+    public override void Process()
+    {
+      if (_options.ContainsKey("filter"))
+      {
+        SendOutput("Error: Can't set filters on this alias command");
+        SendOutput(GetHelp());
 
-//        return _pInfo._steamId + ":" + string.Format("{0} {1} {2}", (int)Math.Round(p.x), (int)Math.Round(p.y), (int)Math.Round(p.z));
-//      }
+        return;
+      }
 
-//      string output = "";
-//      output += new ClientInfoList(_pInfo, _options).DisplayShortWithPos();
+      string filters = BCMPlayer.StrFilters.Position;
 
-//      return output;
-//    }
-//  }
-//}
+      if (_options.ContainsKey("r"))
+      {
+        filters += "," + BCMPlayer.StrFilters.Rotation;
+      }
+      if (_options.ContainsKey("u"))
+      {
+        filters += "," + BCMPlayer.StrFilters.Underground;
+      }
+      if (_options.ContainsKey("g"))
+      {
+        filters += "," + BCMPlayer.StrFilters.OnGround;
+      }
+
+      _options.Add("filter", filters);
+      var listPlayersCmd = new ListPlayers();
+      listPlayersCmd.Process(_options, _params);
+    }
+  }
+}

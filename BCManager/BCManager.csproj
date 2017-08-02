@@ -156,6 +156,7 @@
     <Compile Include="src\Functions\GetEntity.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\Functions\PlayerDataReader.cs" />
+    <Compile Include="src\Models\BCMItemClass.cs" />
     <Compile Include="src\Models\Legacy\BCMItemClass.cs" />
     <Compile Include="src\Models\Legacy\BCMQuestLegacy.cs" />
     <Compile Include="src\Models\Legacy\BCMItem.cs" />
@@ -620,6 +621,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Config\Readme.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Config\Commands\en\Help\BCWorldBlocks.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -635,14 +639,33 @@
     <None Include="Config\Commands\en\Help\SetSkillOnPlayer.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="Config\Motd.xml" />
+    <None Include="Config\Motd.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Config\Defaults\" />
     <Folder Include="Config\Examples\" />
+    <Folder Include="Mods\" />
     <Folder Include="src\Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>rmdir "$(ProjectDir)Mods\BCManager" /s /q
+mkdir "$(ProjectDir)Mods\BCManager\Config"
+mkdir "$(ProjectDir)Mods\BCManager\DefaultConfig"
+
+xcopy "$(ProjectDir)$(OutDir)Config\Commands" "$(ProjectDir)Mods\BCManager\Config\Commands" /e /y /i /c
+
+copy "$(ProjectDir)$(OutDir)BCManager.dll" "$(ProjectDir)Mods\BCManager\BCManager.dll"
+copy "$(ProjectDir)$(OutDir)ModInfo.xml" "$(ProjectDir)Mods\BCManager\ModInfo.xml"
+
+copy "$(ProjectDir)$(OutDir)Config\Commands.xml" "$(ProjectDir)Mods\BCManager\DefaultConfig\Commands.xml"
+copy "$(ProjectDir)$(OutDir)Config\Motd.xml" "$(ProjectDir)Mods\BCManager\DefaultConfig\Motd.xml"
+copy "$(ProjectDir)$(OutDir)Config\System.xml" "$(ProjectDir)Mods\BCManager\DefaultConfig\System.xml"
+copy "$(ProjectDir)$(OutDir)Config\Readme.md" "$(ProjectDir)Mods\BCManager\Config\Readme.md"
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

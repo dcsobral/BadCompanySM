@@ -6,8 +6,9 @@ using UnityEngine;
 namespace BCM.Models
 {
   [Serializable]
-  public class BCMPlayer : AbstractList
+  public class BCMPlayer// : AbstractList
   {
+    private Dictionary<string, string> options = new Dictionary<string, string>();
     private Dictionary<string, object> _bin = new Dictionary<string, object>();
     public enum Filters
     {
@@ -139,8 +140,8 @@ namespace BCM.Models
     public double TotalPlayTime;
     public string LastOnline;
     public int Underground;
-    public BCMVector3i Position;// todo: add options for format (vector3i, vector3, string3i, string3) - doubles to 2dp
-    public BCMVector3i Rotation;// todo: add options for format (vector3i, vector3, string3i, string3) - doubles to 2dp
+    public BCMVector3i Position;// todo: add options for doubles to 2dp
+    public BCMVector3i Rotation;
 
     //STATS
     public int Health;
@@ -316,12 +317,20 @@ namespace BCM.Models
     public BCMVector3i Marker;// todo: add options for format (vector3i, vector3, string3i, string3) - doubles to 2dp
     #endregion;
 
-    public BCMPlayer() : base()
-    {
-    }
 
-    public BCMPlayer(PlayerInfo _pInfo, Dictionary<string, string> _options) : base(_pInfo, _options)
+    private bool useInt = false;
+    private List<string> strFilter = new List<string>();
+    private List<int> intFilter = new List<int>();
+
+
+    //public BCMPlayer() : base()
+    //{
+    //}
+
+    public BCMPlayer(PlayerInfo _pInfo, Dictionary<string, string> _options)// : base(_pInfo, _options)
     {
+      options = _options;
+      Load(_pInfo);
     }
 
     public Dictionary<string, object> Data ()
@@ -329,63 +338,90 @@ namespace BCM.Models
       return _bin;
     }
 
-    public override void Load(PlayerInfo _pInfo)
+    public void Load(PlayerInfo _pInfo)
     {
+      if (isOption("filter"))
+      {
+        strFilter = OptionValue("filter").Split(',').ToList();
+        if (strFilter.Count > 0)
+        {
+          intFilter = (from o in strFilter.Where((o) => { int d; return int.TryParse(o, out d); }) select int.Parse(o)).ToList();
+          if (intFilter.Count == strFilter.Count)
+          {
+            useInt = true;
+          }
+        }
+      }
+
       GetClientInfo(_pInfo);
       GetStats(_pInfo);
+
       //todo: sub filters, e.g. /bag=1,3,4,5
-      if (isOption("bag bg full"))
+
+      if ((useInt && intFilter.Contains((int)Filters.Bag)) || (!useInt && strFilter.Contains(StrFilters.Bag)) || isOption("bag bg full"))
       {
         GetBag(_pInfo);
         _bin.Add("Bag", Bag);
       }
-      if (isOption("belt bt full"))
+      if ((useInt && intFilter.Contains((int)Filters.Belt)) || (!useInt && strFilter.Contains(StrFilters.Belt)) || isOption("belt bt full"))
       {
         GetBelt(_pInfo);
         _bin.Add("Belt", Belt);
       }
-      if (isOption("equipment eq full"))
+      if ((useInt && intFilter.Contains((int)Filters.Equipment)) || (!useInt && strFilter.Contains(StrFilters.Equipment)) || isOption("equipment eq full"))
       {
         GetEquipment(_pInfo);
         _bin.Add("Equipment", Equipment);
       }
-      if (isOption("buffs bu full"))
+      if ((useInt && intFilter.Contains((int)Filters.Buffs)) || (!useInt && strFilter.Contains(StrFilters.Buffs)) || isOption("buffs bu full"))
       {
         GetBuffs(_pInfo);
         _bin.Add("Buffs", Buffs);
       }
-      if (isOption("skills sk full"))
+
+      if (
+        ((useInt && intFilter.Contains((int)Filters.SkillPoints)) || (!useInt && strFilter.Contains(StrFilters.SkillPoints)) || isOption("skillpoints pt full"))
+        ||
+        ((useInt && intFilter.Contains((int)Filters.Skills)) || (!useInt && strFilter.Contains(StrFilters.Skills)) || isOption("skills sk full"))
+        )
       {
         GetSkills(_pInfo);
-        _bin.Add("SkillPoints", SkillPoints);
-        _bin.Add("Skills", Skills);
+        if ((useInt && intFilter.Contains((int)Filters.SkillPoints)) || (!useInt && strFilter.Contains(StrFilters.SkillPoints)) || isOption("skillpoints pt full"))
+        {
+          _bin.Add("SkillPoints", SkillPoints);
+        }
+        if ((useInt && intFilter.Contains((int)Filters.Skills)) || (!useInt && strFilter.Contains(StrFilters.Skills)) || isOption("skills sk full"))
+        {
+          _bin.Add("Skills", Skills);
+        }
       }
-      if (isOption("crafting cq full"))
+
+      if ((useInt && intFilter.Contains((int)Filters.CraftingQueue)) || (!useInt && strFilter.Contains(StrFilters.CraftingQueue)) || isOption("crafting cq full"))
       {
         GetCraftingQueue(_pInfo);
         _bin.Add("CraftingQueue", CraftingQueue);
       }
-      if (isOption("favrecipes fr full"))
+      if ((useInt && intFilter.Contains((int)Filters.FavouriteRecipes)) || (!useInt && strFilter.Contains(StrFilters.FavouriteRecipes)) || isOption("favrecipes fr full"))
       {
         GetFavouriteRecipes(_pInfo);
         _bin.Add("FavouriteRecipes", FavouriteRecipes);
       }
-      if (isOption("unlockedrecipes ur full"))
+      if ((useInt && intFilter.Contains((int)Filters.UnlockedRecipes)) || (!useInt && strFilter.Contains(StrFilters.UnlockedRecipes)) || isOption("unlockedrecipes ur full"))
       {
         GetUnlockedRecipes(_pInfo);
         _bin.Add("UnlockedRecipes", UnlockedRecipes);
       }
-      if (isOption("quests qu full"))
+      if ((useInt && intFilter.Contains((int)Filters.Quests)) || (!useInt && strFilter.Contains(StrFilters.Quests)) || isOption("quests qu full"))
       {
         GetQuests(_pInfo);
         _bin.Add("Quests", Quests);
       }
-      if (isOption("spawns sp full"))
+      if ((useInt && intFilter.Contains((int)Filters.Spawnpoints)) || (!useInt && strFilter.Contains(StrFilters.Spawnpoints)) || isOption("spawns sp full"))
       {
         GetSpawnpoints(_pInfo);
         _bin.Add("Spawnpoints", Spawnpoints);
       }
-      if (isOption("waypoints wp full"))
+      if ((useInt && intFilter.Contains((int)Filters.Waypoints)) || (!useInt && strFilter.Contains(StrFilters.Waypoints)) || isOption("waypoints wp full"))
       {
         GetWaypoints(_pInfo);
         _bin.Add("Waypoints", Waypoints);
@@ -403,6 +439,7 @@ namespace BCM.Models
       {
         var _waypoint = new BCMWaypoint();
         _waypoint.Name = waypoint.name;
+        //todo:BCMVector3i
         _waypoint.Pos = new BCMVector3i(waypoint.pos);
         _waypoint.Icon = waypoint.icon;
 
@@ -789,14 +826,6 @@ namespace BCM.Models
     {
       if (isOption("filter"))
       {
-        bool useInt = false;
-        string[] strFilter = OptionValue("filter").Split(',');
-        int[] intFilter = (from o in strFilter.Where((o) => { int d; return Int32.TryParse(o, out d); }) select Int32.Parse(o)).ToArray();
-        if (intFilter.Length == strFilter.Length)
-        {
-          useInt = true;
-        }
-
         //WELLNESS
         if ((useInt && intFilter.Contains((int)Filters.Wellness)) || (!useInt && strFilter.Contains(StrFilters.Wellness)))
         {
@@ -863,6 +892,7 @@ namespace BCM.Models
         //DROPPEDPACK
         if ((useInt && intFilter.Contains((int)Filters.DroppedPack)) || (!useInt && strFilter.Contains(StrFilters.DroppedPack)))
         {
+          //todo:BCMVector3i
           DroppedPack = (_pInfo.PDF.droppedBackpackPosition != Vector3i.zero ? Convert.PosToStr(_pInfo.PDF.droppedBackpackPosition, GetPosType()) : "None");
         _bin.Add("DroppedPack", DroppedPack);
         }
@@ -999,6 +1029,7 @@ namespace BCM.Models
         //RENTEDVENDOR
         if ((useInt && intFilter.Contains((int)Filters.RentedVendor)) || (!useInt && strFilter.Contains(StrFilters.RentedVendor)))
         {
+          //todo:BCMVector3i
           RentedVendor = (_pInfo.EP != null ? Convert.PosToStr(_pInfo.EP.RentedVMPosition, GetPosType()) : Convert.PosToStr(_pInfo.PDF.rentedVMPosition, GetPosType()));
           _bin.Add("RentedVendor", RentedVendor);
         }
@@ -1012,70 +1043,75 @@ namespace BCM.Models
       }
       else
       {
-        Wellness = (int)(_pInfo.EP != null ? ((_pInfo.EP.Stats.Wellness.Value == 100 && _pInfo.EP.Stats.Wellness.Value != _pInfo.PDF.ecd.stats.Wellness.Value) ? _pInfo.PDF.ecd.stats.Wellness.Value : _pInfo.EP.Stats.Wellness.Value) : _pInfo.PDF.ecd.stats.Wellness.Value);
-        Health = (int)(_pInfo.EP != null ? ((_pInfo.EP.Health == 100 && _pInfo.EP.Health != _pInfo.PDF.ecd.stats.Health.Value) ? _pInfo.PDF.ecd.stats.Health.Value : _pInfo.EP.Health) : _pInfo.PDF.ecd.stats.Health.Value);
-        Stamina = (int)(_pInfo.EP != null ? ((_pInfo.EP.Stamina == 100 && _pInfo.EP.Stamina != _pInfo.PDF.ecd.stats.Stamina.Value) ? _pInfo.PDF.ecd.stats.Stamina.Value : _pInfo.EP.Stamina) : _pInfo.PDF.ecd.stats.Stamina.Value);
-        Food = (int)(_pInfo.PDF.food.GetLifeLevelFraction() * 100);
-        Drink = (int)(_pInfo.PDF.drink.GetLifeLevelFraction() * 100);
-        CoreTemp = (int)_pInfo.PDF.ecd.stats.CoreTemp.Value;
-        SpeedModifier = Math.Round((_pInfo.EP != null ? ((_pInfo.EP.Stats.SpeedModifier.Value == 1 && _pInfo.EP.Stats.SpeedModifier.Value != _pInfo.PDF.ecd.stats.SpeedModifier.Value) ? _pInfo.PDF.ecd.stats.SpeedModifier.Value : _pInfo.EP.Stats.SpeedModifier.Value) : _pInfo.PDF.ecd.stats.SpeedModifier.Value), 1);
-        Archetype = _pInfo.PDF.ecd.playerProfile.Archetype;
-        DistanceWalked = Math.Round(_pInfo.PDF.distanceWalked, 1);
-        DroppedPack = (_pInfo.PDF.droppedBackpackPosition != Vector3i.zero ? Convert.PosToStr(_pInfo.PDF.droppedBackpackPosition, GetPosType()) : "None");
-        Level = (_pInfo.EP != null ? _pInfo.EP.GetLevel() : _pInfo.PDF.level);
-        LevelProgress = Math.Round((_pInfo.EP != null ? (_pInfo.EP.GetLevelProgressPercentage() * 100) : ((1 - _pInfo.PDF.experience / Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pInfo.PDF.level + 1)), int.MaxValue)) * 100)), 2);
-        ExpToNextLevel = (_pInfo.EP != null ? _pInfo.EP.ExpToNextLevel : (int)_pInfo.PDF.experience);
-        ExpForNextLevel = (_pInfo.EP != null ? _pInfo.EP.GetExpForNextLevel() : (int)Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pInfo.PDF.level + 1)), int.MaxValue));
-        Gamestage = (_pInfo.EP != null ? _pInfo.EP.gameStage : (_pInfo.PCP != null ? (int?)_pInfo.PCP.Gamestage : null));
-        Score = (_pInfo.EP != null ? _pInfo.EP.Score : _pInfo.PDF.score);
-        KilledPlayers = (_pInfo.EP != null ? _pInfo.EP.KilledPlayers : _pInfo.PDF.playerKills);
-        KilledZombies = (_pInfo.EP != null ? _pInfo.EP.KilledZombies : _pInfo.PDF.zombieKills);
-        Deaths = (_pInfo.EP != null ? _pInfo.EP.Died : _pInfo.PDF.deaths);
-        CurrentLife = Math.Round((_pInfo.EP != null ? _pInfo.EP.currentLife : _pInfo.PDF.currentLife), 2);
-        LongestLife = Math.Round((_pInfo.EP != null ? _pInfo.EP.longestLife : _pInfo.PDF.longestLife), 2);
-        ItemsCrafted = (_pInfo.EP != null ? _pInfo.EP.totalItemsCrafted : _pInfo.PDF.totalItemsCrafted);
-        IsDead = (_pInfo.EP != null ? _pInfo.EP.IsDead() : _pInfo.PDF.bDead);
-        if (_pInfo.EP != null)
+        if (isOption("full") || !isOption("bag bg belt bt equipment eq buffs bu skillpoints pt skills sk crafting cq favrecipes fr unlockedrecipes ur quests qu spawns sp waypoints wp"))
         {
-          OnGround = _pInfo.EP.onGround;
-          IsStuck = _pInfo.EP.IsStuck;
-          IsSafeZoneActive = _pInfo.EP.IsSafeZoneActive();
-          Remote = _pInfo.EP.isEntityRemote;
-          LastZombieAttacked = Math.Round(((GameManager.Instance.World.worldTime - _pInfo.EP.LastZombieAttackTime) / 600f), 2);
-        }
-        RentedVendor = (_pInfo.EP != null ? Convert.PosToStr(_pInfo.EP.RentedVMPosition, GetPosType()) : Convert.PosToStr(_pInfo.PDF.rentedVMPosition, GetPosType()));
-        RentedVendorExpire = (_pInfo.EP != null ? _pInfo.EP.RentalEndTime : _pInfo.PDF.rentalEndTime);
+          Wellness = (int)(_pInfo.EP != null ? ((_pInfo.EP.Stats.Wellness.Value == 100 && _pInfo.EP.Stats.Wellness.Value != _pInfo.PDF.ecd.stats.Wellness.Value) ? _pInfo.PDF.ecd.stats.Wellness.Value : _pInfo.EP.Stats.Wellness.Value) : _pInfo.PDF.ecd.stats.Wellness.Value);
+          Health = (int)(_pInfo.EP != null ? ((_pInfo.EP.Health == 100 && _pInfo.EP.Health != _pInfo.PDF.ecd.stats.Health.Value) ? _pInfo.PDF.ecd.stats.Health.Value : _pInfo.EP.Health) : _pInfo.PDF.ecd.stats.Health.Value);
+          Stamina = (int)(_pInfo.EP != null ? ((_pInfo.EP.Stamina == 100 && _pInfo.EP.Stamina != _pInfo.PDF.ecd.stats.Stamina.Value) ? _pInfo.PDF.ecd.stats.Stamina.Value : _pInfo.EP.Stamina) : _pInfo.PDF.ecd.stats.Stamina.Value);
+          Food = (int)(_pInfo.PDF.food.GetLifeLevelFraction() * 100);
+          Drink = (int)(_pInfo.PDF.drink.GetLifeLevelFraction() * 100);
+          CoreTemp = (int)_pInfo.PDF.ecd.stats.CoreTemp.Value;
+          SpeedModifier = Math.Round((_pInfo.EP != null ? ((_pInfo.EP.Stats.SpeedModifier.Value == 1 && _pInfo.EP.Stats.SpeedModifier.Value != _pInfo.PDF.ecd.stats.SpeedModifier.Value) ? _pInfo.PDF.ecd.stats.SpeedModifier.Value : _pInfo.EP.Stats.SpeedModifier.Value) : _pInfo.PDF.ecd.stats.SpeedModifier.Value), 1);
+          Archetype = _pInfo.PDF.ecd.playerProfile.Archetype;
+          DistanceWalked = Math.Round(_pInfo.PDF.distanceWalked, 1);
+          //todo:BCMVector3i
+          DroppedPack = (_pInfo.PDF.droppedBackpackPosition != Vector3i.zero ? Convert.PosToStr(_pInfo.PDF.droppedBackpackPosition, GetPosType()) : "None");
+          Level = (_pInfo.EP != null ? _pInfo.EP.GetLevel() : _pInfo.PDF.level);
+          LevelProgress = Math.Round((_pInfo.EP != null ? (_pInfo.EP.GetLevelProgressPercentage() * 100) : ((1 - _pInfo.PDF.experience / Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pInfo.PDF.level + 1)), int.MaxValue)) * 100)), 2);
+          ExpToNextLevel = (_pInfo.EP != null ? _pInfo.EP.ExpToNextLevel : (int)_pInfo.PDF.experience);
+          ExpForNextLevel = (_pInfo.EP != null ? _pInfo.EP.GetExpForNextLevel() : (int)Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pInfo.PDF.level + 1)), int.MaxValue));
+          Gamestage = (_pInfo.EP != null ? _pInfo.EP.gameStage : (_pInfo.PCP != null ? (int?)_pInfo.PCP.Gamestage : null));
+          Score = (_pInfo.EP != null ? _pInfo.EP.Score : _pInfo.PDF.score);
+          KilledPlayers = (_pInfo.EP != null ? _pInfo.EP.KilledPlayers : _pInfo.PDF.playerKills);
+          KilledZombies = (_pInfo.EP != null ? _pInfo.EP.KilledZombies : _pInfo.PDF.zombieKills);
+          Deaths = (_pInfo.EP != null ? _pInfo.EP.Died : _pInfo.PDF.deaths);
+          CurrentLife = Math.Round((_pInfo.EP != null ? _pInfo.EP.currentLife : _pInfo.PDF.currentLife), 2);
+          LongestLife = Math.Round((_pInfo.EP != null ? _pInfo.EP.longestLife : _pInfo.PDF.longestLife), 2);
+          ItemsCrafted = (_pInfo.EP != null ? _pInfo.EP.totalItemsCrafted : _pInfo.PDF.totalItemsCrafted);
+          IsDead = (_pInfo.EP != null ? _pInfo.EP.IsDead() : _pInfo.PDF.bDead);
+          if (_pInfo.EP != null)
+          {
+            OnGround = _pInfo.EP.onGround;
+            IsStuck = _pInfo.EP.IsStuck;
+            IsSafeZoneActive = _pInfo.EP.IsSafeZoneActive();
+            Remote = _pInfo.EP.isEntityRemote;
+            LastZombieAttacked = Math.Round(((GameManager.Instance.World.worldTime - _pInfo.EP.LastZombieAttackTime) / 600f), 2);
+          }
+          //todo:BCMVector3i
+          RentedVendor = (_pInfo.EP != null ? Convert.PosToStr(_pInfo.EP.RentedVMPosition, GetPosType()) : Convert.PosToStr(_pInfo.PDF.rentedVMPosition, GetPosType()));
+          RentedVendorExpire = (_pInfo.EP != null ? _pInfo.EP.RentalEndTime : _pInfo.PDF.rentalEndTime);
 
-        _bin.Add("Wellness", Wellness);
-        _bin.Add("Health", Health);
-        _bin.Add("Stamina", Stamina);
-        _bin.Add("Food", Food);
-        _bin.Add("Drink", Drink);
-        _bin.Add("CoreTemp", CoreTemp);
-        _bin.Add("SpeedModifier", SpeedModifier);
-        _bin.Add("Archetype", Archetype);
-        _bin.Add("DistanceWalked", DistanceWalked);
-        _bin.Add("DroppedPack", DroppedPack);
-        _bin.Add("Level", Level);
-        _bin.Add("LevelProgress", LevelProgress);
-        _bin.Add("ExpToNextLevel", ExpToNextLevel);
-        _bin.Add("ExpForNextLevel", ExpForNextLevel);
-        _bin.Add("Gamestage", Gamestage);
-        _bin.Add("Score", Score);
-        _bin.Add("KilledPlayers", KilledPlayers);
-        _bin.Add("KilledZombies", KilledZombies);
-        _bin.Add("Deaths", Deaths);
-        _bin.Add("CurrentLife", CurrentLife);
-        _bin.Add("LongestLife", LongestLife);
-        _bin.Add("ItemsCrafted", ItemsCrafted);
-        _bin.Add("IsDead", IsDead);
-        _bin.Add("OnGround", OnGround);
-        _bin.Add("IsStuck", IsStuck);
-        _bin.Add("IsSafeZoneActive", IsSafeZoneActive);
-        _bin.Add("Remote", Remote);
-        _bin.Add("LastZombieAttacked", LastZombieAttacked);
-        _bin.Add("RentedVendor", RentedVendor);
-        _bin.Add("RentedVendorExpire", RentedVendorExpire);
+          _bin.Add("Wellness", Wellness);
+          _bin.Add("Health", Health);
+          _bin.Add("Stamina", Stamina);
+          if (isOption("full")) { _bin.Add("Food", Food); }
+          if (isOption("full")) { _bin.Add("Drink", Drink); }
+          if (isOption("full")) { _bin.Add("CoreTemp", CoreTemp); }
+          if (isOption("full")) { _bin.Add("SpeedModifier", SpeedModifier); }
+          if (isOption("full")) { _bin.Add("Archetype", Archetype); }
+          if (isOption("full")) { _bin.Add("DistanceWalked", DistanceWalked); }
+          if (isOption("full")) { _bin.Add("DroppedPack", DroppedPack); }
+          _bin.Add("Level", Level);
+          _bin.Add("LevelProgress", LevelProgress);
+          if (isOption("full")) { _bin.Add("ExpToNextLevel", ExpToNextLevel); }
+          if (isOption("full")) { _bin.Add("ExpForNextLevel", ExpForNextLevel); }
+          _bin.Add("Gamestage", Gamestage);
+          _bin.Add("Score", Score);
+          _bin.Add("KilledPlayers", KilledPlayers);
+          _bin.Add("KilledZombies", KilledZombies);
+          _bin.Add("Deaths", Deaths);
+          if (isOption("full")) { _bin.Add("CurrentLife", CurrentLife); }
+          if (isOption("full")) { _bin.Add("LongestLife", LongestLife); }
+          if (isOption("full")) { _bin.Add("ItemsCrafted", ItemsCrafted); }
+          if (isOption("full")) { _bin.Add("IsDead", IsDead); }
+          if (isOption("full")) { _bin.Add("OnGround", OnGround); }
+          if (isOption("full")) { _bin.Add("IsStuck", IsStuck); }
+          if (isOption("full")) { _bin.Add("IsSafeZoneActive", IsSafeZoneActive); }
+          if (isOption("full")) { _bin.Add("Remote", Remote); }
+          if (isOption("full")) { _bin.Add("LastZombieAttacked", LastZombieAttacked); }
+          if (isOption("full")) { _bin.Add("RentedVendor", RentedVendor); }
+          if (isOption("full")) { _bin.Add("RentedVendorExpire", RentedVendorExpire); }
+        }
       }
     }
 
@@ -1083,15 +1119,6 @@ namespace BCM.Models
     {
       if (isOption("filter"))
       {
-        bool useInt = false;
-        string[] strFilter = null;
-        strFilter = OptionValue("filter").Split(',');
-        int[] intFilter = (from o in strFilter.Where((o) => { int d; return Int32.TryParse(o, out d); }) select Int32.Parse(o)).ToArray();
-        if (intFilter.Length == strFilter.Length)
-        {
-          useInt = true;
-        }
-
         //STEAMID
         if ((useInt && intFilter.Contains((int)Filters.SteamId)) || (!useInt && strFilter.Contains(StrFilters.SteamId)))
         {
@@ -1166,7 +1193,7 @@ namespace BCM.Models
         {
           var p = (_pInfo.EP != null ? _pInfo.EP.position : (_pInfo.PDF != null ? _pInfo.PDF.ecd.pos : Vector3.zero));
           Position = new BCMVector3i(p);
-          _bin.Add("Position", Position);
+          _bin.Add("Position", GetVectorObj(Position));
         }
 
         //ROTATION
@@ -1174,61 +1201,132 @@ namespace BCM.Models
         {
           var r = (_pInfo.EP != null ? _pInfo.EP.rotation : (_pInfo.PDF != null ? _pInfo.PDF.ecd.rot : Vector3.zero));
           Rotation = new BCMVector3i(r);
-          _bin.Add("Rotation", Rotation);
+          _bin.Add("Rotation", GetVectorObj(Rotation));
         }
       }
       else
       {
-        Name = (_pInfo.CI != null ? _pInfo.CI.playerName : _pInfo.PCP != null ? _pInfo.PCP.Name : string.Empty);
-        SteamId = _pInfo._steamId;
-        EntityId = _pInfo.PDF.id;
-        IP = (_pInfo.CI != null ? _pInfo.CI.ip.ToString() : _pInfo.PCP != null ? _pInfo.PCP.IP.ToString() : string.Empty);
-        //todo: add last ping to persistent data?
-        Ping = (_pInfo.CI != null ? _pInfo.CI.ping.ToString() : "Offline");
-
-        long totalPlayTime = (_pInfo.PCP != null ? _pInfo.PCP.TotalPlayTime : 0);
-        TotalPlayTime = Math.Round(totalPlayTime / 60f, 2);
-        if (_pInfo.EP == null)
+        if (isOption("full") || !isOption("bag bg belt bt equipment eq buffs bu skillpoints pt skills sk crafting cq favrecipes fr unlockedrecipes ur quests qu spawns sp waypoints wp"))
         {
-          LastOnline = (_pInfo.PCP != null ? _pInfo.PCP.LastOnline.ToString("yyyy-MM-dd HH:mm") : "");
-        }
-        else if (_pInfo.EP != null)
-        {
-          SessionPlayTime = Math.Round((Time.timeSinceLevelLoad - _pInfo.EP.CreationTimeSinceLevelLoad) / 60, 2);
-        }
-        Underground = (int)(_pInfo.EP != null ? _pInfo.EP.position.y - (int)Math.Floor(_pInfo.EP.serverPos.y / 32f) : 0);
+          SteamId = _pInfo._steamId;
+          Name = (_pInfo.CI != null ? _pInfo.CI.playerName : _pInfo.PCP != null ? _pInfo.PCP.Name : string.Empty);
+          EntityId = _pInfo.PDF.id;
+          IP = (_pInfo.CI != null ? _pInfo.CI.ip.ToString() : _pInfo.PCP != null ? _pInfo.PCP.IP.ToString() : string.Empty);
+          //todo: add last ping to persistent data?
+          Ping = (_pInfo.CI != null ? _pInfo.CI.ping.ToString() : "Offline");
 
-        var p = (_pInfo.EP != null ? _pInfo.EP.position : (_pInfo.PDF != null ? _pInfo.PDF.ecd.pos : Vector3.zero));
-        var r = (_pInfo.EP != null ? _pInfo.EP.rotation : (_pInfo.PDF != null ? _pInfo.PDF.ecd.rot : Vector3.zero));
-        Position = new BCMVector3i(p);
-        Rotation = new BCMVector3i(r);
+          long totalPlayTime = (_pInfo.PCP != null ? _pInfo.PCP.TotalPlayTime : 0);
+          TotalPlayTime = Math.Round(totalPlayTime / 60f, 2);
+          if (_pInfo.EP == null)
+          {
+            LastOnline = (_pInfo.PCP != null ? _pInfo.PCP.LastOnline.ToString("yyyy-MM-dd HH:mm") : "");
+          }
+          else if (_pInfo.EP != null)
+          {
+            SessionPlayTime = Math.Round((Time.timeSinceLevelLoad - _pInfo.EP.CreationTimeSinceLevelLoad) / 60, 2);
+          }
+          Underground = (int)(_pInfo.EP != null ? _pInfo.EP.position.y - (int)Math.Floor(_pInfo.EP.serverPos.y / 32f) : 0);
 
-        _bin.Add("Name", Name);
-        _bin.Add("SteamId", SteamId);
-        _bin.Add("EntityId", EntityId);
-        _bin.Add("IP", IP);
-        _bin.Add("Ping", Ping);
-        _bin.Add("TotalPlayTime", TotalPlayTime);
-        _bin.Add("LastOnline", LastOnline);
-        _bin.Add("SessionPlayTime", SessionPlayTime);
-        _bin.Add("Underground", Underground);
-        _bin.Add("Position", Position);
-        _bin.Add("Rotation", Rotation);
+          var p = (_pInfo.EP != null ? _pInfo.EP.position : (_pInfo.PDF != null ? _pInfo.PDF.ecd.pos : Vector3.zero));
+          var r = (_pInfo.EP != null ? _pInfo.EP.rotation : (_pInfo.PDF != null ? _pInfo.PDF.ecd.rot : Vector3.zero));
+          Position = new BCMVector3i(p);
+          Rotation = new BCMVector3i(r);
+
+          _bin.Add("SteamId", SteamId);
+          _bin.Add("Name", Name);
+          _bin.Add("EntityId", EntityId);
+          if (isOption("full"))
+          { 
+            _bin.Add("IP", IP);
+            _bin.Add("Ping", Ping);
+            _bin.Add("TotalPlayTime", TotalPlayTime);
+            _bin.Add("LastOnline", LastOnline);
+            _bin.Add("SessionPlayTime", SessionPlayTime);
+          }
+          _bin.Add("Underground", Underground);
+          _bin.Add("Position", GetVectorObj(Position));
+          if (isOption("full"))
+          {
+            _bin.Add("Rotation", GetVectorObj(Rotation));
+          }
+        }
       }
     }
 
-    public override string Display(string sep = " ")
+    private object GetVectorObj(BCMVector3i p)
     {
-      string output = "";
-
-      //bool first = true;
-      //foreach (KeyValuePair<string, string> kvp in stats)
-      //{
-      //  if (!first) { output += sep; } else { first = false; }
-      //  output += kvp.Key + ":" + kvp.Value;
-      //}
-
-      return output;
+      if (options.ContainsKey("strpos"))
+      {
+        return p.x.ToString() + " " + p.y.ToString() + " " + p.z.ToString();
+      }
+      else if (options.ContainsKey("worldpos"))
+      {
+        return GameUtils.WorldPosToStr(new Vector3(p.x, p.y, p.z), " ");
+      }
+      else if (options.ContainsKey("csvpos"))
+      {
+        return new int[3] { p.x, p.y, p.z };
+        //return "[" + p.x.ToString() + "," + p.y.ToString() + "," + p.z.ToString() + "]";
+      }
+      else
+      {
+        //vectors
+        return p;
+      }
     }
+
+    public bool isOption(string key, bool isOr = true)
+    {
+      var _o = !isOr;
+      var keys = key.Split(' ');
+      if (keys.Length > 1)
+      {
+        foreach (var k in keys)
+        {
+          if (isOr)
+          {
+            _o |= options.ContainsKey(k);
+          }
+          else
+          {
+            _o &= options.ContainsKey(k);
+          }
+        }
+        return _o;
+      }
+      else
+      {
+        return options.ContainsKey(key);
+      }
+    }
+
+    public string OptionValue(string key)
+    {
+      if (options.ContainsKey(key))
+      {
+        return options[key];
+      }
+      return "";
+    }
+
+    public string GetPosType()
+    {
+      var postype = "strpos";
+      if (options.ContainsKey("worldpos"))
+      {
+        postype = "worldpos";
+      }
+      if (options.ContainsKey("csvpos"))
+      {
+        postype = "csvpos";
+      }
+      if (options.ContainsKey("vectors"))
+      {
+        postype = "vectors";
+      }
+
+      return postype;
+    }
+
   }
 }

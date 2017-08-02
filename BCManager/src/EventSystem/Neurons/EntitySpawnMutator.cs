@@ -105,7 +105,7 @@ namespace BCM.Neurons
 
       if (chunk.FindSpawnPointAtXZ(x2, z2, out y, 15, 0, 3, 251, true))
       {
-        Log.Out(Config.ModPrefix + " AirDropGroundPos:" + ((int)_entity.position.x).ToString() + " " + y.ToString() + " " + ((int)_entity.position.z).ToString());
+        Log.Out(Config.ModPrefix + " AirDropGroundPos:[" + ((int)_entity.position.x).ToString() + " " + y.ToString() + " " + ((int)_entity.position.z).ToString() + "]");
       }
       else
       {

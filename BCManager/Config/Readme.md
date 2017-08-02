@@ -1,0 +1,1 @@
+﻿Copy the xml files from DefaultConfig to the Config folder before starting the server.
