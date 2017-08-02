@@ -30,6 +30,7 @@ namespace BCM
     }
     private static string commandsFile = "Commands.xml";
     private static string systemFile = "System.xml";
+    private static string DefaultConfigPath = ModDir + "DefaultConfig/";
     private static string ConfigPath = ModDir + "Config/";
     public static string DefaultLocale = "en";
     public static bool logCache = false;
@@ -49,7 +50,14 @@ namespace BCM
       XmlDocument _xd = new XmlDocument();
       try
       {
-        _xd.Load(ConfigPath + systemFile);
+        if (File.Exists(ConfigPath + systemFile))
+        {
+          _xd.Load(ConfigPath + systemFile);
+        }
+        else
+        {
+          _xd.Load(DefaultConfigPath + systemFile);
+        }
 
         //LogCache.enabled
         XmlNodeList _lc = _xd.SelectNodes("/System/LogCache/@enabled");
@@ -166,7 +174,15 @@ namespace BCM
       XmlDocument _xd = new XmlDocument();
       try
       {
-        _xd.Load(ConfigPath + commandsFile);
+        if (File.Exists(ConfigPath + commandsFile))
+        {
+          _xd.Load(ConfigPath + commandsFile);
+        }
+        else
+        {
+          _xd.Load(DefaultConfigPath + commandsFile);
+        }
+
         XmlNodeList _locale = _xd.SelectNodes("/Commands/DefaultLocale");
         if (_locale.Count > 0)
         {
