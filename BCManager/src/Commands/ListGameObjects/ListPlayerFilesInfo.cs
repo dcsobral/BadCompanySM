@@ -26,30 +26,34 @@ namespace BCM.Commands
 
       string output = "{";
 
-      foreach (var file in files)
+      if (files != null)
       {
-        if (file.Extension == ".ttp")
+
+        foreach (var file in files)
         {
-          var _steamId = file.Name.Substring(0, file.Name.Length - file.Extension.Length);
-          var p = "";
-          var player = PersistentContainer.Instance.Players[_steamId, false];
-          if (player != null)
+          if (file.Extension == ".ttp")
           {
-            p += "\"playerName\":\"" + player.Name + "\"," +
-            "\"lastOnlineUtc\":\"" + player.LastOnline.ToUniversalTime().ToString("yyyy'-'MMM'-'dd' 'HH':'mm':'ss") + "\"," +//"u"
-            "\"isOnline\":\"" + player.IsOnline.ToString() + "\",";
-          };
+            var _steamId = file.Name.Substring(0, file.Name.Length - file.Extension.Length);
+            var p = "";
+            var player = PersistentContainer.Instance.Players[_steamId, false];
+            if (player != null)
+            {
+              p += "\"playerName\":\"" + player.Name + "\"," +
+              "\"lastOnlineUtc\":\"" + player.LastOnline.ToUniversalTime().ToString("yyyy'-'MMM'-'dd' 'HH':'mm':'ss") + "\"," +//"u"
+              "\"isOnline\":\"" + player.IsOnline.ToString() + "\",";
+            };
 
-          output += "\"" + _steamId + "\":{" +
-            "\"steamId\":" + "\"" + _steamId + "\"," +
-            p +
-            "\"lastWriteTimeUtc\":" + "\"" + file.LastWriteTimeUtc.ToString("yyyy'-'MMM'-'dd' 'HH':'mm':'ss") + "\"" + "" +
+            output += "\"" + _steamId + "\":{" +
+              "\"steamId\":" + "\"" + _steamId + "\"," +
+              p +
+              "\"lastWriteTimeUtc\":" + "\"" + file.LastWriteTimeUtc.ToString("yyyy'-'MMM'-'dd' 'HH':'mm':'ss") + "\"" + "" +
 
-          //"\"Extension\":" + "\"" + file.Extension + "\"" + ", " +
-          //"\"CreationTime\":" + "\"" + file.CreationTime + "\"" + ", " +
-          //"\"LastAccessTime\":" + "\"" + file.LastAccessTime + "\"" + ", " + 
-          //"\"Attributes\":" + "\"" + file.Attributes + "\"" + "" +
-          "},";
+            //"\"Extension\":" + "\"" + file.Extension + "\"" + ", " +
+            //"\"CreationTime\":" + "\"" + file.CreationTime + "\"" + ", " +
+            //"\"LastAccessTime\":" + "\"" + file.LastAccessTime + "\"" + ", " + 
+            //"\"Attributes\":" + "\"" + file.Attributes + "\"" + "" +
+            "},";
+          }
         }
       }
       output = output.Substring(0, output.Length - 1);
