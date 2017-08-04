@@ -10,7 +10,11 @@ namespace BCM
     {
       try
       {
-        PersistentContainer.Instance.Players[_cInfo.playerId, true].Update(_playerDataFile);
+        var player = PersistentContainer.Instance.Players[_cInfo.playerId, true];
+        if (player != null)
+        {
+          player.Update(_playerDataFile);
+        }
       }
       catch (Exception e)
       {
