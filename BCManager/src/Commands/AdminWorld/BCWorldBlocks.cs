@@ -74,16 +74,16 @@ namespace BCM.Commands
             //      multidim blocks with parent blocks outside the area need to be stored in undo data and then removed
             //      other multidim blocks need to have checks for child block and if found remove parent and all children 
             BCImport.InsertPrefab(_p, prefabCache.pos.x, prefabCache.pos.y, prefabCache.pos.z, prefabCache.pos);
+            if (Utils.FileExists(Utils.GetGameDir(dirbase + prefabCache.filename + ".tts")))
+            {
+              Utils.FileDelete(Utils.GetGameDir(dirbase + prefabCache.filename + ".tts"));
+            }
+            if (Utils.FileExists(Utils.GetGameDir(dirbase + prefabCache.filename + ".xml")))
+            {
+              Utils.FileDelete(Utils.GetGameDir(dirbase + prefabCache.filename + ".xml"));
+            }
           }
           _cache[_userID].RemoveAt(_cache[_userID].Count - 1);
-          if (Utils.FileExists(Utils.GetGameDir(dirbase + prefabCache.filename + ".tts")))
-          {
-            Utils.FileDelete(Utils.GetGameDir(dirbase + prefabCache.filename + ".tts"));
-          }
-          if (Utils.FileExists(Utils.GetGameDir(dirbase + prefabCache.filename + ".xml")))
-          {
-            Utils.FileDelete(Utils.GetGameDir(dirbase + prefabCache.filename + ".xml"));
-          }
         }
       }
     }

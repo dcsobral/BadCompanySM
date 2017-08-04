@@ -248,16 +248,16 @@ namespace BCM.Commands
             //workaround for multi dim blocks, insert undo prefab twice
             //todo: clear all blocks (turn to air) before inserting the prefab instead
             InsertPrefab(_p, prefabCache.pos.x, prefabCache.pos.y, prefabCache.pos.z, prefabCache.pos);
+            if (Utils.FileExists(Utils.GetGameDir(dirbase + prefabCache.filename + ".tts")))
+            {
+              Utils.FileDelete(Utils.GetGameDir(dirbase + prefabCache.filename + ".tts"));
+            }
+            if (Utils.FileExists(Utils.GetGameDir(dirbase + prefabCache.filename + ".xml")))
+            {
+              Utils.FileDelete(Utils.GetGameDir(dirbase + prefabCache.filename + ".xml"));
+            }
           }
           _cache[_userID].RemoveAt(_cache[_userID].Count - 1);
-          if (Utils.FileExists(Utils.GetGameDir(dirbase + prefabCache.filename + ".tts")))
-          {
-            Utils.FileDelete(Utils.GetGameDir(dirbase + prefabCache.filename + ".tts"));
-          }
-          if (Utils.FileExists(Utils.GetGameDir(dirbase + prefabCache.filename + ".xml")))
-          {
-            Utils.FileDelete(Utils.GetGameDir(dirbase + prefabCache.filename + ".xml"));
-          }
         }
       }
     }

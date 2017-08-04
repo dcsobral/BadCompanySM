@@ -24,7 +24,7 @@ namespace BCM.Commands
           {
             Dictionary<string, Dictionary<string, Dictionary<string, string>>> _collection = _settings.GetCollection(_name);
 
-            if (_collection.Count > 0)
+            if (_collection != null && _collection.Count > 0)
             {
               output += "{\"name\":\"" + _name + "\", \"count\":\"" + _collection.Count + "\",\"items\":[";
               foreach (string _id in _collection.Keys)

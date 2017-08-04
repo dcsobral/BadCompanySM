@@ -53,7 +53,11 @@ namespace BCM
     {
       try
       {
-        PersistentContainer.Instance.Players[_cInfo.playerId, true].SetOnline(_cInfo);
+        var player = PersistentContainer.Instance.Players[_cInfo.playerId, true];
+        if (player != null)
+        {
+          player.SetOnline(_cInfo);
+        }
         PersistentContainer.Instance.Save();
       }
       catch (Exception e)

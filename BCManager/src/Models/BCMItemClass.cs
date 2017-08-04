@@ -10,27 +10,101 @@ namespace BCM.Models
   {
     private Dictionary<string, string> options = new Dictionary<string, string>();
     private Dictionary<string, object> _bin = new Dictionary<string, object>();
+    
     public enum Filters
     {
-      Id,
+      Type,
       Name,
       LocalizedName,
+      ActionSkillExp,
+      CraftingTool,
+      CanDrop,
+      CraftComponentExp,
+      CraftComponentTime,
+      CraftingSkillExp,
+      CraftingSkillGroup,
+      DescriptionKey,
+      EconomicBundleSize,
+      EconomicValue,
+      GetIconName,
+      GetItemDescriptionKey,
+      Weight,
+      HoldType,
+      IsResourceUnit,
+      LootExp,
+      MadeOfMaterial,
+      MeltTimePerUnit,
+      RepairExpMultiplier,
+      SellableToTrader,
+      CanStack,
+      Stacknumber,
       Properties
     }
+
     public static class StrFilters
     {
-      public static string Id = "id";
+      public static string Type = "type";
       public static string Name = "name";
       public static string LocalizedName = "local";
+
+      public static string ActionSkillExp = "actionexp";
+      public static string CraftingTool = "craftingtool";
+      public static string CanDrop = "candrop";
+      public static string CraftComponentExp = "componentexp";
+      public static string CraftComponentTime = "crafttime";
+      public static string CraftingSkillExp = "skillexp";
+      public static string CraftingSkillGroup = "skillgroup";
+      public static string DescriptionKey = "desc";
+      public static string EconomicBundleSize = "ecosize";
+      public static string EconomicValue = "ecoval";
+      public static string GetIconName = "icon";
+      public static string GetItemDescriptionKey = "desckey";
+      public static string Weight = "weight";
+      public static string HoldType = "holdtype";
+      public static string IsResourceUnit = "resunit";
+      public static string LootExp = "lootexp";
+      public static string MadeOfMaterial = "material";
+      public static string MeltTimePerUnit = "melttime";
+      public static string RepairExpMultiplier = "repairexpmult";
+      public static string SellableToTrader = "sellable";
+      public static string CanStack = "canstack";
+      public static string Stacknumber = "stacksize";
+
       public static string Properties = "props";
+
     }
 
     private List<string> _filter = new List<string>();
 
     #region Properties
-    public int Id;
+    public int Type;
     public string Name;
     public string LocalizedName;
+
+    public int ActionSkillExp;
+    public bool CraftingTool;
+    public bool CanDrop;
+    public double CraftComponentExp;
+    public double CraftComponentTime;
+    public int CraftingSkillExp;
+    public string CraftingSkillGroup;
+    public string DescriptionKey;
+    public int EconomicBundleSize;
+    public double EconomicValue;
+    public string GetIconName;
+    public string GetItemDescriptionKey;
+    public int Weight;
+    public int HoldType;
+    public bool IsResourceUnit;
+    public double LootExp;
+    public string MadeOfMaterial;
+    public double MeltTimePerUnit;
+    public double RepairExpMultiplier;
+    public bool SellableToTrader;
+    public bool CanStack;
+    public int Stacknumber;
+    
+
     public Dictionary<string, string> Properties = new Dictionary<string, string>();
     #endregion;
 
@@ -72,11 +146,11 @@ namespace BCM.Models
     {
       if (isOption("filter"))
       {
-        //ID
-        if ((useInt && intFilter.Contains((int)Filters.Id)) || (!useInt && strFilter.Contains(StrFilters.Id)))
+        //Type
+        if ((useInt && intFilter.Contains((int)Filters.Type)) || (!useInt && strFilter.Contains(StrFilters.Type)))
         {
-          Id = _item.Id;
-          _bin.Add("Id", Id);
+          Type = _item.Id;
+          _bin.Add("Type", Type);
         }
 
         //NAME
@@ -86,16 +160,70 @@ namespace BCM.Models
           _bin.Add("Name", Name);
         }
 
-        //LOCAL NAME
-        if ((useInt && intFilter.Contains((int)Filters.LocalizedName)) || (!useInt && strFilter.Contains(StrFilters.LocalizedName)))
+        if (_item.IsBlock())
         {
-          LocalizedName = _item.localizedName;
-          _bin.Add("LocalizedName", LocalizedName);
+
+        }
+        else
+        {
+          //LOCAL NAME
+          if ((useInt && intFilter.Contains((int)Filters.LocalizedName)) || (!useInt && strFilter.Contains(StrFilters.LocalizedName)))
+          {
+            LocalizedName = _item.localizedName;
+            _bin.Add("LocalizedName", LocalizedName);
+          }
+
+          ////PROPERTIES
+          //if ((useInt && intFilter.Contains((int)Filters.Properties)) || (!useInt && strFilter.Contains(StrFilters.Properties)))
+          //{
+          //  foreach (string current in _item.Properties.Values.Keys)
+          //  {
+          //    if (_item.Properties.Values.ContainsKey(current))
+          //    {
+          //      Properties.Add(current, _item.Properties.Values[current]);
+          //    }
+          //  }
+          //  _bin.Add("Properties", Properties);
+          //}
         }
 
-        //PROPERTIES
-        if ((useInt && intFilter.Contains((int)Filters.Properties)) || (!useInt && strFilter.Contains(StrFilters.Properties)))
+
+      }
+      else
+      {
+        Type = _item.Id;
+        Name = _item.Name;
+        if (_item.IsBlock())
         {
+
+          ActionSkillExp = _item.ActionSkillExp;
+          CraftingTool = _item.bCraftingTool;
+          CanDrop = _item.CanDrop();
+          CraftComponentExp = _item.CraftComponentExp;
+          CraftComponentTime = _item.CraftComponentTime;
+          CraftingSkillExp = _item.CraftingSkillExp;
+          CraftingSkillGroup = _item.CraftingSkillGroup;
+          DescriptionKey = _item.DescriptionKey;
+          EconomicBundleSize = _item.EconomicBundleSize;
+          EconomicValue = _item.EconomicValue;
+          GetIconName = _item.GetIconName();
+          GetItemDescriptionKey = _item.GetItemDescriptionKey();
+          Weight = _item.GetWeight();
+          HoldType = _item.HoldType.Value;
+          IsResourceUnit = _item.IsResourceUnit;
+          LootExp = _item.LootExp;
+          MadeOfMaterial = _item.MadeOfMaterial.id;
+          MeltTimePerUnit = _item.MeltTimePerUnit;
+          RepairExpMultiplier = _item.RepairExpMultiplier;
+          SellableToTrader = _item.SellableToTrader;
+          CanStack = _item.CanStack();
+          Stacknumber = _item.Stacknumber.Value;
+
+        }
+        else
+        {
+          LocalizedName = _item.localizedName;
+          //properties
           foreach (string current in _item.Properties.Values.Keys)
           {
             if (_item.Properties.Values.ContainsKey(current))
@@ -103,29 +231,47 @@ namespace BCM.Models
               Properties.Add(current, _item.Properties.Values[current]);
             }
           }
+        }
+
+        _bin.Add("Type", Type);
+        _bin.Add("Name", Name);
+        if (_item.IsBlock())
+        {
+          _bin.Add("ActionSkillExp", ActionSkillExp);
+          _bin.Add("CraftingSkillExp", CraftingSkillExp);
+          _bin.Add("CraftingSkillGroup", CraftingSkillGroup);
+          _bin.Add("RepairExpMultiplier", RepairExpMultiplier);
+          _bin.Add("LootExp", LootExp);
+          _bin.Add("CraftComponentExp", CraftComponentExp);
+          _bin.Add("CraftComponentTime", CraftComponentTime);
+
+          _bin.Add("Weight", Weight);
+
+          _bin.Add("HoldType", HoldType);
+          _bin.Add("MadeOfMaterial", MadeOfMaterial);
+          _bin.Add("MeltTimePerUnit", MeltTimePerUnit);
+
+          _bin.Add("EconomicBundleSize", EconomicBundleSize);
+          _bin.Add("EconomicValue", EconomicValue);
+
+          _bin.Add("CraftingTool", CraftingTool);
+
+          _bin.Add("CanStack", CanStack);
+          _bin.Add("Stacknumber", Stacknumber);
+          _bin.Add("CanDrop", CanDrop);
+          _bin.Add("IsResourceUnit", IsResourceUnit);
+          _bin.Add("SellableToTrader", SellableToTrader);
+
+          _bin.Add("DescriptionKey", DescriptionKey);
+          _bin.Add("GetItemDescriptionKey", GetItemDescriptionKey);
+          _bin.Add("GetIconName", GetIconName);
+
+        }
+        else
+        {
+          _bin.Add("LocalizedName", LocalizedName);
           _bin.Add("Properties", Properties);
         }
-
-
-      }
-      else
-      {
-        Id = _item.Id;
-        Name = _item.Name;
-        LocalizedName = _item.localizedName;
-        //properties
-        foreach (string current in _item.Properties.Values.Keys)
-        {
-          if (_item.Properties.Values.ContainsKey(current))
-          {
-            Properties.Add(current, _item.Properties.Values[current]);
-          }
-        }
-
-        _bin.Add("Id", Id);
-        _bin.Add("Name", Name);
-        _bin.Add("LocalizedName", LocalizedName);
-        _bin.Add("Properties", Properties);
       }
     }
 

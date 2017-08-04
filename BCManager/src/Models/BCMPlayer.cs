@@ -1136,7 +1136,14 @@ namespace BCM.Models
         //ENTITYID
         if ((useInt && intFilter.Contains((int)Filters.EntityId)) || (!useInt && strFilter.Contains(StrFilters.EntityId)))
         {
-          EntityId = _pInfo.PDF.id;
+          if (_pInfo.EP != null)
+          {
+            EntityId = _pInfo.EP.entityId;
+          }
+          else if (_pInfo.PDF != null)
+          {
+            EntityId = _pInfo.PDF.id;
+          }
           _bin.Add("EntityId", EntityId);
         }
 

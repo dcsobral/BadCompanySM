@@ -115,7 +115,10 @@ namespace BCM
     }
     public List<LogEntry> GetRange()
     {
-      return logEntries;
+      lock(logEntries){
+        //confirm: needs lock?
+        return logEntries;
+      }
     }
 
     public List<LogEntry> GetRange(ref int _start, int _count, out int _end)

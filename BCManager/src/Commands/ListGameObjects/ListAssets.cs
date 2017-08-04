@@ -140,49 +140,49 @@ namespace BCM.Commands
       }
 
 
-      //UIAtlas
-      if (_options.ContainsKey("uiatlas") && false)//not correct game object?
-      {
-        GameObject gameObject = GameObject.Find("UIAtlas_GUI_2");
-        if (gameObject == null)
-        {
-          SendOutput("Atlas object not found");
-          return;
-        }
-        DynamicUIAtlas component = gameObject.GetComponent<DynamicUIAtlas>();
+      ////UIAtlas
+      //if (_options.ContainsKey("uiatlas") && false)//not correct game object?
+      //{
+      //  GameObject gameObject = GameObject.Find("UIAtlas_GUI_2");
+      //  if (gameObject == null)
+      //  {
+      //    SendOutput("Atlas object not found");
+      //    return;
+      //  }
+      //  DynamicUIAtlas component = gameObject.GetComponent<DynamicUIAtlas>();
 
-        if (component == null)
-        {
-          SendOutput("Atlas component not found");
+      //  if (component == null)
+      //  {
+      //    SendOutput("Atlas component not found");
 
-          return;
-        }
+      //    return;
+      //  }
 
-        string prebakedAtlas = component.PrebakedAtlas;
-        List<UISpriteData> list;
-        int num;
-        int num2;
-        if (!DynamicUIAtlasTools.ReadPrebakedAtlasDescriptor(prebakedAtlas, out list, out num, out num2))
-        {
-          SendOutput("Could not read dynamic atlas descriptor");
+      //  string prebakedAtlas = component.PrebakedAtlas;
+      //  List<UISpriteData> list;
+      //  int num;
+      //  int num2;
+      //  if (!DynamicUIAtlasTools.ReadPrebakedAtlasDescriptor(prebakedAtlas, out list, out num, out num2))
+      //  {
+      //    SendOutput("Could not read dynamic atlas descriptor");
 
-          return;
-        }
-        Texture2D texture2D;
-        if (!DynamicUIAtlasTools.ReadPrebakedAtlasTexture(prebakedAtlas, out texture2D))
-        {
-          SendOutput("Could not read dynamic atlas texture");
+      //    return;
+      //  }
+      //  Texture2D texture2D;
+      //  if (!DynamicUIAtlasTools.ReadPrebakedAtlasTexture(prebakedAtlas, out texture2D))
+      //  {
+      //    SendOutput("Could not read dynamic atlas texture");
 
-          return;
-        }
+      //    return;
+      //  }
 
-        for (int i = 0; i < list.Count; i++)
-        {
-          UISpriteData uISpriteData = list[i];
-          output += uISpriteData.name + _sep;
-        }
-        Resources.UnloadAsset(texture2D);
-      }
+      //  for (int i = 0; i < list.Count; i++)
+      //  {
+      //    UISpriteData uISpriteData = list[i];
+      //    output += uISpriteData.name + _sep;
+      //  }
+      //  Resources.UnloadAsset(texture2D);
+      //}
 
       //RESOURCES
       if (_options.ContainsKey("resources"))

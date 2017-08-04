@@ -92,6 +92,7 @@ namespace BCM.Commands
           foreach (var group in groups)
           {
             Dictionary<string, string> details = new Dictionary<string, string>();
+            List<string> items = new List<string>();
 
             if (group != null)
             {
@@ -103,27 +104,27 @@ namespace BCM.Commands
               details.Add("maxLevel", group.maxLevel.ToString());
               details.Add("minQuality", group.minQuality.ToString());
               details.Add("maxQuality", group.maxQuality.ToString());
+
+              //ITEMS
+              foreach (LootContainer.LootEntry current in group.items)
+              {
+                Dictionary<string, string> lootItems = new Dictionary<string, string>();
+                lootItems.Add("item", (current.item != null ? current.item.itemValue.type.ToString() : ""));
+                lootItems.Add("group", current.group != null ? current.group.name : "");
+                lootItems.Add("lootProbTemplate", (current.lootProbTemplate != null ? current.lootProbTemplate : ""));
+                lootItems.Add("minCount", current.minCount.ToString());
+                lootItems.Add("maxCount", current.maxCount.ToString());
+                lootItems.Add("minLevel", current.minLevel.ToString());
+                lootItems.Add("maxLevel", current.maxLevel.ToString());
+                lootItems.Add("minQuality", current.minQuality.ToString());
+                lootItems.Add("maxQuality", current.maxQuality.ToString());
+                lootItems.Add("prob", current.prob.ToString());
+
+                string jsonLootItems = BCUtils.toJson(lootItems);
+                items.Add(jsonLootItems);
+              }
             }
 
-            //ITEMS
-            List<string> items = new List<string>();
-            foreach (LootContainer.LootEntry current in group.items)
-            {
-              Dictionary<string, string> lootItems = new Dictionary<string, string>();
-              lootItems.Add("item", (current.item != null ? current.item.itemValue.type.ToString() : ""));
-              lootItems.Add("group", current.group != null ? current.group.name : "");
-              lootItems.Add("lootProbTemplate", (current.lootProbTemplate != null ? current.lootProbTemplate : ""));
-              lootItems.Add("minCount", current.minCount.ToString());
-              lootItems.Add("maxCount", current.maxCount.ToString());
-              lootItems.Add("minLevel", current.minLevel.ToString());
-              lootItems.Add("maxLevel", current.maxLevel.ToString());
-              lootItems.Add("minQuality", current.minQuality.ToString());
-              lootItems.Add("maxQuality", current.maxQuality.ToString());
-              lootItems.Add("prob", current.prob.ToString());
-
-              string jsonLootItems = BCUtils.toJson(lootItems);
-              items.Add(jsonLootItems);
-            }
             string jsonItems = BCUtils.toJson(items);
             details.Add("items", jsonItems);
 
