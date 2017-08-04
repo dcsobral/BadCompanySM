@@ -1217,7 +1217,14 @@ namespace BCM.Models
         {
           SteamId = _pInfo._steamId;
           Name = (_pInfo.CI != null ? _pInfo.CI.playerName : _pInfo.PCP != null ? _pInfo.PCP.Name : string.Empty);
-          EntityId = _pInfo.PDF.id;
+          if (_pInfo.EP != null)
+          {
+            EntityId = _pInfo.EP.entityId;
+          }
+          else if (_pInfo.PDF != null)
+          {
+            EntityId = _pInfo.PDF.id;
+          }
           IP = (_pInfo.CI != null ? _pInfo.CI.ip.ToString() : _pInfo.PCP != null ? _pInfo.PCP.IP.ToString() : string.Empty);
           //todo: add last ping to persistent data?
           Ping = (_pInfo.CI != null ? _pInfo.CI.ping.ToString() : "Offline");
