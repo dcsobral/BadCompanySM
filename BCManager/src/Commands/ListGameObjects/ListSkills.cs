@@ -64,22 +64,26 @@ namespace BCM.Commands
             Dictionary<string, string> effect = new Dictionary<string, string>();
 
             List<string> modifiers = new List<string>();
-            if (skilleffect != null && skilleffect.Modifiers != null)
+            if (skilleffect != null)
             {
-              foreach (Skill.IModifier modifier in skilleffect.Modifiers)
+              if (skilleffect.Modifiers != null)
               {
-                Dictionary<string, string> _modifier = new Dictionary<string, string>();
-                _modifier.Add("MinLevel", modifier.MinLevel.ToString());
-                _modifier.Add("MaxLevel", modifier.MaxLevel.ToString());
-                _modifier.Add("MinValue", modifier.MinValue.ToString());
-                _modifier.Add("MaxValue", modifier.MaxValue.ToString());
-                string jsonModifier = BCUtils.toJson(_modifier);
-                modifiers.Add(jsonModifier);
+
+                foreach (Skill.IModifier modifier in skilleffect.Modifiers)
+                {
+                  Dictionary<string, string> _modifier = new Dictionary<string, string>();
+                  _modifier.Add("MinLevel", modifier.MinLevel.ToString());
+                  _modifier.Add("MaxLevel", modifier.MaxLevel.ToString());
+                  _modifier.Add("MinValue", modifier.MinValue.ToString());
+                  _modifier.Add("MaxValue", modifier.MaxValue.ToString());
+                  string jsonModifier = BCUtils.toJson(_modifier);
+                  modifiers.Add(jsonModifier);
+                }
               }
+              string jsonModifiers = BCUtils.toJson(modifiers);
+              effect.Add("Name", (skilleffect.Name != null ? skilleffect.Name : ""));
+              effect.Add("Modifiers", jsonModifiers);
             }
-            string jsonModifiers = BCUtils.toJson(modifiers);
-            effect.Add("Name", (skilleffect.Name != null ? skilleffect.Name : ""));
-            effect.Add("Modifiers", jsonModifiers);
             string jsonEffect = BCUtils.toJson(effect);
             effects.Add(jsonEffect);
           }
