@@ -64,6 +64,16 @@ namespace BCM.Commands
             return false;
           }
         }
+        else if (_params.Count == 4)
+        {
+          // specific spawnpoint
+          if (!int.TryParse(_params[1], out _x) || !int.TryParse(_params[2], out _y) || !int.TryParse(_params[3], out _z))
+          {
+            SendOutput("One of <x> <y> <z> params could not be parsed as a number.");
+            return false;
+          }
+          _r = 0;
+        }
         else if (_params.Count == 5)
         {
           // specific spawnpoint
@@ -82,10 +92,7 @@ namespace BCM.Commands
 
 
         // spin the prefab
-        for (int r = 0; r < _r % 4; r++)
-        {
-          _prefab.RotateY(false);
-        }
+        _prefab.RotateY(false, _r % 4);
       }
 
       //bounds
