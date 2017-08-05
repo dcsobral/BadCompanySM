@@ -9,6 +9,7 @@ namespace BCM.Commands
     {
       if (_options.ContainsKey("all") || _options.ContainsKey("istype") || _options.ContainsKey("type"))
       {
+        var _count = new Dictionary<string, int>();
         var _entKeys = new List<int>();
         foreach (var _e in GameManager.Instance.World.Entities.dict)
         {
@@ -49,13 +50,14 @@ namespace BCM.Commands
               SendOutput("Entity was null");
             }
           }
-
         }
 
         foreach (var key in _entKeys)
         {
-          RemoveEntity(key);
+          RemoveEntity(key, _count);
         }
+
+        SendJson(_count);
       }
       else if (_params.Count == 1)
       {
@@ -76,14 +78,17 @@ namespace BCM.Commands
 
     }
 
-    private void RemoveEntity(int entityId)
+    private void RemoveEntity(int entityId, Dictionary<string,int> _count = null)
     {
       if (GameManager.Instance.World.Entities.dict.ContainsKey(entityId))
       {
         var _e = GameManager.Instance.World.Entities.dict[entityId];
         if (_e is EntityPlayer)
         {
-          SendOutput("You can't remove a player!");
+          if (!_options.ContainsKey("all"))
+          {
+            SendOutput("You can't remove a player!");
+          }
 
           return;
         }
@@ -93,7 +98,21 @@ namespace BCM.Commands
           v.RoundToInt(_e.position);
           var _ec = EntityClass.list[_e.entityClass];
 
-          SendOutput("Entity Removed: " + _e.GetType().ToString() + ":" + (_ec != null ? _ec.entityClassName : "") + " @" + v.x.ToString() + " " + v.x.ToString() + " " + v.x.ToString());
+          if (!(_options.ContainsKey("all") || _options.ContainsKey("istype") || _options.ContainsKey("type")))
+          {
+            SendOutput("Entity Removed: " + _e.GetType().ToString() + ":" + (_ec != null ? _ec.entityClassName : "") + " @" + v.x.ToString() + " " + v.x.ToString() + " " + v.x.ToString());
+          }
+          else if (_count != null)
+          {
+            if (_count.ContainsKey(_e.GetType().ToString() + ":" + _ec.entityClassName))
+            {
+              _count[_e.GetType().ToString() + ":" + _ec.entityClassName]++;
+            }
+            else
+            {
+              _count.Add(_e.GetType().ToString() + ":" + _ec.entityClassName, 1);
+            }
+          }
           GameManager.Instance.World.RemoveEntity(entityId, EnumRemoveEntityReason.Unloaded);
         }
         else

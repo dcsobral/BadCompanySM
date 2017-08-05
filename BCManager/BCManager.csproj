@@ -157,6 +157,7 @@
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\Functions\PlayerDataReader.cs" />
     <Compile Include="src\Models\BCMItemClass.cs" />
+    <Compile Include="src\Models\BCMEntityEnemy.cs" />
     <Compile Include="src\Models\Legacy\BCMItemClass.cs" />
     <Compile Include="src\Models\Legacy\BCMQuestLegacy.cs" />
     <Compile Include="src\Models\Legacy\BCMItem.cs" />

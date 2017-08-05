@@ -1280,7 +1280,6 @@ namespace BCM.Models
       else if (options.ContainsKey("csvpos"))
       {
         return new int[3] { p.x, p.y, p.z };
-        //return "[" + p.x.ToString() + "," + p.y.ToString() + "," + p.z.ToString() + "]";
       }
       else
       {
