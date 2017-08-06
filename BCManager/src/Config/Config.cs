@@ -10,16 +10,7 @@ namespace BCM
   public static class Config
   {
     public const string ModPrefix = "(BCM)";
-    private static string DllPath = Utils.GetDirectoryFromPath(System.Reflection.Assembly.GetExecutingAssembly().Location);
-    public static string ModDir
-    {
-      get
-      {
-        string _filepath = string.Empty;
-        _filepath = Path.GetDirectoryName(DllPath) + Path.DirectorySeparatorChar;
-        return _filepath;
-      }
-    }
+    public static string ModDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
     private static string commandsFile = "Commands.xml";
     private static string systemFile = "System.xml";
     private static string DefaultConfigPath = ModDir + "DefaultConfig" + Path.DirectorySeparatorChar;
