@@ -5,7 +5,7 @@
   <BPM rate="60"/>
   <!--Spawn System-->
   <Synapse name="spawnmanager" enabled="false" beats="1"/> <!-- experimental synapse, use at own risk -->
-  <Synapse name="entityspawnmutator" enabled="true" beats="30" options="EntityEnemy,EntityNPC,EntitySupplyCrate"/> <!-- firing the neuron attempts to add the monitor, it will report instantly on spawns -->
+  <Synapse name="entityspawnmutator" enabled="true" beats="30" options="EntityEnemy,EntityNPC"/> <!-- firing the neuron attempts to add the monitor, it will report instantly on spawns -->
 
   <!--Character Management-->
   <Synapse name="bagmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->

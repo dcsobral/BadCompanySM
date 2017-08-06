@@ -42,21 +42,22 @@ namespace BCM.Neurons
         return;
       }
 
-      if (_entity is EntityEnemy || _entity is EntityNPC || _entity is EntitySupplyCrate)
+      if (_entity is EntityEnemy || _entity is EntityNPC/* || _entity is EntitySupplyCrate*/)
       {
 
         if (_entity is EntityEnemy && options.Contains("EntityEnemy"))
         {
           ProcessEntityEnemy(_entity as EntityEnemy);
-        } else if (_entity is EntityNPC && options.Contains("EntityNPC"))
+        }
+        else if (_entity is EntityNPC && options.Contains("EntityNPC"))
         {
           ProcessEntityNPC(_entity as EntityNPC);
         }
 
-        if (_entity is EntitySupplyCrate && options.Contains("EntitySupplyCrate"))
-        {
-          ProcessEntitySupplyCrate(_entity as EntitySupplyCrate);
-        }
+        //if (_entity is EntitySupplyCrate && options.Contains("EntitySupplyCrate"))
+        //{
+        //  ProcessEntitySupplyCrate(_entity as EntitySupplyCrate);
+        //}
         
         //todo: apply settings to entity based on config
       }
@@ -101,15 +102,20 @@ namespace BCM.Neurons
 
       GameManager.Instance.World.ChunkCache.ChunkProvider.RequestChunk(x2, z2);
       long chunkKey = WorldChunkCache.MakeChunkKey(x2, z2);
+      
+      //todo: needs to be processed in subthread
       var chunk = GameManager.Instance.World.GetChunkSync(chunkKey) as Chunk;
 
-      if (chunk.FindSpawnPointAtXZ(x2, z2, out y, 15, 0, 3, 251, true))
+      if (chunk != null)
       {
-        Log.Out(Config.ModPrefix + " AirDropGroundPos:[" + ((int)_entity.position.x).ToString() + " " + y.ToString() + " " + ((int)_entity.position.z).ToString() + "]");
-      }
-      else
-      {
-        Log.Out(Config.ModPrefix + " AirDropGroundPos: No valiud spawn point found");
+        if (chunk.FindSpawnPointAtXZ(x2, z2, out y, 15, 0, 3, 251, true))
+        {
+          Log.Out(Config.ModPrefix + " AirDropGroundPos:[" + ((int)_entity.position.x).ToString() + " " + y.ToString() + " " + ((int)_entity.position.z).ToString() + "]");
+        }
+        else
+        {
+          Log.Out(Config.ModPrefix + " AirDropGroundPos: No valid spawn point found");
+        }
       }
 
     }
