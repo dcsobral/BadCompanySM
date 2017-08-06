@@ -15,6 +15,8 @@ namespace BCM.Commands
       }
 
       //use loc and current location, or 2x vector3i to define area, or current loc and a radius
+      //alternative option of x y z instead of 2xV3i for single block change
+      //if x y z is not a TE then report nearest in y only + any direction as second item, report none if nothung within limit
 
       if (_params[0] == "owner")
       {
@@ -30,11 +32,11 @@ namespace BCM.Commands
       }
       else if (_params[0] == "empty")
       {
-        //empties secure tiles in the area or a type or all
+        //empties secure tiles in the area of a type or all
       }
       else if (_params[0] == "remove")
       {
-        //removes secure tiles in the area or a type or all
+        //removes secure tiles in the area of a type or all
       }
 
     }

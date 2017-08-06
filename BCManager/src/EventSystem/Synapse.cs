@@ -35,7 +35,7 @@ namespace BCM
         case "buffmonitor":
           neurons.Add(new BuffMonitor());
           break;
-        case "deadiddead":
+        case "deadisdead":
           neurons.Add(new DeadIsDead());
           break;
         case "deathwatch":

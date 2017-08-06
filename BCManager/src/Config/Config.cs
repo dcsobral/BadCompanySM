@@ -16,22 +16,14 @@ namespace BCM
       get
       {
         string _filepath = string.Empty;
-        int num = DllPath.LastIndexOf('/');
-        if (num == -1)
-        {
-          num = DllPath.LastIndexOf('\\');
-        }
-        if (num > 0 && num + 1 < DllPath.Length)
-        {
-          _filepath = DllPath.Substring(0, num + 1);
-        }
+        _filepath = Path.GetDirectoryName(DllPath) + Path.DirectorySeparatorChar;
         return _filepath;
       }
     }
     private static string commandsFile = "Commands.xml";
     private static string systemFile = "System.xml";
-    private static string DefaultConfigPath = ModDir + "DefaultConfig/";
-    private static string ConfigPath = ModDir + "Config/";
+    private static string DefaultConfigPath = ModDir + "DefaultConfig" + Path.DirectorySeparatorChar;
+    private static string ConfigPath = ModDir + "Config" + Path.DirectorySeparatorChar;
     public static string DefaultLocale = "en";
     public static bool logCache = false;
     public static Dictionary<string, Command> commandDictionary = new Dictionary<string, Command>();

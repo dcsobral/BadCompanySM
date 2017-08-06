@@ -10,7 +10,7 @@
   <!--Character Management-->
   <Synapse name="bagmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
   <Synapse name="buffmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
-  <Synapse name="deadiddead" enabled="false" beats="15"/><!-- todo: not implemented -->
+  <Synapse name="deadisdead" enabled="false" beats="15"/><!-- todo: not implemented -->
   <Synapse name="deathwatch" enabled="false" beats="60"/><!-- todo: not implemented -->
   <Synapse name="equipmentmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
   <Synapse name="positiontracker" enabled="false" beats="60"/><!-- todo: not implemented -->
