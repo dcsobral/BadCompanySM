@@ -83,7 +83,7 @@ namespace BCM.Commands
         {
           if (_param.IndexOf('=', 1) != -1)
           {
-            string[] p1 = _param.Substring(1).ToLower().Split('=');
+            string[] p1 = _param.Substring(1).Split('=');
             _options.Add(p1[0], p1[1]);
           }
           else

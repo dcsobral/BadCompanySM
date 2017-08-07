@@ -11,21 +11,6 @@
   <Command name="ListPlayersId" commands="bc-lpids,bc-id" defaultpermissionlevel="0" defaultoptions="online,pp"/>
   <Command name="ListPlayersPosition" commands="bc-lppos,bc-lpos" defaultpermissionlevel="0" defaultoptions="online,strpos,pp"/>
 
-  <!-- List Players Legacy -->
-  <!--<Command name="ListPlayersBagLegacy" commands="bc-lpbag" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersBuffsLegacy" commands="bc-lpbuffs,bc-lpbuff" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersClientInfoLegacy" commands="bc-lpci,bc-lpcinfo" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersCraftingQueueLegacy" commands="bc-lpcrafts,bc-lpcraft" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersEquipmentLegacy" commands="bc-lpequip" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersFavRecipesLegacy" commands="bc-lpfavs,bc-lpfav" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersQuestsLegacy" commands="bc-lpquests,bc-lpquest" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersRecipesLegacy" commands="bc-lprecipes,bc-lprecipe" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersSkillsLegacy" commands="bc-lpskills,bc-lpskill" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersSpawnsLegacy" commands="bc-lpspawns,bc-lpspawn" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersStatsLegacy" commands="bc-lpstats" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersToolbeltLegacy" commands="bc-lptools,bc-lptool" defaultpermissionlevel="0" defaultoptions="online"/>
-  <Command name="ListPlayersWaypointsLegacy" commands="bc-lpwayp,bc-lpwayps,bc-lpwaypoints" defaultpermissionlevel="0" defaultoptions="online"/>-->
-
   <!-- GAME OBJECTS -->
   <!-- Players -->
   <Command name="ListPlayerFilesInfo" commands="bc-pfinfo" defaultpermissionlevel="0" defaultoptions="nl"/>
@@ -70,7 +55,7 @@
   <Command name="SetSkillOnPlayer" commands="bc-setskill,setskill" defaultpermissionlevel="0" defaultoptions=""/>
 
   <!-- Admin Entities -->
-  <Command name="ListEntities" commands="bc-le" defaultpermissionlevel="0" defaultoptions="nl,alive"/>
+  <Command name="ListEntities" commands="bc-le" defaultpermissionlevel="0" defaultoptions="pp,strpos"/>
   <Command name="GiveBuffToEntity" commands="bc-geb,bc-gebuff" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="RemoveBuffFromEntity" commands="bc-reb,bc-debuff,bc-rembuff" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCRemove" commands="bc-remove,remove" defaultpermissionlevel="0" defaultoptions=""/>

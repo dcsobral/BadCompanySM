@@ -84,9 +84,9 @@ namespace BCM.Commands
       else
       {
         //todo: /players=id1,id2,id3 instead of single or all
-        // All players
-        //todo: fix below function, shouldnt hit player files if /nopdf or /fastpos+/online are set
 
+        // All players
+        //todo: fix below function, shouldnt hit player files if /nopdf is set
         List<string> players = GetEntity.GetStoredPlayers(_options);
         Dictionary<string, Dictionary<string, object>> data = new Dictionary<string, Dictionary<string, object>>();
         List<List<object>> keyless = new List<List<object>>();

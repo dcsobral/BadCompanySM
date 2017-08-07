@@ -1,132 +1,131 @@
-using System;
 using System.Collections.Generic;
-using System.Reflection;
+using BCM.Models;
+using System;
 
 namespace BCM.Commands
 {
   public class ListEntities : BCCommandAbstract
   {
+    private void Filters()
+    {
+      var data = new Dictionary<string, string>();
+      var obj = typeof(BCMEntity.StrFilters);
+      foreach (var field in obj.GetFields())
+      {
+        data.Add(field.Name, field.GetValue(obj).ToString());
+      }
+
+      SendJson(data);
+    }
+    private void Index()
+    {
+      var data = new Dictionary<string, int>();
+      foreach (var value in Enum.GetValues(typeof(BCMEntity.Filters)))
+      {
+        data.Add(value.ToString(), (int)value);
+      }
+
+      SendJson(data);
+    }
+
     public override void Process()
     {
-      if (_options.ContainsKey("details"))
+      if (GameManager.Instance.World == null)
       {
-        if (_params.Count == 1)
+        SendOutput("The world isn't loaded");
+
+        return;
+      }
+
+      if (_options.ContainsKey("filters"))
+      {
+        Filters();
+        return;
+      }
+      if (_options.ContainsKey("index"))
+      {
+        Index();
+        return;
+      }
+
+      if (_params.Count > 1)
+      {
+        SendOutput("Wrong number of arguments");
+        SendOutput(Config.GetHelp(GetType().Name));
+
+        return;
+      }
+
+      if (_params.Count == 1)
+      {
+        // specific entity
+        Entity _entity = null;
+        int _entityId = -1;
+
+        if (int.TryParse(_params[0], out _entityId))
         {
-          int n = int.MinValue;
-          int.TryParse(_params[0], out n);
-          Entity entity = GameManager.Instance.World.Entities.dict[n];
-          if (entity == null)
+          _entity = GameManager.Instance.World.Entities.dict[_entityId];
+        }
+        if (_entity == null)
+        {
+          SdtdConsole.Instance.Output("Entity id not found.");
+
+          return;
+        }
+
+        var entity = new BCMEntity(_entity, _options);
+        if (_options.ContainsKey("nokeys"))
+        {
+          List<List<object>> keyless = new List<List<object>>();
+          List<object> obj = new List<object>();
+          foreach (var d in entity.Data())
           {
-            SdtdConsole.Instance.Output("Entity id not found.");
-            return;
+            obj.Add(d.Value);
           }
-          displayEntity(entity);
+          keyless.Add(obj);
+          SendJson(keyless);
+        }
+        else
+        {
+          SendJson(entity.Data());
         }
       }
       else
       {
-        if (_params.Count == 1)
+        //todo: /entity=id1,id2,id3
+
+        // All entities
+        List<object> data = new List<object>();
+        List<List<object>> keyless = new List<List<object>>();
+        var _entities = BCUtils.filterEntities(GameManager.Instance.World.Entities.dict, _options).Values;
+
+        foreach (Entity _entity in _entities)
         {
-          displaySummary(_params[0]);
+          var entity = new BCMEntity(_entity, _options);
+          if (_options.ContainsKey("nokeys"))
+          {
+            var obj = new List<object>();
+            foreach (var d in entity.Data())
+            {
+              obj.Add(d.Value);
+            }
+            keyless.Add(obj);
+          }
+          else
+          {
+            data.Add(entity.Data());
+          }
+        }
+
+        if (_options.ContainsKey("nokeys"))
+        {
+          SendJson(keyless);
         }
         else
         {
-          displaySummary(null);
-          SendOutput("Total of " + GameManager.Instance.World.Entities.Count + " entities in the world");
+          SendJson(data);
         }
       }
-    }
-
-    private void displaySummary(string filter)
-    {
-      Dictionary<string, List<Entity>> list = new Dictionary<string, List<Entity>>();
-      for (int i = GameManager.Instance.World.Entities.list.Count - 1; i >= 0; i--)
-      {
-        Entity entity = GameManager.Instance.World.Entities.list[i];
-        if (!_options.ContainsKey("all"))
-        {
-          if (_options.ContainsKey("alive") && entity.IsDead())
-          {
-            continue;
-          }
-          if (_options.ContainsKey("dead") && !entity.IsDead())
-          {
-            continue;
-          }
-        }
-        if (list.ContainsKey(entity.GetType().ToString()))
-        {
-          list[entity.GetType().ToString()].Add(entity);
-        }
-        else
-        {
-          list.Add(entity.GetType().ToString(), new List<Entity>());
-          list[entity.GetType().ToString()].Add(entity);
-        }
-      }
-      foreach (string type in list.Keys)
-      {
-        if (filter == null || type == filter)
-        {
-          SendOutput("Entities of type " + type + ":" + list[type].Count);
-          foreach (Entity e in list[type])
-          {
-            displayEntity(e);
-          }
-        }
-      }
-    }
-    private void displayEntity(Entity entity)
-    {
-      EntityAlive entityAlive = null;
-      EntityPlayer entityPlayer = null;
-      EntityNPC entityNPC = null;
-      EntityZombie entityZombie = null;
-      if (entity is EntityAlive)
-      {
-        entityAlive = (EntityAlive)entity;
-      }
-      if (entity is EntityPlayer)
-      {
-        entityPlayer = (EntityPlayer)entity;
-      }
-      if (entity is EntityNPC)
-      {
-        entityNPC = (EntityNPC)entity;
-      }
-      if (entity is EntityZombie)
-      {
-        entityZombie = (EntityZombie)entity;
-      }
-
-      string entitydata = " [";
-      entitydata += string.Empty;
-      entitydata += "id=";
-      entitydata += entity.entityId;
-      entitydata += ", ";
-      entitydata += entity.ToString();
-      entitydata += ", Pos=";
-      entitydata += entity.GetPosition();
-      entitydata += ", Rot=";
-      entitydata += entity.rotation;
-      entitydata += ", Lifetime=";
-      entitydata += ((entity.lifetime != float.MaxValue) ? entity.lifetime.ToString("0.0") : "Max");
-      entitydata += ", Remote=";
-      entitydata += entity.isEntityRemote;
-      entitydata += ", Dead=";
-      entitydata += entity.IsDead();
-      if (entityAlive != null)
-      {
-        entitydata += ", CreationTimeSinceLevelLoad=" + entityAlive.CreationTimeSinceLevelLoad;
-        entitydata += ", MaxHealth=" + entityAlive.GetMaxHealth();
-        entitydata += ", Health=" + entityAlive.Health;
-      }
-      if (entityZombie != null)
-      {
-        entitydata += ", IsScoutZombie=" + entityZombie.IsScoutZombie;
-      }
-      entitydata += "]";
-      SendOutput(entitydata);
     }
   }
 }

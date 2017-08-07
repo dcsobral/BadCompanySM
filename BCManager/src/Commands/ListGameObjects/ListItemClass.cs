@@ -60,19 +60,41 @@ namespace BCM.Commands
 
       if (_params.Count == 1)
       {
-        int i = 0;
+        //todo: get by name
+        ItemClass _item = null;
+        int i = -1;
         if (int.TryParse(_params[0], out i))
         {
-          if (ItemClass.list[i] != null)
+          _item = ItemClass.list[i];
+        }
+        if (_item == null)
+        {
+          SdtdConsole.Instance.Output("Itemclass not found.");
+
+          return;
+        }
+
+        var item = new BCMItemClass(ItemClass.list[i], _options);
+        if (_options.ContainsKey("nokeys"))
+        {
+          List<List<object>> keyless = new List<List<object>>();
+          List<object> obj = new List<object>();
+          foreach (var d in item.Data())
           {
-            var item = new BCMItemClass(ItemClass.list[i], _options);
-            SendJson(item.Data());
+            obj.Add(d.Value);
           }
+          keyless.Add(obj);
+          SendJson(keyless);
+        }
+        else
+        {
+          SendJson(item.Data());
         }
       }
       else
       {
         List<object> data = new List<object>();
+        List<List<object>> keyless = new List<List<object>>();
 
         int start = 0;
         int end = ItemClass.list.Length;
@@ -94,10 +116,30 @@ namespace BCM.Commands
           if (ItemClass.list[i] != null)
           {
             var item = new BCMItemClass(ItemClass.list[i], _options);
-            data.Add(item.Data());
+            if (_options.ContainsKey("nokeys"))
+            {
+              var obj = new List<object>();
+              foreach (var d in item.Data())
+              {
+                obj.Add(d.Value);
+              }
+              keyless.Add(obj);
+            }
+            else
+            {
+              data.Add(item.Data());
+            }
           }
         }
-        SendJson(data);
+
+        if (_options.ContainsKey("nokeys"))
+        {
+          SendJson(keyless);
+        }
+        else
+        {
+          SendJson(data);
+        }
       }
     }
   }

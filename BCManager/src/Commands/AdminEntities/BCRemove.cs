@@ -10,47 +10,7 @@ namespace BCM.Commands
       if (_options.ContainsKey("all") || _options.ContainsKey("istype") || _options.ContainsKey("type"))
       {
         var _count = new Dictionary<string, int>();
-        var _entKeys = new List<int>();
-        foreach (var _e in GameManager.Instance.World.Entities.dict)
-        {
-          if (_options.ContainsKey("all"))
-          {
-            _entKeys.Add(_e.Key);
-          }
-          else if (_options.ContainsKey("type"))
-          {
-            if (_e.Value != null)
-            {
-              if (_e.Value.GetType().ToString() == _options["type"])
-              {
-                _entKeys.Add(_e.Key);
-              }
-            }
-            else
-            {
-              SendOutput("Entity was null");
-            }
-          }
-          else if (_options.ContainsKey("istype"))
-          {
-            if (_e.Value != null)
-            {
-
-              Type type = Type.GetType(_e.Value.GetType().AssemblyQualifiedName.Replace(_e.Value.GetType().ToString(), _options["istype"]));
-                
-              if (type != null)
-              {
-                if (type.IsInstanceOfType(_e.Value))
-                {
-                  _entKeys.Add(_e.Key);
-                }
-              }
-            } else
-            {
-              SendOutput("Entity was null");
-            }
-          }
-        }
+        var _entKeys = BCUtils.filterEntities(GameManager.Instance.World.Entities.dict, _options).Keys;
 
         foreach (var key in _entKeys)
         {
