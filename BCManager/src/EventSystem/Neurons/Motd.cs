@@ -1,20 +1,17 @@
-﻿using System;
-
-namespace BCM.Neurons
+﻿namespace BCM.Neurons
 {
   public class Motd : NeuronAbstract
   {
     public Motd()
     {
     }
-    public override bool Fire(int b)
+    public override void Fire(int b)
     {
       //preiodic messages sent to chat from server
 
 
 
       Log.Out(Config.ModPrefix + " Motd");
-      return true;
     }
   }
 }

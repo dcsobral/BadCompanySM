@@ -2,9 +2,8 @@
 {
   public class NeuronAbstract
   {
-    public virtual bool Fire(int b)
+    public virtual void Fire(int b)
     {
-      return true;
     }
   }
 }

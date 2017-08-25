@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace BCM
+﻿namespace BCM
 {
   public class BCMVector3
   {
@@ -10,7 +8,7 @@ namespace BCM
     
     public override string ToString()
     {
-      return x.ToString("0f") + " " + y.ToString("0f") + " " + z.ToString("0f");
+      return $"{x:0f} {y:0f} {z:0f}";
     }
   }
 }

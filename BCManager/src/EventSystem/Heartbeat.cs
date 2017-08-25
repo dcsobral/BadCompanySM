@@ -5,21 +5,21 @@ namespace BCM
   public static class Heartbeat
   {
     public static bool IsAlive = false;
-    public static int BPM = 60;
-    public static int beats = 0;
+    public static int Bpm = 60;
+    public static int Beats;
 
     public static void Start()
     {
-      ThreadManager.StartThread(new ThreadManager.ThreadFunctionDelegate(HeartbeatPulse), ThreadPriority.Lowest, null, null);
+      ThreadManager.StartThread(HeartbeatPulse, ThreadPriority.Lowest);
       Log.Out(Config.ModPrefix + " Its Alive!!! (Pulse Started)");
     }
     private static void HeartbeatPulse(ThreadManager.ThreadInfo ti)
     {
       while (IsAlive)
       {
-        beats++;
-        Brain.FireNeurons(beats);
-        Thread.Sleep(1000 * 60 / BPM);
+        Beats++;
+        Brain.FireNeurons(Beats);
+        Thread.Sleep(1000 * 60 / Bpm);
       }
       Terminate();
     }

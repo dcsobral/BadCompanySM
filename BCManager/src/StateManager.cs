@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace BCM
 {
-  public class StateManager
+  public static class StateManager
   {
     public static void Awake()
     {
@@ -13,7 +13,7 @@ namespace BCM
       }
       catch (Exception e)
       {
-        Log.Out("" + Config.ModPrefix + " Error in StateManager." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        Log.Out($"{Config.ModPrefix} Error in StateManager.{MethodBase.GetCurrentMethod().Name}: {e}");
       }
     }
 
@@ -25,7 +25,7 @@ namespace BCM
       }
       catch (Exception e)
       {
-        Log.Out("" + Config.ModPrefix + " Error in StateManager." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        Log.Out($"{Config.ModPrefix} Error in StateManager.{MethodBase.GetCurrentMethod().Name}: {e}");
       }
     }
   }

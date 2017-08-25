@@ -1,0 +1,17 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command}
+            2. {command} <entityid>
+            3. {command} /type=<ClassName>
+            4. {command} /istype=<ClassName>
+            5. {command} /all
+      Notes:
+            This command shows all entities of different types
+            Use bc-help to get a list of common /options
+            Use bc-remove to remove entities
+            Without options will return EntityEnemy and EntityAnimal entities
+            /type=EntityZombie - lists all zombies that match the class exactly
+            /istype=EntityEnemy - lists all entities that are enemies (derived from filter class)
+            /all - lists all entities including FallingBlocks and DroppedItems

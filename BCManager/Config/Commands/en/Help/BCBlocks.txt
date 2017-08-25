@@ -1,0 +1,9 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command}
+            2. {command} <blockid / blockname>
+      Notes:
+            Use bc-help to get a list of common /options
+            This is an alias command for bc-go blocks

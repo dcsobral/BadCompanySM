@@ -1,22 +1,21 @@
 ﻿using BCM.PersistentData;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace BCM
 {
   public class API : ModApiAbstract
   {
-    public static EntitySpawner entitySpawner = new EntitySpawner();
-    public static bool IsAlive = false;
+    private static readonly EntitySpawner EntitySpawner = new EntitySpawner();
+    public static bool IsAlive;
 
     public API()
     {
       Config.Init();
-      if (Config.logCache)
-      {
-        LogCache.Instance.GetType();
-      }
+      //if (Config.LogCache)
+      //{
+      //  LogCache.Instance.GetType();
+      //}
       Heartbeat.Start();
     }
 
@@ -24,7 +23,7 @@ namespace BCM
     {
       if (IsAlive)
       {
-        entitySpawner.ProcessSpawnQueue();
+        EntitySpawner.ProcessSpawnQueue();
       }
     }
 
@@ -39,51 +38,39 @@ namespace BCM
       StateManager.Shutdown();
     }
 
-    public override void SavePlayerData(ClientInfo _cInfo, PlayerDataFile _playerDataFile)
+    public override void SavePlayerData(ClientInfo cInfo, PlayerDataFile playerDataFile)
     {
-      DataManager.SavePlayerData(_cInfo, _playerDataFile);
+      DataManager.SavePlayerData(cInfo, playerDataFile);
     }
 
-    public override void PlayerLogin(ClientInfo _cInfo, string _compatibilityVersion)
+    public override void PlayerLogin(ClientInfo cInfo, string compatibilityVersion)
     {
 
     }
 
-    public override void PlayerSpawning(ClientInfo _cInfo, int _chunkViewDim, PlayerProfile _playerProfile)
+    public override void PlayerSpawning(ClientInfo cInfo, int chunkViewDim, PlayerProfile playerProfile)
     {
       try
       {
-        var player = PersistentContainer.Instance.Players[_cInfo.playerId, true];
-        if (player != null)
-        {
-          player.SetOnline(_cInfo);
-        }
+        PersistentContainer.Instance.Players[cInfo.playerId, true]?.SetOnline(cInfo);
         PersistentContainer.Instance.Save();
       }
       catch (Exception e)
       {
-        Log.Out(Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        Log.Out($"{Config.ModPrefix} Error in {GetType().Name}.{MethodBase.GetCurrentMethod().Name}: {e}");
       }
     }
 
-    public override void PlayerDisconnected(ClientInfo _cInfo, bool _bShutdown)
+    public override void PlayerDisconnected(ClientInfo cInfo, bool bShutdown)
     {
       try
       {
-        Player p = PersistentContainer.Instance.Players[_cInfo.playerId, true];
-        if (p != null)
-        {
-          p.SetOffline();
-        }
-        else
-        {
-          //Log.Out("" + Config.ModPrefix + " Disconnected player not found in client list...");
-        }
+        PersistentContainer.Instance.Players[cInfo.playerId, true]?.SetOffline();
         PersistentContainer.Instance.Save();
       }
       catch (Exception e)
       {
-        Log.Out("" + Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        Log.Out($"{Config.ModPrefix} Error in {GetType().Name}.{MethodBase.GetCurrentMethod().Name}: {e}");
       }
     }
 
@@ -98,7 +85,7 @@ namespace BCM
     //public override void GameStartDone() {
     //}
 
-    public override void PlayerSpawnedInWorld(ClientInfo _cInfo, RespawnType _respawnReason, Vector3i _pos)
+    public override void PlayerSpawnedInWorld(ClientInfo cInfo, RespawnType respawnReason, Vector3i pos)
     {
       //_cInfo.SendPackage(new NetPackageConsoleCmdClient("dm", true));
       //Log.Out(Config.ModPrefix + " Player Spawned: " + _cInfo.entityId + " @" + _pos.x.ToString() + " " + _pos.y.ToString() + " " + _pos.z.ToString());

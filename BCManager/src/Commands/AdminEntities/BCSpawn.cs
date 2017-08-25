@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace BCM.Commands
 {
   public class BCSpawn : BCCommandAbstract
@@ -9,20 +7,20 @@ namespace BCM.Commands
       int count = 1;
       Vector3i targetPos = Vector3i.zero;
 
-      if (_params.Count == 0)
+      if (Params.Count == 0)
       {
 
       }
-      else if (_params.Count == 1)
+      else if (Params.Count == 1)
       {
           count = 25;
           //target = comand sender
         }
         else
         {
-          if (_params.Count == 2)
+          if (Params.Count == 2)
           {
-            if (!int.TryParse(_params[1], out count))
+            if (!int.TryParse(Params[1], out count))
             {
               SendOutput("Count was not a number");
 
@@ -30,9 +28,9 @@ namespace BCM.Commands
             }
             //target = comand sender
           }
-          if (_params.Count == 3)
+          if (Params.Count == 3)
           {
-            if (!int.TryParse(_params[2], out count))
+            if (!int.TryParse(Params[2], out count))
             {
               SendOutput("Count was not a number");
 
@@ -48,16 +46,15 @@ namespace BCM.Commands
       Vector3i v = Vector3i.zero;
       ClientInfo ci = null;
 
-      if (_params.Count < 3 && _senderInfo.RemoteClientInfo != null)
+      if (Params.Count < 3 && SenderInfo.RemoteClientInfo != null)
       {
-        ci = _senderInfo.RemoteClientInfo;
+        ci = SenderInfo.RemoteClientInfo;
       }
       else
       {
-        var nameOrId = _params[0];
+        var nameOrId = Params[0];
 
-        string id;
-        ConsoleHelper.ParseParamPartialNameOrId(nameOrId, out id, out ci);
+        ConsoleHelper.ParseParamPartialNameOrId(nameOrId, out string _, out ci);
         if (ci != null)
         {
 

@@ -1,0 +1,7 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} <x> <z>
+      Notes:
+            Visits the region given and reveals the map

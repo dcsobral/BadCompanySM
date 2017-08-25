@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace BCM
 {
@@ -7,50 +6,41 @@ namespace BCM
   {
     public static string PosToStr(Vector3i v, string postype)
     {
-      string position = string.Empty;
-      if (postype == "worldpos")
+      string position;
+      switch (postype)
       {
-        position = GameUtils.WorldPosToStr(v.ToVector3(), " ");
-      }
-      else if (postype == "csvpos")
-      {
-        position = string.Format("{0}, {1}, {2}", v.x, v.y, v.z);
-      }
-      else
-      {
-        position = string.Format("{0} {1} {2}", v.x, v.y, v.z);
+        case "worldpos":
+          position = GameUtils.WorldPosToStr(v.ToVector3(), " ");
+          break;
+        case "csvpos":
+          position = $"{v.x}, {v.y}, {v.z}";
+          break;
+        default:
+          position = $"{v.x} {v.y} {v.z}";
+          break;
       }
       return position;
     }
     public static string PosToStr(Vector3 v, string postype)
     {
-      string position = string.Empty;
-      if (postype == "worldpos")
+      string position;
+      switch (postype)
       {
-        position = GameUtils.WorldPosToStr(v, " ");
-      }
-      else if (postype == "csvpos")
-      {
-        position = string.Format("{0:F0},{1:F0},{2:F0}", v.x, v.y, v.z);
-      }
-      else
-      {
-        position = string.Format("{0:F0} {1:F0} {2:F0}", v.x, v.y, v.z);
+        case "worldpos":
+          position = GameUtils.WorldPosToStr(v, " ");
+          break;
+        case "csvpos":
+          position = $"{v.x:F0},{v.y:F0},{v.z:F0}";
+          break;
+        default:
+          position = $"{v.x:F0} {v.y:F0} {v.z:F0}";
+          break;
       }
       return position;
     }
     public static string PosToStr(Vector2i v, string postype)
     {
-      string position = string.Empty;
-      if (postype == "csvpos")
-      {
-        position = string.Format("{0}, {1}", v.x, v.y);
-      }
-      else
-      {
-        position = string.Format("{0} {1}", v.x, v.y);
-      }
-      return position;
+      return string.Format(postype == "csvpos" ? "{0}, {1}" : "{0} {1}", v.x, v.y);
     }
   }
 }

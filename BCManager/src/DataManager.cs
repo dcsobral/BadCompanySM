@@ -4,21 +4,17 @@ using System.Reflection;
 
 namespace BCM
 {
-  class DataManager
+  internal static class DataManager
   {
-    public static void SavePlayerData(ClientInfo _cInfo, PlayerDataFile _playerDataFile)
+    public static void SavePlayerData(ClientInfo cInfo, PlayerDataFile playerDataFile)
     {
       try
       {
-        var player = PersistentContainer.Instance.Players[_cInfo.playerId, true];
-        if (player != null)
-        {
-          player.Update(_playerDataFile);
-        }
+        PersistentContainer.Instance.Players[cInfo.playerId, true]?.Update(playerDataFile);
       }
       catch (Exception e)
       {
-        Log.Out("" + Config.ModPrefix + " Error in DataManager." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        Log.Out($"{Config.ModPrefix} Error in DataManager.{MethodBase.GetCurrentMethod().Name}: {e}");
       }
     }
   }

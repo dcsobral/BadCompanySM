@@ -6,7 +6,7 @@ namespace BCM.PersistentData
   [Serializable]
   public class Players
   {
-    private Dictionary<string, Player> players = new Dictionary<string, Player>();
+    private readonly Dictionary<string, Player> _players = new Dictionary<string, Player>();
 
     public Player this[string steamId, bool create]
     {
@@ -16,27 +16,18 @@ namespace BCM.PersistentData
         {
           return null;
         }
-        else if (players.ContainsKey(steamId))
+        if (_players.ContainsKey(steamId))
         {
-          return players[steamId];
+          return _players[steamId];
         }
-        else
-        {
-          if (create && steamId != null && steamId.Length == 17)
-          {
-            Log.Out("" + Config.ModPrefix + " Created new player entry for ID: " + steamId);
-            Player p = new Player(steamId);
-            players.Add(steamId, p);
-            return p;
-          }
-          return null;
-        }
+        if (!create || steamId.Length != 17) return null;
+        Log.Out("" + Config.ModPrefix + " Created new player entry for ID: " + steamId);
+        var p = new Player(steamId);
+        _players.Add(steamId, p);
+        return p;
       }
     }
 
-    public int Count
-    {
-      get { return players.Count; }
-    }
+    public int Count => _players.Count;
   }
 }

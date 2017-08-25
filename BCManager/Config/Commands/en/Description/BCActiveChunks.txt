@@ -1,0 +1,1 @@
+﻿Active Chunks - Information about the chunks loaded by the server

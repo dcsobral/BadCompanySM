@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 namespace BCM
 {
   public struct HordeSpawner
   {
-    public int spawnerId;
-    public string type;
-    public int aliveCount;
-    public ulong lastSpawntick;
-    public int spawnDelay;
-    public int totalCount;
-    public int wave;
-    public int waveCount;
-    public int waveDelay;
-    public BCMVector3 fixedPos;
-    public Dictionary<string, Spawn> spawns;
+    public int SpawnerId;
+    public string Type;
+    public int AliveCount;
+    public ulong LastSpawntick;
+    public int SpawnDelay;
+    public int TotalCount;
+    public int Wave;
+    public int WaveCount;
+    public int WaveDelay;
+    public BCMVector3 FixedPos;
+    public Dictionary<string, Spawn> Spawns;
   }
 }

@@ -1,55 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace BCM.Models
 {
   [Serializable]
-  public class BCMEntity
+  public class BCMEntity : BCMAbstract
   {
-    private Dictionary<string, string> options = new Dictionary<string, string>();
-    private Dictionary<string, object> _bin = new Dictionary<string, object>();
-    public enum Filters
-    {
-      EntityId,
-      Type,
-      Name,
-      Position,
-      Rotation,
-      Lifetime,
-      IsAlive,
-
-      CreationTime,
-      MaxHealth,
-      Health,
-      IsScout,
-      IsFeral,
-      IsSleeper,
-      IsDecoy,
-      IsSleeping
-    }
+    #region Filters
     public static class StrFilters
     {
-      public static string EntityId = "id";
-      public static string Type = "type";
-      public static string Name = "name";
-      public static string Position = "pos";
-      public static string Rotation = "rot";
-      public static string Lifetime = "lifetime";
-      public static string IsAlive = "isalive";
+      public const string EntityId = "id";
+      public const string Type = "type";
+      public const string Name = "name";
+      public const string Position = "pos";
+      public const string Rotation = "rot";
+      public const string Lifetime = "lifetime";
+      public const string IsAlive = "isalive";
 
-      public static string CreationTime = "creationtime";
-      public static string MaxHealth = "maxhealth";
-      public static string Health = "health";
-      public static string IsScout = "isscout";
-      public static string IsFeral = "isferal";
-      public static string IsSleeper = "issleeper";
-      public static string IsDecoy = "isdecoy";
-      public static string IsSleeping = "issleeping";
+      public const string CreationTime = "creationtime";
+      public const string MaxHealth = "maxhealth";
+      public const string Health = "health";
+      public const string IsScout = "isscout";
+      public const string IsFeral = "isferal";
+      public const string IsSleeper = "issleeper";
+      public const string IsDecoy = "isdecoy";
+      public const string IsSleeping = "issleeping";
     }
 
-    private List<string> _filter = new List<string>();
+    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    {
+      { 0,  StrFilters.EntityId },
+      { 1,  StrFilters.Type },
+      { 2,  StrFilters.Name },
+      { 3,  StrFilters.Position },
+      { 4,  StrFilters.Rotation },
+      { 5,  StrFilters.Lifetime },
+      { 6,  StrFilters.IsAlive },
+      { 7,  StrFilters.CreationTime },
+      { 8,  StrFilters.MaxHealth },
+      { 9,  StrFilters.Health },
+      { 10,  StrFilters.IsScout },
+      { 11,  StrFilters.IsFeral  },
+      { 12,  StrFilters.IsSleeper },
+      { 13,  StrFilters.IsDecoy },
+      { 14,  StrFilters.IsSleeping }
+    };
+    public static Dictionary<int, string> FilterMap => _filterMap;
+
+    #endregion
 
     #region Properties
     public int EntityId;
@@ -63,21 +62,21 @@ namespace BCM.Models
       public int z;
       public BCMVector3i()
       {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+        x = 0;
+        y = 0;
+        z = 0;
       }
       public BCMVector3i(Vector3 v)
       {
-        this.x = Mathf.RoundToInt(v.x);
-        this.y = Mathf.RoundToInt(v.y);
-        this.z = Mathf.RoundToInt(v.z);
+        x = Mathf.RoundToInt(v.x);
+        y = Mathf.RoundToInt(v.y);
+        z = Mathf.RoundToInt(v.z);
       }
       public BCMVector3i(Vector3i v)
       {
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
+        x = v.x;
+        y = v.y;
+        z = v.z;
       }
     }
     public BCMVector3i Position;
@@ -99,329 +98,150 @@ namespace BCM.Models
     public double SpeedNight;
     #endregion;
 
-
-    private bool useInt = false;
-    private List<string> strFilter = new List<string>();
-    private List<int> intFilter = new List<int>();
-
-    public BCMEntity(Entity _entity, Dictionary<string, string> _options)
+    public BCMEntity(object obj, Dictionary<string, string> options, List<string> filters) : base(obj, "Entity", options, filters)
     {
-      options = _options;
-      Load(_entity);
     }
 
-    public Dictionary<string, object> Data ()
+    public override void GetData(object obj)
     {
-      return _bin;
-    }
+      var entity = obj as Entity;
+      if (entity == null) return;
+      var entityAlive = entity as EntityAlive;
 
-    public void Load(Entity _entity)
-    {
-      if (isOption("filter"))
+      if (IsOption("filter"))
       {
-        strFilter = OptionValue("filter").Split(',').ToList();
-        if (strFilter.Count > 0)
+        foreach (var f in StrFilter)
         {
-          intFilter = (from o in strFilter.Where((o) => { int d; return int.TryParse(o, out d); }) select int.Parse(o)).ToList();
-          if (intFilter.Count == strFilter.Count)
+          switch (f)
           {
-            useInt = true;
-          }
-        }
-      }
-
-      GetStats(_entity);
-    }
-
-    private void GetStats(Entity _entity)
-    {
-      if (isOption("filter"))
-      {
-        //ENTITYID
-        if ((useInt && intFilter.Contains((int)Filters.EntityId)) || (!useInt && strFilter.Contains(StrFilters.EntityId)))
-        {
-          if (_entity != null)
-          {
-            EntityId = _entity.entityId;
-          }
-          _bin.Add("EntityId", EntityId);
-        }
-
-        //TYPE
-        if ((useInt && intFilter.Contains((int)Filters.Type)) || (!useInt && strFilter.Contains(StrFilters.Type)))
-        {
-          if (_entity != null)
-          {
-            Type = _entity.GetType().ToString();
-          }
-          _bin.Add("Type", Type);
-        }
-
-        //NAME
-        if ((useInt && intFilter.Contains((int)Filters.Name)) || (!useInt && strFilter.Contains(StrFilters.Name)))
-        {
-          if (_entity != null)
-          {
-            var _ec = EntityClass.list[_entity.entityClass];
-            Name = _ec.entityClassName;
-          }
-          _bin.Add("Name", Name);
-        }
-
-        //POSITION
-        if ((useInt && intFilter.Contains((int)Filters.Position)) || (!useInt && strFilter.Contains(StrFilters.Position)))
-        {
-          if (_entity != null)
-          {
-            Position = new BCMVector3i(_entity.position);
-          }
-          _bin.Add("Position", GetVectorObj(Position));
-        }
-
-        //ROTATION
-        if ((useInt && intFilter.Contains((int)Filters.Rotation)) || (!useInt && strFilter.Contains(StrFilters.Rotation)))
-        {
-          if (_entity != null)
-          {
-            Rotation = new BCMVector3i(_entity.rotation);
-          }
-          _bin.Add("Rotation", GetVectorObj(Rotation));
-        }
-
-        //LIFETIME
-        if ((useInt && intFilter.Contains((int)Filters.Lifetime)) || (!useInt && strFilter.Contains(StrFilters.Lifetime)))
-        {
-          if (_entity != null)
-          {
-            Lifetime = ((_entity.lifetime != float.MaxValue) ? (double?)_entity.lifetime : (double?)null);
-          }
-          _bin.Add("Lifetime", Lifetime);
-        }
-
-        var _ea = _entity as EntityAlive;
-        if (_ea != null)
-        {
-          //CREATIONTIME
-          if ((useInt && intFilter.Contains((int)Filters.CreationTime)) || (!useInt && strFilter.Contains(StrFilters.CreationTime)))
-          {
-            if (_entity != null)
-            {
-              CreationTime = Math.Round(_ea.CreationTimeSinceLevelLoad, 1);
-            }
-            _bin.Add("CreationTime", CreationTime);
-          }
-
-          //MAXHEALTH
-          if ((useInt && intFilter.Contains((int)Filters.MaxHealth)) || (!useInt && strFilter.Contains(StrFilters.MaxHealth)))
-          {
-            if (_entity != null)
-            {
-              MaxHealth = _ea.GetMaxHealth();
-            }
-            _bin.Add("MaxHealth", MaxHealth);
-          }
-
-          //HEALTH
-          if ((useInt && intFilter.Contains((int)Filters.Health)) || (!useInt && strFilter.Contains(StrFilters.Health)))
-          {
-            if (_entity != null)
-            {
-              Health = _ea.Health;
-            }
-            _bin.Add("Health", Health);
-          }
-
-
-          //ISALIVE
-          if ((useInt && intFilter.Contains((int)Filters.IsAlive)) || (!useInt && strFilter.Contains(StrFilters.IsAlive)))
-          {
-            if (_entity != null)
-            {
-              IsAlive = !_entity.IsDead();
-            }
-            _bin.Add("IsAlive", IsAlive);
-          }
-
-          //ISSCOUT
-          if ((useInt && intFilter.Contains((int)Filters.IsScout)) || (!useInt && strFilter.Contains(StrFilters.IsScout)))
-          {
-            if (_entity != null)
-            {
-              IsScout = _ea.IsScoutZombie;
-            }
-            _bin.Add("IsScout", IsScout);
-          }
-
-          //ISFERAL
-          if ((useInt && intFilter.Contains((int)Filters.IsFeral)) || (!useInt && strFilter.Contains(StrFilters.IsFeral)))
-          {
-            if (_entity != null)
-            {
-              IsFeral = _ea.isFeral;
-            }
-            _bin.Add("IsFeral", IsFeral);
-          }
-
-          //ISSLEEPER
-          if ((useInt && intFilter.Contains((int)Filters.IsSleeper)) || (!useInt && strFilter.Contains(StrFilters.IsSleeper)))
-          {
-            if (_entity != null)
-            {
-              IsSleeper = _ea.IsSleeper;
-            }
-            _bin.Add("IsSleeper", IsSleeper);
-          }
-
-          //ISDECOY
-          if ((useInt && intFilter.Contains((int)Filters.IsDecoy)) || (!useInt && strFilter.Contains(StrFilters.IsDecoy)))
-          {
-            if (_entity != null)
-            {
-              IsDecoy = _ea.IsSleeperDecoy;
-            }
-            _bin.Add("IsDecoy", IsDecoy);
-          }
-
-          //ISSLEEPING
-          if ((useInt && intFilter.Contains((int)Filters.IsSleeping)) || (!useInt && strFilter.Contains(StrFilters.IsSleeping)))
-          {
-            if (_entity != null)
-            {
-              IsSleeping = _ea.IsSleeping;
-            }
-            _bin.Add("IsSleeping", IsSleeping);
+            case StrFilters.EntityId:
+              GetEntityId(entity);
+              break;
+            case StrFilters.Type:
+              GetType(entity);
+              break;
+            case StrFilters.Name:
+              GetName(entity);
+              break;
+            case StrFilters.Position:
+              GetPosition(entity);
+              break;
+            case StrFilters.Rotation:
+              GetRotation(entity);
+              break;
+            case StrFilters.Lifetime:
+              GetLifetime(entity);
+              break;
+            case StrFilters.CreationTime:
+              if (entityAlive == null) break;
+              GetCreationTime(entityAlive);
+              break;
+            case StrFilters.MaxHealth:
+              if (entityAlive == null) break;
+              GetMaxHealth(entityAlive);
+              break;
+            case StrFilters.Health:
+              if (entityAlive == null) break;
+              GetHealth(entityAlive);
+              break;
+            case StrFilters.IsAlive:
+              if (entityAlive == null) break;
+              GetIsAlive(entityAlive);
+              break;
+            case StrFilters.IsScout:
+              if (entityAlive == null) break;
+              GetIsScout(entityAlive);
+              break;
+            case StrFilters.IsFeral:
+              if (entityAlive == null) break;
+              GetIsFeral(entityAlive);
+              break;
+            case StrFilters.IsSleeper:
+              if (entityAlive == null) break;
+              GetIsSleeper(entityAlive);
+              break;
+            case StrFilters.IsDecoy:
+              if (entityAlive == null) break;
+              GetIsDecoy(entityAlive);
+              break;
+            case StrFilters.IsSleeping:
+              if (entityAlive == null) break;
+              GetIsSleeping(entityAlive);
+              break;
+            default:
+              Log.Out($"{Config.ModPrefix} Unknown filter {f}");
+              break;
           }
         }
       }
       else
       {
-        if (_entity != null)
-        {
-          EntityId = _entity.entityId;
-          _bin.Add("EntityId", EntityId);
+        GetEntityId(entity);
+        GetType(entity);
+        GetName(entity);
+        GetPosition(entity);
+        GetRotation(entity);
+        GetLifetime(entity);
 
-          Type = _entity.GetType().ToString();
-          _bin.Add("Type", Type);
+        if (entityAlive == null) return;
 
-          var _ec = EntityClass.list[_entity.entityClass];
-          Name = _ec.entityClassName;
-          _bin.Add("Name", Name);
-
-          Position = new BCMVector3i(_entity.position);
-          _bin.Add("Position", GetVectorObj(Position));
-          Rotation = new BCMVector3i(_entity.rotation);
-          _bin.Add("Rotation", GetVectorObj(Rotation));
-
-          Lifetime = ((_entity.lifetime != float.MaxValue) ? (double?)_entity.lifetime : (double?)null);
-          _bin.Add("Lifetime", Lifetime);
-
-          var _ea = _entity as EntityAlive;
-          if (_ea != null)
-          {
-            CreationTime = Math.Round(_ea.CreationTimeSinceLevelLoad, 1);
-            _bin.Add("CreationTime", CreationTime);
-
-            MaxHealth = _ea.GetMaxHealth();
-            _bin.Add("MaxHealth", MaxHealth);
-
-            Health = _ea.Health;
-            _bin.Add("Health", Health);
-
-            IsAlive = !_entity.IsDead();
-            _bin.Add("IsAlive", IsAlive);
-
-            IsScout = _ea.IsScoutZombie;
-            _bin.Add("IsScout", IsScout);
-
-            IsFeral = _ea.isFeral;
-            _bin.Add("IsFeral", IsFeral);
-
-            IsSleeper = _ea.IsSleeper;
-            _bin.Add("IsSleeper", IsSleeper);
-
-            IsDecoy = _ea.IsSleeperDecoy;
-            _bin.Add("IsDecoy", IsDecoy);
-
-            IsSleeping = _ea.IsSleeping;
-            _bin.Add("IsSleeping", IsSleeping);
-          }
-        }
+        GetCreationTime(entityAlive);
+        GetMaxHealth(entityAlive);
+        GetHealth(entityAlive);
+        GetIsAlive(entityAlive);
+        GetIsScout(entityAlive);
+        GetIsFeral(entityAlive);
+        GetIsSleeper(entityAlive);
+        GetIsDecoy(entityAlive);
+        GetIsSleeping(entityAlive);
       }
     }
+
+    private void GetIsSleeping(EntityAlive entityAlive) => Bin.Add("IsSleeping", IsSleeping = entityAlive.IsSleeping);
+
+    private void GetIsDecoy(EntityAlive entityAlive) => Bin.Add("IsDecoy", IsDecoy = entityAlive.IsSleeperDecoy);
+
+    private void GetIsSleeper(EntityAlive entityAlive) => Bin.Add("IsSleeper", IsSleeper = entityAlive.IsSleeper);
+
+    private void GetIsFeral(EntityAlive entityAlive) => Bin.Add("IsFeral", IsFeral = entityAlive.isFeral);
+
+    private void GetIsScout(EntityAlive entityAlive) => Bin.Add("IsScout", IsScout = entityAlive.IsScoutZombie);
+
+    private void GetIsAlive(EntityAlive entityAlive) => Bin.Add("IsAlive", IsAlive = !entityAlive.IsDead());
+
+    private void GetHealth(EntityAlive entityAlive) => Bin.Add("Health", Health = entityAlive.Health);
+
+    private void GetMaxHealth(EntityAlive entityAlive) => Bin.Add("MaxHealth", MaxHealth = entityAlive.GetMaxHealth());
+
+    private void GetCreationTime(EntityAlive entityAlive) => Bin.Add("CreationTime", CreationTime = Math.Round(entityAlive.CreationTimeSinceLevelLoad, 1));
+
+    private void GetLifetime(Entity entity) => Bin.Add("Lifetime", Lifetime = entity.lifetime < float.MaxValue ? entity.lifetime : (double?)null);
+
+    private void GetRotation(Entity entity) => Bin.Add("Rotation", GetVectorObj(Rotation = new BCMVector3i(entity.rotation)));
+
+    private void GetPosition(Entity entity) => Bin.Add("Position", GetVectorObj(Position = new BCMVector3i(entity.position)));
+
+    private void GetName(Entity entity) => Bin.Add("Name", Name = EntityClass.list[entity.entityClass]?.entityClassName);
+
+    private void GetType(Entity entity) => Bin.Add("Type", Type = entity.GetType().ToString());
+
+    private void GetEntityId(Entity entity) => Bin.Add("EntityId", EntityId = entity.entityId);
 
     private object GetVectorObj(BCMVector3i p)
     {
-      if (options.ContainsKey("strpos"))
+      if (Options.ContainsKey("strpos"))
       {
-        return p.x.ToString() + " " + p.y.ToString() + " " + p.z.ToString();
+        return p.x + " " + p.y + " " + p.z;
       }
-      else if (options.ContainsKey("worldpos"))
+      if (Options.ContainsKey("worldpos"))
       {
         return GameUtils.WorldPosToStr(new Vector3(p.x, p.y, p.z), " ");
       }
-      else if (options.ContainsKey("csvpos"))
+      if (Options.ContainsKey("csvpos"))
       {
-        return new int[3] { p.x, p.y, p.z };
+        return new[] { p.x, p.y, p.z };
       }
-      else
-      {
-        //vectors
-        return p;
-      }
+      return p;//vectors
     }
-
-    public bool isOption(string key, bool isOr = true)
-    {
-      var _o = !isOr;
-      var keys = key.Split(' ');
-      if (keys.Length > 1)
-      {
-        foreach (var k in keys)
-        {
-          if (isOr)
-          {
-            _o |= options.ContainsKey(k);
-          }
-          else
-          {
-            _o &= options.ContainsKey(k);
-          }
-        }
-        return _o;
-      }
-      else
-      {
-        return options.ContainsKey(key);
-      }
-    }
-
-    public string OptionValue(string key)
-    {
-      if (options.ContainsKey(key))
-      {
-        return options[key];
-      }
-      return "";
-    }
-
-    public string GetPosType()
-    {
-      var postype = "strpos";
-      if (options.ContainsKey("worldpos"))
-      {
-        postype = "worldpos";
-      }
-      if (options.ContainsKey("csvpos"))
-      {
-        postype = "csvpos";
-      }
-      if (options.ContainsKey("vectors"))
-      {
-        postype = "vectors";
-      }
-
-      return postype;
-    }
-
   }
 }

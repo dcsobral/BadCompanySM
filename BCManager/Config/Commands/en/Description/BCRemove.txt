@@ -1,0 +1,1 @@
+﻿Remove - Removes the selected entities from the game by unloading them

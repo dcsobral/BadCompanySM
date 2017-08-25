@@ -1,19 +1,16 @@
-﻿using System;
-
-namespace BCM.Neurons
+﻿namespace BCM.Neurons
 {
   public class PositionTracker : NeuronAbstract
   {
     public PositionTracker()
     {
     }
-    public override bool Fire(int b)
+    public override void Fire(int b)
     {
       // todo: implement
 
 
       Log.Out(Config.ModPrefix + " PositionTracker");
-      return true;
     }
   }
 }

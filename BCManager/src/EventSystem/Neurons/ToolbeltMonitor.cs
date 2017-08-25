@@ -1,19 +1,16 @@
-﻿using System;
-
-namespace BCM.Neurons
+﻿namespace BCM.Neurons
 {
   public class ToolbeltMonitor : NeuronAbstract
   {
     public ToolbeltMonitor()
     {
     }
-    public override bool Fire(int b)
+    public override void Fire(int b)
     {
       // todo: implement
 
 
       Log.Out(Config.ModPrefix + " ToolbeltMonitor");
-      return true;
     }
   }
 }

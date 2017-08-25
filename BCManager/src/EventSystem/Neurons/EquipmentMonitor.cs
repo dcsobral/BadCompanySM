@@ -1,18 +1,15 @@
-﻿using System;
-
-namespace BCM.Neurons
+﻿namespace BCM.Neurons
 {
   public class EquipmentMonitor : NeuronAbstract
   {
     public EquipmentMonitor()
     {
     }
-    public override bool Fire(int b)
+    public override void Fire(int b)
     {
       // todo: implement
 
       Log.Out(Config.ModPrefix + " EquipmentMonitor");
-      return true;
     }
   }
 }

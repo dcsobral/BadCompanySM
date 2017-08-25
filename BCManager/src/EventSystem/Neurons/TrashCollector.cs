@@ -1,18 +1,15 @@
-﻿using System;
+﻿using static System.GC;
 
 namespace BCM.Neurons
 {
   public class TrashCollector : NeuronAbstract
   {
-    public TrashCollector()
+    public override void Fire(int b)
     {
-    }
-    public override bool Fire(int b)
-    {
-      GC.Collect();
-      GC.WaitForPendingFinalizers();
+      Collect();
+      WaitForPendingFinalizers();
+
       //Log.Out(Config.ModPrefix + " Trash Disposed");
-      return true;
     }
   }
 }

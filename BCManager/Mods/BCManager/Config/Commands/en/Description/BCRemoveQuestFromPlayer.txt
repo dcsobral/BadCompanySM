@@ -1,0 +1,1 @@
+﻿Remove Quests From Players - Removes an in progress quest from the player

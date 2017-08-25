@@ -1,0 +1,1 @@
+﻿Entities - Provides information about all entities in the game

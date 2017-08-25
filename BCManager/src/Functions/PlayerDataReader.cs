@@ -50,32 +50,30 @@ namespace BCM
     public List<Skill> skills;
     //public PlayerStealth stealth;
 
-    public void GetData(string _steamid)
+    public PlayerDataReader(string steamid)
     {
-      string _dir = GameUtils.GetPlayerDataDir();
+      Init(steamid);
+    }
+
+    public void  Init(string steamid)
+    {
       try
       {
-        string file = _dir + "/" + _steamid + ".ttp";
-        if (Utils.FileExists(file))
-        {
-          BinaryReader binaryReader = new BinaryReader(new FileStream(file, FileMode.Open));
-          if (binaryReader.ReadChar() == 't')
-          {
-            if (binaryReader.ReadChar() == 't')
-            {
-              if (binaryReader.ReadChar() == 'p')
-              {
-                if (binaryReader.ReadChar() == '\0')
-                {
-                  uint version = (uint)binaryReader.ReadByte();
-                  Read(binaryReader, version);
-                  binaryReader.Close();
-                  bLoaded = true;
-                }
-              }
-            }
-          }
-        }
+        var file = $"{GameUtils.GetPlayerDataDir()}/{steamid}.ttp";
+        if (!Utils.FileExists(file)) return;
+
+        var binaryReader = new BinaryReader(new FileStream(file, FileMode.Open));
+        if (binaryReader.ReadChar() != 't') return;
+        if (binaryReader.ReadChar() != 't') return;
+        if (binaryReader.ReadChar() != 'p') return;
+        if (binaryReader.ReadChar() != '\0') return;
+
+        var version = (uint)binaryReader.ReadByte();
+
+        Read(binaryReader, version);
+        binaryReader.Close();
+
+        bLoaded = true;
       }
       catch (Exception e)
       {
@@ -103,7 +101,7 @@ namespace BCM
       bag = GameUtils.ReadItemStack(_br);
       if (bag.Length > 32)
       {
-        ItemStack[] destinationArray = ItemStack.CreateArray(32);
+        var destinationArray = ItemStack.CreateArray(32);
         Array.Copy(bag, destinationArray, 32);
         bag = destinationArray;
       }
@@ -111,14 +109,14 @@ namespace BCM
       //CRAFTED
       alreadyCraftedList = new HashSet<string>();
       int num = _br.ReadUInt16();
-      for (int i = 0; i < num; i++)
+      for (var i = 0; i < num; i++)
       {
         alreadyCraftedList.Add(_br.ReadString());
       }
 
       //SPAWNS
-      byte b = _br.ReadByte();
-      for (int j = 0; j < b; j++)
+      var b = _br.ReadByte();
+      for (var j = 0; j < b; j++)
       {
         spawnPoints.Add(new Vector3i(_br.ReadInt32(), _br.ReadInt32(), _br.ReadInt32()));
       }
@@ -169,7 +167,7 @@ namespace BCM
       {
         unlockedRecipeList = new List<string>();
         num = _br.ReadUInt16();
-        for (int k = 0; k < num; k++)
+        for (var k = 0; k < num; k++)
         {
           unlockedRecipeList.Add(_br.ReadString());
         }
@@ -214,7 +212,7 @@ namespace BCM
       {
         if (_version < 18u)
         {
-          Skills pdfskills = new Skills();
+          var pdfskills = new Skills();
           pdfskills.Read(_br, _version);
         }
       }
@@ -224,7 +222,7 @@ namespace BCM
       {
         favoriteRecipeList = new List<string>();
         num = _br.ReadUInt16();
-        for (int l = 0; l < num; l++)
+        for (var l = 0; l < num; l++)
         {
           favoriteRecipeList.Add(_br.ReadString());
         }
@@ -233,19 +231,15 @@ namespace BCM
       //SKILLS - part2
       if (_version > 17u)
       {
-        int num2 = (int)_br.ReadUInt32();
+        var num2 = (int)_br.ReadUInt32();
         if (num2 > 0)
         {
           //custom skill loader
-          MemoryStream pdfskills = new MemoryStream(0);
-          pdfskills = new MemoryStream(_br.ReadBytes(num2));
-          EntityPlayer EP = new EntityPlayer();
-          EP.Skills = new Skills();
-          if (pdfskills.Length > 0L)
-          {
-            EP.Skills.Read(new BinaryReader(pdfskills), _version);
-          }
-          skills = EP.Skills.GetAllSkills();
+          var pdfskills = new MemoryStream(_br.ReadBytes(num2));
+          
+          var skillsReader = new Skills();
+          skillsReader.Read(new BinaryReader(pdfskills), _version);
+          skills = skillsReader.GetAllSkills();
           //end custom skill loader
         }
       }
@@ -302,18 +296,17 @@ namespace BCM
       {
         trackedFriendEntityIds.Clear();
         int num3 = _br.ReadUInt16();
-        for (int m = 0; m < num3; m++)
+        for (var m = 0; m < num3; m++)
         {
           trackedFriendEntityIds.Add(_br.ReadInt32());
         }
       }
       if (_version > 34u)
       {
-        int num4 = _br.ReadInt32();
+        var num4 = _br.ReadInt32();
         if (num4 > 0)
         {
-          MemoryStream pdfstealth = new MemoryStream(0);
-          pdfstealth = new MemoryStream(_br.ReadBytes(num4));
+          var pdfstealth = new MemoryStream(_br.ReadBytes(num4));
           //todo: custom loader
         }
       }

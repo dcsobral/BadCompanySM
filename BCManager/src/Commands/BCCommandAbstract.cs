@@ -1,44 +1,34 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using LitJson;
+using System.Linq;
+using BCM.Models;
 
 namespace BCM.Commands
 {
   public class BCCommandAbstract : ConsoleCmdAbstract
   {
-    public CommandSenderInfo _senderInfo;
-    public List<string> _params = new List<string>();
-    public Dictionary<string,string> _options = new Dictionary<string, string>();
-    public string _sep = "";
+    public static CommandSenderInfo SenderInfo;
+    public static List<string> Params = new List<string>();
+    public static Dictionary<string,string> Options = new Dictionary<string, string>();
 
-    public override string GetDescription()
-    {
-      return Config.GetDescription(GetType().Name);
-    }
+    [Obsolete]
+    public string Sep = "";
 
-    public override string GetHelp()
-    {
-      return Config.GetHelp(GetType().Name);
-    }
+    public override string GetDescription() => Config.GetDescription(GetType().Name);
 
-    public override string[] GetCommands()
-    {
-      return Config.GetCommands(GetType().Name);
-    }
+    public override string GetHelp() => Config.GetHelp(GetType().Name);
 
-    public override int DefaultPermissionLevel
-    {
-      get
-      {
-        return Config.GetDefaultPermissionLevel(GetType().Name);
-      }
-    }
+    public override string[] GetCommands() => Config.GetCommands(GetType().Name);
 
-    public override void Execute(List<string> _params, CommandSenderInfo _senderInfo)
+    public override int DefaultPermissionLevel => Config.GetDefaultPermissionLevel(GetType().Name);
+
+    public override void Execute(List<string> _params, CommandSenderInfo senderInfo)
     {
-      this._senderInfo = _senderInfo;
-      this._params = new List<string>();
-      _options = new Dictionary<string, string>();
+      SenderInfo = senderInfo;
+      Params = new List<string>();
+      Options = new Dictionary<string, string>();
       ParseParams(_params);
       try
       {
@@ -46,15 +36,15 @@ namespace BCM.Commands
       }
       catch (Exception e)
       {
-        SdtdConsole.Instance.Output("Error while executing command.");
+        SendOutput("Error while executing command.");
         Log.Out(Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
       }
     }
 
-    public virtual void Process(Dictionary<string, string> _o, List<string> _p)
+    public virtual void Process(Dictionary<string, string> o, List<string> p)
     {
-      _options = _o;
-      _params = _p;
+      Options = o;
+      Params = p;
       Process();
     }
 
@@ -64,138 +54,186 @@ namespace BCM.Commands
       // this allows param parsing and exception handling to be done in this class
     }
 
-    //public enum CommandParams
-    //{
-    //  Player,
-    //  Entity,
-    //  x,
-    //  y,
-    //  z,
-    //  Text
-    //}
-
-    public void ParseParams(List<string> _p)
+    private void ParseParams(List<string> _params)
     {
-      int pindex = 0;
-      foreach (string _param in _p)
+      foreach (var param in _params)
       {
-        if (_param.IndexOf('/', 0) == 0)
+        if (param.IndexOf('/', 0) != 0)
         {
-          if (_param.IndexOf('=', 1) != -1)
-          {
-            string[] p1 = _param.Substring(1).Split('=');
-            _options.Add(p1[0], p1[1]);
-          }
-          else
-          {
-            _options.Add(_param.Substring(1).ToLower(), null);
-          }
+          Params.Add(param);
         }
         else
         {
-          _params.Add(_param);
-          pindex++;
+          if (param.IndexOf('=', 1) == -1)
+          {
+            Options.Add(param.Substring(1).ToLower(), null);
+          }
+          else
+          {
+            var p1 = param.Substring(1).Split('=');
+            Options.Add(p1[0], p1[1]);
+          }
         }
       }
 
-      string defaultoptions = Config.GetDefaultOptions(GetType().Name);
-      string[] addDefaults = defaultoptions.Split(',');
-      foreach (string def in addDefaults)
+      var defaultoptions = Config.GetDefaultOptions(GetType().Name);
+      foreach (var _default in defaultoptions.Split(','))
       {
-        string add = def.Trim().ToLower();
-        if (
-          (add == "online" && (_options.ContainsKey("offline") || _options.ContainsKey("all")))
-          ||
-          (add == "offline" && (_options.ContainsKey("online") || _options.ContainsKey("all")))
-          ||
-          (add == "nl" && _options.ContainsKey("nonl"))
-          ||
-          (add == "csv" && _options.ContainsKey("nocsv"))
-          ||
-          (add == "details" && _options.ContainsKey("nodetails"))
-          ||
-          (add == "strpos" && _options.ContainsKey("vectors"))
-          ||
-          (add == "strpos" && _options.ContainsKey("csvpos"))
-          ||
-          (add == "strpos" && _options.ContainsKey("worldpos"))
-          ||
-          (_options.ContainsKey(add))
-          )
+        var add = _default.Trim().ToLower();
+        if ((add != "online" || !Options.ContainsKey("offline") && !Options.ContainsKey("all")) &&
+            (add != "offline" || !Options.ContainsKey("online") && !Options.ContainsKey("all")) &&
+            (add != "nl" || !Options.ContainsKey("nonl")) && (add != "csv" || !Options.ContainsKey("nocsv")) &&
+            (add != "details" || !Options.ContainsKey("nodetails")) &&
+            (add != "strpos" || !Options.ContainsKey("vectors")) &&
+            (add != "strpos" || !Options.ContainsKey("csvpos")) &&
+            (add != "strpos" || !Options.ContainsKey("worldpos")) && !Options.ContainsKey(add))
         {
-          continue;
-        }
-        else 
-        {
-          _options.Add(add, null);
+          Options.Add(add, null);
         }
       }
-
-      _sep = "";
-      if (_options.ContainsKey("csv"))
-      {
-        _sep += ",";
-      }
-      if (_options.ContainsKey("nl"))
-      {
-        _sep += "\n";
-      }
-      if (_sep == "")
-      {
-        _sep = " ";
-      }
-
     }
 
-    public void SendJson(object data)
+    public static void SendJsonError(string err)
     {
-      LitJson.JsonWriter _writer = new LitJson.JsonWriter();
-      if (_options.ContainsKey("pp") && !_options.ContainsKey("1l"))
+      SendJson(new { error = err });
+    }
+
+    public static void SendJson(object data)
+    {
+      var writer = new JsonWriter();
+      if (Options.ContainsKey("pp") && !Options.ContainsKey("1l"))
       {
-        _writer.IndentValue = 2;
-        _writer.PrettyPrint = true;
+        writer.IndentValue = 2;
+        writer.PrettyPrint = true;
       }
 
       var jsonOut = new Dictionary<string, object>();
-      if (_options.ContainsKey("tag"))
+      if (Options.ContainsKey("tag"))
       {
-        jsonOut.Add("tag", _options["tag"]);
+        jsonOut.Add("tag", Options["tag"]);
         jsonOut.Add("data", data);
-        LitJson.JsonMapper.ToJson(jsonOut, _writer);
+        JsonMapper.ToJson(jsonOut, writer);
       }
       else
       {
-        LitJson.JsonMapper.ToJson(data, _writer);
+        JsonMapper.ToJson(data, writer);
       }
 
-      SendOutput(_writer.ToString().TrimStart());
+      SendOutput(writer.ToString().TrimStart());
     }
 
-    public void SendOutput(string output)
+    public static void SendOutput(string output)
     {
-      if (_options.ContainsKey("log"))
+      if (Options.ContainsKey("log"))
       {
         Log.Out(output);
       }
-      else if (_options.ContainsKey("chat"))
+      else if (Options.ContainsKey("chat"))
       {
-        if (_options.ContainsKey("color"))
+        if (Options.ContainsKey("color"))
         {
-          output = "[" + _options["color"] + "]" + output + "[-]";
+          output = $"[{Options["color"]}]{output}[-]";
         }
-        string[] split = output.Split('\n');
-        foreach (string text in split)
+        foreach (var text in output.Split('\n'))
         {
           GameManager.Instance.GameMessageServer(null, EnumGameMessages.Chat, text, "Server", false, string.Empty, false);
         }
       }
       else
       {
-        string[] split = output.Split('\n');
-        foreach (string text in split)
+        foreach (var text in output.Split('\n'))
         {
           SdtdConsole.Instance.Output(text);
         }
+      }
+    }
+
+    public static List<string> GetFilters(string type)
+    {
+      if (!Options.ContainsKey("filter")) return new List<string>();
+
+      var filter = new List<string>();
+      var filters = Options["filter"].ToLower().Split(',').ToList();
+      foreach (var cur in filters)
+      {
+        var str = int.TryParse(cur, out int intFilter) ? GetFilter(intFilter, type) : cur;
+        if (str == null) continue;
+
+        if (filter.Contains(str))
+        {
+          Log.Out($"{Config.ModPrefix} Duplicate filter index *{str}* in {filters.Aggregate("", (c, f) => c + (f == cur ? $"*{f}*," : $"{f},"))} skipping");
+
+          continue;
+        }
+
+        filter.Add(str);
+      }
+      return filter;
+    }
+
+    public static void SendObject(BCMAbstract gameobj)
+    {
+      if (Options.ContainsKey("min"))
+      {
+        SendJson(new List<List<object>> { gameobj.Data().Select(d => d.Value).ToList() });
+      }
+      else
+      {
+        SendJson(gameobj.Data());
+      }
+    }
+
+    private static string GetFilter(int f, string type)
+    {
+      switch (type)
+      {
+        case BCMGameObject.GOTypes.Players:
+          return BCMPlayer.FilterMap.ContainsKey(f) ? BCMPlayer.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Entities:
+          return BCMEntity.FilterMap.ContainsKey(f) ? BCMEntity.FilterMap[f] : null;
+
+        case BCMGameObject.GOTypes.Archetypes:
+          return BCMArchetype.FilterMap.ContainsKey(f) ? BCMArchetype.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.BiomeSpawning:
+          return BCMBiomeSpawn.FilterMap.ContainsKey(f) ? BCMBiomeSpawn.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Biomes:
+          return BCMBiome.FilterMap.ContainsKey(f) ? BCMBiome.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Blocks:
+          return BCMItemClass.FilterMap.ContainsKey(f) ? BCMItemClass.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Buffs:
+          return BCMBuff.FilterMap.ContainsKey(f) ? BCMBuff.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.EntityClasses:
+          return BCMEntityClass.FilterMap.ContainsKey(f) ? BCMEntityClass.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.EntityGroups:
+          return BCMEntityGroup.FilterMap.ContainsKey(f) ? BCMEntityGroup.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.ItemClasses:
+          return BCMItemClass.FilterMap.ContainsKey(f) ? BCMItemClass.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Items:
+          return BCMItemClass.FilterMap.ContainsKey(f) ? BCMItemClass.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.LootContainers:
+          return BCMLootContainer.FilterMap.ContainsKey(f) ? BCMLootContainer.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.LootGroups:
+          return BCMLootGroup.FilterMap.ContainsKey(f) ? BCMLootGroup.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.LootProbabilityTemplates:
+          return BCMLootProbabilityTemplate.FilterMap.ContainsKey(f) ? BCMLootProbabilityTemplate.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.LootQualityTemplates:
+          return BCMLootQualityTemplate.FilterMap.ContainsKey(f) ? BCMLootQualityTemplate.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Materials:
+          return BCMMaterial.FilterMap.ContainsKey(f) ? BCMMaterial.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Prefabs:
+          return BCMPrefab.FilterMap.ContainsKey(f) ? BCMPrefab.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Quests:
+          return BCMQuest.FilterMap.ContainsKey(f) ? BCMQuest.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Recipes:
+          return BCMRecipe.FilterMap.ContainsKey(f) ? BCMRecipe.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Rwg:
+          return BCMRWG.FilterMap.ContainsKey(f) ? BCMRWG.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Skills:
+          return BCMSkill.FilterMap.ContainsKey(f) ? BCMSkill.FilterMap[f] : null;
+        case BCMGameObject.GOTypes.Spawners:
+          return BCMSpawner.FilterMap.ContainsKey(f) ? BCMSpawner.FilterMap[f] : null;
+        default:
+          return null;
       }
     }
 

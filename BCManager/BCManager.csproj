@@ -57,84 +57,103 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\Commands\en\Description\BCHelp.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCLocation.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCTime.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCExport.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCHelp.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCImport.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCLocation.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCTime.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCWorldBlocks.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="ModInfo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="src\API.cs" />
-    <Compile Include="src\Classes\EntityZombie.cs" />
     <Compile Include="src\Commands\AdminEntities\BCHordeSpawners.cs" />
-    <Compile Include="src\Commands\AdminEntities\BCGetSpawn.cs" />
-    <Compile Include="src\Commands\AdminWorld\BCTileEntity.cs" />
+    <Compile Include="src\Commands\GameObjects\GameObjectsAlias\BCItems.cs" />
+    <Compile Include="src\Commands\GameObjects\GameObjectsAlias\BCBlocks.cs" />
+    <Compile Include="src\Commands\LiveData\BCGetSpawn.cs" />
+    <Compile Include="src\Commands\LiveData\BCAdmins.cs" />
+    <Compile Include="src\Commands\WorldEditing\BCTileEntity.cs" />
     <Compile Include="src\Commands\AdminEntities\BCSpawn.cs" />
-    <Compile Include="src\Commands\AdminEntities\GiveBuffToEntity.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCGiveBuffToEntity.cs" />
     <Compile Include="src\Commands\AdminEntities\BCRemove.cs" />
-    <Compile Include="src\Commands\AdminEntities\RemoveBuffFromEntity.cs" />
-    <Compile Include="src\Commands\AdminPlayers\SetSkillOnPlayer.cs" />
-    <Compile Include="src\Commands\AdminPlayers\GiveBuffToPlayer.cs" />
-    <Compile Include="src\Commands\AdminPlayers\RemoveBuffFromPlayer.cs" />
-    <Compile Include="src\Commands\AdminWorld\BCVisitRegion.cs" />
-    <Compile Include="src\Commands\AdminWorld\BCReset.cs" />
-    <Compile Include="src\Commands\AdminWorld\BCLocation.cs" />
-    <Compile Include="src\Commands\AdminWorld\BCWorldBlocks.cs" />
-    <Compile Include="src\Commands\AdminWorld\BCExport.cs" />
-    <Compile Include="src\Commands\AdminWorld\BCImport.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCRemoveBuffFromEntity.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCSetSkillOnPlayer.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCGiveBuffToPlayer.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCRemoveBuffFromPlayer.cs" />
+    <Compile Include="src\Commands\WorldEditing\BCVisitRegion.cs" />
+    <Compile Include="src\Commands\WorldEditing\BCReset.cs" />
+    <Compile Include="src\Commands\LiveData\BCLocation.cs" />
+    <Compile Include="src\Commands\WorldEditing\BCWorldBlocks.cs" />
+    <Compile Include="src\Commands\WorldEditing\BCExport.cs" />
+    <Compile Include="src\Commands\WorldEditing\BCImport.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListActiveChunks.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListRWG.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListTime.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListVersions.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListItemClass.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListHubCellData.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListPrefabs.cs" />
-    <Compile Include="src\Commands\Legacy\ListBlocks.cs" />
-    <Compile Include="src\Commands\Legacy\ListItems.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListEntityClasses.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListEntityGroups.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListMaterials.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListSkills.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListRecipes.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListBiomeSpawning.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListSpawners.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListArchetypes.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListBiomes.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListLoot.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListBuffs.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListQuests.cs" />
-    <Compile Include="src\Commands\AdminPlayers\RemoveQuestFromPlayer.cs" />
-    <Compile Include="src\Commands\AdminPlayers\GiveQuestToPlayer.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListPlayerFilesInfo.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListAssets.cs" />
-    <Compile Include="src\Commands\ListGameObjects\ListPlayers.cs" />
-    <Compile Include="src\Commands\ListPlayersAlias\ListPlayersGamestage.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersBag.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersBuffs.cs" />
-    <Compile Include="src\Commands\ListPlayersAlias\ListPlayersPosition.cs" />
-    <Compile Include="src\Commands\ListPlayersAlias\ListPlayersId.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersCraftingQueue.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersEquipment.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersClientInfo.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersFavRecipes.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersQuests.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersSkills.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersSpawns.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersStats.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersToolbelt.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersRecipes.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersWaypoints.cs" />
-    <Compile Include="src\Commands\BCHelp.cs" />
-    <Compile Include="src\Commands\Neurons\BroadcastAPI.cs" />
-    <Compile Include="src\Commands\Settings\Settings.cs" />
-    <Compile Include="src\Commands\Test.cs" />
-    <Compile Include="src\Commands\AdminEntities\ListEntities.cs" />
-    <Compile Include="src\Commands\Legacy\ListPlayersGamestageLegacy.cs" />
-    <Compile Include="src\Commands\Utility\MemTrash.cs" />
-    <Compile Include="src\Config\Command.cs" />
+    <Compile Include="src\Commands\GameObjects\BCGameObjects.cs" />
+    <Compile Include="src\Commands\LiveData\BCActiveChunks.cs" />
+    <Compile Include="src\Commands\LiveData\BCTime.cs" />
+    <Compile Include="src\Commands\GameObjects\BCVersions.cs" />
+    <Compile Include="src\Commands\GameObjects\BCHubCellData.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCRemoveQuestFromPlayer.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCGiveQuestToPlayer.cs" />
+    <Compile Include="src\Commands\LiveData\BCPlayerFiles.cs" />
+    <Compile Include="src\Commands\GameObjects\BCAssets.cs" />
+    <Compile Include="src\Commands\LiveData\BCPlayers.cs" />
+    <Compile Include="src\Commands\LiveData\LiveDataAlias\BCPlayersGamestage.cs" />
+    <Compile Include="src\Commands\LiveData\LiveDataAlias\BCPlayersPosition.cs" />
+    <Compile Include="src\Commands\LiveData\LiveDataAlias\BCPlayersId.cs" />
+    <Compile Include="src\Commands\Utility\BCHelp.cs" />
+    <Compile Include="src\Commands\Utility\BCBroadcastAPI.cs" />
+    <Compile Include="src\Commands\Utility\BCSettings.cs" />
+    <Compile Include="src\Commands\Utility\BCTest.cs" />
+    <Compile Include="src\Commands\LiveData\BCEntities.cs" />
+    <Compile Include="src\Commands\Utility\BCMemTrash.cs" />
+    <Compile Include="src\Functions\BCExtensions.cs" />
+    <Compile Include="src\Models\BCMSpawner.cs" />
+    <Compile Include="src\Models\BCMSkill.cs" />
+    <Compile Include="src\Models\BCMRWG.cs" />
+    <Compile Include="src\Models\BCMRecipe.cs" />
+    <Compile Include="src\Models\BCMQuest.cs" />
+    <Compile Include="src\Models\BCMPrefab.cs" />
+    <Compile Include="src\Models\BCMMaterial.cs" />
+    <Compile Include="src\Models\BCMLootQualityTemplate.cs" />
+    <Compile Include="src\Models\BCMLootProbabilityTemplate.cs" />
+    <Compile Include="src\Models\BCMLootGroup.cs" />
+    <Compile Include="src\Models\BCMLootContainer.cs" />
+    <Compile Include="src\Models\BCMEntityGroup.cs" />
+    <Compile Include="src\Models\BCMEntityClass.cs" />
+    <Compile Include="src\Models\BCMBuff.cs" />
+    <Compile Include="src\Models\BCMBiomeSpawn.cs" />
+    <Compile Include="src\Models\BCMBiome.cs" />
+    <Compile Include="src\Models\BCMGameObject.cs" />
+    <Compile Include="src\Models\BCMArchetype.cs" />
+    <Compile Include="src\Models\BCMCommand.cs" />
     <Compile Include="src\Config\Config.cs" />
     <Compile Include="src\DataManager.cs" />
-    <Compile Include="src\EventSystem\LogCache.cs" />
+    <Compile Include="src\EventSystem\Utilities\LogCache.cs" />
     <Compile Include="src\EventSystem\Models\HordeSpawner.cs" />
     <Compile Include="src\EventSystem\Models\BCMVector3.cs" />
     <Compile Include="src\EventSystem\Models\Spawn.cs" />
@@ -146,26 +165,20 @@
     <Compile Include="src\EventSystem\Neurons\InactiveEntityMonitor.cs" />
     <Compile Include="src\EventSystem\Neurons\PingKicker.cs" />
     <Compile Include="src\EventSystem\Neurons\SpawnManager.cs" />
-    <Compile Include="src\EventSystem\EntitySpawner.cs" />
+    <Compile Include="src\EventSystem\Utilities\EntitySpawner.cs" />
     <Compile Include="src\EventSystem\Neurons\SaveWorld.cs" />
     <Compile Include="src\EventSystem\Neurons\EntitySpawnMutator.cs" />
     <Compile Include="src\Functions\BCChunks.cs" />
     <Compile Include="src\Functions\Convert.cs" />
-    <Compile Include="src\Functions\GetPlayer.cs" />
+    <Compile Include="src\Functions\PlayerData.cs" />
     <Compile Include="src\Functions\ObjectCopier.cs" />
-    <Compile Include="src\Functions\GetEntity.cs" />
+    <Compile Include="src\Functions\PlayerStore.cs" />
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\Functions\PlayerDataReader.cs" />
+    <Compile Include="src\Models\BCMAbstract.cs" />
     <Compile Include="src\Models\BCMItemClass.cs" />
     <Compile Include="src\Models\BCMEntity.cs" />
-    <Compile Include="src\Models\Legacy\BCMItemClass.cs" />
-    <Compile Include="src\Models\Legacy\BCMQuestLegacy.cs" />
-    <Compile Include="src\Models\Legacy\BCMItem.cs" />
-    <Compile Include="src\Models\Legacy\ClientInfoList.cs" />
-    <Compile Include="src\Models\AbstractList.cs" />
-    <Compile Include="src\Models\Legacy\BCMBuff.cs" />
     <Compile Include="src\Models\BCMPlayer.cs" />
-    <Compile Include="src\Models\Legacy\StatsList.cs" />
     <Compile Include="src\EventSystem\NeuronAbstract.cs" />
     <Compile Include="src\EventSystem\Neurons\TrashCollector.cs" />
     <Compile Include="src\EventSystem\Neurons\BagMonitor.cs" />
@@ -178,62 +191,11 @@
     <Compile Include="src\EventSystem\Synapse.cs" />
     <Compile Include="src\EventSystem\Brain.cs" />
     <Compile Include="src\EventSystem\Heartbeat.cs" />
-    <Compile Include="src\Models\Legacy\EquipmentList.cs" />
-    <Compile Include="src\Models\Legacy\BagList.cs" />
-    <Compile Include="src\Models\Legacy\ToolbeltList.cs" />
-    <Compile Include="src\Models\Legacy\CraftingQueue.cs" />
-    <Compile Include="src\Models\Legacy\FavoriteRecipeList.cs" />
-    <Compile Include="src\Models\Legacy\WaypointList.cs" />
-    <Compile Include="src\Models\Legacy\UnlockedRecipeList.cs" />
-    <Compile Include="src\Models\Legacy\SpawnpointList.cs" />
-    <Compile Include="src\Models\Legacy\SkillList.cs" />
-    <Compile Include="src\Models\Legacy\QuestList.cs" />
-    <Compile Include="src\Models\Legacy\BuffList.cs" />
     <Compile Include="src\PersistentData\BCMSettings.cs" />
     <Compile Include="src\PersistentData\Player.cs" />
     <Compile Include="src\PersistentData\PersistentContainer.cs" />
     <Compile Include="src\PersistentData\Players.cs" />
     <Compile Include="src\StateManager.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersExtensive.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersExtensive.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListEntities.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListEntities.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersGamestage.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersGamestage.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayers.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayers.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Config\System.xml">
@@ -242,402 +204,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListHubCellData.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListHubCellData.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\BCHelp.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\BCHelp.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersBag.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersBuffs.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersCraftingQueue.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersEquipment.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersFavRecipes.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersQuests.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersSkills.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersSpawns.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersStats.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersToolbelt.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersRecipes.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersWaypoints.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersClientInfo.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersId.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPlayersPosition.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\GiveQuestToPlayer.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\RemoveQuestFromPlayer.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListArchetypes.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListBiomes.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListBiomeSpawning.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListBlocks.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListBuffs.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListEntityClasses.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListEntityGroups.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListItems.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListLoot.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListQuests.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListMaterials.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListPrefabs.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListRecipes.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListSkills.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\ListSpawners.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\MemTrash.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\GiveQuestToPlayer.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListArchetypes.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListBiomes.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListBiomeSpawning.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListBlocks.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListBuffs.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListEntityClasses.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListEntityGroups.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListItems.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListLoot.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListMaterials.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersBag.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersBuffs.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersClientInfo.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersCraftingQueue.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersEquipment.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersFavRecipes.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersId.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersPosition.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersQuests.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersRecipes.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersSkills.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersSpawns.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersStats.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersToolbelt.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPlayersWaypoints.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListPrefabs.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListQuests.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListRecipes.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListSkills.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\ListSpawners.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\MemTrash.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\RemoveQuestFromPlayer.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\RemoveBuffFromPlayer.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\GiveBuffToPlayer.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\GiveBuffToPlayer.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\RemoveBuffFromPlayer.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Help\GiveBuffToEntity.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Config\Commands\en\Description\GiveBuffToEntity.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Config\Readme.md">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Config\Commands\en\Help\BCWorldBlocks.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Config\Commands\en\Help\BCLocation.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Config\Commands\en\Help\BCImport.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Config\Commands\en\Help\BCExport.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Config\Commands\en\Help\SetSkillOnPlayer.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Config\Motd.xml">
@@ -645,14 +212,213 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Config\Defaults\" />
-    <Folder Include="Config\Examples\" />
     <Folder Include="Mods\" />
-    <Folder Include="src\Tests\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Config\Commands\en\Description\BCActiveChunks.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCAdmins.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCAssets.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCBlocks.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCBroadcastAPI.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCEntities.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCExport.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCGameObjects.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCGetSpawn.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCGiveBuffToEntity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCGiveBuffToPlayer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCGiveQuestToPlayer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCHordeSpawners.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCHubCellData.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCImport.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCItems.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCMemTrash.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCPlayerFiles.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCPlayers.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCPlayersGamestage.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCPlayersId.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCPlayersPosition.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCRemove.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCRemoveBuffFromEntity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCRemoveBuffFromPlayer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCRemoveQuestFromPlayer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCSetSkillOnPlayer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCSettings.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCSpawn.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCTest.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCTileEntity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCVersions.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCVisitRegion.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCWorldBlocks.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCActiveChunks.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCAdmins.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCBroadcastAPI.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCGetSpawn.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCHordeSpawners.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCPlayersPosition.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCPlayersId.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCPlayersGamestage.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCGameObjects.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCAssets.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCItems.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCBlocks.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCEntities.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCGiveBuffToEntity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCGiveBuffToPlayer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCGiveQuestToPlayer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCHubCellData.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCMemTrash.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCPlayerFiles.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCPlayers.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCReset.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCRemove.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCRemoveBuffFromEntity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCRemoveBuffFromPlayer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCRemoveQuestFromPlayer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCSetSkillOnPlayer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCSettings.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCSpawn.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCTest.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCTileEntity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCVersions.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCVisitRegion.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rmdir "$(ProjectDir)Mods\BCManager" /s /q
+
+
 mkdir "$(ProjectDir)Mods\BCManager\Config"
 mkdir "$(ProjectDir)Mods\BCManager\DefaultConfig"
 

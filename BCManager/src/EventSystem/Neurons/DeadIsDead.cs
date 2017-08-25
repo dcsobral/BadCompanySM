@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace BCM.Neurons
+﻿namespace BCM.Neurons
 {
   public class DeadIsDead : NeuronAbstract
   {
     public DeadIsDead()
     {
     }
-    public override bool Fire(int b)
+    public override void Fire(int b)
     {
       // todo: implement
       // todo: IsDead checker, after death animation kick player and then rename ttp file and move to sub folder for archive
@@ -34,7 +32,6 @@ namespace BCM.Neurons
 
 
       Log.Out(Config.ModPrefix + " DeadIsDead");
-      return true;
     }
   }
 }

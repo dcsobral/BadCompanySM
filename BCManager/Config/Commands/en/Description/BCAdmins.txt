@@ -1,0 +1,1 @@
+﻿Admins - Provides information on admins, bans, whitelist, and other admin details

@@ -1,0 +1,17 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} <type>
+      Notes:
+            Use bc-help to get a list of common /options
+            This will return information on various game assets
+            types:
+            overlays - UMA overlays list
+            slots - UMA slots list
+            particles - particle effects that can be used in buffs, on items, and attached to entities
+            textures - block painting textures
+            meshes - meshes used for block textures
+            itemicons - the items atlas including any icons from mods folders
+            resources - returns all resources. NOTE: can cause the server to load significant data into memory
+

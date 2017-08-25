@@ -1,8 +1,0 @@
-﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command}
-            2. {command} <spawnername>
-      Notes:
-            Use bc-help to get a list of common /options

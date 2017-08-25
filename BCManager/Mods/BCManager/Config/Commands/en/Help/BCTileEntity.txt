@@ -1,0 +1,8 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command}
+      Notes:
+            Use bc-help to get a list of common /options
+            Perform actions on the tile entities (loot containers and doors) in the area

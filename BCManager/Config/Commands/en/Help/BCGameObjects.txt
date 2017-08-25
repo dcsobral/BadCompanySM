@@ -1,0 +1,9 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} <type> [options]
+      Notes:
+            Use bc-help to get a list of common /options
+            Provides detailed information about the game
+            types: archetypes, biomes, biomespawning, blocks, buffs, entityclasses, entitygroups, itemclasses, items, loot, materials, prefabs, quests, recipes, rwg, skills, spawners

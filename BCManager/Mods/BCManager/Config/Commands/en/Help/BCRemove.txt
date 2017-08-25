@@ -1,0 +1,14 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} <entityid>
+            2. {command} /type=<ClassName>
+            3. {command} /istype=<ClassName>
+            4. {command} /all
+      Notes:
+            Use bc-help to get a list of common /options
+            Removes the selected entities from the game by unloading them (will not work on players)
+            /type=EntityZombie - removes all zombies that match the class exactly
+            /istype=EntityEnemy - removes all entities that are enemies (derived from filter class)
+            /all - removes all entities including FallingBlocks and DroppedItems

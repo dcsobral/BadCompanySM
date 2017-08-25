@@ -1,0 +1,1 @@
+﻿Get Spawn - Gets a valid spawn point at the given x,z. Also loads the chunk.

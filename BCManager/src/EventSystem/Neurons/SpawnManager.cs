@@ -1,186 +1,174 @@
 ﻿using BCM.PersistentData;
-using System;
 using System.Collections.Generic;
-using System.Xml;
-using UnityEngine;
+using static System.Boolean;
+using static System.Int32;
+using static System.Single;
 
 namespace BCM.Neurons
 {
   public class SpawnManager : NeuronAbstract
   {
-    BCMSettings _settings;
-    string _function = "SpawnManager";
-    string _entitiesCollection = "Entities";
-    string _playersCollection = "Players";
+    private BCMSettings _settings;
+    private const string Function = "SpawnManager";
+    private const string EntitiesCollection = "Entities";
+    private const string PlayersCollection = "Players";
 
     public SpawnManager()
     {
     }
 
-    private void SpawnForEntity (int targetEntityId, Dictionary<string,string> _spawnerSettings)
+    private static void SpawnForEntity (int targetEntityId, IDictionary<string, string> settings)
     {
-      Entity targetEntity;
-      if (GameManager.Instance.World.Entities.dict.ContainsKey(targetEntityId))
-      {
-        targetEntity = GameManager.Instance.World.Entities.dict[targetEntityId];
+      // todo: delay between spawns based on command settings
 
-        if (targetEntity == null)
-        {
-          Log.Out("Target entity was not found in world");
-
-          return;
-        }
-
-        //if player is dead turn off spawner if set with end_on_death flag (default == true)
-        if (targetEntity.IsDead())
-        {
-          if (!_spawnerSettings.ContainsKey("end_on_death") || _spawnerSettings["end_on_death"] == "true")
-          {
-            _spawnerSettings["enabled"] = "false";
-
-            return;
-          }
-        }
-
-        Spawn spawn = new Spawn();
-        spawn.entityId = 0;
-        spawn.spawnerId = targetEntity.entityId;
-        spawn.targetId = targetEntity.entityId;
-        spawn.pos = targetEntity.position;
-
-        //spawn.pos.x = targetEntity.position.x;
-        //spawn.pos.y = targetEntity.position.y;
-        //spawn.pos.z = targetEntity.position.z;
-
-        // todo: delay between spawns based on command settings
-
-        string _groupname = null;
-        _spawnerSettings.TryGetValue("group", out _groupname);
-
-        if (_groupname == null)
-        {
-          _groupname = "ZombiesAll";
-        }
-
-        if (EntityGroups.list.ContainsKey(_groupname))
-        {
-          spawn.entityClassId = EntityGroups.GetRandomFromGroup(_groupname);
-        }
-
-        if (EntityClass.list.ContainsKey(spawn.entityClassId))
-        {
-          spawn.minRange = 40;
-          if (_spawnerSettings.ContainsKey("minrange"))
-          {
-            int.TryParse(_spawnerSettings["minrange"], out spawn.minRange);
-          }
-
-          spawn.maxRange = 60;
-          if (_spawnerSettings.ContainsKey("maxrange"))
-          {
-            int.TryParse(_spawnerSettings["maxrange"], out spawn.maxRange);
-          }
-
-          spawn.isObserver = true;
-          if (_spawnerSettings.ContainsKey("observe"))
-          {
-            bool.TryParse(_spawnerSettings["observe"], out spawn.isObserver);
-          }
-
-          spawn.isFeral = false;
-          if (_spawnerSettings.ContainsKey("feral"))
-          {
-            bool.TryParse(_spawnerSettings["feral"], out spawn.isFeral);
-          }
-
-          spawn.nightRun = false;
-          if (_spawnerSettings.ContainsKey("nightrun"))
-          {
-            bool.TryParse(_spawnerSettings["nightrun"], out spawn.nightRun);
-          }
-
-          spawn.speedBase = 0;
-          if (_spawnerSettings.ContainsKey("speedbase"))
-          {
-            float.TryParse(_spawnerSettings["speedbase"], out spawn.speedBase);
-          }
-
-          float speedmin = 0;
-          if (_spawnerSettings.ContainsKey("speedmin"))
-          {
-            float.TryParse(_spawnerSettings["speedmin"], out speedmin);
-          }
-          float speedmax = 0;
-          if (_spawnerSettings.ContainsKey("speedmax"))
-          {
-            float.TryParse(_spawnerSettings["speedmax"], out speedmax);
-          }
-          if (speedmin == 0)
-          {
-            speedmin = 1;
-          }
-          if (speedmax < speedmin)
-          {
-            speedmax = speedmin;
-          }
-          spawn.speedMul = UnityEngine.Random.Range(speedmin, speedmax);
-
-          EntitySpawner.spawnQueue.Enqueue(spawn);
-        }
-        else
-        {
-          Log.Out(Config.ModPrefix + "Entity Class not found " + spawn.entityClassId);
-        }
-      }
-      else
+      var entities = GameManager.Instance.World.Entities.dict;
+      if (!entities.ContainsKey(targetEntityId))
       {
         Log.Out(Config.ModPrefix + " Player not found: " + targetEntityId);
-      }
-    }
-    public override bool Fire(int b)
-    {
-      if (API.IsAlive && PersistentContainer.IsLoaded)
-      {
-        _settings = PersistentContainer.Instance.Settings;
-        int onlineplayercount = 0;
-        try
-        {
-          onlineplayercount = GameManager.Instance.World.Players.Count;
-        }
-        catch
-        {
-          return false;
-        }
-        if (onlineplayercount > 0)
-        {
-          // ENTITY TARGETED SPAWNING
-          foreach (int _entityId in GameManager.Instance.World.Entities.dict.Keys)
-          {
-            var _spawnerSettings = _settings.GetFunction(_entitiesCollection, _entityId.ToString(), _function);
-            if (_spawnerSettings != null && _spawnerSettings.ContainsKey("enabled") && _spawnerSettings["enabled"] == "true")
-            {
-              SpawnForEntity(_entityId, _spawnerSettings);
-            }
-          }
 
-          // PLAYER TARGETED SPAWNING
-          var _clients = ConnectionManager.Instance.GetClients();
-          foreach (ClientInfo _client in _clients)
-          {
-            var _spawnerSettings = _settings.GetFunction(_playersCollection, _client.playerId, _function);
-            if (_spawnerSettings != null && _spawnerSettings.ContainsKey("enabled") && _spawnerSettings["enabled"] == "true")
-            {
-              SpawnForEntity(_client.entityId, _spawnerSettings);
-            }
-          }
-          
-          //AREA SPAWNERS
-          // todo:
-          
-          return true;
-        }
+        return;
       }
-      return false;
+
+      var targetEntity = entities[targetEntityId];
+      if (targetEntity == null)
+      {
+        Log.Out("Target entity was not found in world");
+
+        return;
+      }
+
+      //if player is dead turn off spawner if set with end_on_death flag (default == true)
+      if (targetEntity.IsDead() && (!settings.ContainsKey("end_on_death") || settings["end_on_death"] == "true"))
+      {
+        settings["enabled"] = "false";
+
+        return;
+      }
+
+      if (!settings.TryGetValue("group", out string groupName))
+      {
+        groupName = "ZombiesAll";
+      }
+
+      if (!EntityGroups.list.ContainsKey(groupName))
+      {
+        Log.Out(Config.ModPrefix + "Entity group not found " + groupName);
+
+        return;
+      }
+
+      var classId = EntityGroups.GetRandomFromGroup(groupName);
+      if (!EntityClass.list.ContainsKey(classId))
+      {
+        Log.Out(Config.ModPrefix + "Entity class not found " + classId);
+
+        return;
+      }
+
+      EntitySpawner.SpawnQueue.Enqueue(GetSpawnForTarget(settings, targetEntity, classId));
+    }
+
+    private static Spawn GetSpawnForTarget(IDictionary<string, string> settings, Entity target, int classId)
+    {
+      var spawn = new Spawn
+      {
+        EntityId = 0,
+        SpawnerId = target.entityId,
+        TargetId = target.entityId,
+        Pos = target.position,
+        MinRange = 40,
+        MaxRange = 60,
+        IsObserver = true,
+        IsFeral = false,
+        NightRun = false,
+        SpeedBase = 0f,
+        EntityClassId = classId
+      };
+
+      if (settings.ContainsKey("minrange"))
+      {
+        TryParse(settings["minrange"], out spawn.MinRange);
+      }
+
+      if (settings.ContainsKey("maxrange"))
+      {
+        TryParse(settings["maxrange"], out spawn.MaxRange);
+      }
+
+      if (settings.ContainsKey("observe"))
+      {
+        TryParse(settings["observe"], out spawn.IsObserver);
+      }
+
+      if (settings.ContainsKey("feral"))
+      {
+        TryParse(settings["feral"], out spawn.IsFeral);
+      }
+
+      if (settings.ContainsKey("nightrun"))
+      {
+        TryParse(settings["nightrun"], out spawn.NightRun);
+      }
+
+      if (settings.ContainsKey("speedbase"))
+      {
+        TryParse(settings["speedbase"], out spawn.SpeedBase);
+      }
+
+      var speedmin = 0f;
+      if (settings.ContainsKey("speedmin"))
+      {
+        TryParse(settings["speedmin"], out speedmin);
+      }
+      var speedmax = 0f;
+      if (settings.ContainsKey("speedmax"))
+      {
+        TryParse(settings["speedmax"], out speedmax);
+      }
+      if (speedmin == 0f)
+      {
+        speedmin = 1f;
+      }
+      if (speedmax < speedmin)
+      {
+        speedmax = speedmin;
+      }
+      spawn.SpeedMul = UnityEngine.Random.Range(speedmin, speedmax);
+
+      return spawn;
+    }
+
+    public override void Fire(int b)
+    {
+      if (!API.IsAlive || !PersistentContainer.IsLoaded) return;
+
+      _settings = PersistentContainer.Instance.Settings;
+      var world = GameManager.Instance.World;
+
+      var onlineplayercount = world?.Players.Count;
+      if (!(onlineplayercount > 0)) return;
+
+      // ENTITY TARGETED SPAWNING
+      foreach (var entityId in world.Entities.dict.Keys)
+      {
+        var settings = _settings.GetFunction(EntitiesCollection, entityId.ToString(), Function);
+        if (settings?.ContainsKey("enabled") != true || settings["enabled"] != "true") continue;
+
+        SpawnForEntity(entityId, settings);
+      }
+
+      // PLAYER TARGETED SPAWNING
+      var clients = ConnectionManager.Instance.GetClients();
+      foreach (var client in clients)
+      {
+        var settings = _settings.GetFunction(PlayersCollection, client.playerId, Function);
+        if (settings?.ContainsKey("enabled") != true || settings["enabled"] != "true") continue;
+
+        SpawnForEntity(client.entityId, settings);
+      }
+          
+      //AREA SPAWNERS
+      // todo:
     }
   }
 }

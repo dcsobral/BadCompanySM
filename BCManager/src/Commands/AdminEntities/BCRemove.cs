@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace BCM.Commands
@@ -7,83 +6,96 @@ namespace BCM.Commands
   {
     public override void Process()
     {
-      if (_options.ContainsKey("all") || _options.ContainsKey("istype") || _options.ContainsKey("type"))
-      {
-        var _count = new Dictionary<string, int>();
-        var _entKeys = BCUtils.filterEntities(GameManager.Instance.World.Entities.dict, _options).Keys;
+      var world = GameManager.Instance.World;
+      if (world == null) return;
 
-        foreach (var key in _entKeys)
+      if (Options.ContainsKey("all") || Options.ContainsKey("istype") || Options.ContainsKey("type"))
+      {
+        var count = new Dictionary<string, int>();
+
+        foreach (var key in BCUtils.FilterEntities(world.Entities.dict, Options).Keys)
         {
-          RemoveEntity(key, _count);
+          RemoveEntity(key, count);
         }
 
-        SendJson(_count);
+        SendJson(count);
       }
-      else if (_params.Count == 1)
+      else if (Params.Count == 1)
       {
-        int entityId = -1;
-        if (int.TryParse(_params[0], out entityId))
-        {
-          RemoveEntity(entityId);
-        }
-        else
+        if (!int.TryParse(Params[0], out int entityId))
         {
           SendOutput("Invalid enityId, 1st param is not a valid number");
+
+          return;
         }
+
+        RemoveEntity(entityId);
       }
       else
       {
         SendOutput(GetHelp());
       }
-
     }
 
-    private void RemoveEntity(int entityId, Dictionary<string,int> _count = null)
+    private static void RemoveEntity(int entityId, IDictionary<string, int> count = null)
     {
-      if (GameManager.Instance.World.Entities.dict.ContainsKey(entityId))
+      var world = GameManager.Instance.World;
+      if (world == null) return;
+
+      if (!world.Entities.dict.ContainsKey(entityId))
       {
-        var _e = GameManager.Instance.World.Entities.dict[entityId];
-        if (_e is EntityPlayer)
+        if (!Options.ContainsKey("all"))
         {
-          if (!_options.ContainsKey("all"))
-          {
-            SendOutput("You can't remove a player!");
-          }
-
-          return;
+          SendOutput("Invalid entityId, entity not found: " + entityId);
         }
-        if (_e != null)
-        {
-          var v = new Vector3i();
-          v.RoundToInt(_e.position);
-          var _ec = EntityClass.list[_e.entityClass];
 
-          if (!(_options.ContainsKey("all") || _options.ContainsKey("istype") || _options.ContainsKey("type")))
-          {
-            SendOutput("Entity Removed: " + _e.GetType().ToString() + ":" + (_ec != null ? _ec.entityClassName : "") + " @" + v.x.ToString() + " " + v.x.ToString() + " " + v.x.ToString());
-          }
-          else if (_count != null)
-          {
-            if (_count.ContainsKey(_e.GetType().ToString() + ":" + _ec.entityClassName))
-            {
-              _count[_e.GetType().ToString() + ":" + _ec.entityClassName]++;
-            }
-            else
-            {
-              _count.Add(_e.GetType().ToString() + ":" + _ec.entityClassName, 1);
-            }
-          }
-          GameManager.Instance.World.RemoveEntity(entityId, EnumRemoveEntityReason.Unloaded);
+        return;
+      }
+
+      var e = world.Entities.dict[entityId];
+      if (e == null)
+      {
+        if (!Options.ContainsKey("all"))
+        {
+          SendOutput("Invalid entity, entity not found: " + entityId);
+        }
+
+        return;
+      }
+
+      if (e is EntityPlayer)
+      {
+        if (!Options.ContainsKey("all"))
+        {
+          SendOutput("You can't remove a player!");
+        }
+
+        return;
+      }
+
+      world.RemoveEntity(entityId, EnumRemoveEntityReason.Despawned);
+
+      var entityClass = EntityClass.list[e.entityClass];
+      if (Options.ContainsKey("all") || Options.ContainsKey("istype") || Options.ContainsKey("type"))
+      {
+        if (count == null) return;
+
+        if (count.ContainsKey(e.GetType() + ":" + entityClass.entityClassName))
+        {
+          count[e.GetType() + ":" + entityClass.entityClassName]++;
         }
         else
         {
-          SendOutput("Invalid entity, entity not found: " + entityId);
+          count.Add(e.GetType() + ":" + entityClass.entityClassName, 1);
         }
       }
       else
       {
-        SendOutput("Invalid entityId, entity not found: " + entityId);
+        var v = new Vector3i();
+        v.RoundToInt(e.position);
+        SendOutput($"Entity Removed: {e.GetType()}:{(entityClass != null ? entityClass.entityClassName : "")} @{v.x} {v.y} {v.z}");
       }
+
     }
   }
 }

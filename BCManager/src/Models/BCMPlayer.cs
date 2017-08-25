@@ -1,146 +1,146 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace BCM.Models
 {
   [Serializable]
-  public class BCMPlayer// : AbstractList
+  public class BCMPlayer : BCMAbstract
   {
-    private Dictionary<string, string> options = new Dictionary<string, string>();
-    private Dictionary<string, object> _bin = new Dictionary<string, object>();
-    public enum Filters
-    {
-      SteamId,
-      Name,
-      EntityId,
-      IP,
-      Ping,
-      SessionPlayTime,
-      TotalPlayTime,
-      LastOnline,
-      Underground,
-      Position,
-      Rotation,
-      Health,
-      Stamina,
-      Wellness,
-      Food,
-      Drink,
-      CoreTemp,
-      SpeedModifier,
-      LastZombieAttacked,
-      IsDead,
-      OnGround,
-      IsStuck,
-      IsSafeZoneActive,
-      Level,
-      LevelProgress,
-      ExpToNextLevel,
-      ExpForNextLevel,
-      Gamestage,
-      Score,
-      KilledPlayers,
-      KilledZombies,
-      Deaths,
-      DistanceWalked,
-      ItemsCrafted,
-      CurrentLife,
-      LongestLife,
-      Archetype,
-      DroppedPack,
-      RentedVendor,
-      RentedVendorExpire,
-      Remote,
-      Bag,
-      Belt,
-      SelectedSlot,
-      Equipment,
-      Buffs,
-      SkillPoints,
-      Skills,
-      CraftingQueue,
-      FavouriteRecipes,
-      UnlockedRecipes,
-      Quests,
-      Spawnpoints,
-      Waypoints,
-      Marker
-    }
+    #region Filters
     public static class StrFilters
     {
-      public static string SteamId = "steamid";
-      public static string Name = "name";
-      public static string EntityId = "entityid";
-      public static string IP = "ip";
-      public static string Ping = "ping";
-      public static string SessionPlayTime = "session";
-      public static string TotalPlayTime = "playtime";
-      public static string LastOnline = "online";
-      public static string Underground = "underground";
-      public static string Position = "position";
-      public static string Rotation = "rotation";
-      public static string Health = "health";
-      public static string Stamina = "stamina";
-      public static string Wellness = "wellness";
-      public static string Food = "food";
-      public static string Drink = "drink";
-      public static string CoreTemp = "coretemp";
-      public static string SpeedModifier = "speed";
-      public static string LastZombieAttacked = "lastattack";
-      public static string IsDead = "isdead";
-      public static string OnGround = "onground";
-      public static string IsStuck = "isstuck";
-      public static string IsSafeZoneActive = "issafe";
-      public static string Level = "level";
-      public static string LevelProgress = "progress";
-      public static string ExpToNextLevel = "tonext";
-      public static string ExpForNextLevel = "fornext";
-      public static string Gamestage = "gamestage";
-      public static string Score = "score";
-      public static string KilledPlayers = "pkill";
-      public static string KilledZombies = "zkill";
-      public static string Deaths = "deaths";
-      public static string DistanceWalked = "walked";
-      public static string ItemsCrafted = "crafted";
-      public static string CurrentLife = "current";
-      public static string LongestLife = "longest";
-      public static string Archetype = "archetype";
-      public static string DroppedPack = "pack";
-      public static string RentedVendor = "vendor";
-      public static string RentedVendorExpire = "vendorexpire";
-      public static string Remote = "remote";
-      public static string Bag = "bag";
-      public static string Belt = "belt";
-      public static string SelectedSlot = "selslot";
-      public static string Equipment = "equip";
-      public static string Buffs = "buffs";
-      public static string SkillPoints = "skillpts";
-      public static string Skills = "skills";
-      public static string CraftingQueue = "crafting";
-      public static string FavouriteRecipes = "favs";
-      public static string UnlockedRecipes = "unlocks";
-      public static string Quests = "quests";
-      public static string Spawnpoints = "spawns";
-      public static string Waypoints = "waypoints";
-      public static string Marker = "marker";
+      public const string SteamId = "steamid";
+      public const string Name = "name";
+      public const string EntityId = "entityid";
+      public const string Ip = "ip";
+      public const string Ping = "ping";
+      public const string SessionPlayTime = "session";
+      public const string TotalPlayTime = "playtime";
+      public const string LastOnline = "online";
+      public const string Underground = "underground";
+      public const string Position = "position";
+      public const string Rotation = "rotation";
+      public const string Health = "health";
+      public const string Stamina = "stamina";
+      public const string Wellness = "wellness";
+      public const string Food = "food";
+      public const string Drink = "drink";
+      public const string CoreTemp = "coretemp";
+      public const string SpeedModifier = "speed";
+      public const string LastZombieAttacked = "lastattack";
+      public const string IsDead = "isdead";
+      public const string OnGround = "onground";
+      public const string IsStuck = "isstuck";
+      public const string IsSafeZoneActive = "issafe";
+      public const string Level = "level";
+      public const string LevelProgress = "progress";
+      public const string ExpToNextLevel = "tonext";
+      public const string ExpForNextLevel = "fornext";
+      public const string Gamestage = "gamestage";
+      public const string Score = "score";
+      public const string KilledPlayers = "pkill";
+      public const string KilledZombies = "zkill";
+      public const string Deaths = "deaths";
+      public const string DistanceWalked = "walked";
+      public const string ItemsCrafted = "crafted";
+      public const string CurrentLife = "current";
+      public const string LongestLife = "longest";
+      public const string Archetype = "archetype";
+      public const string DroppedPack = "pack";
+      public const string RentedVendor = "vendor";
+      public const string RentedVendorExpire = "vendorexpire";
+      public const string Remote = "remote";
+      public const string Bag = "bag";
+      public const string Belt = "belt";
+      public const string SelectedSlot = "selslot";
+      public const string Equipment = "equip";
+      public const string Buffs = "buffs";
+      public const string SkillPoints = "skillpts";
+      public const string Skills = "skills";
+      public const string CraftingQueue = "crafting";
+      public const string FavouriteRecipes = "favs";
+      public const string UnlockedRecipes = "unlocks";
+      public const string Quests = "quests";
+      public const string Spawnpoints = "spawns";
+      public const string Waypoints = "waypoints";
+      public const string Marker = "marker";
     }
 
-    private List<string> _filter = new List<string>();
+    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    {
+      { 0,  StrFilters.SteamId },
+      { 1,  StrFilters.Name },
+      { 2,  StrFilters.EntityId },
+      { 3,  StrFilters.Ip },
+      { 4,  StrFilters.Ping },
+      { 5,  StrFilters.SessionPlayTime },
+      { 6,  StrFilters.TotalPlayTime },
+      { 7,  StrFilters.LastOnline },
+      { 8,  StrFilters.Underground },
+      { 9,  StrFilters.Position },
+      { 10,  StrFilters.Rotation },
+      { 11,  StrFilters.Health },
+      { 12,  StrFilters.Stamina },
+      { 13,  StrFilters.Wellness },
+      { 14,  StrFilters.Food },
+      { 15,  StrFilters.Drink },
+      { 16,  StrFilters.CoreTemp },
+      { 17,  StrFilters.SpeedModifier },
+      { 18,  StrFilters.LastZombieAttacked },
+      { 19,  StrFilters.IsDead },
+      { 20,  StrFilters.OnGround },
+      { 21,  StrFilters.IsStuck },
+      { 22,  StrFilters.IsSafeZoneActive },
+      { 23,  StrFilters.Level },
+      { 24,  StrFilters.LevelProgress },
+      { 25,  StrFilters.ExpToNextLevel },
+      { 26,  StrFilters.ExpForNextLevel },
+      { 27,  StrFilters.Gamestage },
+      { 28,  StrFilters.Score },
+      { 29,  StrFilters.KilledPlayers },
+      { 30,  StrFilters.KilledZombies },
+      { 31,  StrFilters.Deaths },
+      { 32,  StrFilters.DistanceWalked },
+      { 33,  StrFilters.ItemsCrafted },
+      { 34,  StrFilters.CurrentLife },
+      { 35,  StrFilters.LongestLife },
+      { 36,  StrFilters.Archetype },
+      { 37,  StrFilters.DroppedPack },
+      { 38,  StrFilters.RentedVendor },
+      { 39,  StrFilters.RentedVendorExpire },
+      { 40,  StrFilters.Remote },
+      { 41,  StrFilters.Bag },
+      { 42,  StrFilters.Belt },
+      { 43,  StrFilters.SelectedSlot },
+      { 44,  StrFilters.Equipment },
+      { 45,  StrFilters.Buffs },
+      { 46,  StrFilters.SkillPoints },
+      { 47,  StrFilters.Skills },
+      { 48,  StrFilters.CraftingQueue },
+      { 49,  StrFilters.FavouriteRecipes },
+      { 50,  StrFilters.UnlockedRecipes },
+      { 51,  StrFilters.Quests },
+      { 52,  StrFilters.Spawnpoints },
+      { 53,  StrFilters.Waypoints },
+      { 54,  StrFilters.Marker }
+    };
+    public static Dictionary<int, string> FilterMap => _filterMap;
+
+    #endregion
 
     #region Properties
     //CLIENTINFO
     public string SteamId;
     public string Name;
     public int EntityId;
-    public string IP;
+    public string Ip;
     public string Ping;
     public double SessionPlayTime;
     public double TotalPlayTime;
     public string LastOnline;
     public int Underground;
-    public BCMVector3i Position;// todo: add options for doubles to 2dp
+    public BCMVector3i Position;
     public BCMVector3i Rotation;
 
     //STATS
@@ -289,21 +289,21 @@ namespace BCM.Models
       public int z;
       public BCMVector3i()
       {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+        x = 0;
+        y = 0;
+        z = 0;
       }
       public BCMVector3i(Vector3 v)
       {
-        this.x = Mathf.RoundToInt(v.x);
-        this.y = Mathf.RoundToInt(v.y);
-        this.z = Mathf.RoundToInt(v.z);
+        x = Mathf.RoundToInt(v.x);
+        y = Mathf.RoundToInt(v.y);
+        z = Mathf.RoundToInt(v.z);
       }
       public BCMVector3i(Vector3i v)
       {
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
+        x = v.x;
+        y = v.y;
+        z = v.z;
       }
     }
     public class BCMWaypoint
@@ -314,200 +314,499 @@ namespace BCM.Models
     }
     public List<BCMVector3i> Spawnpoints;
     public List<BCMWaypoint> Waypoints;
-    public BCMVector3i Marker;// todo: add options for format (vector3i, vector3, string3i, string3) - doubles to 2dp
+    public BCMVector3i Marker;
     #endregion;
 
-
-    private bool useInt = false;
-    private List<string> strFilter = new List<string>();
-    private List<int> intFilter = new List<int>();
-
-
-    //public BCMPlayer() : base()
-    //{
-    //}
-
-    public BCMPlayer(PlayerInfo _pInfo, Dictionary<string, string> _options)// : base(_pInfo, _options)
+    public BCMPlayer(object obj, Dictionary<string, string> options, List<string> filters) : base(obj, "Entity", options, filters)
     {
-      options = _options;
-      Load(_pInfo);
     }
 
-    public Dictionary<string, object> Data ()
+    public override void GetData(object obj)
     {
-      return _bin;
-    }
+      if (obj == null) return;
 
-    public void Load(PlayerInfo _pInfo)
-    {
-      if (isOption("filter"))
+      var pInfo = (PlayerInfo)obj;
+
+      if (IsOption("filter"))
       {
-        strFilter = OptionValue("filter").Split(',').ToList();
-        if (strFilter.Count > 0)
+        foreach (var f in StrFilter)
         {
-          intFilter = (from o in strFilter.Where((o) => { int d; return int.TryParse(o, out d); }) select int.Parse(o)).ToList();
-          if (intFilter.Count == strFilter.Count)
+          switch (f)
           {
-            useInt = true;
+            case StrFilters.SteamId:
+              GetSteamId(pInfo);
+              break;
+            case StrFilters.Name:
+              GetName(pInfo);
+              break;
+            case StrFilters.EntityId:
+              GetEntityId(pInfo);
+              break;
+            case StrFilters.Ip:
+              GetIp(pInfo);
+              break;
+            case StrFilters.Ping:
+              GetPing(pInfo);
+              break;
+            case StrFilters.TotalPlayTime:
+              GetTotalPlaytime(pInfo);
+              break;
+            case StrFilters.SessionPlayTime:
+              GetSessionPlaytime(pInfo);
+              break;
+            case StrFilters.LastOnline:
+              GetLastOnline(pInfo);
+              break;
+            case StrFilters.Underground:
+              GetUnderground(pInfo);
+              break;
+            case StrFilters.Position:
+              GetPosition(pInfo);
+              break;
+            case StrFilters.Rotation:
+              GetRotation(pInfo);
+              break;
+            case StrFilters.Wellness:
+              GetWellness(pInfo);
+              break;
+            case StrFilters.Health:
+              GetHealth(pInfo);
+              break;
+            case StrFilters.Stamina:
+              GetStamina(pInfo);
+              break;
+            case StrFilters.Food:
+              GetFood(pInfo);
+              break;
+            case StrFilters.Drink:
+              GetDrink(pInfo);
+              break;
+            case StrFilters.CoreTemp:
+              GetCoreTemp(pInfo);
+              break;
+            case StrFilters.SpeedModifier:
+              GetSpeedModifier(pInfo);
+              break;
+            case StrFilters.Archetype:
+              GetArchetype(pInfo);
+              break;
+            case StrFilters.DistanceWalked:
+              GetDistanceWalked(pInfo);
+              break;
+            case StrFilters.DroppedPack:
+              GetDroppedPack(pInfo);
+              break;
+            case StrFilters.Level:
+              GetLevel(pInfo);
+              break;
+            case StrFilters.LevelProgress:
+              GetLevelProgress(pInfo);
+              break;
+            case StrFilters.ExpToNextLevel:
+              GetExpToNextLevel(pInfo);
+              break;
+            case StrFilters.ExpForNextLevel:
+              GetExpForNextLevel(pInfo);
+              break;
+            case StrFilters.Gamestage:
+              GetGamestage(pInfo);
+              break;
+            case StrFilters.Score:
+              GetScore(pInfo);
+              break;
+            case StrFilters.KilledPlayers:
+              GetKilledPlayers(pInfo);
+              break;
+            case StrFilters.KilledZombies:
+              GetKilledZombies(pInfo);
+              break;
+            case StrFilters.Deaths:
+              GetDeaths(pInfo);
+              break;
+            case StrFilters.CurrentLife:
+              GetCurrentLife(pInfo);
+              break;
+            case StrFilters.LongestLife:
+              GetLongestLife(pInfo);
+              break;
+            case StrFilters.ItemsCrafted:
+              GetItemsCrafted(pInfo);
+              break;
+            case StrFilters.IsDead:
+              GetIsDead(pInfo);
+              break;
+            case StrFilters.OnGround:
+              GetOnGround(pInfo);
+              break;
+            case StrFilters.IsStuck:
+              GetIsStuck(pInfo);
+              break;
+            case StrFilters.IsSafeZoneActive:
+              GetIsSafeZoneActive(pInfo);
+              break;
+            case StrFilters.Remote:
+              GetRemote(pInfo);
+              break;
+            case StrFilters.LastZombieAttacked:
+              GetLastZombieAttacked(pInfo);
+              break;
+            case StrFilters.RentedVendor:
+              GetRentedVendor(pInfo);
+              break;
+            case StrFilters.RentedVendorExpire:
+              GetRentedVendorExpire(pInfo);
+              break;
+            case StrFilters.Bag:
+              GetBag(pInfo);
+              break;
+            case StrFilters.Belt:
+              GetBelt(pInfo);
+              break;
+            case StrFilters.Equipment:
+              GetEquipment(pInfo);
+              break;
+            case StrFilters.Buffs:
+              GetBuffs(pInfo);
+              break;
+            case StrFilters.SkillPoints:
+              GetSkillPoints(pInfo);
+              break;
+            case StrFilters.Skills:
+              GetSkills(pInfo);
+              break;
+            case StrFilters.CraftingQueue:
+              GetCraftingQueue(pInfo);
+              break;
+            case StrFilters.FavouriteRecipes:
+              GetFavouriteRecipes(pInfo);
+              break;
+            case StrFilters.UnlockedRecipes:
+              GetUnlockedRecipes(pInfo);
+              break;
+            case StrFilters.Quests:
+              GetQuests(pInfo);
+              break;
+            case StrFilters.Spawnpoints:
+              GetSpawnpoints(pInfo);
+              break;
+            case StrFilters.Waypoints:
+              GetWaypoints(pInfo);
+              break;
+            case StrFilters.Marker:
+              GetMarker(pInfo);
+              break;
           }
         }
       }
+      else
+      {
+        GetSteamId(pInfo);
+        GetName(pInfo);
+        GetEntityId(pInfo);
+        GetIp(pInfo);
+        GetPing(pInfo);
+        GetTotalPlaytime(pInfo);
+        GetSessionPlaytime(pInfo);
+        GetLastOnline(pInfo);
+        GetUnderground(pInfo);
+        GetPosition(pInfo);
+        GetRotation(pInfo);
+        GetWellness(pInfo);
+        GetHealth(pInfo);
+        GetStamina(pInfo);
+        GetFood(pInfo);
+        GetDrink(pInfo);
+        GetCoreTemp(pInfo);
+        GetSpeedModifier(pInfo);
+        GetArchetype(pInfo);
+        GetDistanceWalked(pInfo);
+        GetDroppedPack(pInfo);
+        GetLevel(pInfo);
+        GetLevelProgress(pInfo);
+        GetExpToNextLevel(pInfo);
+        GetExpForNextLevel(pInfo);
+        GetGamestage(pInfo);
+        GetScore(pInfo);
+        GetKilledPlayers(pInfo);
+        GetKilledZombies(pInfo);
+        GetDeaths(pInfo);
+        GetCurrentLife(pInfo);
+        GetLongestLife(pInfo);
+        GetItemsCrafted(pInfo);
+        GetIsDead(pInfo);
+        GetOnGround(pInfo);
+        GetIsStuck(pInfo);
+        GetIsSafeZoneActive(pInfo);
+        GetRemote(pInfo);
+        GetLastZombieAttacked(pInfo);
+        GetRentedVendor(pInfo);
+        GetRentedVendorExpire(pInfo);
 
-      GetClientInfo(_pInfo);
-      GetStats(_pInfo);
+        if (!Options.ContainsKey("full")) return;
+        //("bag bg belt bt equipment eq buffs bu skillpoints pt skills sk crafting cq favrecipes fr unlockedrecipes ur quests qu spawns sp waypoints wp")
 
-      //todo: sub filters, e.g. /bag=1,3,4,5
-
-      if ((useInt && intFilter.Contains((int)Filters.Bag)) || (!useInt && strFilter.Contains(StrFilters.Bag)) || isOption("bag bg full"))
-      {
-        GetBag(_pInfo);
-        _bin.Add("Bag", Bag);
-      }
-      if ((useInt && intFilter.Contains((int)Filters.Belt)) || (!useInt && strFilter.Contains(StrFilters.Belt)) || isOption("belt bt full"))
-      {
-        GetBelt(_pInfo);
-        _bin.Add("Belt", Belt);
-      }
-      if ((useInt && intFilter.Contains((int)Filters.Equipment)) || (!useInt && strFilter.Contains(StrFilters.Equipment)) || isOption("equipment eq full"))
-      {
-        GetEquipment(_pInfo);
-        _bin.Add("Equipment", Equipment);
-      }
-      if ((useInt && intFilter.Contains((int)Filters.Buffs)) || (!useInt && strFilter.Contains(StrFilters.Buffs)) || isOption("buffs bu full"))
-      {
-        GetBuffs(_pInfo);
-        _bin.Add("Buffs", Buffs);
-      }
-
-      if (
-        ((useInt && intFilter.Contains((int)Filters.SkillPoints)) || (!useInt && strFilter.Contains(StrFilters.SkillPoints)) || isOption("skillpoints pt full"))
-        ||
-        ((useInt && intFilter.Contains((int)Filters.Skills)) || (!useInt && strFilter.Contains(StrFilters.Skills)) || isOption("skills sk full"))
-        )
-      {
-        GetSkills(_pInfo);
-        if ((useInt && intFilter.Contains((int)Filters.SkillPoints)) || (!useInt && strFilter.Contains(StrFilters.SkillPoints)) || isOption("skillpoints pt full"))
-        {
-          _bin.Add("SkillPoints", SkillPoints);
-        }
-        if ((useInt && intFilter.Contains((int)Filters.Skills)) || (!useInt && strFilter.Contains(StrFilters.Skills)) || isOption("skills sk full"))
-        {
-          _bin.Add("Skills", Skills);
-        }
-      }
-
-      if ((useInt && intFilter.Contains((int)Filters.CraftingQueue)) || (!useInt && strFilter.Contains(StrFilters.CraftingQueue)) || isOption("crafting cq full"))
-      {
-        GetCraftingQueue(_pInfo);
-        _bin.Add("CraftingQueue", CraftingQueue);
-      }
-      if ((useInt && intFilter.Contains((int)Filters.FavouriteRecipes)) || (!useInt && strFilter.Contains(StrFilters.FavouriteRecipes)) || isOption("favrecipes fr full"))
-      {
-        GetFavouriteRecipes(_pInfo);
-        _bin.Add("FavouriteRecipes", FavouriteRecipes);
-      }
-      if ((useInt && intFilter.Contains((int)Filters.UnlockedRecipes)) || (!useInt && strFilter.Contains(StrFilters.UnlockedRecipes)) || isOption("unlockedrecipes ur full"))
-      {
-        GetUnlockedRecipes(_pInfo);
-        _bin.Add("UnlockedRecipes", UnlockedRecipes);
-      }
-      if ((useInt && intFilter.Contains((int)Filters.Quests)) || (!useInt && strFilter.Contains(StrFilters.Quests)) || isOption("quests qu full"))
-      {
-        GetQuests(_pInfo);
-        _bin.Add("Quests", Quests);
-      }
-      if ((useInt && intFilter.Contains((int)Filters.Spawnpoints)) || (!useInt && strFilter.Contains(StrFilters.Spawnpoints)) || isOption("spawns sp full"))
-      {
-        GetSpawnpoints(_pInfo);
-        _bin.Add("Spawnpoints", Spawnpoints);
-      }
-      if ((useInt && intFilter.Contains((int)Filters.Waypoints)) || (!useInt && strFilter.Contains(StrFilters.Waypoints)) || isOption("waypoints wp full"))
-      {
-        GetWaypoints(_pInfo);
-        _bin.Add("Waypoints", Waypoints);
-        _bin.Add("Marker", Marker);
+        GetBag(pInfo);
+        GetBelt(pInfo);
+        GetEquipment(pInfo);
+        GetBuffs(pInfo);
+        GetSkillPoints(pInfo);
+        GetSkills(pInfo);
+        GetCraftingQueue(pInfo);
+        GetFavouriteRecipes(pInfo);
+        GetUnlockedRecipes(pInfo);
+        GetQuests(pInfo);
+        GetSpawnpoints(pInfo);
+        GetWaypoints(pInfo);
+        GetMarker(pInfo);
       }
     }
 
-    private void GetWaypoints(PlayerInfo _pInfo)
+    private void GetRotation(PlayerInfo pInfo)
     {
-      Marker = new BCMVector3i(_pInfo.PDF.markerPosition);
+      Bin.Add("Rotation", GetVectorObj(Rotation = new BCMVector3i(pInfo.EP != null ? pInfo.EP.rotation : (pInfo.PDF != null ? pInfo.PDF.ecd.rot : Vector3.zero))));
+    }
 
+    private void GetPosition(PlayerInfo pInfo)
+    {
+      Bin.Add("Position", GetVectorObj(Position = new BCMVector3i(pInfo.EP != null ? pInfo.EP.position : (pInfo.PDF != null ? pInfo.PDF.ecd.pos : Vector3.zero))));
+    }
+
+    private void GetUnderground(PlayerInfo pInfo)
+    {
+      Bin.Add("Underground", Underground = pInfo.EP != null ? (int)pInfo.EP.position.y - GameManager.Instance.World.GetHeight((int)pInfo.EP.position.x, (int)pInfo.EP.position.z) - 1 : 0);
+    }
+
+    private void GetLastOnline(PlayerInfo pInfo)
+    {
+      Bin.Add("LastOnline", pInfo.EP == null ? LastOnline = pInfo.PCP != null ? pInfo.PCP.LastOnline.ToString("yyyy-MM-ddTHH:mm:ssZ") : "" : null);
+    }
+
+    private void GetSessionPlaytime(PlayerInfo pInfo)
+    {
+      Bin.Add("SessionPlayTime", pInfo.EP != null ? SessionPlayTime = Math.Round((Time.timeSinceLevelLoad - pInfo.EP.CreationTimeSinceLevelLoad) / 60, 2) : 0);
+    }
+
+    private void GetTotalPlaytime(PlayerInfo pInfo)
+    {
+      Bin.Add("TotalPlayTime", TotalPlayTime = Math.Round((pInfo.PCP != null ? pInfo.PCP.TotalPlayTime : 0) / 60f, 2));
+    }
+
+    private void GetPing(PlayerInfo pInfo)
+    {
+      Bin.Add("Ping", Ping = pInfo.CI != null ? pInfo.CI.ping.ToString() : "Offline");
+    }
+
+    private void GetIp(PlayerInfo pInfo)
+    {
+      Bin.Add("IP", Ip = pInfo.CI != null ? pInfo.CI.ip : pInfo.PCP != null ? pInfo.PCP.IP : string.Empty);
+    }
+
+    private void GetEntityId(PlayerInfo pInfo)
+    {
+      Bin.Add("EntityId", EntityId = pInfo.EP != null ? pInfo.EP.entityId : pInfo.PDF != null ? pInfo.PDF.id : -1);
+    }
+
+    private void GetName(PlayerInfo pInfo)
+    {
+      Bin.Add("Name", Name = pInfo.CI != null ? pInfo.CI.playerName : pInfo.PCP != null ? pInfo.PCP.Name : string.Empty);
+    }
+
+    private void GetSteamId(PlayerInfo pInfo)
+    {
+      Bin.Add("SteamId", SteamId = pInfo.SteamId);
+    }
+
+    private void GetRentedVendorExpire(PlayerInfo pInfo) => Bin.Add("RentedVendorExpire",
+      RentedVendorExpire = pInfo.EP != null ? pInfo.EP.RentalEndTime : pInfo.PDF.rentalEndTime);
+
+    //todo:BCMVector3i
+    private void GetRentedVendor(PlayerInfo pInfo) => Bin.Add("RentedVendor",
+        RentedVendor = pInfo.EP != null
+          ? Convert.PosToStr(pInfo.EP.RentedVMPosition, PosType)
+          : Convert.PosToStr(pInfo.PDF.rentedVMPosition, PosType));
+
+    private void GetLastZombieAttacked(PlayerInfo pInfo) => Bin.Add("LastZombieAttacked",
+      pInfo.EP != null
+        ? LastZombieAttacked = Math.Round((GameManager.Instance.World.worldTime - pInfo.EP.LastZombieAttackTime) / 600f, 2)
+        : null);
+
+    private void GetRemote(PlayerInfo pInfo) => Bin.Add("Remote", pInfo.EP != null ? Remote = pInfo.EP.isEntityRemote : null);
+
+    private void GetIsSafeZoneActive(PlayerInfo pInfo) => Bin.Add("IsSafeZoneActive", pInfo.EP != null ? IsSafeZoneActive = pInfo.EP.IsSafeZoneActive() : null);
+
+    private void GetIsStuck(PlayerInfo pInfo) => Bin.Add("IsStuck", pInfo.EP != null ? IsStuck = pInfo.EP.IsStuck : null);
+
+    private void GetOnGround(PlayerInfo pInfo) => Bin.Add("OnGround", pInfo.EP != null ? OnGround = pInfo.EP.onGround : null);
+
+    private void GetIsDead(PlayerInfo pInfo) => Bin.Add("IsDead", IsDead = pInfo.EP != null ? pInfo.EP.IsDead() : pInfo.PDF.bDead);
+
+    private void GetItemsCrafted(PlayerInfo pInfo) => Bin.Add("ItemsCrafted",
+      ItemsCrafted = pInfo.EP != null ? pInfo.EP.totalItemsCrafted : pInfo.PDF.totalItemsCrafted);
+
+    private void GetLongestLife(PlayerInfo pInfo) => Bin.Add("LongestLife",
+      LongestLife = Math.Round(pInfo.EP != null ? pInfo.EP.longestLife : pInfo.PDF.longestLife, 2));
+
+    private void GetCurrentLife(PlayerInfo pInfo) => Bin.Add("CurrentLife",
+      CurrentLife = Math.Round(pInfo.EP != null ? pInfo.EP.currentLife : pInfo.PDF.currentLife, 2));
+
+    private void GetDeaths(PlayerInfo pInfo) => Bin.Add("Deaths", Deaths = pInfo.EP != null ? pInfo.EP.Died : pInfo.PDF.deaths);
+
+    private void GetKilledZombies(PlayerInfo pInfo) => Bin.Add("KilledZombies", KilledZombies = pInfo.EP != null ? pInfo.EP.KilledZombies : pInfo.PDF.zombieKills);
+
+    private void GetKilledPlayers(PlayerInfo pInfo) => Bin.Add("KilledPlayers", KilledPlayers = pInfo.EP != null ? pInfo.EP.KilledPlayers : pInfo.PDF.playerKills);
+
+    private void GetScore(PlayerInfo pInfo) => Bin.Add("Score", Score = pInfo.EP != null ? pInfo.EP.Score : pInfo.PDF.score);
+
+    private void GetGamestage(PlayerInfo pInfo) => Bin.Add("Gamestage",
+      Gamestage = pInfo.EP != null ? pInfo.EP.gameStage : (pInfo.PCP != null ? (int?)pInfo.PCP.Gamestage : null));
+
+    private void GetExpForNextLevel(PlayerInfo pInfo) => Bin.Add("ExpForNextLevel",
+      ExpForNextLevel = pInfo.EP != null
+        ? pInfo.EP.GetExpForNextLevel()
+        : (int)Math.Min(Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, pInfo.PDF.level + 1),
+          int.MaxValue));
+
+    private void GetExpToNextLevel(PlayerInfo pInfo) => Bin.Add("ExpToNextLevel",
+      ExpToNextLevel = pInfo.EP != null ? pInfo.EP.ExpToNextLevel : (int)pInfo.PDF.experience);
+
+    private void GetLevelProgress(PlayerInfo pInfo) => Bin.Add("LevelProgress",
+      LevelProgress =
+        Math.Round(
+          pInfo.EP != null
+            ? pInfo.EP.GetLevelProgressPercentage() * 100
+            : (1 - pInfo.PDF.experience /
+               Math.Min(Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, pInfo.PDF.level + 1),
+                 int.MaxValue)) * 100, 2));
+
+    private void GetLevel(PlayerInfo pInfo) => Bin.Add("Level", Level = pInfo.EP != null ? pInfo.EP.GetLevel() : pInfo.PDF.level);
+
+    private void GetDroppedPack(PlayerInfo pInfo) => Bin.Add("DroppedPack",
+      DroppedPack = pInfo.PDF.droppedBackpackPosition != Vector3i.zero
+        ? Convert.PosToStr(pInfo.PDF.droppedBackpackPosition, PosType)
+        : "None");
+
+    private void GetDistanceWalked(PlayerInfo pInfo) => Bin.Add("DistanceWalked", DistanceWalked = Math.Round(pInfo.PDF.distanceWalked, 1));
+
+    private void GetArchetype(PlayerInfo pInfo) => Bin.Add("Archetype", Archetype = pInfo.PDF.ecd.playerProfile.Archetype);
+
+    private void GetSpeedModifier(PlayerInfo pInfo) => Bin.Add("SpeedModifier",
+      SpeedModifier =
+        Math.Round(
+          pInfo.EP != null
+            ? (pInfo.EP.Stats.SpeedModifier.Value == 1 && pInfo.EP.Stats.SpeedModifier.Value !=
+               pInfo.PDF.ecd.stats.SpeedModifier.Value
+              ? pInfo.PDF.ecd.stats.SpeedModifier.Value
+              : pInfo.EP.Stats.SpeedModifier.Value)
+            : pInfo.PDF.ecd.stats.SpeedModifier.Value, 1));
+
+    private void GetCoreTemp(PlayerInfo pInfo) => Bin.Add("CoreTemp", CoreTemp = (int)pInfo.PDF.ecd.stats.CoreTemp.Value);
+
+    private void GetDrink(PlayerInfo pInfo) => Bin.Add("Drink", Drink = (int)(pInfo.PDF.drink.GetLifeLevelFraction() * 100));
+
+    private void GetFood(PlayerInfo pInfo) => Bin.Add("Food", Food = (int)(pInfo.PDF.food.GetLifeLevelFraction() * 100));
+
+    private void GetStamina(PlayerInfo pInfo) => Bin.Add("Stamina",
+      Stamina = (int)(pInfo.EP != null
+        ? (pInfo.EP.Stamina - 100 < 1f && pInfo.EP.Stamina - pInfo.PDF.ecd.stats.Stamina.Value > 1f
+          ? pInfo.PDF.ecd.stats.Stamina.Value
+          : pInfo.EP.Stamina)
+        : pInfo.PDF.ecd.stats.Stamina.Value));
+
+    private void GetHealth(PlayerInfo pInfo) => Bin.Add("Health",
+      Health = (int)(pInfo.EP != null
+        ? (pInfo.EP.Health == 100 && pInfo.EP.Health != pInfo.PDF.ecd.stats.Health.Value
+          ? pInfo.PDF.ecd.stats.Health.Value
+          : pInfo.EP.Health)
+        : pInfo.PDF.ecd.stats.Health.Value));
+
+    private void GetWellness(PlayerInfo pInfo) => Bin.Add("Wellness",
+      Wellness = (int)(pInfo.EP != null
+        ? (pInfo.EP.Stats.Wellness.Value - 100 < 1f && pInfo.EP.Stats.Wellness.Value - pInfo.PDF.ecd.stats.Wellness.Value > 1
+          ? pInfo.PDF.ecd.stats.Wellness.Value
+          : pInfo.EP.Stats.Wellness.Value)
+        : pInfo.PDF.ecd.stats.Wellness.Value));
+
+    private void GetMarker(PlayerInfo pInfo) => Bin.Add("Marker", Marker = new BCMVector3i(pInfo.PDF.markerPosition));
+
+    private void GetWaypoints(PlayerInfo pInfo)
+    {
       Waypoints = new List<BCMWaypoint>();
 
-      foreach (Waypoint waypoint in _pInfo.PDF.waypoints.List)
+      foreach (var waypoint in pInfo.PDF.waypoints.List)
       {
-        var _waypoint = new BCMWaypoint();
-        _waypoint.Name = waypoint.name;
-        //todo:BCMVector3i
-        _waypoint.Pos = new BCMVector3i(waypoint.pos);
-        _waypoint.Icon = waypoint.icon;
-
-        Waypoints.Add(_waypoint);
+        Waypoints.Add(new BCMWaypoint
+        {
+          Name = waypoint.name,
+          Pos = new BCMVector3i(waypoint.pos),
+          Icon = waypoint.icon
+        });
       }
+      Bin.Add("Waypoints", Waypoints);
     }
 
-    private void GetSpawnpoints(PlayerInfo _pInfo)
+    private void GetSpawnpoints(PlayerInfo pInfo)
     {
       Spawnpoints = new List<BCMVector3i>();
 
-      foreach (Vector3i spawn in _pInfo.PDF.spawnPoints)
+      foreach (var spawn in pInfo.PDF.spawnPoints)
       {
-        var _spawn = new BCMVector3i(spawn);
-
-        Spawnpoints.Add(_spawn);
+        Spawnpoints.Add(new BCMVector3i(spawn));
       }
+      Bin.Add("Spawnpoints", Spawnpoints);
     }
 
-    private void GetQuests(PlayerInfo _pInfo)
+    private void GetQuests(PlayerInfo pInfo)
     {
       Quests = new List<BCMQuest>();
 
-      foreach (Quest quest in _pInfo.PDF.questJournal.Clone().quests)
+      foreach (var quest in pInfo.PDF.questJournal.Clone().quests)
       {
-        var _quest = new BCMQuest();
+        var q = new BCMQuest();
         if (QuestClass.s_Quests.ContainsKey(quest.ID))
         {
           var qc = QuestClass.s_Quests[quest.ID];
-          _quest.Name = qc.Name;
-          _quest.Id = qc.ID;
-          _quest.CurrentState = quest.CurrentState.ToString();
+          q.Name = qc.Name;
+          q.Id = qc.ID;
+          q.CurrentState = quest.CurrentState.ToString();
 
         }
         else
         {
-          _quest.Name = null;
+          q.Name = null;
         }
 
-        Quests.Add(_quest);
+        Quests.Add(q);
       }
+      Bin.Add("Quests", Quests);
     }
 
-    private void GetUnlockedRecipes(PlayerInfo _pInfo)
+    private void GetUnlockedRecipes(PlayerInfo pInfo)
     {
       UnlockedRecipes = new List<string>();
 
-      foreach (string name in _pInfo.PDF.unlockedRecipeList)
+      foreach (var name in pInfo.PDF.unlockedRecipeList)
       {
         UnlockedRecipes.Add(name);
       }
+      Bin.Add("UnlockedRecipes", UnlockedRecipes);
     }
 
-    private void GetFavouriteRecipes(PlayerInfo _pInfo)
+    private void GetFavouriteRecipes(PlayerInfo pInfo)
     {
       FavouriteRecipes = new List<string>();
 
-      foreach (string name in _pInfo.PDF.favoriteRecipeList)
+      foreach (var name in pInfo.PDF.favoriteRecipeList)
       {
         FavouriteRecipes.Add(name);
       }
+      Bin.Add("FavouriteRecipes", FavouriteRecipes);
     }
 
-    private void GetCraftingQueue(PlayerInfo _pInfo)
+    private void GetCraftingQueue(PlayerInfo pInfo)
     {
       CraftingQueue = new List<BCMCraftingQueue>();
 
-      foreach (RecipeQueueItem rqi in _pInfo.PDF.craftingData.RecipeQueueItems)
+      foreach (var rqi in pInfo.PDF.craftingData.RecipeQueueItems)
       {
         var queueItem = new BCMCraftingQueue();
 
@@ -518,48 +817,43 @@ namespace BCM.Models
           queueItem.Count = rqi.Multiplier;
           if (rqi.IsCrafting)
           {
-            queueItem.TotalTime = Math.Round((rqi.Recipe.craftingTime * (rqi.Multiplier - 1) + rqi.CraftingTimeLeft), 1);
+            queueItem.TotalTime = Math.Round(rqi.Recipe.craftingTime * (rqi.Multiplier - 1) + rqi.CraftingTimeLeft, 1);
             queueItem.CraftTime = Math.Round(rqi.CraftingTimeLeft, 1);
-          } else
+          }
+          else
           {
-            queueItem.TotalTime = Math.Round((rqi.Recipe.craftingTime * rqi.Multiplier), 1);
+            queueItem.TotalTime = Math.Round(rqi.Recipe.craftingTime * rqi.Multiplier, 1);
             queueItem.CraftTime = Math.Round(rqi.Recipe.craftingTime, 1);
           }
 
 
           queueItem.Ingredients = new List<BCMIngredient>();
 
-          foreach (ItemStack ingredient in rqi.Recipe.GetIngredientsSummedUp())
+          foreach (var ingredient in rqi.Recipe.GetIngredientsSummedUp())
           {
-            var _ingredient = new BCMIngredient();
-            _ingredient.Type = ingredient.itemValue.type;
-            _ingredient.Count = ingredient.count;
+            var i = new BCMIngredient
+            {
+              Type = ingredient.itemValue.type,
+              Count = ingredient.count
+            };
 
-            queueItem.Ingredients.Add(_ingredient);
+            queueItem.Ingredients.Add(i);
           }
         }
         CraftingQueue.Add(queueItem);
       }
+      Bin.Add("CraftingQueue", CraftingQueue);
     }
 
-    private void GetSkills(PlayerInfo _pInfo)
+    private void GetSkillPoints(PlayerInfo pInfo) => Bin.Add("SkillPoints", SkillPoints = pInfo.PDF.skillPoints);
+
+    private void GetSkills(PlayerInfo pInfo)
     {
-      SkillPoints = _pInfo.PDF.skillPoints;
       Skills = new List<BCMSkill>();
 
-      var allSkills = new List<Skill>();
-      if (_pInfo.EP != null)
+      foreach (var skill in pInfo.EP != null ? pInfo.EP.Skills.GetAllSkills() : pInfo.PDF.skills)
       {
-        allSkills = _pInfo.EP.Skills.GetAllSkills();
-      }
-      else
-      {
-        allSkills = _pInfo.PDF.skills;
-      }
-
-      foreach (Skill skill in allSkills)
-      {
-        var _skill = new BCMSkill();
+        var s = new BCMSkill();
 
         int l;
         try
@@ -570,73 +864,67 @@ namespace BCM.Models
         {
           l = 0;
         }
-        _skill.Name = skill.Name;
-        _skill.Level = l;
-        _skill.Percent = Math.Round(skill.PercentThisLevel * 100, 1);
+        s.Name = skill.Name;
+        s.Level = l;
+        s.Percent = Math.Round(skill.PercentThisLevel * 100, 1);
 
-        Skills.Add(_skill);
+        Skills.Add(s);
       }
+      Bin.Add("Skills", Skills);
     }
 
-    private void GetBuffs(PlayerInfo _pInfo)
+    private void GetBuffs(PlayerInfo pInfo)
     {
       Buffs = new List<BCMBuff>();
-      Dictionary<string, MultiBuff> multiBuffs = new Dictionary<string, MultiBuff>();
-      if (_pInfo.EP != null)
+      var multiBuffs = new Dictionary<string, MultiBuff>();
+      if (pInfo.EP != null)
       {
-        foreach (MultiBuff multiBuff in _pInfo.EP.Stats.Buffs)
+        foreach (var buff in pInfo.EP.Stats.Buffs)
         {
-          if (multiBuff != null && multiBuff.MultiBuffClass.Id != null)
-          {
-            if (!multiBuffs.ContainsKey(multiBuff.MultiBuffClass.Id))
-            {
-              multiBuffs.Add(multiBuff.MultiBuffClass.Id, multiBuff);
-            }
-          }
-        }
-      }
-      foreach (MultiBuff multiBuff in _pInfo.PDF.ecd.stats.Buffs)
-      {
-        if (multiBuff != null && multiBuff.MultiBuffClass.Id != null)
-        {
+          var multiBuff = buff as MultiBuff;
+          if (multiBuff?.MultiBuffClass.Id == null) continue;
+
           if (!multiBuffs.ContainsKey(multiBuff.MultiBuffClass.Id))
           {
-            multiBuffs.Add(multiBuff.MultiBuffClass.Id, multiBuff);
+            multiBuffs.Add(multiBuff.MultiBuffClass.Id, buff as MultiBuff);
           }
         }
       }
-
-      foreach (KeyValuePair<string, MultiBuff> multiBuff in multiBuffs)
+      foreach (var buff in pInfo.PDF.ecd.stats.Buffs)
       {
-        var buff = new BCMBuff();
-        buff.Id = multiBuff.Value.MultiBuffClass.Id;
-        buff.Name = multiBuff.Value.Name;
-        buff.Expired = multiBuff.Value.Expired;
-        buff.IsOverriden = multiBuff.Value.IsOverriden;
-        buff.InstigatorId = multiBuff.Value.InstigatorId;
-        buff.Duration = multiBuff.Value.MultiBuffClass.FDuration;
-        buff.TimeFraction = multiBuff.Value.Timer.TimeFraction;
+        var multiBuff = buff as MultiBuff;
+        if (multiBuff?.MultiBuffClass.Id == null) continue;
 
-        Buffs.Add(buff);
+        if (!multiBuffs.ContainsKey(multiBuff.MultiBuffClass.Id))
+        {
+          multiBuffs.Add(multiBuff.MultiBuffClass.Id, buff as MultiBuff);
+        }
       }
+
+      foreach (var multiBuff in multiBuffs.Values)
+      {
+        Buffs.Add(new BCMBuff
+        {
+          Id = multiBuff.MultiBuffClass.Id,
+          Name = multiBuff.Name,
+          Expired = multiBuff.Expired,
+          IsOverriden = multiBuff.IsOverriden,
+          InstigatorId = multiBuff.InstigatorId,
+          Duration = multiBuff.MultiBuffClass.FDuration,
+          TimeFraction = multiBuff.Timer.TimeFraction
+        });
+      }
+      Bin.Add("Buffs", Buffs);
     }
 
-    private void GetEquipment(PlayerInfo _pInfo)
+    private void GetEquipment(PlayerInfo pInfo)
     {
       Equipment = new Dictionary<string, BCMItemValue>();
 
-      ItemValue[] equipment;
-      if (_pInfo.EP != null)
-      {
-        equipment = _pInfo.EP.equipment.GetItems();
-      }
-      else
-      {
-        equipment = _pInfo.PDF.equipment.GetItems();
-      }
+      var equipment = pInfo.EP != null ? pInfo.EP.equipment.GetItems() : pInfo.PDF.equipment.GetItems();
 
-      int k = 1;
-      foreach (ItemValue item in equipment)
+      var k = 1;
+      foreach (var item in equipment)
       {
         BCMItemValue slot = null;
         if (item.type != 0)
@@ -655,17 +943,17 @@ namespace BCM.Models
           if (item.Attachments != null && item.Attachments.Length > 0)
           {
             slot.Attachments = new List<BCMAttachment>();
-            foreach (ItemValue attachment in item.Attachments)
+            foreach (var attachment in item.Attachments)
             {
               if (attachment != null && attachment.type != 0)
               {
-                var _attachment = new BCMAttachment();
-                _attachment.Type = attachment.type;
-                _attachment.Quality = attachment.Quality;
-                _attachment.MaxUse = attachment.MaxUseTimes;
-                _attachment.UseTimes = attachment.UseTimes;
-
-                slot.Attachments.Add(_attachment);
+                slot.Attachments.Add(new BCMAttachment
+                {
+                  Type = attachment.type,
+                  Quality = attachment.Quality,
+                  MaxUse = attachment.MaxUseTimes,
+                  UseTimes = attachment.UseTimes
+                });
               }
             }
           }
@@ -673,16 +961,17 @@ namespace BCM.Models
           if (item.Parts != null && item.Parts.Length > 0)
           {
             slot.Parts = new List<BCMParts>();
-            foreach (ItemValue part in item.Parts)
+            foreach (var part in item.Parts)
             {
               if (part != null && part.type != 0)
               {
-                var _part = new BCMParts();
-                _part.Type = part.type;
-                _part.Quality = part.Quality;
-                _part.MaxUse = part.MaxUseTimes;
-                _part.UseTimes = part.UseTimes;
-                slot.Parts.Add(_part);
+                slot.Parts.Add(new BCMParts
+                {
+                  Type = part.type,
+                  Quality = part.Quality,
+                  MaxUse = part.MaxUseTimes,
+                  UseTimes = part.UseTimes
+                });
               }
             }
           }
@@ -690,51 +979,54 @@ namespace BCM.Models
         Equipment.Add(k.ToString(), slot);
         k++;
       }
+      Bin.Add("Equipment", Equipment);
     }
 
-    private void GetBelt(PlayerInfo _pInfo)
+    private void GetBelt(PlayerInfo pInfo)
     {
       Belt = new Dictionary<string, BCMItemStack>();
 
       ItemStack[] inv;
-      if (_pInfo.EP != null)
+      if (pInfo.EP != null)
       {
-        inv = _pInfo.EP.inventory.GetSlots();
-        SelectedSlot = _pInfo.EP.inventory.holdingItemIdx;
+        inv = pInfo.EP.inventory.GetSlots();
+        SelectedSlot = pInfo.EP.inventory.holdingItemIdx;
       }
       else
       {
-        inv = _pInfo.PDF.inventory;
-        SelectedSlot = _pInfo.PDF.selectedInventorySlot;
+        inv = pInfo.PDF.inventory;
+        SelectedSlot = pInfo.PDF.selectedInventorySlot;
       }
 
-      int j = 0;
-      foreach (ItemStack item in inv)
+      var j = 0;
+      foreach (var item in inv)
       {
         BCMItemStack slot = null;
         if (item.itemValue.type != 0)
         {
-          slot = new BCMItemStack();
-          slot.Type = item.itemValue.type;
-          slot.Quality = item.itemValue.Quality;
-          slot.UseTimes = item.itemValue.UseTimes;
-          slot.MaxUse = item.itemValue.MaxUseTimes;
-          slot.AmmoIndex = item.itemValue.SelectedAmmoTypeIndex;
+          slot = new BCMItemStack
+          {
+            Type = item.itemValue.type,
+            Quality = item.itemValue.Quality,
+            UseTimes = item.itemValue.UseTimes,
+            MaxUse = item.itemValue.MaxUseTimes,
+            AmmoIndex = item.itemValue.SelectedAmmoTypeIndex
+          };
 
           if (item.itemValue.Attachments != null && item.itemValue.Attachments.Length > 0)
           {
             slot.Attachments = new List<BCMAttachment>();
-            foreach (ItemValue attachment in item.itemValue.Attachments)
+            foreach (var attachment in item.itemValue.Attachments)
             {
               if (attachment != null && attachment.type != 0)
               {
-                var _attachment = new BCMAttachment();
-                _attachment.Type = attachment.type;
-                _attachment.Quality = attachment.Quality;
-                _attachment.MaxUse = attachment.MaxUseTimes;
-                _attachment.UseTimes = attachment.UseTimes;
-
-                slot.Attachments.Add(_attachment);
+                slot.Attachments.Add(new BCMAttachment
+                {
+                  Type = attachment.type,
+                  Quality = attachment.Quality,
+                  MaxUse = attachment.MaxUseTimes,
+                  UseTimes = attachment.UseTimes
+                });
               }
             }
           }
@@ -742,16 +1034,17 @@ namespace BCM.Models
           if (item.itemValue.Parts != null && item.itemValue.Parts.Length > 0)
           {
             slot.Parts = new List<BCMParts>();
-            foreach (ItemValue part in item.itemValue.Parts)
+            foreach (var part in item.itemValue.Parts)
             {
               if (part != null && part.type != 0)
               {
-                var _part = new BCMParts();
-                _part.Type = part.type;
-                _part.Quality = part.Quality;
-                _part.MaxUse = part.MaxUseTimes;
-                _part.UseTimes = part.UseTimes;
-                slot.Parts.Add(_part);
+                slot.Parts.Add(new BCMParts
+                {
+                  Type = part.type,
+                  Quality = part.Quality,
+                  MaxUse = part.MaxUseTimes,
+                  UseTimes = part.UseTimes
+                });
               }
             }
           }
@@ -761,39 +1054,43 @@ namespace BCM.Models
         Belt.Add(j.ToString(), slot);
         j++;
       }
+      Bin.Add("Belt", Belt);
     }
 
-    private void GetBag(PlayerInfo _pInfo)
+    private void GetBag(PlayerInfo pInfo)
     {
       // Updates are instantly triggered when looting, but not when an item is moved to equipment so there is a delay of up to 30 seconds
       Bag = new Dictionary<string, BCMItemStack>();
-      int i = 1;
-      foreach (ItemStack item in _pInfo.PDF.bag)
+
+      var i = 1;
+      foreach (var item in pInfo.PDF.bag)
       {
         BCMItemStack slot = null;
         if (item.itemValue.type != 0)
         {
-          slot = new BCMItemStack();
-          slot.Type = item.itemValue.type;
-          slot.Quality = item.itemValue.Quality;
-          slot.UseTimes = item.itemValue.UseTimes;
-          slot.MaxUse = item.itemValue.MaxUseTimes;
-          slot.AmmoIndex = item.itemValue.SelectedAmmoTypeIndex;
+          slot = new BCMItemStack
+          {
+            Type = item.itemValue.type,
+            Quality = item.itemValue.Quality,
+            UseTimes = item.itemValue.UseTimes,
+            MaxUse = item.itemValue.MaxUseTimes,
+            AmmoIndex = item.itemValue.SelectedAmmoTypeIndex
+          };
 
           if (item.itemValue.Attachments != null && item.itemValue.Attachments.Length > 0)
           {
             slot.Attachments = new List<BCMAttachment>();
-            foreach (ItemValue attachment in item.itemValue.Attachments)
+            foreach (var attachment in item.itemValue.Attachments)
             {
               if (attachment != null && attachment.type != 0)
               {
-                var _attachment = new BCMAttachment();
-                _attachment.Type = attachment.type;
-                _attachment.Quality = attachment.Quality;
-                _attachment.MaxUse = attachment.MaxUseTimes;
-                _attachment.UseTimes = attachment.UseTimes;
-
-                slot.Attachments.Add(_attachment);
+                slot.Attachments.Add(new BCMAttachment
+                {
+                  Type = attachment.type,
+                  Quality = attachment.Quality,
+                  MaxUse = attachment.MaxUseTimes,
+                  UseTimes = attachment.UseTimes
+                });
               }
             }
           }
@@ -801,16 +1098,17 @@ namespace BCM.Models
           if (item.itemValue.Parts != null && item.itemValue.Parts.Length > 0)
           {
             slot.Parts = new List<BCMParts>();
-            foreach (ItemValue part in item.itemValue.Parts)
+            foreach (var part in item.itemValue.Parts)
             {
               if (part != null && part.type != 0)
               {
-                var _part = new BCMParts();
-                _part.Type = part.type;
-                _part.Quality = part.Quality;
-                _part.MaxUse = part.MaxUseTimes;
-                _part.UseTimes = part.UseTimes;
-                slot.Parts.Add(_part);
+                slot.Parts.Add(new BCMParts
+                {
+                  Type = part.type,
+                  Quality = part.Quality,
+                  MaxUse = part.MaxUseTimes,
+                  UseTimes = part.UseTimes
+                });
               }
             }
           }
@@ -820,526 +1118,47 @@ namespace BCM.Models
         Bag.Add(i.ToString(), slot);
         i++;
       }
-    }
-
-    private void GetStats(PlayerInfo _pInfo)
-    {
-      if (isOption("filter"))
-      {
-        //WELLNESS
-        if ((useInt && intFilter.Contains((int)Filters.Wellness)) || (!useInt && strFilter.Contains(StrFilters.Wellness)))
-        {
-          Wellness = (int)(_pInfo.EP != null ? ((_pInfo.EP.Stats.Wellness.Value == 100 && _pInfo.EP.Stats.Wellness.Value != _pInfo.PDF.ecd.stats.Wellness.Value) ? _pInfo.PDF.ecd.stats.Wellness.Value : _pInfo.EP.Stats.Wellness.Value) : _pInfo.PDF.ecd.stats.Wellness.Value);
-          _bin.Add("Wellness", Wellness);
-        }
-
-        //HEALTH
-        if ((useInt && intFilter.Contains((int)Filters.Health)) || (!useInt && strFilter.Contains(StrFilters.Health)))
-        {
-          Health = (int)(_pInfo.EP != null ? ((_pInfo.EP.Health == 100 && _pInfo.EP.Health != _pInfo.PDF.ecd.stats.Health.Value) ? _pInfo.PDF.ecd.stats.Health.Value : _pInfo.EP.Health) : _pInfo.PDF.ecd.stats.Health.Value);
-          _bin.Add("Health", Health);
-        }
-
-        //STAMINA
-        if ((useInt && intFilter.Contains((int)Filters.Stamina)) || (!useInt && strFilter.Contains(StrFilters.Stamina)))
-        {
-          Stamina = (int)(_pInfo.EP != null ? ((_pInfo.EP.Stamina == 100 && _pInfo.EP.Stamina != _pInfo.PDF.ecd.stats.Stamina.Value) ? _pInfo.PDF.ecd.stats.Stamina.Value : _pInfo.EP.Stamina) : _pInfo.PDF.ecd.stats.Stamina.Value);
-        _bin.Add("Stamina", Stamina);
-        }
-
-        //FOOD
-        if ((useInt && intFilter.Contains((int)Filters.Food)) || (!useInt && strFilter.Contains(StrFilters.Food)))
-        {
-          Food = (int)(_pInfo.PDF.food.GetLifeLevelFraction() * 100);
-        _bin.Add("Food", Food);
-        }
-
-        //DRINK
-        if ((useInt && intFilter.Contains((int)Filters.Drink)) || (!useInt && strFilter.Contains(StrFilters.Drink)))
-        {
-          Drink = (int)(_pInfo.PDF.drink.GetLifeLevelFraction() * 100);
-        _bin.Add("Drink", Drink);
-        }
-
-        //CORETEMP
-        if ((useInt && intFilter.Contains((int)Filters.CoreTemp)) || (!useInt && strFilter.Contains(StrFilters.CoreTemp)))
-        {
-          CoreTemp = (int)_pInfo.PDF.ecd.stats.CoreTemp.Value;
-        _bin.Add("CoreTemp", CoreTemp);
-        }
-
-        //SPEEDMODIFIER
-        if ((useInt && intFilter.Contains((int)Filters.SpeedModifier)) || (!useInt && strFilter.Contains(StrFilters.SpeedModifier)))
-        {
-          SpeedModifier = Math.Round((_pInfo.EP != null ? ((_pInfo.EP.Stats.SpeedModifier.Value == 1 && _pInfo.EP.Stats.SpeedModifier.Value != _pInfo.PDF.ecd.stats.SpeedModifier.Value) ? _pInfo.PDF.ecd.stats.SpeedModifier.Value : _pInfo.EP.Stats.SpeedModifier.Value) : _pInfo.PDF.ecd.stats.SpeedModifier.Value), 1);
-        _bin.Add("SpeedModifier", SpeedModifier);
-        }
-
-        //ARCHETYPE
-        if ((useInt && intFilter.Contains((int)Filters.Archetype)) || (!useInt && strFilter.Contains(StrFilters.Archetype)))
-        {
-          Archetype = _pInfo.PDF.ecd.playerProfile.Archetype;
-        _bin.Add("Archetype", Archetype);
-        }
-
-        //DISTANCEWALKED
-        if ((useInt && intFilter.Contains((int)Filters.DistanceWalked)) || (!useInt && strFilter.Contains(StrFilters.DistanceWalked)))
-        {
-          DistanceWalked = Math.Round(_pInfo.PDF.distanceWalked, 1);
-        _bin.Add("DistanceWalked", DistanceWalked);
-        }
-
-        //DROPPEDPACK
-        if ((useInt && intFilter.Contains((int)Filters.DroppedPack)) || (!useInt && strFilter.Contains(StrFilters.DroppedPack)))
-        {
-          //todo:BCMVector3i
-          DroppedPack = (_pInfo.PDF.droppedBackpackPosition != Vector3i.zero ? Convert.PosToStr(_pInfo.PDF.droppedBackpackPosition, GetPosType()) : "None");
-        _bin.Add("DroppedPack", DroppedPack);
-        }
-
-        //LEVEL
-        if ((useInt && intFilter.Contains((int)Filters.Level)) || (!useInt && strFilter.Contains(StrFilters.Level)))
-        {
-          Level = (_pInfo.EP != null ? _pInfo.EP.GetLevel() : _pInfo.PDF.level);
-        _bin.Add("Level", Level);
-        }
-
-        //LEVELPROGRESS
-        if ((useInt && intFilter.Contains((int)Filters.LevelProgress)) || (!useInt && strFilter.Contains(StrFilters.LevelProgress)))
-        {
-          LevelProgress = Math.Round((_pInfo.EP != null ? (_pInfo.EP.GetLevelProgressPercentage() * 100) : ((1 - _pInfo.PDF.experience / Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pInfo.PDF.level + 1)), int.MaxValue)) * 100)), 2);
-        _bin.Add("LevelProgress", LevelProgress);
-        }
-
-        //EXPTONEXTLEVEL
-        if ((useInt && intFilter.Contains((int)Filters.ExpToNextLevel)) || (!useInt && strFilter.Contains(StrFilters.ExpToNextLevel)))
-        {
-          ExpToNextLevel = (_pInfo.EP != null ? _pInfo.EP.ExpToNextLevel : (int)_pInfo.PDF.experience);
-        _bin.Add("ExpToNextLevel", ExpToNextLevel);
-        }
-
-        //EXPFORNEXTLEVEL
-        if ((useInt && intFilter.Contains((int)Filters.ExpForNextLevel)) || (!useInt && strFilter.Contains(StrFilters.ExpForNextLevel)))
-        {
-          ExpForNextLevel = (_pInfo.EP != null ? _pInfo.EP.GetExpForNextLevel() : (int)Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pInfo.PDF.level + 1)), int.MaxValue));
-        _bin.Add("ExpForNextLevel", ExpForNextLevel);
-        }
-
-        //GAMESTAGE
-        if ((useInt && intFilter.Contains((int)Filters.Gamestage)) || (!useInt && strFilter.Contains(StrFilters.Gamestage)))
-        {
-          Gamestage = (_pInfo.EP != null ? _pInfo.EP.gameStage : (_pInfo.PCP != null ? (int?)_pInfo.PCP.Gamestage : null));
-          _bin.Add("Gamestage", Gamestage);
-        }
-
-        //SCORE
-        if ((useInt && intFilter.Contains((int)Filters.Score)) || (!useInt && strFilter.Contains(StrFilters.Score)))
-        {
-          Score = (_pInfo.EP != null ? _pInfo.EP.Score : _pInfo.PDF.score);
-        _bin.Add("Score", Score);
-        }
-
-        //KILLEDPLAYERS
-        if ((useInt && intFilter.Contains((int)Filters.KilledPlayers)) || (!useInt && strFilter.Contains(StrFilters.KilledPlayers)))
-        {
-          KilledPlayers = (_pInfo.EP != null ? _pInfo.EP.KilledPlayers : _pInfo.PDF.playerKills);
-        _bin.Add("KilledPlayers", KilledPlayers);
-        }
-
-        //KILLEDZOMBIES
-        if ((useInt && intFilter.Contains((int)Filters.KilledZombies)) || (!useInt && strFilter.Contains(StrFilters.KilledZombies)))
-        {
-          KilledZombies = (_pInfo.EP != null ? _pInfo.EP.KilledZombies : _pInfo.PDF.zombieKills);
-        _bin.Add("KilledZombies", KilledZombies);
-        }
-
-        //DEATHS
-        if ((useInt && intFilter.Contains((int)Filters.Deaths)) || (!useInt && strFilter.Contains(StrFilters.Deaths)))
-        {
-          Deaths = (_pInfo.EP != null ? _pInfo.EP.Died : _pInfo.PDF.deaths);
-        _bin.Add("Deaths", Deaths);
-        }
-
-        //CURRENTLIFE
-        if ((useInt && intFilter.Contains((int)Filters.CurrentLife)) || (!useInt && strFilter.Contains(StrFilters.CurrentLife)))
-        {
-          CurrentLife = Math.Round((_pInfo.EP != null ? _pInfo.EP.currentLife : _pInfo.PDF.currentLife), 2);
-        _bin.Add("CurrentLife", CurrentLife);
-        }
-
-        //LONGESTLIFE
-        if ((useInt && intFilter.Contains((int)Filters.LongestLife)) || (!useInt && strFilter.Contains(StrFilters.LongestLife)))
-        {
-          LongestLife = Math.Round((_pInfo.EP != null ? _pInfo.EP.longestLife : _pInfo.PDF.longestLife), 2);
-        _bin.Add("LongestLife", LongestLife);
-        }
-
-        //ITEMSCRAFTED
-        if ((useInt && intFilter.Contains((int)Filters.ItemsCrafted)) || (!useInt && strFilter.Contains(StrFilters.ItemsCrafted)))
-        {
-          ItemsCrafted = (_pInfo.EP != null ? _pInfo.EP.totalItemsCrafted : _pInfo.PDF.totalItemsCrafted);
-          _bin.Add("ItemsCrafted", ItemsCrafted);
-        }
-
-        //ISDEAD
-        if ((useInt && intFilter.Contains((int)Filters.IsDead)) || (!useInt && strFilter.Contains(StrFilters.IsDead)))
-        {
-          IsDead = (_pInfo.EP != null ? _pInfo.EP.IsDead() : _pInfo.PDF.bDead);
-          _bin.Add("IsDead", IsDead);
-        }
-
-        if (_pInfo.EP != null)
-        {
-          //ONGROUND
-          if ((useInt && intFilter.Contains((int)Filters.OnGround)) || (!useInt && strFilter.Contains(StrFilters.OnGround)))
-          {
-            OnGround = _pInfo.EP.onGround;
-            _bin.Add("OnGround", OnGround);
-          }
-
-          //ISSTUCK
-          if ((useInt && intFilter.Contains((int)Filters.IsStuck)) || (!useInt && strFilter.Contains(StrFilters.IsStuck)))
-          {
-            IsStuck = _pInfo.EP.IsStuck;
-            _bin.Add("IsStuck", IsStuck);
-          }
-
-          //ISSAFEZONEACTIVE
-          if ((useInt && intFilter.Contains((int)Filters.IsSafeZoneActive)) || (!useInt && strFilter.Contains(StrFilters.IsSafeZoneActive)))
-          {
-            IsSafeZoneActive = _pInfo.EP.IsSafeZoneActive();
-            _bin.Add("IsSafeZoneActive", IsSafeZoneActive);
-          }
-
-          //REMOTE
-          if ((useInt && intFilter.Contains((int)Filters.Remote)) || (!useInt && strFilter.Contains(StrFilters.Remote)))
-          {
-            Remote = _pInfo.EP.isEntityRemote;
-            _bin.Add("Remote", Remote);
-          }
-
-          //LASTZOMBIEATTACKED
-          if ((useInt && intFilter.Contains((int)Filters.LastZombieAttacked)) || (!useInt && strFilter.Contains(StrFilters.LastZombieAttacked)))
-          {
-            LastZombieAttacked = Math.Round(((GameManager.Instance.World.worldTime - _pInfo.EP.LastZombieAttackTime) / 600f), 2);
-            _bin.Add("LastZombieAttacked", LastZombieAttacked);
-          }
-        }
-
-        //RENTEDVENDOR
-        if ((useInt && intFilter.Contains((int)Filters.RentedVendor)) || (!useInt && strFilter.Contains(StrFilters.RentedVendor)))
-        {
-          //todo:BCMVector3i
-          RentedVendor = (_pInfo.EP != null ? Convert.PosToStr(_pInfo.EP.RentedVMPosition, GetPosType()) : Convert.PosToStr(_pInfo.PDF.rentedVMPosition, GetPosType()));
-          _bin.Add("RentedVendor", RentedVendor);
-        }
-
-        //RENTEDVENDOREXPIRE
-        if ((useInt && intFilter.Contains((int)Filters.RentedVendorExpire)) || (!useInt && strFilter.Contains(StrFilters.RentedVendorExpire)))
-        {
-          RentedVendorExpire = (_pInfo.EP != null ? _pInfo.EP.RentalEndTime : _pInfo.PDF.rentalEndTime);
-          _bin.Add("RentedVendorExpire", RentedVendorExpire);
-        }
-      }
-      else
-      {
-        if (isOption("full") || !isOption("bag bg belt bt equipment eq buffs bu skillpoints pt skills sk crafting cq favrecipes fr unlockedrecipes ur quests qu spawns sp waypoints wp"))
-        {
-          Wellness = (int)(_pInfo.EP != null ? ((_pInfo.EP.Stats.Wellness.Value == 100 && _pInfo.EP.Stats.Wellness.Value != _pInfo.PDF.ecd.stats.Wellness.Value) ? _pInfo.PDF.ecd.stats.Wellness.Value : _pInfo.EP.Stats.Wellness.Value) : _pInfo.PDF.ecd.stats.Wellness.Value);
-          Health = (int)(_pInfo.EP != null ? ((_pInfo.EP.Health == 100 && _pInfo.EP.Health != _pInfo.PDF.ecd.stats.Health.Value) ? _pInfo.PDF.ecd.stats.Health.Value : _pInfo.EP.Health) : _pInfo.PDF.ecd.stats.Health.Value);
-          Stamina = (int)(_pInfo.EP != null ? ((_pInfo.EP.Stamina == 100 && _pInfo.EP.Stamina != _pInfo.PDF.ecd.stats.Stamina.Value) ? _pInfo.PDF.ecd.stats.Stamina.Value : _pInfo.EP.Stamina) : _pInfo.PDF.ecd.stats.Stamina.Value);
-          Food = (int)(_pInfo.PDF.food.GetLifeLevelFraction() * 100);
-          Drink = (int)(_pInfo.PDF.drink.GetLifeLevelFraction() * 100);
-          CoreTemp = (int)_pInfo.PDF.ecd.stats.CoreTemp.Value;
-          SpeedModifier = Math.Round((_pInfo.EP != null ? ((_pInfo.EP.Stats.SpeedModifier.Value == 1 && _pInfo.EP.Stats.SpeedModifier.Value != _pInfo.PDF.ecd.stats.SpeedModifier.Value) ? _pInfo.PDF.ecd.stats.SpeedModifier.Value : _pInfo.EP.Stats.SpeedModifier.Value) : _pInfo.PDF.ecd.stats.SpeedModifier.Value), 1);
-          Archetype = _pInfo.PDF.ecd.playerProfile.Archetype;
-          DistanceWalked = Math.Round(_pInfo.PDF.distanceWalked, 1);
-          //todo:BCMVector3i
-          DroppedPack = (_pInfo.PDF.droppedBackpackPosition != Vector3i.zero ? Convert.PosToStr(_pInfo.PDF.droppedBackpackPosition, GetPosType()) : "None");
-          Level = (_pInfo.EP != null ? _pInfo.EP.GetLevel() : _pInfo.PDF.level);
-          LevelProgress = Math.Round((_pInfo.EP != null ? (_pInfo.EP.GetLevelProgressPercentage() * 100) : ((1 - _pInfo.PDF.experience / Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pInfo.PDF.level + 1)), int.MaxValue)) * 100)), 2);
-          ExpToNextLevel = (_pInfo.EP != null ? _pInfo.EP.ExpToNextLevel : (int)_pInfo.PDF.experience);
-          ExpForNextLevel = (_pInfo.EP != null ? _pInfo.EP.GetExpForNextLevel() : (int)Math.Min((Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, _pInfo.PDF.level + 1)), int.MaxValue));
-          Gamestage = (_pInfo.EP != null ? _pInfo.EP.gameStage : (_pInfo.PCP != null ? (int?)_pInfo.PCP.Gamestage : null));
-          Score = (_pInfo.EP != null ? _pInfo.EP.Score : _pInfo.PDF.score);
-          KilledPlayers = (_pInfo.EP != null ? _pInfo.EP.KilledPlayers : _pInfo.PDF.playerKills);
-          KilledZombies = (_pInfo.EP != null ? _pInfo.EP.KilledZombies : _pInfo.PDF.zombieKills);
-          Deaths = (_pInfo.EP != null ? _pInfo.EP.Died : _pInfo.PDF.deaths);
-          CurrentLife = Math.Round((_pInfo.EP != null ? _pInfo.EP.currentLife : _pInfo.PDF.currentLife), 2);
-          LongestLife = Math.Round((_pInfo.EP != null ? _pInfo.EP.longestLife : _pInfo.PDF.longestLife), 2);
-          ItemsCrafted = (_pInfo.EP != null ? _pInfo.EP.totalItemsCrafted : _pInfo.PDF.totalItemsCrafted);
-          IsDead = (_pInfo.EP != null ? _pInfo.EP.IsDead() : _pInfo.PDF.bDead);
-          if (_pInfo.EP != null)
-          {
-            OnGround = _pInfo.EP.onGround;
-            IsStuck = _pInfo.EP.IsStuck;
-            IsSafeZoneActive = _pInfo.EP.IsSafeZoneActive();
-            Remote = _pInfo.EP.isEntityRemote;
-            LastZombieAttacked = Math.Round(((GameManager.Instance.World.worldTime - _pInfo.EP.LastZombieAttackTime) / 600f), 2);
-          }
-          //todo:BCMVector3i
-          RentedVendor = (_pInfo.EP != null ? Convert.PosToStr(_pInfo.EP.RentedVMPosition, GetPosType()) : Convert.PosToStr(_pInfo.PDF.rentedVMPosition, GetPosType()));
-          RentedVendorExpire = (_pInfo.EP != null ? _pInfo.EP.RentalEndTime : _pInfo.PDF.rentalEndTime);
-
-          _bin.Add("Wellness", Wellness);
-          _bin.Add("Health", Health);
-          _bin.Add("Stamina", Stamina);
-          if (isOption("full")) { _bin.Add("Food", Food); }
-          if (isOption("full")) { _bin.Add("Drink", Drink); }
-          if (isOption("full")) { _bin.Add("CoreTemp", CoreTemp); }
-          if (isOption("full")) { _bin.Add("SpeedModifier", SpeedModifier); }
-          if (isOption("full")) { _bin.Add("Archetype", Archetype); }
-          if (isOption("full")) { _bin.Add("DistanceWalked", DistanceWalked); }
-          if (isOption("full")) { _bin.Add("DroppedPack", DroppedPack); }
-          _bin.Add("Level", Level);
-          _bin.Add("LevelProgress", LevelProgress);
-          if (isOption("full")) { _bin.Add("ExpToNextLevel", ExpToNextLevel); }
-          if (isOption("full")) { _bin.Add("ExpForNextLevel", ExpForNextLevel); }
-          _bin.Add("Gamestage", Gamestage);
-          _bin.Add("Score", Score);
-          _bin.Add("KilledPlayers", KilledPlayers);
-          _bin.Add("KilledZombies", KilledZombies);
-          _bin.Add("Deaths", Deaths);
-          if (isOption("full")) { _bin.Add("CurrentLife", CurrentLife); }
-          if (isOption("full")) { _bin.Add("LongestLife", LongestLife); }
-          if (isOption("full")) { _bin.Add("ItemsCrafted", ItemsCrafted); }
-          if (isOption("full")) { _bin.Add("IsDead", IsDead); }
-          if (isOption("full")) { _bin.Add("OnGround", OnGround); }
-          if (isOption("full")) { _bin.Add("IsStuck", IsStuck); }
-          if (isOption("full")) { _bin.Add("IsSafeZoneActive", IsSafeZoneActive); }
-          if (isOption("full")) { _bin.Add("Remote", Remote); }
-          if (isOption("full")) { _bin.Add("LastZombieAttacked", LastZombieAttacked); }
-          if (isOption("full")) { _bin.Add("RentedVendor", RentedVendor); }
-          if (isOption("full")) { _bin.Add("RentedVendorExpire", RentedVendorExpire); }
-        }
-      }
-    }
-
-    private void GetClientInfo(PlayerInfo _pInfo)
-    {
-      if (isOption("filter"))
-      {
-        //STEAMID
-        if ((useInt && intFilter.Contains((int)Filters.SteamId)) || (!useInt && strFilter.Contains(StrFilters.SteamId)))
-        {
-          SteamId = _pInfo._steamId;
-          _bin.Add("SteamId", SteamId);
-        }
-
-        //NAME
-        if ((useInt && intFilter.Contains((int)Filters.Name)) || (!useInt && strFilter.Contains(StrFilters.Name)))
-        {
-          Name = (_pInfo.CI != null ? _pInfo.CI.playerName : _pInfo.PCP != null ? _pInfo.PCP.Name : string.Empty);
-          _bin.Add("Name", Name);
-        }
-
-        //ENTITYID
-        if ((useInt && intFilter.Contains((int)Filters.EntityId)) || (!useInt && strFilter.Contains(StrFilters.EntityId)))
-        {
-          if (_pInfo.EP != null)
-          {
-            EntityId = _pInfo.EP.entityId;
-          }
-          else if (_pInfo.PDF != null)
-          {
-            EntityId = _pInfo.PDF.id;
-          }
-          _bin.Add("EntityId", EntityId);
-        }
-
-        //IP
-        if ((useInt && intFilter.Contains((int)Filters.IP)) || (!useInt && strFilter.Contains(StrFilters.IP)))
-        {
-          IP = (_pInfo.CI != null ? _pInfo.CI.ip.ToString() : _pInfo.PCP != null ? _pInfo.PCP.IP.ToString() : string.Empty);
-          _bin.Add("IP", IP);
-        }
-
-        //PING
-        if ((useInt && intFilter.Contains((int)Filters.Ping)) || (!useInt && strFilter.Contains(StrFilters.Ping)))
-        {
-          Ping = (_pInfo.CI != null ? _pInfo.CI.ping.ToString() : "Offline");
-          _bin.Add("Ping", Ping);
-        }
-
-        //TOTALPLAYTIME
-        if ((useInt && intFilter.Contains((int)Filters.TotalPlayTime)) || (!useInt && strFilter.Contains(StrFilters.TotalPlayTime)))
-        {
-          long totalPlayTime = (_pInfo.PCP != null ? _pInfo.PCP.TotalPlayTime : 0);
-          TotalPlayTime = Math.Round(totalPlayTime / 60f, 2);
-          _bin.Add("TotalPlayTime", TotalPlayTime);
-        }
-
-        if (_pInfo.EP == null)
-        {
-          //LASTONLINE
-          if ((useInt && intFilter.Contains((int)Filters.LastOnline)) || (!useInt && strFilter.Contains(StrFilters.LastOnline)))
-          {
-            LastOnline = (_pInfo.PCP != null ? _pInfo.PCP.LastOnline.ToString("yyyy-MM-dd HH:mm") : "");
-            _bin.Add("LastOnline", LastOnline);
-          }
-        }
-        else if (_pInfo.EP != null)
-        {
-          //SESSIONPLAYTIME
-          if ((useInt && intFilter.Contains((int)Filters.SessionPlayTime)) || (!useInt && strFilter.Contains(StrFilters.SessionPlayTime)))
-          {
-            SessionPlayTime = Math.Round((Time.timeSinceLevelLoad - _pInfo.EP.CreationTimeSinceLevelLoad) / 60, 2);
-            _bin.Add("SessionPlayTime", SessionPlayTime);
-          }
-        }
-
-        //UNDERGROUND
-        if ((useInt && intFilter.Contains((int)Filters.Underground)) || (!useInt && strFilter.Contains(StrFilters.Underground)))
-        {
-          Underground = (int)(_pInfo.EP != null ? _pInfo.EP.position.y - (int)Math.Floor(_pInfo.EP.serverPos.y / 32f) : 0);
-          _bin.Add("Underground", Underground);
-        }
-
-        //POSITION
-        if ((useInt && intFilter.Contains((int)Filters.Position)) || (!useInt && strFilter.Contains(StrFilters.Position)))
-        {
-          var p = (_pInfo.EP != null ? _pInfo.EP.position : (_pInfo.PDF != null ? _pInfo.PDF.ecd.pos : Vector3.zero));
-          Position = new BCMVector3i(p);
-          _bin.Add("Position", GetVectorObj(Position));
-        }
-
-        //ROTATION
-        if ((useInt && intFilter.Contains((int)Filters.Rotation)) || (!useInt && strFilter.Contains(StrFilters.Rotation)))
-        {
-          var r = (_pInfo.EP != null ? _pInfo.EP.rotation : (_pInfo.PDF != null ? _pInfo.PDF.ecd.rot : Vector3.zero));
-          Rotation = new BCMVector3i(r);
-          _bin.Add("Rotation", GetVectorObj(Rotation));
-        }
-      }
-      else
-      {
-        if (isOption("full") || !isOption("bag bg belt bt equipment eq buffs bu skillpoints pt skills sk crafting cq favrecipes fr unlockedrecipes ur quests qu spawns sp waypoints wp"))
-        {
-          SteamId = _pInfo._steamId;
-          Name = (_pInfo.CI != null ? _pInfo.CI.playerName : _pInfo.PCP != null ? _pInfo.PCP.Name : string.Empty);
-          if (_pInfo.EP != null)
-          {
-            EntityId = _pInfo.EP.entityId;
-          }
-          else if (_pInfo.PDF != null)
-          {
-            EntityId = _pInfo.PDF.id;
-          }
-          IP = (_pInfo.CI != null ? _pInfo.CI.ip.ToString() : _pInfo.PCP != null ? _pInfo.PCP.IP.ToString() : string.Empty);
-          //todo: add last ping to persistent data?
-          Ping = (_pInfo.CI != null ? _pInfo.CI.ping.ToString() : "Offline");
-
-          long totalPlayTime = (_pInfo.PCP != null ? _pInfo.PCP.TotalPlayTime : 0);
-          TotalPlayTime = Math.Round(totalPlayTime / 60f, 2);
-          if (_pInfo.EP == null)
-          {
-            LastOnline = (_pInfo.PCP != null ? _pInfo.PCP.LastOnline.ToString("yyyy-MM-dd HH:mm") : "");
-          }
-          else if (_pInfo.EP != null)
-          {
-            SessionPlayTime = Math.Round((Time.timeSinceLevelLoad - _pInfo.EP.CreationTimeSinceLevelLoad) / 60, 2);
-          }
-          Underground = (int)(_pInfo.EP != null ? _pInfo.EP.position.y - (int)Math.Floor(_pInfo.EP.serverPos.y / 32f) : 0);
-
-          var p = (_pInfo.EP != null ? _pInfo.EP.position : (_pInfo.PDF != null ? _pInfo.PDF.ecd.pos : Vector3.zero));
-          var r = (_pInfo.EP != null ? _pInfo.EP.rotation : (_pInfo.PDF != null ? _pInfo.PDF.ecd.rot : Vector3.zero));
-          Position = new BCMVector3i(p);
-          Rotation = new BCMVector3i(r);
-
-          _bin.Add("SteamId", SteamId);
-          _bin.Add("Name", Name);
-          _bin.Add("EntityId", EntityId);
-          if (isOption("full"))
-          { 
-            _bin.Add("IP", IP);
-            _bin.Add("Ping", Ping);
-            _bin.Add("TotalPlayTime", TotalPlayTime);
-            _bin.Add("LastOnline", LastOnline);
-            _bin.Add("SessionPlayTime", SessionPlayTime);
-          }
-          _bin.Add("Underground", Underground);
-          _bin.Add("Position", GetVectorObj(Position));
-          if (isOption("full"))
-          {
-            _bin.Add("Rotation", GetVectorObj(Rotation));
-          }
-        }
-      }
+      Bin.Add("Bag", Bag);
     }
 
     private object GetVectorObj(BCMVector3i p)
     {
-      if (options.ContainsKey("strpos"))
+      if (Options.ContainsKey("strpos"))
       {
-        return p.x.ToString() + " " + p.y.ToString() + " " + p.z.ToString();
+        return p.x + " " + p.y + " " + p.z;
       }
-      else if (options.ContainsKey("worldpos"))
+      if (Options.ContainsKey("worldpos"))
       {
         return GameUtils.WorldPosToStr(new Vector3(p.x, p.y, p.z), " ");
       }
-      else if (options.ContainsKey("csvpos"))
+      if (Options.ContainsKey("csvpos"))
       {
-        return new int[3] { p.x, p.y, p.z };
+        return new[] { p.x, p.y, p.z };
       }
-      else
-      {
-        //vectors
-        return p;
-      }
+      return p;//vectors
     }
 
-    public bool isOption(string key, bool isOr = true)
+    [Obsolete]
+    private string PosType
     {
-      var _o = !isOr;
-      var keys = key.Split(' ');
-      if (keys.Length > 1)
+      get
       {
-        foreach (var k in keys)
+        var postype = "strpos";
+        if (Options.ContainsKey("worldpos"))
         {
-          if (isOr)
-          {
-            _o |= options.ContainsKey(k);
-          }
-          else
-          {
-            _o &= options.ContainsKey(k);
-          }
+          postype = "worldpos";
         }
-        return _o;
-      }
-      else
-      {
-        return options.ContainsKey(key);
+        if (Options.ContainsKey("csvpos"))
+        {
+          postype = "csvpos";
+        }
+        if (Options.ContainsKey("vectors"))
+        {
+          postype = "vectors";
+        }
+
+        return postype;
       }
     }
-
-    public string OptionValue(string key)
-    {
-      if (options.ContainsKey(key))
-      {
-        return options[key];
-      }
-      return "";
-    }
-
-    public string GetPosType()
-    {
-      var postype = "strpos";
-      if (options.ContainsKey("worldpos"))
-      {
-        postype = "worldpos";
-      }
-      if (options.ContainsKey("csvpos"))
-      {
-        postype = "csvpos";
-      }
-      if (options.ContainsKey("vectors"))
-      {
-        postype = "vectors";
-      }
-
-      return postype;
-    }
-
   }
 }
