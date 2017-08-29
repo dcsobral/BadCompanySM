@@ -47,7 +47,6 @@ namespace BCM.Models
       { 14,  StrFilters.IsSleeping }
     };
     public static Dictionary<int, string> FilterMap => _filterMap;
-
     #endregion
 
     #region Properties
