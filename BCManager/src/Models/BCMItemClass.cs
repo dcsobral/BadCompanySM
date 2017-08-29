@@ -18,11 +18,8 @@ namespace BCM.Models
       { 0,  StrFilters.Id },
       { 1,  StrFilters.Name }
     };
-    public static Dictionary<int, string> FilterMap
-    {
-      get => _filterMap;
-      set => _filterMap = value;
-    }
+    public static Dictionary<int, string> FilterMap => _filterMap;
+
     #endregion
 
     #region Properties
@@ -61,8 +58,8 @@ namespace BCM.Models
       {
         GetId(itemClass);
         GetName(itemClass);
-      }
 
+      }
     }
 
     private void GetName(ItemClass itemClass) => Bin.Add("Name", Name = itemClass.Name);

@@ -19,11 +19,8 @@ namespace BCM.Models
       { 0,  StrFilters.Name },
       { 1,  StrFilters.Spawns }
     };
-    public static Dictionary<int, string> FilterMap
-    {
-      get => _filterMap;
-      set => _filterMap = value;
-    }
+    public static Dictionary<int, string> FilterMap => _filterMap;
+
     #endregion
 
     #region Properties

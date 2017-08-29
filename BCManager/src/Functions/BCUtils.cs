@@ -5,6 +5,20 @@ namespace BCM
 {
   public static class BCUtils
   {
+    public static string UIntToHex(uint c)
+    {
+      return ColorToHex(UIntToColor(c));
+    }
+
+    public static UnityEngine.Color UIntToColor(uint c)
+    {
+      var a = (byte)(c >> 24);
+      var r = (byte)(c >> 16);
+      var g = (byte)(c >> 8);
+      var b = (byte)c;
+      return new UnityEngine.Color32(r, g, b, 255);
+    }
+
     public static string ColorToHex(UnityEngine.Color color)
     {
       return $"{(int) (color.r * 255):X02}{(int) (color.g * 255):X02}{(int) (color.b * 255):X02}";

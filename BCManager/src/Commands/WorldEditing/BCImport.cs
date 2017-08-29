@@ -24,22 +24,22 @@ namespace BCM.Commands
       x = loc.x - prefab.size.x / 2;
       y = loc.y;
       z = loc.z - prefab.size.z / 2;
-      if (Options.ContainsKey("cornersw") || Options.ContainsKey("ne"))
+      if (Options.ContainsKey("csw") || Options.ContainsKey("ne"))
       {
         x = loc.x;
         z = loc.z;
       }
-      else if (Options.ContainsKey("cornerse") || Options.ContainsKey("nw"))
+      else if (Options.ContainsKey("cse") || Options.ContainsKey("nw"))
       {
         x = loc.x - prefab.size.x;
         z = loc.z;
       }
-      else if (Options.ContainsKey("cornernw") || Options.ContainsKey("se"))
+      else if (Options.ContainsKey("cnw") || Options.ContainsKey("se"))
       {
         x = loc.x;
         z = loc.z - prefab.size.z;
       }
-      else if (Options.ContainsKey("cornerne") || Options.ContainsKey("sw"))
+      else if (Options.ContainsKey("cne") || Options.ContainsKey("sw"))
       {
         x = loc.x - prefab.size.x;
         z = loc.z - prefab.size.z;

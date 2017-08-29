@@ -140,8 +140,8 @@ namespace BCM.Models
     public double TotalPlayTime;
     public string LastOnline;
     public int Underground;
-    public BCMVector3i Position;
-    public BCMVector3i Rotation;
+    public BCMVector3 Position;
+    public BCMVector3 Rotation;
 
     //STATS
     public int Health;
@@ -282,39 +282,40 @@ namespace BCM.Models
     public List<BCMQuest> Quests;
 
     //SPAWNPOINTS+WAYPOINTS+MARKER
-    public class BCMVector3i
+    public class BCMVector3
     {
       public int x;
       public int y;
       public int z;
-      public BCMVector3i()
+      public BCMVector3()
       {
         x = 0;
         y = 0;
         z = 0;
       }
-      public BCMVector3i(Vector3 v)
+      public BCMVector3(Vector3 v)
       {
         x = Mathf.RoundToInt(v.x);
         y = Mathf.RoundToInt(v.y);
         z = Mathf.RoundToInt(v.z);
       }
-      public BCMVector3i(Vector3i v)
+      public BCMVector3(Vector3i v)
       {
         x = v.x;
         y = v.y;
         z = v.z;
       }
     }
+
     public class BCMWaypoint
     {
       public string Name;
       public string Icon;
-      public BCMVector3i Pos;
+      public BCMVector3 Pos;
     }
-    public List<BCMVector3i> Spawnpoints;
+    public List<BCMVector3> Spawnpoints;
     public List<BCMWaypoint> Waypoints;
-    public BCMVector3i Marker;
+    public BCMVector3 Marker;
     #endregion;
 
     public BCMPlayer(object obj, Dictionary<string, string> options, List<string> filters) : base(obj, "Entity", options, filters)
@@ -563,12 +564,12 @@ namespace BCM.Models
 
     private void GetRotation(PlayerInfo pInfo)
     {
-      Bin.Add("Rotation", GetVectorObj(Rotation = new BCMVector3i(pInfo.EP != null ? pInfo.EP.rotation : (pInfo.PDF != null ? pInfo.PDF.ecd.rot : Vector3.zero))));
+      Bin.Add("Rotation", GetVectorObj(Rotation = new BCMVector3(pInfo.EP != null ? pInfo.EP.rotation : (pInfo.PDF != null ? pInfo.PDF.ecd.rot : Vector3.zero))));
     }
 
     private void GetPosition(PlayerInfo pInfo)
     {
-      Bin.Add("Position", GetVectorObj(Position = new BCMVector3i(pInfo.EP != null ? pInfo.EP.position : (pInfo.PDF != null ? pInfo.PDF.ecd.pos : Vector3.zero))));
+      Bin.Add("Position", GetVectorObj(Position = new BCMVector3(pInfo.EP != null ? pInfo.EP.position : (pInfo.PDF != null ? pInfo.PDF.ecd.pos : Vector3.zero))));
     }
 
     private void GetUnderground(PlayerInfo pInfo)
@@ -726,7 +727,7 @@ namespace BCM.Models
           : pInfo.EP.Stats.Wellness.Value)
         : pInfo.PDF.ecd.stats.Wellness.Value));
 
-    private void GetMarker(PlayerInfo pInfo) => Bin.Add("Marker", Marker = new BCMVector3i(pInfo.PDF.markerPosition));
+    private void GetMarker(PlayerInfo pInfo) => Bin.Add("Marker", Marker = new BCMVector3(pInfo.PDF.markerPosition));
 
     private void GetWaypoints(PlayerInfo pInfo)
     {
@@ -737,7 +738,7 @@ namespace BCM.Models
         Waypoints.Add(new BCMWaypoint
         {
           Name = waypoint.name,
-          Pos = new BCMVector3i(waypoint.pos),
+          Pos = new BCMVector3(waypoint.pos),
           Icon = waypoint.icon
         });
       }
@@ -746,11 +747,11 @@ namespace BCM.Models
 
     private void GetSpawnpoints(PlayerInfo pInfo)
     {
-      Spawnpoints = new List<BCMVector3i>();
+      Spawnpoints = new List<BCMVector3>();
 
       foreach (var spawn in pInfo.PDF.spawnPoints)
       {
-        Spawnpoints.Add(new BCMVector3i(spawn));
+        Spawnpoints.Add(new BCMVector3(spawn));
       }
       Bin.Add("Spawnpoints", Spawnpoints);
     }
@@ -1121,7 +1122,7 @@ namespace BCM.Models
       Bin.Add("Bag", Bag);
     }
 
-    private object GetVectorObj(BCMVector3i p)
+    private object GetVectorObj(BCMVector3 p)
     {
       if (Options.ContainsKey("strpos"))
       {

@@ -71,7 +71,7 @@ namespace BCM.Commands
           else
           {
             var p1 = param.Substring(1).Split('=');
-            Options.Add(p1[0], p1[1]);
+            Options.Add(p1[0] == "f" ? "filter" : p1[0], p1[1]);
           }
         }
       }
