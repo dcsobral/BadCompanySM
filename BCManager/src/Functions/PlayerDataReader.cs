@@ -45,6 +45,7 @@ namespace BCM
     public List<string> unlockedRecipeList = new List<string>();
     public WaypointCollection waypoints = new WaypointCollection();
     public int zombieKills;
+    public ulong gameStageLifetimeTicks;
 
     public bool IsModdedSave;
     public List<Skill> skills;
@@ -251,6 +252,16 @@ namespace BCM
         distanceWalked = _br.ReadSingle();
         longestLife = _br.ReadSingle();
       }
+
+      if (_version > 35u)
+      {
+        gameStageLifetimeTicks = _br.ReadUInt64();
+      }
+      else
+      {
+        gameStageLifetimeTicks = 0uL;
+      }
+
       if (_version > 19u)
       {
         waypoints = new WaypointCollection();

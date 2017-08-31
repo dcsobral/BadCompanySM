@@ -39,32 +39,8 @@
   <Command name="BCVersions" commands="bc-version" defaultpermissionlevel="0" defaultoptions="pp"/>
 
   <!-- Aliases -->
-  <Command name="BCArchetypes" commands="bc-arch,bc-archetypes" defaultpermissionlevel="0" defaultoptions="pp"/>
-  <Command name="BCBlocks" commands="bc-blocks" defaultpermissionlevel="0" defaultoptions="pp"/>
-  <Command name="BCItems" commands="bc-items" defaultpermissionlevel="0" defaultoptions="pp"/>
-
-  <!--<Command name="BCBiomes" commands="bc-biomes" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCBiomeSpawning" commands="bc-biomespawns" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCBuffs" commands="bc-buffs" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCEntityClasses" commands="bc-lec,bc-entityclasses" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCEntityGroups" commands="bc-leg,bc-entitygroups" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCItemClass" commands="bc-ic,bc-itemclasses" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCLoot" commands="bc-loot" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCMaterials" commands="bc-mats,bc-materials" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCPrefabs" commands="bc-prefabs" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCQuests" commands="bc-quests" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCRecipes" commands="bc-recipes" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCSkills" commands="bc-skills" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCSpawners" commands="bc-spawners" defaultpermissionlevel="0" defaultoptions="csv"/>
-  <Command name="BCRWG" commands="bc-rwg" defaultpermissionlevel="0" defaultoptions="csv"/>-->
-  
-  <!--<Command name="BCGamestages" commands="bc-gamestages" defaultpermissionlevel="0"/>-->
-  <!--<Command name="BCNPCs" commands="bc-npcs" defaultpermissionlevel="0"/>-->
-  <!--<Command name="BCTraders" commands="bc-traders" defaultpermissionlevel="0"/>-->
-  <!--<Command name="BCUtilityAI" commands="bc-uai" defaultpermissionlevel="0"/>-->
-  <!--<Command name="BCSounds" commands="bc-sounds" defaultpermissionlevel="0"/>-->
-  <!--<Command name="BCVehicles" commands="bc-vehicles" defaultpermissionlevel="0"/>-->
-  <!--<Command name="BCWeather" commands="bc-weather" defaultpermissionlevel="0"/>-->
+  <!--<Command name="BCBlocks" commands="bc-blocks" defaultpermissionlevel="0" defaultoptions="pp"/>-->
+  <!--<Command name="BCItems" commands="bc-items" defaultpermissionlevel="0" defaultoptions="pp"/>-->
 
   <!-- Admin Players & Entities -->
   <Command name="BCGiveBuffToEntity" commands="bc-geb,bc-gebuff" defaultpermissionlevel="0" defaultoptions=""/>

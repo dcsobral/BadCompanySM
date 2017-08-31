@@ -358,7 +358,7 @@ namespace BCM.Commands
     //  chunkCluster.SetBlock(parentPos, BlockValue.Air, false, false);
     //}
 
-    private static void SetBlocks(int clrIdx, Vector3i p0, Vector3i size, BlockValue bvNew, bool isStar)
+    private static void SetBlocks(int clrIdx, Vector3i p0, Vector3i size, BlockValue bvNew, bool searchAll)
     {
       var world = GameManager.Instance.World;
       var chunkCluster = world.ChunkClusters[clrIdx];
@@ -396,17 +396,15 @@ namespace BCM.Commands
             var p5 = new Vector3i(p0.x + i, p0.y + j, p0.z + k);
             var bvCurrent = world.GetBlock(p5);
 
-            if (Options.ContainsKey("delmulti") && isStar && bvNew.type != bvCurrent.type) continue;
+            if (Options.ContainsKey("delmulti") && (!searchAll || bvNew.type != bvCurrent.type)) continue;
 
+            //REMOVE PARENT OF MULTIDIM
             if (bvCurrent.Block.isMultiBlock && bvCurrent.ischild)
             {
-              //RemoveParentBlock(chunkCluster, p5, bvCurr);
               var parentPos = bvCurrent.Block.multiBlockPos.GetParentPos(p5, bvCurrent);
-              var bv = chunkCluster.GetBlock(parentPos);
+              var parent = chunkCluster.GetBlock(parentPos);
+              if (parent.ischild || parent.type != bvCurrent.type) continue;
 
-              if (bv.ischild || bv.type != bvCurrent.type) continue;
-
-              //REMOVE PARENT OF MULTIDIM
               chunkCluster.SetBlock(parentPos, BlockValue.Air, false, false);
             }
             if (Options.ContainsKey("delmulti")) continue;

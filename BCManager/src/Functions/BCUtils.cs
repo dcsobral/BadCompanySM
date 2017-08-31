@@ -51,6 +51,7 @@ namespace BCM
 
           var type = Type.GetType(name.Replace(e.Value.GetType().ToString(), options["istype"]));
           if (type == null) continue;
+
           if (!type.IsInstanceOfType(e.Value)) continue;
 
           filteredEntities.Add(e.Key, e.Value);
