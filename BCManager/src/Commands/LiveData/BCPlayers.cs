@@ -68,7 +68,6 @@ namespace BCM.Commands
         var data = new List<object>();
         foreach (var player in PlayerStore.GetAll(Options).Select(s => new BCMPlayer(PlayerData.PlayerInfo(s), Options, GetFilters(BCMGameObject.GOTypes.Players))))
         {
-          //var player = new BCMPlayer(PlayerData.PlayerInfo(steamId), Options);
           if (Options.ContainsKey("min"))
           {
             data.Add(player.Data().Select(d => d.Value).ToList());

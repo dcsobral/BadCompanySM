@@ -25,14 +25,18 @@ namespace BCM
         PCP = PersistentContainer.Instance.Players[steamId, false],
         CI = ConnectionManager.Instance.GetClientInfoForPlayerId(steamId),
         PPD = GameManager.Instance.persistentPlayers.GetPlayerData(steamId),
-        PDF = new PlayerDataReader(steamId),
+        PDF = null,
         EP = null
       };
-
 
       if (playerInfo.CI != null && world.Entities.dict.ContainsKey(playerInfo.CI.entityId))
       {
         playerInfo.EP = world.Entities.dict[playerInfo.CI.entityId] as EntityPlayer;
+      }
+
+      if (playerInfo.EP == null)
+      {
+        playerInfo.PDF = new PlayerDataReader(steamId);
       }
 
       return playerInfo;

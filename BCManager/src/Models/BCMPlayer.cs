@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace BCM.Models
@@ -175,8 +176,8 @@ namespace BCM.Models
     public double LongestLife;
 
     public string Archetype;
-    public string DroppedPack; //vector3i
-    public string RentedVendor; //vector3i
+    public BCMVector3 DroppedPack;
+    public BCMVector3 RentedVendor;
     public ulong RentedVendorExpire;
     public bool? Remote;
 
@@ -327,6 +328,9 @@ namespace BCM.Models
       if (obj == null) return;
 
       var pInfo = (PlayerInfo)obj;
+
+      //all players must have PDF or EP to be valid
+      if (pInfo.PDF == null && (pInfo.EP == null || pInfo.PCP == null)) return;
 
       if (IsOption("filter"))
       {
@@ -559,77 +563,42 @@ namespace BCM.Models
         GetSpawnpoints(pInfo);
         GetWaypoints(pInfo);
         GetMarker(pInfo);
+
+        //todo: add PPD.LCBlocks
+        //todo: add PPD.ACL
       }
     }
 
-    private void GetRotation(PlayerInfo pInfo)
-    {
-      Bin.Add("Rotation", GetVectorObj(Rotation = new BCMVector3(pInfo.EP != null ? pInfo.EP.rotation : (pInfo.PDF != null ? pInfo.PDF.ecd.rot : Vector3.zero))));
-    }
+    private void GetRotation(PlayerInfo pInfo) => Bin.Add("Rotation", GetVectorObj(Rotation = new BCMVector3(pInfo.EP != null ? pInfo.EP.rotation : pInfo.PDF.ecd.rot)));
 
-    private void GetPosition(PlayerInfo pInfo)
-    {
-      Bin.Add("Position", GetVectorObj(Position = new BCMVector3(pInfo.EP != null ? pInfo.EP.position : (pInfo.PDF != null ? pInfo.PDF.ecd.pos : Vector3.zero))));
-    }
+    private void GetPosition(PlayerInfo pInfo) => Bin.Add("Position", GetVectorObj(Position = new BCMVector3(pInfo.EP != null ? pInfo.EP.position : pInfo.PDF.ecd.pos)));
 
-    private void GetUnderground(PlayerInfo pInfo)
-    {
-      Bin.Add("Underground", Underground = pInfo.EP != null ? (int)pInfo.EP.position.y - GameManager.Instance.World.GetHeight((int)pInfo.EP.position.x, (int)pInfo.EP.position.z) - 1 : 0);
-    }
+    private void GetUnderground(PlayerInfo pInfo) => Bin.Add("Underground", Underground = pInfo.EP != null ? (int)pInfo.EP.position.y - GameManager.Instance.World.GetHeight((int)pInfo.EP.position.x, (int)pInfo.EP.position.z) - 1 : 0);
 
-    private void GetLastOnline(PlayerInfo pInfo)
-    {
-      Bin.Add("LastOnline", pInfo.EP == null ? LastOnline = pInfo.PCP != null ? pInfo.PCP.LastOnline.ToString("yyyy-MM-ddTHH:mm:ssZ") : "" : null);
-    }
+    private void GetLastOnline(PlayerInfo pInfo) => Bin.Add("LastOnline", pInfo.EP == null ? LastOnline = pInfo.PCP != null ? pInfo.PCP.LastOnline.ToString("yyyy-MM-ddTHH:mm:ssZ") : "" : null);
 
-    private void GetSessionPlaytime(PlayerInfo pInfo)
-    {
-      Bin.Add("SessionPlayTime", pInfo.EP != null ? SessionPlayTime = Math.Round((Time.timeSinceLevelLoad - pInfo.EP.CreationTimeSinceLevelLoad) / 60, 2) : 0);
-    }
+    private void GetSessionPlaytime(PlayerInfo pInfo) => Bin.Add("SessionPlayTime", pInfo.EP != null ? SessionPlayTime = Math.Round((Time.timeSinceLevelLoad - pInfo.EP.CreationTimeSinceLevelLoad) / 60, 2) : 0);
 
-    private void GetTotalPlaytime(PlayerInfo pInfo)
-    {
-      Bin.Add("TotalPlayTime", TotalPlayTime = Math.Round((pInfo.PCP != null ? pInfo.PCP.TotalPlayTime : 0) / 60f, 2));
-    }
+    private void GetTotalPlaytime(PlayerInfo pInfo) => Bin.Add("TotalPlayTime", TotalPlayTime = Math.Round((pInfo.PCP != null ? pInfo.PCP.TotalPlayTime : 0) / 60f, 2));
 
-    private void GetPing(PlayerInfo pInfo)
-    {
-      Bin.Add("Ping", Ping = pInfo.CI != null ? pInfo.CI.ping.ToString() : "Offline");
-    }
+    private void GetPing(PlayerInfo pInfo) => Bin.Add("Ping", Ping = pInfo.CI != null ? pInfo.CI.ping.ToString() : "Offline");
 
-    private void GetIp(PlayerInfo pInfo)
-    {
-      Bin.Add("IP", Ip = pInfo.CI != null ? pInfo.CI.ip : pInfo.PCP != null ? pInfo.PCP.IP : string.Empty);
-    }
+    private void GetIp(PlayerInfo pInfo) => Bin.Add("IP", Ip = pInfo.CI != null ? pInfo.CI.ip : pInfo.PCP != null ? pInfo.PCP.Ip : string.Empty);
 
-    private void GetEntityId(PlayerInfo pInfo)
-    {
-      Bin.Add("EntityId", EntityId = pInfo.EP != null ? pInfo.EP.entityId : pInfo.PDF != null ? pInfo.PDF.id : -1);
-    }
+    private void GetEntityId(PlayerInfo pInfo) => Bin.Add("EntityId", EntityId = pInfo.EP != null ? pInfo.EP.entityId : pInfo.PDF.id);
 
-    private void GetName(PlayerInfo pInfo)
-    {
-      Bin.Add("Name", Name = pInfo.CI != null ? pInfo.CI.playerName : pInfo.PCP != null ? pInfo.PCP.Name : string.Empty);
-    }
+    private void GetName(PlayerInfo pInfo) => Bin.Add("Name", Name = pInfo.CI != null ? pInfo.CI.playerName : pInfo.PCP != null ? pInfo.PCP.Name : string.Empty);
 
-    private void GetSteamId(PlayerInfo pInfo)
-    {
-      Bin.Add("SteamId", SteamId = pInfo.SteamId);
-    }
+    private void GetSteamId(PlayerInfo pInfo) => Bin.Add("SteamId", SteamId = pInfo.SteamId);
 
-    private void GetRentedVendorExpire(PlayerInfo pInfo) => Bin.Add("RentedVendorExpire",
-      RentedVendorExpire = pInfo.EP != null ? pInfo.EP.RentalEndTime : pInfo.PDF.rentalEndTime);
+    //todo:EP not updating
+    private void GetRentedVendorExpire(PlayerInfo pInfo) => Bin.Add("RentedVendorExpire", RentedVendorExpire = pInfo.EP != null ? pInfo.EP.RentalEndTime : pInfo.PDF.rentalEndTime);
 
-    //todo:BCMVector3i
-    private void GetRentedVendor(PlayerInfo pInfo) => Bin.Add("RentedVendor",
-        RentedVendor = pInfo.EP != null
-          ? Convert.PosToStr(pInfo.EP.RentedVMPosition, PosType)
-          : Convert.PosToStr(pInfo.PDF.rentedVMPosition, PosType));
+    //todo:EP not updating
+    private void GetRentedVendor(PlayerInfo pInfo) => Bin.Add("RentedVendor", GetVectorObj(RentedVendor = new BCMVector3(pInfo.EP != null ? pInfo.EP.RentedVMPosition : pInfo.PDF.rentedVMPosition)));
 
-    private void GetLastZombieAttacked(PlayerInfo pInfo) => Bin.Add("LastZombieAttacked",
-      pInfo.EP != null
-        ? LastZombieAttacked = Math.Round((GameManager.Instance.World.worldTime - pInfo.EP.LastZombieAttackTime) / 600f, 2)
-        : null);
+    private void GetLastZombieAttacked(PlayerInfo pInfo) => Bin.Add("LastZombieAttacked", pInfo.EP != null
+        ? LastZombieAttacked = Math.Round((GameManager.Instance.World.worldTime - pInfo.EP.LastZombieAttackTime) / 600f, 2) : null);
 
     private void GetRemote(PlayerInfo pInfo) => Bin.Add("Remote", pInfo.EP != null ? Remote = pInfo.EP.isEntityRemote : null);
 
@@ -662,261 +631,30 @@ namespace BCM.Models
       Gamestage = pInfo.EP != null ? pInfo.EP.gameStage : (pInfo.PCP != null ? (int?)pInfo.PCP.Gamestage : null));
 
     private void GetExpForNextLevel(PlayerInfo pInfo) => Bin.Add("ExpForNextLevel",
-      ExpForNextLevel = pInfo.EP != null
-        ? pInfo.EP.GetExpForNextLevel()
-        : (int)Math.Min(Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, pInfo.PDF.level + 1),
-          int.MaxValue));
+      ExpForNextLevel = pInfo.EP != null ? pInfo.EP.GetExpForNextLevel()
+        : (int)Math.Min(Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, pInfo.PDF.level + 1), int.MaxValue));
 
     private void GetExpToNextLevel(PlayerInfo pInfo) => Bin.Add("ExpToNextLevel",
       ExpToNextLevel = pInfo.EP != null ? pInfo.EP.ExpToNextLevel : (int)pInfo.PDF.experience);
 
     private void GetLevelProgress(PlayerInfo pInfo) => Bin.Add("LevelProgress",
-      LevelProgress =
-        Math.Round(
-          pInfo.EP != null
-            ? pInfo.EP.GetLevelProgressPercentage() * 100
-            : (1 - pInfo.PDF.experience /
-               Math.Min(Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, pInfo.PDF.level + 1),
-                 int.MaxValue)) * 100, 2));
+      LevelProgress = Math.Round(pInfo.EP != null ? pInfo.EP.GetLevelProgressPercentage() * 100
+        : (1 - pInfo.PDF.experience / Math.Min(Progression.BaseExpToLevel * Mathf.Pow(Progression.ExpMultiplier, pInfo.PDF.level + 1), int.MaxValue)) * 100, 2));
 
     private void GetLevel(PlayerInfo pInfo) => Bin.Add("Level", Level = pInfo.EP != null ? pInfo.EP.GetLevel() : pInfo.PDF.level);
 
+    //todo: check this is updating while online
     private void GetDroppedPack(PlayerInfo pInfo) => Bin.Add("DroppedPack",
-      DroppedPack = pInfo.PDF.droppedBackpackPosition != Vector3i.zero
-        ? Convert.PosToStr(pInfo.PDF.droppedBackpackPosition, PosType)
-        : "None");
+      GetVectorObj(DroppedPack = new BCMVector3(pInfo.EP != null ? pInfo.EP.GetDroppedBackpackPosition()
+        : pInfo.PDF.droppedBackpackPosition)));
 
-    private void GetDistanceWalked(PlayerInfo pInfo) => Bin.Add("DistanceWalked", DistanceWalked = Math.Round(pInfo.PDF.distanceWalked, 1));
+    private void GetDistanceWalked(PlayerInfo pInfo) => Bin.Add("DistanceWalked",
+      DistanceWalked = Math.Round(pInfo.EP != null ? pInfo.EP.distanceWalked
+        : pInfo.PDF.distanceWalked, 1));
 
-    private void GetArchetype(PlayerInfo pInfo) => Bin.Add("Archetype", Archetype = pInfo.PDF.ecd.playerProfile.Archetype);
-
-    private void GetSpeedModifier(PlayerInfo pInfo) => Bin.Add("SpeedModifier",
-      SpeedModifier =
-        Math.Round(
-          pInfo.EP != null
-            ? (pInfo.EP.Stats.SpeedModifier.Value == 1 && pInfo.EP.Stats.SpeedModifier.Value !=
-               pInfo.PDF.ecd.stats.SpeedModifier.Value
-              ? pInfo.PDF.ecd.stats.SpeedModifier.Value
-              : pInfo.EP.Stats.SpeedModifier.Value)
-            : pInfo.PDF.ecd.stats.SpeedModifier.Value, 1));
-
-    private void GetCoreTemp(PlayerInfo pInfo) => Bin.Add("CoreTemp", CoreTemp = (int)pInfo.PDF.ecd.stats.CoreTemp.Value);
-
-    private void GetDrink(PlayerInfo pInfo) => Bin.Add("Drink", Drink = (int)(pInfo.PDF.drink.GetLifeLevelFraction() * 100));
-
-    private void GetFood(PlayerInfo pInfo) => Bin.Add("Food", Food = (int)(pInfo.PDF.food.GetLifeLevelFraction() * 100));
-
-    private void GetStamina(PlayerInfo pInfo) => Bin.Add("Stamina",
-      Stamina = (int)(pInfo.EP != null
-        ? (pInfo.EP.Stamina - 100 < 1f && pInfo.EP.Stamina - pInfo.PDF.ecd.stats.Stamina.Value > 1f
-          ? pInfo.PDF.ecd.stats.Stamina.Value
-          : pInfo.EP.Stamina)
-        : pInfo.PDF.ecd.stats.Stamina.Value));
-
-    private void GetHealth(PlayerInfo pInfo) => Bin.Add("Health",
-      Health = (int)(pInfo.EP != null
-        ? (pInfo.EP.Health == 100 && pInfo.EP.Health != pInfo.PDF.ecd.stats.Health.Value
-          ? pInfo.PDF.ecd.stats.Health.Value
-          : pInfo.EP.Health)
-        : pInfo.PDF.ecd.stats.Health.Value));
-
-    private void GetWellness(PlayerInfo pInfo) => Bin.Add("Wellness",
-      Wellness = (int)(pInfo.EP != null
-        ? (pInfo.EP.Stats.Wellness.Value - 100 < 1f && pInfo.EP.Stats.Wellness.Value - pInfo.PDF.ecd.stats.Wellness.Value > 1
-          ? pInfo.PDF.ecd.stats.Wellness.Value
-          : pInfo.EP.Stats.Wellness.Value)
-        : pInfo.PDF.ecd.stats.Wellness.Value));
-
-    private void GetMarker(PlayerInfo pInfo) => Bin.Add("Marker", Marker = new BCMVector3(pInfo.PDF.markerPosition));
-
-    private void GetWaypoints(PlayerInfo pInfo)
-    {
-      Waypoints = new List<BCMWaypoint>();
-
-      foreach (var waypoint in pInfo.PDF.waypoints.List)
-      {
-        Waypoints.Add(new BCMWaypoint
-        {
-          Name = waypoint.name,
-          Pos = new BCMVector3(waypoint.pos),
-          Icon = waypoint.icon
-        });
-      }
-      Bin.Add("Waypoints", Waypoints);
-    }
-
-    private void GetSpawnpoints(PlayerInfo pInfo)
-    {
-      Spawnpoints = new List<BCMVector3>();
-
-      foreach (var spawn in pInfo.PDF.spawnPoints)
-      {
-        Spawnpoints.Add(new BCMVector3(spawn));
-      }
-      Bin.Add("Spawnpoints", Spawnpoints);
-    }
-
-    private void GetQuests(PlayerInfo pInfo)
-    {
-      Quests = new List<BCMQuest>();
-
-      foreach (var quest in pInfo.PDF.questJournal.Clone().quests)
-      {
-        var q = new BCMQuest();
-        if (QuestClass.s_Quests.ContainsKey(quest.ID))
-        {
-          var qc = QuestClass.s_Quests[quest.ID];
-          q.Name = qc.Name;
-          q.Id = qc.ID;
-          q.CurrentState = quest.CurrentState.ToString();
-
-        }
-        else
-        {
-          q.Name = null;
-        }
-
-        Quests.Add(q);
-      }
-      Bin.Add("Quests", Quests);
-    }
-
-    private void GetUnlockedRecipes(PlayerInfo pInfo)
-    {
-      UnlockedRecipes = new List<string>();
-
-      foreach (var name in pInfo.PDF.unlockedRecipeList)
-      {
-        UnlockedRecipes.Add(name);
-      }
-      Bin.Add("UnlockedRecipes", UnlockedRecipes);
-    }
-
-    private void GetFavouriteRecipes(PlayerInfo pInfo)
-    {
-      FavouriteRecipes = new List<string>();
-
-      foreach (var name in pInfo.PDF.favoriteRecipeList)
-      {
-        FavouriteRecipes.Add(name);
-      }
-      Bin.Add("FavouriteRecipes", FavouriteRecipes);
-    }
-
-    private void GetCraftingQueue(PlayerInfo pInfo)
-    {
-      CraftingQueue = new List<BCMCraftingQueue>();
-
-      foreach (var rqi in pInfo.PDF.craftingData.RecipeQueueItems)
-      {
-        var queueItem = new BCMCraftingQueue();
-
-        if (rqi.Recipe != null)
-        {
-          queueItem.Type = rqi.Recipe.itemValueType;
-          queueItem.Name = rqi.Recipe.GetName();
-          queueItem.Count = rqi.Multiplier;
-          if (rqi.IsCrafting)
-          {
-            queueItem.TotalTime = Math.Round(rqi.Recipe.craftingTime * (rqi.Multiplier - 1) + rqi.CraftingTimeLeft, 1);
-            queueItem.CraftTime = Math.Round(rqi.CraftingTimeLeft, 1);
-          }
-          else
-          {
-            queueItem.TotalTime = Math.Round(rqi.Recipe.craftingTime * rqi.Multiplier, 1);
-            queueItem.CraftTime = Math.Round(rqi.Recipe.craftingTime, 1);
-          }
-
-
-          queueItem.Ingredients = new List<BCMIngredient>();
-
-          foreach (var ingredient in rqi.Recipe.GetIngredientsSummedUp())
-          {
-            var i = new BCMIngredient
-            {
-              Type = ingredient.itemValue.type,
-              Count = ingredient.count
-            };
-
-            queueItem.Ingredients.Add(i);
-          }
-        }
-        CraftingQueue.Add(queueItem);
-      }
-      Bin.Add("CraftingQueue", CraftingQueue);
-    }
-
-    private void GetSkillPoints(PlayerInfo pInfo) => Bin.Add("SkillPoints", SkillPoints = pInfo.PDF.skillPoints);
-
-    private void GetSkills(PlayerInfo pInfo)
-    {
-      Skills = new List<BCMSkill>();
-
-      foreach (var skill in pInfo.EP != null ? pInfo.EP.Skills.GetAllSkills() : pInfo.PDF.skills)
-      {
-        var s = new BCMSkill();
-
-        int l;
-        try
-        {
-          l = skill.Level;
-        }
-        catch
-        {
-          l = 0;
-        }
-        s.Name = skill.Name;
-        s.Level = l;
-        s.Percent = Math.Round(skill.PercentThisLevel * 100, 1);
-
-        Skills.Add(s);
-      }
-      Bin.Add("Skills", Skills);
-    }
-
-    private void GetBuffs(PlayerInfo pInfo)
-    {
-      Buffs = new List<BCMBuff>();
-      var multiBuffs = new Dictionary<string, MultiBuff>();
-      if (pInfo.EP != null)
-      {
-        foreach (var buff in pInfo.EP.Stats.Buffs)
-        {
-          var multiBuff = buff as MultiBuff;
-          if (multiBuff?.MultiBuffClass.Id == null) continue;
-
-          if (!multiBuffs.ContainsKey(multiBuff.MultiBuffClass.Id))
-          {
-            multiBuffs.Add(multiBuff.MultiBuffClass.Id, buff as MultiBuff);
-          }
-        }
-      }
-      foreach (var buff in pInfo.PDF.ecd.stats.Buffs)
-      {
-        var multiBuff = buff as MultiBuff;
-        if (multiBuff?.MultiBuffClass.Id == null) continue;
-
-        if (!multiBuffs.ContainsKey(multiBuff.MultiBuffClass.Id))
-        {
-          multiBuffs.Add(multiBuff.MultiBuffClass.Id, buff as MultiBuff);
-        }
-      }
-
-      foreach (var multiBuff in multiBuffs.Values)
-      {
-        Buffs.Add(new BCMBuff
-        {
-          Id = multiBuff.MultiBuffClass.Id,
-          Name = multiBuff.Name,
-          Expired = multiBuff.Expired,
-          IsOverriden = multiBuff.IsOverriden,
-          InstigatorId = multiBuff.InstigatorId,
-          Duration = multiBuff.MultiBuffClass.FDuration,
-          TimeFraction = multiBuff.Timer.TimeFraction
-        });
-      }
-      Bin.Add("Buffs", Buffs);
-    }
+    private void GetArchetype(PlayerInfo pInfo) => Bin.Add("Archetype",
+      Archetype = pInfo.EP != null ? pInfo.EP.playerProfile.Archetype
+        : pInfo.PDF.ecd.playerProfile.Archetype);
 
     private void GetEquipment(PlayerInfo pInfo)
     {
@@ -933,7 +671,7 @@ namespace BCM.Models
           slot = new BCMItemValue();
           if (item.ItemClass != null)
           {
-            slot.UISlot = item.ItemClass.UmaSlotData.UISlot.ToString();// item.ItemClass.EquipSlot.ToString();          
+            slot.UISlot = item.ItemClass.UmaSlotData.UISlot.ToString();
           }
           slot.Type = item.type;
           slot.Quality = item.Quality;
@@ -990,6 +728,7 @@ namespace BCM.Models
       ItemStack[] inv;
       if (pInfo.EP != null)
       {
+        //only recognises changes once the slot is seleted
         inv = pInfo.EP.inventory.GetSlots();
         SelectedSlot = pInfo.EP.inventory.holdingItemIdx;
       }
@@ -1058,13 +797,272 @@ namespace BCM.Models
       Bin.Add("Belt", Belt);
     }
 
+    private void GetSkills(PlayerInfo pInfo)
+    {
+      Skills = new List<BCMSkill>();
+
+      foreach (var skill in pInfo.EP != null ? pInfo.EP.Skills.GetAllSkills() : pInfo.PDF.skills)
+      {
+        var s = new BCMSkill();
+
+        int l;
+        try
+        {
+          l = skill.Level;
+        }
+        catch
+        {
+          l = 0;
+        }
+        s.Name = skill.Name;
+        s.Level = l;
+        s.Percent = Math.Round(skill.PercentThisLevel * 100, 1);
+
+        Skills.Add(s);
+      }
+      Bin.Add("Skills", Skills);
+    }
+
+    private void GetSpawnpoints(PlayerInfo pInfo)
+    {
+      Spawnpoints = new List<BCMVector3>();
+
+      if (pInfo.EP != null)
+      {
+        foreach (var spawn in pInfo.EP.SpawnPoints.GetCopy())
+        {
+          Spawnpoints.Add(new BCMVector3(spawn));
+        }
+      }
+      else
+      {
+        foreach (var spawn in pInfo.PDF.spawnPoints)
+        {
+          Spawnpoints.Add(new BCMVector3(spawn));
+        }
+
+      }
+
+      Bin.Add("Spawnpoints", Spawnpoints);
+    }
+
+    //get the updated value from PCP, EP stats doesnt always update on joining
+    private void GetStamina(PlayerInfo pInfo) => Bin.Add("Stamina",
+      Stamina = (int)(pInfo.EP != null ? (pInfo.EP.Stamina - 100 < 1f && pInfo.EP.Stamina - pInfo.PCP.DataCache.ecd.stats.Stamina.Value > 1f
+      ? pInfo.PCP.DataCache.ecd.stats.Stamina.Value
+      : pInfo.EP.Stamina)
+      : pInfo.PDF.ecd.stats.Stamina.Value));
+
+    //get the updated value from PCP, EP stats doesnt always update on joining
+    private void GetHealth(PlayerInfo pInfo) => Bin.Add("Health",
+      Health = (int)(pInfo.EP != null
+      ? (pInfo.EP.Health == 100 && pInfo.EP.Health != (int)pInfo.PCP.DataCache.ecd.stats.Health.Value
+      ? pInfo.PCP.DataCache.ecd.stats.Health.Value
+      : pInfo.EP.Health)
+      : pInfo.PDF.ecd.stats.Health.Value));
+
+    //get the updated value from PCP, EP stats doesnt always update on joining
+    private void GetWellness(PlayerInfo pInfo) => Bin.Add("Wellness",
+    Wellness = (int)(pInfo.EP != null
+    ? (pInfo.EP.Stats.Wellness.Value - 100 < 1f && pInfo.EP.Stats.Wellness.Value - pInfo.PCP.DataCache.ecd.stats.Wellness.Value > 1
+    ? pInfo.PCP.DataCache.ecd.stats.Wellness.Value
+    : pInfo.EP.Stats.Wellness.Value)
+    : pInfo.PDF.ecd.stats.Wellness.Value));
+
+    //get the updated value from PCP, EP stats doesnt always update on joining
+    private void GetSpeedModifier(PlayerInfo pInfo) => Bin.Add("SpeedModifier",
+      SpeedModifier = Math.Round(pInfo.EP != null
+        ? (pInfo.EP.Stats.SpeedModifier.Value -1 < 0.01 && pInfo.EP.Stats.SpeedModifier.Value - pInfo.PCP.DataCache.ecd.stats.SpeedModifier.Value > 0.01
+        ? pInfo.PCP.DataCache.ecd.stats.SpeedModifier.Value
+        : pInfo.EP.Stats.SpeedModifier.Value)
+        : pInfo.PDF.ecd.stats.SpeedModifier.Value, 
+        1));
+
+    //get the updated value from PCP, values on server not updating
+    private void GetCoreTemp(PlayerInfo pInfo) => Bin.Add("CoreTemp", CoreTemp = (int)(pInfo.EP != null ? pInfo.PCP.DataCache.ecd.stats.CoreTemp.Value : pInfo.PDF.ecd.stats.CoreTemp.Value));
+
+    //get the updated value from PCP, values on server not updating
+    private void GetDrink(PlayerInfo pInfo) => Bin.Add("Drink", Drink = (int)((pInfo.EP != null ? pInfo.PCP.DataCache.drink.GetLifeLevelFraction() : pInfo.PDF.drink.GetLifeLevelFraction()) * 100));
+
+    //get the updated value from PCP, values on server not updating
+    private void GetFood(PlayerInfo pInfo) => Bin.Add("Food", Food = (int)((pInfo.EP != null ? pInfo.PCP.DataCache.food.GetLifeLevelFraction() : pInfo.PDF.food.GetLifeLevelFraction()) * 100));
+
+    //get the updated value from PCP, values on server not updating
+    private void GetWaypoints(PlayerInfo pInfo)
+    {
+      Waypoints = new List<BCMWaypoint>();
+      //todo: broken for EP
+      foreach (var waypoint in pInfo.EP != null ? pInfo.PCP.DataCache.waypoints.List : pInfo.PDF.waypoints.List)
+      {
+        Waypoints.Add(new BCMWaypoint
+        {
+          Name = waypoint.name,
+          Pos = new BCMVector3(waypoint.pos),
+          Icon = waypoint.icon
+        });
+      }
+      Bin.Add("Waypoints", Waypoints);
+    }
+
+    //use PCP for online players
+    private void GetMarker(PlayerInfo pInfo)
+    {
+      if (pInfo.PDF != null)
+      {
+        Bin.Add("Marker", Marker = new BCMVector3(pInfo.EP != null ? pInfo.PCP.DataCache.markerPosition : pInfo.PDF.markerPosition));
+      }
+    }
+
+    //use PCP for online players
+    private void GetQuests(PlayerInfo pInfo)
+    {
+      Quests = new List<BCMQuest>();
+
+      foreach (var quest in pInfo.EP != null ? pInfo.PCP.DataCache.questJournal.Clone().quests : pInfo.PDF.questJournal.Clone().quests)
+      {
+        var q = new BCMQuest();
+        if (QuestClass.s_Quests.ContainsKey(quest.ID))
+        {
+          var qc = QuestClass.s_Quests[quest.ID];
+          q.Name = qc.Name;
+          q.Id = qc.ID;
+          q.CurrentState = quest.CurrentState.ToString();
+
+        }
+        else
+        {
+          q.Name = null;
+        }
+
+        Quests.Add(q);
+      }
+      Bin.Add("Quests", Quests);
+    }
+
+    //use PCP for online players
+    private void GetUnlockedRecipes(PlayerInfo pInfo)
+    {
+      UnlockedRecipes = new List<string>();
+
+      foreach (var name in pInfo.EP != null ? pInfo.PCP.DataCache.unlockedRecipeList : pInfo.PDF.unlockedRecipeList)
+      {
+        UnlockedRecipes.Add(name);
+      }
+      Bin.Add("UnlockedRecipes", UnlockedRecipes);
+    }
+
+    //use PCP for online players
+    private void GetFavouriteRecipes(PlayerInfo pInfo)
+    {
+      FavouriteRecipes = new List<string>();
+
+      foreach (var name in pInfo.EP != null ? pInfo.PCP.DataCache.favoriteRecipeList : pInfo.PDF.favoriteRecipeList)
+      {
+        FavouriteRecipes.Add(name);
+      }
+      Bin.Add("FavouriteRecipes", FavouriteRecipes);
+    }
+
+    //use PCP for online players
+    private void GetCraftingQueue(PlayerInfo pInfo)
+    {
+      CraftingQueue = new List<BCMCraftingQueue>();
+
+      foreach (var rqi in pInfo.EP != null ? pInfo.PCP.DataCache.craftingData.RecipeQueueItems : pInfo.PDF.craftingData.RecipeQueueItems)
+      {
+        var queueItem = new BCMCraftingQueue();
+
+        if (rqi.Recipe != null)
+        {
+          queueItem.Type = rqi.Recipe.itemValueType;
+          queueItem.Name = rqi.Recipe.GetName();
+          queueItem.Count = rqi.Multiplier;
+          if (rqi.IsCrafting)
+          {
+            queueItem.TotalTime = Math.Round(rqi.Recipe.craftingTime * (rqi.Multiplier - 1) + rqi.CraftingTimeLeft, 1);
+            queueItem.CraftTime = Math.Round(rqi.CraftingTimeLeft, 1);
+          }
+          else
+          {
+            queueItem.TotalTime = Math.Round(rqi.Recipe.craftingTime * rqi.Multiplier, 1);
+            queueItem.CraftTime = Math.Round(rqi.Recipe.craftingTime, 1);
+          }
+
+
+          queueItem.Ingredients = new List<BCMIngredient>();
+
+          foreach (var ingredient in rqi.Recipe.GetIngredientsSummedUp())
+          {
+            var i = new BCMIngredient
+            {
+              Type = ingredient.itemValue.type,
+              Count = ingredient.count
+            };
+
+            queueItem.Ingredients.Add(i);
+          }
+        }
+        CraftingQueue.Add(queueItem);
+      }
+      Bin.Add("CraftingQueue", CraftingQueue);
+    }
+
+    //use PCP for online players
+    private void GetSkillPoints(PlayerInfo pInfo) => Bin.Add("SkillPoints", SkillPoints = pInfo.EP != null ? pInfo.PCP.DataCache.skillPoints : pInfo.PDF.skillPoints);
+
+    //use PCP for online players
+    private void GetBuffs(PlayerInfo pInfo)
+    {
+      Buffs = new List<BCMBuff>();
+      var multiBuffs = new Dictionary<string, MultiBuff>();
+      if (pInfo.EP != null)
+      {
+        foreach (var buff in pInfo.EP.Stats.Buffs)
+        {
+          var multiBuff = buff as MultiBuff;
+          if (multiBuff?.MultiBuffClass.Id == null) continue;
+
+          if (!multiBuffs.ContainsKey(multiBuff.MultiBuffClass.Id))
+          {
+            multiBuffs.Add(multiBuff.MultiBuffClass.Id, buff as MultiBuff);
+          }
+        }
+      }
+      foreach (var buff in pInfo.EP != null ? pInfo.PCP.DataCache.ecd.stats.Buffs : pInfo.PDF.ecd.stats.Buffs)
+      {
+        var multiBuff = buff as MultiBuff;
+        if (multiBuff?.MultiBuffClass.Id == null) continue;
+
+        if (!multiBuffs.ContainsKey(multiBuff.MultiBuffClass.Id))
+        {
+          multiBuffs.Add(multiBuff.MultiBuffClass.Id, buff as MultiBuff);
+        }
+      }
+
+      foreach (var multiBuff in multiBuffs.Values)
+      {
+        Buffs.Add(new BCMBuff
+        {
+          Id = multiBuff.MultiBuffClass.Id,
+          Name = multiBuff.Name,
+          Expired = multiBuff.Expired,
+          IsOverriden = multiBuff.IsOverriden,
+          InstigatorId = multiBuff.InstigatorId,
+          Duration = multiBuff.MultiBuffClass.FDuration,
+          TimeFraction = multiBuff.Timer.TimeFraction
+        });
+      }
+      Bin.Add("Buffs", Buffs);
+    }
+
+    //use PCP for online players
     private void GetBag(PlayerInfo pInfo)
     {
       // Updates are instantly triggered when looting, but not when an item is moved to equipment so there is a delay of up to 30 seconds
       Bag = new Dictionary<string, BCMItemStack>();
 
       var i = 1;
-      foreach (var item in pInfo.PDF.bag)
+      foreach (var item in pInfo.EP != null ? pInfo.PCP.DataCache.bag : pInfo.PDF.bag)
       {
         BCMItemStack slot = null;
         if (item.itemValue.type != 0)
@@ -1137,29 +1135,6 @@ namespace BCM.Models
         return new[] { p.x, p.y, p.z };
       }
       return p;//vectors
-    }
-
-    [Obsolete]
-    private string PosType
-    {
-      get
-      {
-        var postype = "strpos";
-        if (Options.ContainsKey("worldpos"))
-        {
-          postype = "worldpos";
-        }
-        if (Options.ContainsKey("csvpos"))
-        {
-          postype = "csvpos";
-        }
-        if (Options.ContainsKey("vectors"))
-        {
-          postype = "vectors";
-        }
-
-        return postype;
-      }
     }
   }
 }

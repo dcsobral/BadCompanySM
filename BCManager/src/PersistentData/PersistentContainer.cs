@@ -31,12 +31,12 @@ namespace BCM.PersistentData
       try
       {
 
-        Directory.CreateDirectory(GameUtils.GetSaveGameDir() + "/BCM/");
+        Directory.CreateDirectory(GameUtils.GetSaveGameDir() + "/BCMData/");
         var bFormatter = new BinaryFormatter();
 
         if (Players.Count > 0)
         {
-          Stream streamPlayers = File.Open(GameUtils.GetSaveGameDir() + "/BCM/Players.bin", FileMode.Create);
+          Stream streamPlayers = File.Open(GameUtils.GetSaveGameDir() + "/BCMData/Players.bin", FileMode.Create);
           bFormatter.Serialize(streamPlayers, _players);
           streamPlayers.Close();
           Log.Out(Config.ModPrefix + " Players Saved");
@@ -44,7 +44,7 @@ namespace BCM.PersistentData
 
         if (_settings != null)
         {
-          Stream streamSettings = File.Open(GameUtils.GetSaveGameDir() + "/BCM/Settings.bin", FileMode.Create);
+          Stream streamSettings = File.Open(GameUtils.GetSaveGameDir() + "/BCMData/Settings.bin", FileMode.Create);
           bFormatter.Serialize(streamSettings, _settings);
           streamSettings.Close();
           Log.Out(Config.ModPrefix + " Settings Saved");
@@ -60,20 +60,20 @@ namespace BCM.PersistentData
     {
       try
       {
-        Directory.CreateDirectory(GameUtils.GetSaveGameDir() + "/BCM/");
+        Directory.CreateDirectory(GameUtils.GetSaveGameDir() + "/BCMData/");
 
         var obj = new PersistentContainer();
         var bFormatter = new BinaryFormatter();
 
         // todo: add files for players stats, position, buff, inventory histories 
-        Stream streamPlayers = File.Open(GameUtils.GetSaveGameDir() + "/BCM/Players.bin", FileMode.OpenOrCreate);
+        Stream streamPlayers = File.Open(GameUtils.GetSaveGameDir() + "/BCMData/Players.bin", FileMode.OpenOrCreate);
         if (streamPlayers.Length > 0)
         {
           obj._players = (Players)bFormatter.Deserialize(streamPlayers);
         }
         streamPlayers.Close();
 
-        Stream streamSettings = File.Open(GameUtils.GetSaveGameDir() + "/BCM/Settings.bin", FileMode.OpenOrCreate);
+        Stream streamSettings = File.Open(GameUtils.GetSaveGameDir() + "/BCMData/Settings.bin", FileMode.OpenOrCreate);
         if (streamSettings.Length > 0)
         {
           obj._settings = (BCMSettings)bFormatter.Deserialize(streamSettings);

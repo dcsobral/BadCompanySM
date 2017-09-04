@@ -84,12 +84,28 @@ namespace BCM.Commands
         return;
       }
 
-      if (level <= 0)
+      if (Skills.AllSkills.ContainsKey(skillByName.Id))
       {
-        SendOutput("Level must be 0+");
+        var skill = Skills.AllSkills[skillByName.Id];
+        if (level < skill.Level)
+        {
+          SendOutput("Level is below the mininmum level of " + skill.Level + " for " + skillName);
 
-        return;
+          return;
+        }
+        if (level > skill.MaxLevel)
+        {
+          SendOutput("Level is higher than the maximum level of " + skill.MaxLevel + " for " + skillName);
+
+          return;
+        }
       }
+      //if (level < 0)
+      //{
+      //  SendOutput("Level must be 0+");
+
+      //  return;
+      //}
 
       //todo: check constraints
       clientInfo.SendPackage(new NetPackageEntitySetSkillLevelClient(clientInfo.entityId, skillByName.Id, level));

@@ -6,6 +6,7 @@ namespace BCM
 {
   public class PlayerDataReader
   {
+    #region Properties
     public HashSet<string> alreadyCraftedList = new HashSet<string>();
     public ItemStack[] bag = new ItemStack[0];
     public bool bCrouchedLocked;
@@ -50,6 +51,11 @@ namespace BCM
     public bool IsModdedSave;
     public List<Skill> skills;
     //public PlayerStealth stealth;
+    #endregion
+
+    public PlayerDataReader()
+    {
+    }
 
     public PlayerDataReader(string steamid)
     {
@@ -64,14 +70,13 @@ namespace BCM
         if (!Utils.FileExists(file)) return;
 
         var binaryReader = new BinaryReader(new FileStream(file, FileMode.Open));
-        if (binaryReader.ReadChar() != 't') return;
-        if (binaryReader.ReadChar() != 't') return;
-        if (binaryReader.ReadChar() != 'p') return;
-        if (binaryReader.ReadChar() != '\0') return;
+        if (binaryReader.ReadChar() != 't' ||
+          binaryReader.ReadChar() != 't' ||
+          binaryReader.ReadChar() != 'p' ||
+          binaryReader.ReadChar() != '\0')
+          return;
 
-        var version = (uint)binaryReader.ReadByte();
-
-        Read(binaryReader, version);
+        Parse(binaryReader);
         binaryReader.Close();
 
         bLoaded = true;
@@ -80,6 +85,13 @@ namespace BCM
       {
         Log.Error(Config.ModPrefix + " Error loading data file. " + e);
       }
+    }
+
+    public void Parse(BinaryReader binaryReader)
+    {
+      var version = (uint)binaryReader.ReadByte();
+
+      Read(binaryReader, version);
     }
 
     public void Read(BinaryReader _br, uint _version)

@@ -12,7 +12,7 @@ namespace BCM.Models
     {
       public const string Id = "id";
       public const string Name = "name";
-      public const string Localized = "local";
+      public const string Local = "local";
       public const string ExpGainMult = "expgainmult";
       public const string Group = "group";
       public const string ExpToNext = "exptonext";
@@ -39,7 +39,7 @@ namespace BCM.Models
     {
       { 0,  StrFilters.Id },
       { 1,  StrFilters.Name },
-      { 2,  StrFilters.Localized},
+      { 2,  StrFilters.Local},
       { 3,  StrFilters.ExpGainMult},
       { 4,  StrFilters.Group},
       { 5,  StrFilters.ExpToNext},
@@ -67,7 +67,7 @@ namespace BCM.Models
     #region Properties
     public int Id;
     public string Name;
-    public string Localized;
+    public string Local;
     public double ExpGainMult;
     public string Group;
     public int ExpToNext;
@@ -169,7 +169,7 @@ namespace BCM.Models
             case StrFilters.Name:
               GetName(skill);
               break;
-            case StrFilters.Localized:
+            case StrFilters.Local:
               GetLocalized(skill);
               break;
             case StrFilters.ExpGainMult:
@@ -389,7 +389,7 @@ namespace BCM.Models
 
     private void GetLocalized(Skill skill)
     {
-      Bin.Add("Localized", Localized = skill.LocalizedName);
+      Bin.Add("Localized", Local = skill.LocalizedName);
     }
 
     private void GetName(Skill skill) => Bin.Add("Name", Name = skill.Name);

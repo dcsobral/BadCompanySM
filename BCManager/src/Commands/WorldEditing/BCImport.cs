@@ -300,6 +300,7 @@ namespace BCM.Commands
       {
         ProcessSleepers(prefab, world, null, dest);
       }
+      
 
       var chunkSync = world.ChunkCache.GetChunkSync(World.toChunkXZ(dest.x), World.toChunkXZ(dest.z));
 
@@ -316,6 +317,43 @@ namespace BCM.Commands
             chunkSync = world.ChunkCache.GetChunkSync(chunkX, chunkZ);
           }
 
+          //todo:
+          if (chunkSync == null) continue;
+
+          for (var y = 0; y < prefab.size.y; ++y)
+          {
+            var blockY = World.toBlockY(y + dest.y);
+            var chunkBlock = chunkSync.GetBlock(blockX, blockY, blockZ);
+
+            //REMOVE PARENT OF MULTIDIM
+            if (chunkBlock.Block.isMultiBlock && chunkBlock.ischild)
+            {
+              var parentPos =
+                chunkBlock.Block.multiBlockPos.GetParentPos(new Vector3i(dest.x + x, dest.y + y, dest.z + z),
+                  chunkBlock);
+              var parent = world.ChunkClusters[0].GetBlock(parentPos);
+              if (parent.ischild || parent.type != chunkBlock.type) continue;
+
+              world.ChunkClusters[0].SetBlock(parentPos, BlockValue.Air, false, false);
+            }
+          }
+        }
+      }
+
+      for (var x = 0; x < prefab.size.x; ++x)
+      {
+        for (var z = 0; z < prefab.size.z; ++z)
+        {
+          var chunkX = World.toChunkXZ(x + dest.x);
+          var chunkZ = World.toChunkXZ(z + dest.z);
+          var blockX = World.toBlockXZ(x + dest.x);
+          var blockZ = World.toBlockXZ(z + dest.z);
+          if (chunkSync == null || chunkSync.X != chunkX || chunkSync.Z != chunkZ)
+          {
+            chunkSync = world.ChunkCache.GetChunkSync(chunkX, chunkZ);
+          }
+
+          //todo:
           if (chunkSync == null) continue;
 
           var terrainHeight = (int)chunkSync.GetTerrainHeight(blockX, blockZ);
@@ -337,23 +375,26 @@ namespace BCM.Commands
             var chunkBlock = chunkSync.GetBlock(blockX, blockY, blockZ);
 
             //REMOVE PARENT OF MULTIDIM
-            if (chunkBlock.Block.isMultiBlock && chunkBlock.ischild)
-            {
-              var parentPos = chunkBlock.Block.multiBlockPos.GetParentPos(new Vector3i(dest.x + x, dest.y + y, dest.z + z), chunkBlock);
-              var parent = world.ChunkClusters[0].GetBlock(parentPos);
-              if (parent.ischild || parent.type != chunkBlock.type) continue;
+            //if (chunkBlock.Block.isMultiBlock && chunkBlock.ischild)
+            //{
+            //  var parentPos = chunkBlock.Block.multiBlockPos.GetParentPos(new Vector3i(dest.x + x, dest.y + y, dest.z + z), chunkBlock);
+            //  var parent = world.ChunkClusters[0].GetBlock(parentPos);
+            //  if (parent.ischild || parent.type != chunkBlock.type) continue;
 
-              world.ChunkClusters[0].SetBlock(parentPos, BlockValue.Air, false, false);
-            }
+            //  world.ChunkClusters[0].SetBlock(parentPos, BlockValue.Air, false, false);
+            //}
 
             //REMOVE LCB's
             if (chunkBlock.Block.IndexName == "lpblock")
             {
-              //todo: get list?
-              //new PersistentPlayerList().RemoveLandProtectionBlock(new Vector3i(x, y, z));
+              GameManager.Instance.persistentPlayers.RemoveLandProtectionBlock(new Vector3i(x, y, z));
             }
 
-            //REMOVE LOOT
+            //REMOVE LOOT - Make optional for reimporting same prefab over existing loot blocks
+            if (Options.ContainsKey("clearloot"))
+            {
+              
+            }
 
             //TERRAIN FILLER
             if (!(Options.ContainsKey("tfill") || Options.ContainsKey("editmode")) && Constants.cTerrainFillerBlockValue.type != 0 && prefabBlock.type == Constants.cTerrainFillerBlockValue.type)
@@ -445,7 +486,7 @@ namespace BCM.Commands
 
     private void UndoInsert(EntityPlayer sender)
     {
-      const string dirbase = "Data/Prefabs/BCM";
+      const string dirbase = "Data/Prefabs/BCMUndoCache";
       var userId = 0;
       if (sender != null)
       {
@@ -460,10 +501,6 @@ namespace BCM.Commands
       {
         var p = new Prefab();
         p.Load(Utils.GetGameDir(dirbase), pCache.Filename);
-        InsertPrefab(p, pCache.Pos.x, pCache.Pos.y, pCache.Pos.z, pCache.Pos);
-
-        //workaround for multi dim blocks, insert undo prefab twice
-        //todo: clear all blocks (turn to air) before inserting the prefab instead
         InsertPrefab(p, pCache.Pos.x, pCache.Pos.y, pCache.Pos.z, pCache.Pos);
 
         var cacheFile = Utils.GetGameDir($"{dirbase}{pCache.Filename}");

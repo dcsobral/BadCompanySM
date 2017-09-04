@@ -1,11 +1,13 @@
 ﻿using BCM.PersistentData;
 using System;
+using System.IO;
 using System.Reflection;
 
 namespace BCM
 {
   internal static class DataManager
   {
+    private const byte Version = 36;
     public static void SavePlayerData(ClientInfo cInfo, PlayerDataFile playerDataFile)
     {
       try

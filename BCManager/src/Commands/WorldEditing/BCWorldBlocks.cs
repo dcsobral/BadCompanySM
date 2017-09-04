@@ -47,7 +47,7 @@ namespace BCM.Commands
 
     private void UndoInsert(EntityPlayer sender)
     {
-      const string dirbase = "Data/Prefabs/BCM";
+      const string dirbase = "Data/Prefabs/BCMUndoCache";
       var userId = 0;
       if (sender != null)
       {
@@ -262,7 +262,6 @@ namespace BCM.Commands
       const int clrIdx = 0;
       var counter = 0;
 
-      //todo: fix this code
       var block1 = Block.list[targetbv.type];
       if (block1 == null)
       {
@@ -286,6 +285,7 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
+            //todo:
             sbyte density = 1;
             var textureFull = 0L;
 
@@ -304,9 +304,6 @@ namespace BCM.Commands
             world.ChunkClusters[clrIdx].SetBlock(p5, true, newbv, false, density, false, false);
             world.ChunkClusters[clrIdx].SetTextureFull(p5, textureFull);
 
-            //GameManager.Instance.World.SetBlock(clrIdx, p5, newbv, false, false);
-            //GameManager.Instance.World.SetDensity(clrIdx, p5, density);
-            //GameManager.Instance.World.SetTexture(clrIdx, p5.x, p5.y, p5.z, textureFull);
             counter++;
           }
         }
@@ -345,18 +342,6 @@ namespace BCM.Commands
       //RELOAD CHUNKS
       BCChunks.ReloadForClients(modifiedChunks);
     }
-
-    //public static void RemoveParentBlock(ChunkCluster chunkCluster, Vector3i blockPos, BlockValue blockValue)
-    //{
-    //  if (chunkCluster == null)
-    //    return;
-    //  var parentPos = blockValue.Block.multiBlockPos.GetParentPos(blockPos, blockValue);
-    //  var block = chunkCluster.GetBlock(parentPos);
-
-    //  if (block.ischild || block.type != blockValue.type) return;
-
-    //  chunkCluster.SetBlock(parentPos, BlockValue.Air, false, false);
-    //}
 
     private static void SetBlocks(int clrIdx, Vector3i p0, Vector3i size, BlockValue bvNew, bool searchAll)
     {
@@ -409,9 +394,14 @@ namespace BCM.Commands
             }
             if (Options.ContainsKey("delmulti")) continue;
 
+            //REMOVE LCB's
+            if (bvCurrent.Block.IndexName == "lpblock")
+            {
+              GameManager.Instance.persistentPlayers.RemoveLandProtectionBlock(new Vector3i(p5.x, p5.y, p5.z));
+            }
+
             //todo: move to a chunk request and then process all blocks on that chunk
             var chunkSync = world.GetChunkFromWorldPos(p5.x, p5.y, p5.z) as Chunk;
-
 
             if (bvNew.Equals(BlockValue.Air))
             {

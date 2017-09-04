@@ -65,7 +65,7 @@ namespace BCM
     {
       try
       {
-        PersistentContainer.Instance.Players[cInfo.playerId, true]?.SetOffline();
+        PersistentContainer.Instance.Players[cInfo.playerId, true]?.SetOffline(GameManager.Instance.World.Players.dict[cInfo.entityId]);
         PersistentContainer.Instance.Save();
       }
       catch (Exception e)
