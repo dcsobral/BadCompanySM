@@ -97,12 +97,33 @@ namespace BCM.Commands
           Permissions.Add(new BCMPermission(atcp));
         }
       }
+
+      public object Data()
+      {
+        var data = new Dictionary<string, object>();
+        if (Options.ContainsKey("admins") || !(Options.ContainsKey("bans") || Options.ContainsKey("whitelist") || Options.ContainsKey("permissions")))
+        {
+          data.Add("Admins", Admins);
+        }
+        if (Options.ContainsKey("bans") || !(Options.ContainsKey("admins") || Options.ContainsKey("whitelist") || Options.ContainsKey("permissions")))
+        {
+          data.Add("Bans", Bans);
+        }
+        if (Options.ContainsKey("whitelist") || !(Options.ContainsKey("admins") || Options.ContainsKey("bans") || Options.ContainsKey("permissions")))
+        {
+          data.Add("Whitelist", Whitelist);
+        }
+        if (Options.ContainsKey("permissions") || !(Options.ContainsKey("admins") || Options.ContainsKey("bans") || Options.ContainsKey("whitelist")))
+        {
+          data.Add("Permissions", Permissions);
+        }
+        
+        return data;
+      }
     }
 
     public override void Process()
     {
-      var data = new BCMAdmins();
-
       if (Options.ContainsKey("gg"))
       {
         SendJson(GetGamePrefs());
@@ -113,12 +134,12 @@ namespace BCM.Commands
       }
       else
       {
-        SendJson(data);
+        SendJson(new BCMAdmins().Data());
       }
 
     }
 
-    public SortedList<string, object> GetGamePrefs()
+    private SortedList<string, object> GetGamePrefs()
     {
       var sortedList = new SortedList<string, object>();
 
@@ -160,7 +181,7 @@ namespace BCM.Commands
       return _filterPrefs.All(value => !pref.ToString().ToLower().Contains(value));
     }
 
-    public SortedList<string, object> GetGameStats()
+    private SortedList<string, object> GetGameStats()
     {
       var sortedList = new SortedList<string, object>();
 
