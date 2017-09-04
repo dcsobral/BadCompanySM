@@ -8,13 +8,14 @@ namespace BCM.Commands
 {
   public class BCImport : BCCommandAbstract
   {
-    public class PrefabCache
+    private const string UndoDir = "Data/Prefabs/BCMUndoCache";
+
+    private class PrefabCache
     {
       public string Filename;
       public Vector3i Pos;
     }
-
-    public Dictionary<int, List<PrefabCache>> UndoCache = new Dictionary<int, List<PrefabCache>>();
+    private readonly Dictionary<int, List<PrefabCache>> _undoCache = new Dictionary<int, List<PrefabCache>>();
 
     private static bool GetXyz(Prefab prefab, Entity entity, ref int x, ref int y, ref int z)
     {
@@ -470,40 +471,39 @@ namespace BCM.Commands
       {
         userId = sender.entityId;
       }
-      var filename = $"{steamId}_{DateTime.UtcNow.ToFileTime()}";
-      Directory.CreateDirectory(Utils.GetGameDir("Data/Prefabs/BCM"));
-      areaCache.Save(Utils.GetGameDir("Data/Prefabs/BCM"), filename);
+      Directory.CreateDirectory(Utils.GetGameDir(UndoDir));
+      var filename = $"{steamId}.{p0.x}.{p0.y}.{p0.z}.{DateTime.UtcNow.ToFileTime()}";
+      areaCache.Save(Utils.GetGameDir(UndoDir), filename);
 
-      if (UndoCache.ContainsKey(userId))
+      if (_undoCache.ContainsKey(userId))
       {
-        UndoCache[userId].Add(new PrefabCache { Filename = filename, Pos = p0 });
+        _undoCache[userId].Add(new PrefabCache { Filename = filename, Pos = p0 });
       }
       else
       {
-        UndoCache.Add(userId, new List<PrefabCache> { new PrefabCache { Filename = filename, Pos = p0 } });
+        _undoCache.Add(userId, new List<PrefabCache> { new PrefabCache { Filename = filename, Pos = p0 } });
       }
     }
 
     private void UndoInsert(EntityPlayer sender)
     {
-      const string dirbase = "Data/Prefabs/BCMUndoCache";
       var userId = 0;
       if (sender != null)
       {
         userId = sender.entityId;
       }
-      if (!UndoCache.ContainsKey(userId)) return;
+      if (!_undoCache.ContainsKey(userId)) return;
 
-      if (UndoCache[userId].Count <= 0) return;
+      if (_undoCache[userId].Count <= 0) return;
 
-      var pCache = UndoCache[userId][UndoCache[userId].Count - 1];
+      var pCache = _undoCache[userId][_undoCache[userId].Count - 1];
       if (pCache != null)
       {
         var p = new Prefab();
-        p.Load(Utils.GetGameDir(dirbase), pCache.Filename);
+        p.Load(Utils.GetGameDir(UndoDir), pCache.Filename);
         InsertPrefab(p, pCache.Pos.x, pCache.Pos.y, pCache.Pos.z, pCache.Pos);
 
-        var cacheFile = Utils.GetGameDir($"{dirbase}{pCache.Filename}");
+        var cacheFile = Utils.GetGameDir($"{UndoDir}{pCache.Filename}");
         if (Utils.FileExists($"{cacheFile}.tts"))
         {
           Utils.FileDelete($"{cacheFile}.tts");
@@ -513,7 +513,7 @@ namespace BCM.Commands
           Utils.FileDelete($"{cacheFile}.xml");
         }
       }
-      UndoCache[userId].RemoveAt(UndoCache[userId].Count - 1);
+      _undoCache[userId].RemoveAt(_undoCache[userId].Count - 1);
     }
 
     public override void Process()
