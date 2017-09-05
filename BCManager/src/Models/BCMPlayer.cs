@@ -66,6 +66,8 @@ namespace BCM.Models
       public const string Spawnpoints = "spawns";
       public const string Waypoints = "waypoints";
       public const string Marker = "marker";
+      public const string Friends = "friends";
+      public const string LPBlocks = "lpblocks";
     }
 
     private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
@@ -124,7 +126,9 @@ namespace BCM.Models
       { 51,  StrFilters.Quests },
       { 52,  StrFilters.Spawnpoints },
       { 53,  StrFilters.Waypoints },
-      { 54,  StrFilters.Marker }
+      { 54,  StrFilters.Marker },
+      { 55,  StrFilters.Friends },
+      { 56,  StrFilters.LPBlocks }
     };
     public static Dictionary<int, string> FilterMap => _filterMap;
 
@@ -317,6 +321,8 @@ namespace BCM.Models
     public List<BCMVector3> Spawnpoints;
     public List<BCMWaypoint> Waypoints;
     public BCMVector3 Marker;
+    public List<string> Friends = new List<string>();
+    public List<object> LPBlocks = new List<object>();
     #endregion;
 
     public BCMPlayer(object obj, Dictionary<string, string> options, List<string> filters) : base(obj, "Entity", options, filters)
@@ -500,6 +506,12 @@ namespace BCM.Models
             case StrFilters.Marker:
               GetMarker(pInfo);
               break;
+            case StrFilters.Friends:
+              GetFriends(pInfo);
+              break;
+            case StrFilters.LPBlocks:
+              GetLpBlocks(pInfo);
+              break;
           }
         }
       }
@@ -563,11 +575,14 @@ namespace BCM.Models
         GetSpawnpoints(pInfo);
         GetWaypoints(pInfo);
         GetMarker(pInfo);
-
-        //todo: add PPD.LCBlocks
-        //todo: add PPD.ACL
+        GetFriends(pInfo);
+        GetLpBlocks(pInfo);
       }
     }
+
+    private void GetLpBlocks(PlayerInfo pInfo) => Bin.Add("LPBlocks", LPBlocks = pInfo.PPD?.LPBlocks?.Select(lpb => GetVectorObj(new BCMVector3(lpb))).ToList());
+
+    private void GetFriends(PlayerInfo pInfo) => Bin.Add("Friends", Friends = pInfo.PPD?.ACL?.ToList());
 
     private void GetRotation(PlayerInfo pInfo) => Bin.Add("Rotation", GetVectorObj(Rotation = new BCMVector3(pInfo.EP != null ? pInfo.EP.rotation : pInfo.PDF.ecd.rot)));
 
