@@ -185,7 +185,7 @@ namespace BCM.Commands
           if (chunk == null)
           {
             // todo: generate and observe chunks required
-            SendOutput("Unable to load chunk for prefab @ " + (x + cx) + "," + (z + cz));
+            SendOutput($"Unable to load chunk for prefab @ {x + cx},{z + cz}");
           }
           else
           {
@@ -327,16 +327,13 @@ namespace BCM.Commands
             var chunkBlock = chunkSync.GetBlock(blockX, blockY, blockZ);
 
             //REMOVE PARENT OF MULTIDIM
-            if (chunkBlock.Block.isMultiBlock && chunkBlock.ischild)
-            {
-              var parentPos =
-                chunkBlock.Block.multiBlockPos.GetParentPos(new Vector3i(dest.x + x, dest.y + y, dest.z + z),
-                  chunkBlock);
-              var parent = world.ChunkClusters[0].GetBlock(parentPos);
-              if (parent.ischild || parent.type != chunkBlock.type) continue;
+            if (!chunkBlock.Block.isMultiBlock || !chunkBlock.ischild) continue;
 
-              world.ChunkClusters[0].SetBlock(parentPos, BlockValue.Air, false, false);
-            }
+            var parentPos = chunkBlock.Block.multiBlockPos.GetParentPos(new Vector3i(dest.x + x, dest.y + y, dest.z + z), chunkBlock);
+            var parent = world.ChunkClusters[0].GetBlock(parentPos);
+            if (parent.ischild || parent.type != chunkBlock.type) continue;
+
+            world.ChunkClusters[0].SetBlock(parentPos, BlockValue.Air, false, false);
           }
         }
       }
@@ -375,16 +372,6 @@ namespace BCM.Commands
             var blockY = World.toBlockY(y + dest.y);
             var chunkBlock = chunkSync.GetBlock(blockX, blockY, blockZ);
 
-            //REMOVE PARENT OF MULTIDIM
-            //if (chunkBlock.Block.isMultiBlock && chunkBlock.ischild)
-            //{
-            //  var parentPos = chunkBlock.Block.multiBlockPos.GetParentPos(new Vector3i(dest.x + x, dest.y + y, dest.z + z), chunkBlock);
-            //  var parent = world.ChunkClusters[0].GetBlock(parentPos);
-            //  if (parent.ischild || parent.type != chunkBlock.type) continue;
-
-            //  world.ChunkClusters[0].SetBlock(parentPos, BlockValue.Air, false, false);
-            //}
-
             //REMOVE LCB's
             if (chunkBlock.Block.IndexName == "lpblock")
             {
@@ -414,8 +401,7 @@ namespace BCM.Commands
             }
             chunkSync.SetDensity(blockX, blockY, blockZ, density);
 
-            //var block1 = chunkSync.GetBlock(blockXz1, blockY, blockXz2);
-            if (chunkBlock.ischild) continue;// || block.type != 0 && !Block.list[block.type].shape.IsTerrain()
+            if (chunkBlock.ischild) continue;
 
             //DECORATIONS
             if (prefab.bAllowTopSoilDecorations)
@@ -435,6 +421,8 @@ namespace BCM.Commands
             }
 
             //SECURE DOORS/CHESTS
+
+            //TRADER SPAWNS
 
             //SET OWNER
 
@@ -518,8 +506,7 @@ namespace BCM.Commands
 
     public override void Process()
     {
-      // todo: remove LCB's from persistent players
-      // todo: remove loot container contents before inserting new prefab
+      // todo: remove loot container contents before inserting new prefab, optional flag
       // todo: add map visitor to load chunks if required
 
       // optional todo: allow for partial names for prefab, provide list if more then one result, allow for partial + # from list to specify
@@ -568,14 +555,6 @@ namespace BCM.Commands
       {
         prefab.bCopyAirBlocks = false;
       }
-      //if (Options.ContainsKey("spawns"))
-      //{
-      //  prefab.bSleeperVolumes = true;
-      //}
-      //if (Options.ContainsKey("sblocks"))
-      //{
-      //  prefab.bSleeperVolumes = false;
-      //}
 
       // todo: create a copy of the chunks in the bounded dimensions of the prefab size for an undo
       //       should work better than a prefab copy undo as it will preserve block ownership and state?

@@ -5,6 +5,6 @@
             1. {command} <partialname / entityid / steamid> <Skill Name> <level>
       Notes:
             Use bc-help to get a list of common /options
-            Use bc-skills to get a list of skill names
+            Use 'bc-go skills' to get a list of skill names
             Set the skill level of a player. The skill name params are as found in the xml name field, the level is any valid level for that skill and player requirements
             /self can be used in place of a playername to specify the player giving the command.

@@ -61,7 +61,7 @@
   <Command name="BCImport" commands="bc-import,import" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCExport" commands="bc-export,export" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCVisitRegion" commands="bc-visitregion,visit" defaultpermissionlevel="0" defaultoptions=""/>
-  <Command name="BCTileEntity" commands="bc-tileentity,tile" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCTileEntity" commands="bc-te,tile" defaultpermissionlevel="0" defaultoptions=""/>
   <!--<Command name="BCReset" commands="bc-reset" defaultpermissionlevel="0" defaultoptions=""/>-->
 
 </Commands>

@@ -200,10 +200,9 @@ namespace BCM.Commands
       var modifiedChunks = GetAffectedChunks(p3, size);
 
       //CREATE UNDO
-      //create backup of area prefab will insert to
+      //create backup of area blocks will insert to
       if (!Options.ContainsKey("noundo"))
       {
-        //todo: use BlockTools.CopyIntoStorage to get prefab, then save to cache
         CreateUndo(sender, p3, size);
       }
 
@@ -211,13 +210,21 @@ namespace BCM.Commands
       {
         SwapBlocks(p3, size, bvNew, blockname2, modifiedChunks);
       }
-      else if (Options.ContainsKey("chown"))
-      {
-
-      }
       else if (Options.ContainsKey("smooth"))
       {
-        //options: randomise, smooth, default
+        //todo
+      }
+      else if (Options.ContainsKey("repair"))
+      {
+        //todo
+      }
+      else if (Options.ContainsKey("upgrade"))
+      {
+        //todo
+      }
+      else if (Options.ContainsKey("nopaint"))
+      {
+        //todo
       }
       else if (Options.ContainsKey("scan"))
       {

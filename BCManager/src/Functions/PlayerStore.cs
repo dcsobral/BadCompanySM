@@ -8,8 +8,7 @@ namespace BCM
   {
     public static bool GetId(string param, out string steamId, string el = "")
     {
-      ClientInfo cInfo;
-      var count = ConsoleHelper.ParseParamPartialNameOrId(param, out steamId, out cInfo, false);
+      var count = ConsoleHelper.ParseParamPartialNameOrId(param, out steamId, out ClientInfo cInfo, false);
 
       if (cInfo == null && count > 0 && !IsStoredPlayer(steamId))
       {
@@ -26,13 +25,13 @@ namespace BCM
       return false;
     }
 
-    public static bool IsStoredPlayer(string steamId)
+    private static bool IsStoredPlayer(string steamId)
     {
       return File.Exists(GameUtils.GetPlayerDataDir() + Path.DirectorySeparatorChar + steamId + ".ttp");
     }
 
     /* Returns a list of steam ids found in Player Data Dir */
-    public static List<string> GetAll(Dictionary<string, string> options)
+    public static IEnumerable<string> GetAll(Dictionary<string, string> options)
     {
       var playerDataDir = GameUtils.GetPlayerDataDir();
       var players = new List<string>();
@@ -121,8 +120,6 @@ namespace BCM
         case "CON":
           SdtdConsole.Instance.Output(err);
           break;
-        case "":
-          return;
         case "LOG":
           Log.Out(err);
           break;
@@ -130,6 +127,8 @@ namespace BCM
           SdtdConsole.Instance.Output(err);
           Log.Out(err);
           break;
+        default:
+          return;
       }
     }
   }

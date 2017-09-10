@@ -5,17 +5,15 @@ namespace BCM.Commands
 {
   public class BCTime : BCCommandAbstract
   {
-    //public Dictionary<string, object> _bin = new Dictionary<string, object>();
-
     public class BCMTime
     {
-      public Dictionary<string, int> Time;
+      public readonly Dictionary<string, int> Time;
       public double Ticks;
       public double Fps;
       public int Clients;
       public int Entities;
 
-      public BCMTime(Dictionary<string, string> options)
+      public BCMTime()
       {
         var worldTime = GameManager.Instance.World.worldTime;
         Time = new Dictionary<string, int>
@@ -25,7 +23,7 @@ namespace BCM.Commands
           {"M", GameUtils.WorldTimeToMinutes(worldTime)}
         };
 
-        if (options.ContainsKey("t") || options.ContainsKey("s")) return;
+        if (Options.ContainsKey("t") || Options.ContainsKey("s")) return;
 
         Ticks = Math.Round(UnityEngine.Time.timeSinceLevelLoad, 2);
         Fps = Math.Round(GameManager.Instance.fps.Counter, 2);
@@ -35,7 +33,7 @@ namespace BCM.Commands
     }
     public override void Process()
     {
-      var time = new BCMTime(Options);
+      var time = new BCMTime();
 
       if (Options.ContainsKey("t"))
       {
