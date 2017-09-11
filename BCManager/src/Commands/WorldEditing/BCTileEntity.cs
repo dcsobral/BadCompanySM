@@ -730,6 +730,7 @@ namespace BCM.Commands
     private static bool GetEntPos(CmdParams command, EntityPlayer entity)
     {
       //todo: if /loc and a loc is set then use loc and player pos as the bounds instad of radius, /loc and /r connot be used together
+      //todo: if /h=#,# then set y to pos + [0], y2 to pos + [1], if only 1 number then y=pos y2=pos+#
       if (entity != null)
       {
         command.ChunkBounds = new BCMVector4
