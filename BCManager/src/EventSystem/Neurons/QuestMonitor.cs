@@ -22,7 +22,7 @@ namespace BCM.Neurons
         }
         catch
         {
-          Log.Out(Config.ModPrefix + " CACHE CLONE ERROR");
+          Log.Out($"{Config.ModPrefix} Cache Clone Error");
         }
       }
 
@@ -65,7 +65,7 @@ namespace BCM.Neurons
             //}
           }
           catch (Exception e)
-          { Log.Out(Config.ModPrefix + " QuestMonitoring.Fire Exception getting quest lists: " + e); }
+          { Log.Out($"{Config.ModPrefix} QuestMonitoring.Fire Exception getting quest lists: {e}"); }
 
           var changedQuests = new List<Quest>();
           try
@@ -98,12 +98,12 @@ namespace BCM.Neurons
             }
             catch (Exception e)
             {
-              Log.Out(Config.ModPrefix + " QuestMonitoring.Fire Exception assigning current quests to cache: " + e);
+              Log.Out($"{Config.ModPrefix} QuestMonitoring.Fire Exception assigning current quests to cache: {e}");
             }
           }
           catch (Exception e)
           {
-            Log.Out(Config.ModPrefix + " QuestMonitoring.Fire Exception computing changed quests: " + e);
+            Log.Out($"{Config.ModPrefix} QuestMonitoring.Fire Exception computing changed quests: {e}");
             changedQuests = new List<Quest>(); //if an error computing changes then don't return a list or it spams log files
           }
 
@@ -111,11 +111,11 @@ namespace BCM.Neurons
           {
             foreach (var q in changedQuests)
             {
-              Log.Out(Config.ModPrefix + " " + playerName + " Quest Status Changed to " + q.CurrentState + ":" + q.ID + "");
+              Log.Out($"{Config.ModPrefix} {playerName} Quest Status Changed to {q.CurrentState}:{q.ID}");
             }
           }
           catch (Exception e)
-          { Log.Out(Config.ModPrefix + " QuestMonitoring.Fire Exception: (changedquests.foreach) " + e); }
+          { Log.Out($"{Config.ModPrefix} QuestMonitoring.Fire Exception: (changedquests.foreach) {e}"); }
         }
       }
     }

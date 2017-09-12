@@ -37,7 +37,7 @@ namespace BCM.Commands
       catch (Exception e)
       {
         SendOutput("Error while executing command.");
-        Log.Out(Config.ModPrefix + " Error in " + GetType().Name + "." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        Log.Out($"{Config.ModPrefix} Error in {GetType().Name}.{MethodBase.GetCurrentMethod().Name}: {e}");
       }
     }
 

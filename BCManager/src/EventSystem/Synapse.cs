@@ -74,7 +74,7 @@ namespace BCM
           break;
 
         default:
-          Log.Out(Config.ModPrefix + " Unknown Synapse " + Name);
+          Log.Out($"{Config.ModPrefix} Unknown Synapse {Name}");
           break;
       }
     }
@@ -92,7 +92,7 @@ namespace BCM
         }
         catch (Exception e)
         {
-          Log.Out(Config.ModPrefix + " WARNING: Brain Damage detected trying to fire Neuron: " + n.GetType() + e);
+          Log.Out($"{Config.ModPrefix} Brain Damage detected trying to fire Neuron {n.GetType()}:\n{e}");
         }
       }
     }

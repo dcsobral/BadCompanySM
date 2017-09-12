@@ -39,7 +39,7 @@ namespace BCM.PersistentData
           Stream streamPlayers = File.Open(GameUtils.GetSaveGameDir() + "/BCMData/Players.bin", FileMode.Create);
           bFormatter.Serialize(streamPlayers, _players);
           streamPlayers.Close();
-          Log.Out(Config.ModPrefix + " Players Saved");
+          Log.Out($"{Config.ModPrefix} Players Saved");
         }
 
         if (_settings != null)
@@ -47,12 +47,12 @@ namespace BCM.PersistentData
           Stream streamSettings = File.Open(GameUtils.GetSaveGameDir() + "/BCMData/Settings.bin", FileMode.Create);
           bFormatter.Serialize(streamSettings, _settings);
           streamSettings.Close();
-          Log.Out(Config.ModPrefix + " Settings Saved");
+          Log.Out($"{Config.ModPrefix} Settings Saved");
         }
       }
       catch (Exception e)
       {
-        Log.Error("" + Config.ModPrefix + " Error in PersistentContainer." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        Log.Error($"{Config.ModPrefix} Error in PersistentContainer.{MethodBase.GetCurrentMethod().Name}: {e}");
       }
     }
 
@@ -86,7 +86,7 @@ namespace BCM.PersistentData
       }
       catch (Exception e)
       {
-        Log.Error("" + Config.ModPrefix + " Error in PersistentContainer." + MethodBase.GetCurrentMethod().Name + ": " + e);
+        Log.Error($"{Config.ModPrefix} Error in PersistentContainer.{MethodBase.GetCurrentMethod().Name}: {e}");
       }
 
       return false;

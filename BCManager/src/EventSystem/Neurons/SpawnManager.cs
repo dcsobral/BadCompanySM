@@ -24,7 +24,7 @@ namespace BCM.Neurons
       var entities = GameManager.Instance.World.Entities.dict;
       if (!entities.ContainsKey(targetEntityId))
       {
-        Log.Out(Config.ModPrefix + " Player not found: " + targetEntityId);
+        Log.Out($"{Config.ModPrefix} Player not found: {targetEntityId}");
 
         return;
       }
@@ -32,7 +32,7 @@ namespace BCM.Neurons
       var targetEntity = entities[targetEntityId];
       if (targetEntity == null)
       {
-        Log.Out("Target entity was not found in world");
+        Log.Out($"{Config.ModPrefix}Target entity was not found in world");
 
         return;
       }
@@ -52,7 +52,7 @@ namespace BCM.Neurons
 
       if (!EntityGroups.list.ContainsKey(groupName))
       {
-        Log.Out(Config.ModPrefix + "Entity group not found " + groupName);
+        Log.Out($"{Config.ModPrefix}Entity group not found {groupName}");
 
         return;
       }
@@ -60,7 +60,7 @@ namespace BCM.Neurons
       var classId = EntityGroups.GetRandomFromGroup(groupName);
       if (!EntityClass.list.ContainsKey(classId))
       {
-        Log.Out(Config.ModPrefix + "Entity class not found " + classId);
+        Log.Out($"{Config.ModPrefix}Entity class not found {classId}");
 
         return;
       }

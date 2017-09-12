@@ -10,7 +10,7 @@ namespace BCM
     {
       if (!typeof(T).IsSerializable)
       {
-        Log.Out(Config.ModPrefix + " Clone object requires a serializable object");
+        Log.Out($"{Config.ModPrefix} Clone object requires a serializable object");
       }
 
       // Don't serialize a null object, simply return the default for that object

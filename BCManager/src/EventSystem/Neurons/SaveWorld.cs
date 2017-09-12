@@ -8,7 +8,7 @@
 
       if (!Steam.Network.IsServer)
       {
-        Log.Out(Config.ModPrefix + "World save failed. Not a network server");
+        Log.Out($"{Config.ModPrefix} World save failed. Not a network server");
 
         return;
       }
@@ -16,7 +16,7 @@
       GameManager.Instance.SaveLocalPlayerData();
       GameManager.Instance.SaveWorld();
 
-      Log.Out(Config.ModPrefix + " World saved");
+      Log.Out($"{Config.ModPrefix} World saved");
     }
   }
 }

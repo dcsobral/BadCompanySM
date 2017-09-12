@@ -20,7 +20,7 @@ namespace BCM.Neurons
       if (_hasDelegate || !API.IsAlive) return;
 
       GameManager.Instance.World.EntityLoadedDelegates += OnEntityLoaded;
-      Log.Out("EntitySpawnMutator Initialised");
+      Log.Out($"{Config.ModPrefix} EntitySpawnMutator Initialised");
 
       _hasDelegate = true;
     }

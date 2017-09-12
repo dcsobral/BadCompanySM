@@ -25,7 +25,7 @@ namespace BCM.Neurons
     {
       if (!Steam.Network.IsServer)
       {
-        Log.Out(Config.ModPrefix + "Can't kick players for high ping. Not a network server");
+        Log.Out($"{Config.ModPrefix}Can\'t kick players for high ping. Not a network server");
 
         return;
       }

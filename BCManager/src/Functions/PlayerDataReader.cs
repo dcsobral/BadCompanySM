@@ -83,7 +83,7 @@ namespace BCM
       }
       catch (Exception e)
       {
-        Log.Error(Config.ModPrefix + " Error loading data file. " + e);
+        Log.Error($"{Config.ModPrefix} Error loading data file. {e}");
       }
     }
 

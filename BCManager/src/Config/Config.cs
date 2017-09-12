@@ -11,22 +11,23 @@ namespace BCM
 {
   public static class Config
   {
+    public static readonly Dictionary<string, BCMCommand> CommandDictionary = new Dictionary<string, BCMCommand>();
     public const string ModPrefix = "(BCM)";
-    public static string ModDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
-    public static string CommandsFile = "Commands.xml";
-    public static string SystemFile = "System.xml";
-    public static string DefaultConfigPath = ModDir + "DefaultConfig" + Path.DirectorySeparatorChar;
-    public static string ConfigPath = ModDir + "Config" + Path.DirectorySeparatorChar;
+    private static readonly string ModDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
+    private const string CommandsFile = "Commands.xml";
+    private const string SystemFile = "System.xml";
+    private static readonly string DefaultConfigPath = ModDir + "DefaultConfig" + Path.DirectorySeparatorChar;
+    public static readonly string ConfigPath = ModDir + "Config" + Path.DirectorySeparatorChar;
     public static string DefaultLocale = "en";
     public static bool LogCache;
-    public static Dictionary<string, BCMCommand> CommandDictionary = new Dictionary<string, BCMCommand>();
 
     //todo: implement filesystemwatcher so changes to the config are dynamically updated
     private static FileSystemWatcher _fsw;
     private static void ProcessChangedConfig(object item, FileSystemEventArgs args)
     {
-      Log.Out("System.xml Changed");
+      Log.Out($"{ModPrefix} System.xml Changed");
     }
+
     private static void AddFsWatch()
     {
       _fsw = new FileSystemWatcher(ConfigPath, SystemFile);
@@ -36,40 +37,33 @@ namespace BCM
       _fsw.EnableRaisingEvents = true;
     }
 
-    public static bool Init()
+    public static void Init()
     {
       LoadCommands();
       ConfigureSystem();
       AddFsWatch();
-
-      return true;
     }
 
-    public static bool ConfigureSystem()
+    private static void ConfigureSystem()
     {
       var xmlDoc = new XmlDocument();
       try
       {
-        if (File.Exists(ConfigPath + SystemFile))
-        {
-          xmlDoc.Load(ConfigPath + SystemFile);
-        }
-        else
-        {
-          xmlDoc.Load(DefaultConfigPath + SystemFile);
-        }
+        xmlDoc.Load(File.Exists($"{ConfigPath}{SystemFile}")
+          ? $"{ConfigPath}{SystemFile}"
+          : $"{DefaultConfigPath}{SystemFile}");
 
         //LogCache.enabled
         var logNodes = xmlDoc.SelectNodes("/System/LogCache/@enabled");
         if (logNodes == null || logNodes.Count == 0)
         {
-          Log.Out(ModPrefix + " Unable to load LogCache enabled, setting not found in " + SystemFile);
+          Log.Out($"{ModPrefix} Unable to load LogCache enabled, setting not found in {SystemFile}");
         }
         else
         {
           if (!bool.TryParse(logNodes.Item(0)?.Value, out LogCache))
           {
-            Log.Out(ModPrefix + " Unable to load LogCache, enabled is not a valid boolean in " + SystemFile);
+            Log.Out($"{ModPrefix} Unable to load LogCache, enabled is not a valid boolean in {SystemFile}");
           }
         }
 
@@ -77,13 +71,13 @@ namespace BCM
         var isAlive = xmlDoc.SelectNodes("/System/Heartbeat/@isalive");
         if (isAlive == null || isAlive.Count == 0)
         {
-          Log.Out(ModPrefix + " Unable to load Heartbeat IsAlive, setting not found in " + SystemFile);
+          Log.Out($"{ModPrefix} Unable to load Heartbeat IsAlive, setting not found in {SystemFile}");
         }
         else
         {
           if (!bool.TryParse(isAlive.Item(0)?.Value, out Heartbeat.IsAlive))
           {
-            Log.Out(ModPrefix + " Unable to load Heartbeat, isalive is not a valid boolean in " + SystemFile);
+            Log.Out($"{ModPrefix} Unable to load Heartbeat, isalive is not a valid boolean in {SystemFile}");
           }
         }
 
@@ -91,13 +85,13 @@ namespace BCM
         var bpm = xmlDoc.SelectNodes("/System/BPM/@rate");
         if (bpm == null || bpm.Count <= 0)
         {
-          Log.Out(ModPrefix + " Unable to load BPM, setting not found in " + SystemFile);
+          Log.Out($"{ModPrefix} Unable to load BPM, setting not found in {SystemFile}");
         }
         else
         {
           if (!int.TryParse(bpm.Item(0)?.Value, out Heartbeat.Bpm))
           {
-            Log.Out(ModPrefix + " Unable to load BPM, 'rate' is not a valid int in " + SystemFile);
+            Log.Out($"{ModPrefix} Unable to load BPM, \'rate\' is not a valid int in {SystemFile}");
           }
         }
 
@@ -105,7 +99,7 @@ namespace BCM
         var synapseNodes = xmlDoc.SelectNodes("/System/Synapse");
         if (synapseNodes == null || synapseNodes.Count == 0)
         {
-          Log.Out(ModPrefix + " Unable to load Synapses, settings not found in " + SystemFile);
+          Log.Out($"{ModPrefix} Unable to load Synapses, settings not found in {SystemFile}");
         }
         else
         {
@@ -117,33 +111,30 @@ namespace BCM
 
             if (!node.HasAttribute("name"))
             {
-              Log.Out(ModPrefix + " Skipping Synapse element #" + count + ", missing 'name' attribute in " +
-                      SystemFile);
+              Log.Out($"{ModPrefix} Skipping Synapse element #{count}, missing \'name\' attribute in {SystemFile}");
               continue;
             }
             synapse.Name = node.GetAttribute("name");
 
             if (!node.HasAttribute("enabled"))
             {
-              Log.Out(ModPrefix + " Skipping Synapse element #" + count + ", missing 'enabled' attribute in " +
-                      SystemFile);
+              Log.Out($"{ModPrefix} Skipping Synapse element #{count}, missing \'enabled\' attribute in {SystemFile}");
               continue;
             }
             if (!bool.TryParse(node.GetAttribute("enabled"), out synapse.IsEnabled))
             {
-              Log.Out(ModPrefix + " Unable to load Synapse 'enabled' in element #" + count +
-                      ", value is not a valid boolean in " + SystemFile);
+              Log.Out($"{ModPrefix} Unable to load Synapse \'enabled\' in element #{count}, value is not a valid boolean in {SystemFile}");
             }
 
             if (!node.HasAttribute("beats"))
             {
-              Log.Out(ModPrefix + " Skipping Synapse element #" + count + ", missing 'beats' attribute in " + SystemFile);
+              Log.Out($"{ModPrefix} Skipping Synapse element #{count}, missing \'beats\' attribute in {SystemFile}");
               continue;
             }
 
             if (!int.TryParse(node.GetAttribute("beats"), out synapse.Beats))
             {
-              Log.Out(ModPrefix + " Unable to load Synapse 'beats' in element #" + count + ", value not a valid int in " + SystemFile);
+              Log.Out($"{ModPrefix} Unable to load Synapse \'beats\' in element #{count}, value not a valid int in {SystemFile}");
               continue;
             }
 
@@ -159,15 +150,11 @@ namespace BCM
       }
       catch (Exception e)
       {
-        Log.Error(ModPrefix + " Error configuring tasks\n" + e);
-
-        return false;
+        Log.Error($"{ModPrefix} Error configuring tasks\n{e}");
       }
-
-      return true;
     }
 
-    public static bool LoadCommands()
+    private static void LoadCommands()
     {
       var xmlDoc = new XmlDocument();
       try
@@ -188,7 +175,7 @@ namespace BCM
         }
         else
         {
-          Log.Out(ModPrefix + " Using DefaultLocale '" + DefaultLocale + "', setting not found in " + CommandsFile);
+          Log.Out($"{ModPrefix} Using default locale \'{DefaultLocale}\', setting not found in {CommandsFile}");
         }
 
         var commands = xmlDoc.SelectNodes("/Commands/Command");
@@ -206,7 +193,7 @@ namespace BCM
             // NAME
             if (!element.HasAttribute("name"))
             {
-              Log.Out(ModPrefix + " Skipping Command element #" + count + ", missing 'name' attribute in " + CommandsFile);
+              Log.Out($"{ModPrefix} Skipping Command element #{count}, missing \'name\' attribute in {CommandsFile}");
 
               continue;
             }
@@ -215,7 +202,7 @@ namespace BCM
             // COMMANDS
             if (!element.HasAttribute("commands"))
             {
-              Log.Out(ModPrefix + " Skipping Command element #" + count + ", missing 'commands' attribute " + CommandsFile);
+              Log.Out($"{ModPrefix} Skipping Command element #{count}, missing \'commands\' attribute {CommandsFile}");
 
               continue;
             }
@@ -258,12 +245,8 @@ namespace BCM
       }
       catch (Exception e)
       {
-        Log.Error(ModPrefix + " Error loading config files\n" + e);
-
-        return false;
+        Log.Error($"{ModPrefix} Error loading config files\n{e}");
       }
-
-      return true;
     }
 
     public static string GetDescription(string command)
