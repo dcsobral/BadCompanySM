@@ -2,7 +2,30 @@
       Aliases: {commands}
       Default Options: {defaultoptions}
       Usage:
-            1. {command}
+            1. {command} <subcommand>
+            2. {command} <subcommand> <cx> <cz>
+            3. {command} <subcommand> <x> <y> <z>
+            4. {command} <subcommand> <cx> <cz> <cx2> <cz2>
+            5. {command} <subcommand> <x> <y> <z> <x2> <y2> <z2>
       Notes:
             Use bc-help to get a list of common /options
-            Perform actions on the tile entities (loot containers and doors) in the area
+            Perform actions on the tile entities (loot containers, doors, turrets etc) in the area
+            Command with no co-ords will use player location as a chunk position
+            <cx> <cz> - chunk co-ordinates. In this mode the entire chunk is part of the area
+            <cx2> <cz2> - chunk co-ordinates. The second pair defines an area of chunks
+            /r=0-5 - defines a radius if using chunk location. max of 5, 'bc-te scan 0 0 /r=5' would scan the 11x11 chunk grid around 0,0
+            <x> <y> <z> - block position single block, when combined with <x2> <y2> <z2> becomes an area instead
+            /id=<steamid> for an online player can be used, if absent the command executor is used instead
+            target = the commader, or id=<name|entityid|steamid> player, must be online
+            Sub Commands:
+            scan - scans the defined area and reports on detials of tile entities found
+            owner - sets the target as the owner of targeted secure blocks in area
+            access - grants access to the target as a user of targeted secure blocks in area
+            revoke - removes target player from access list of targeted tiles in area
+            lock - locks all targeted secure tiles in area
+            unlock - unlocks all targeted secure tiles in area
+            empty - removes all loot from targeted tiles in area
+            reset - removes all loot and resets touched status so loot tiles become untouched (including player placed blocks)
+            additem - add items to a specific loot container, options for /quality=1-600 or /count=1-# (if # is more than a stack them multiple stacks will be added)
+            removeitem - removes items in the specific loot container, if no /slot=1-# given then smallest stack is reduced, and overflow into extra stacks if required
+            remove - DESTROYS all targeted tiles in area. Must use /confirm to execute as there is no undo
