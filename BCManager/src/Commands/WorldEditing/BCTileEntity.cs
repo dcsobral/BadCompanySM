@@ -392,6 +392,7 @@ namespace BCM.Commands
     {
       public BCMTileEntityPowerSource(Vector3i pos, TileEntityPowerSource te) : base(pos, te)
       {
+        //var powerItem = te.GetPowerItem();
         //todo
       }
     }
@@ -426,7 +427,7 @@ namespace BCM.Commands
       var command = new CmdParams();
       if (!ProcessParams(command)) return;
 
-      if (!GetIds(world, out string steamId, out EntityPlayer entity)) return;
+      if (!GetIds(world, out var steamId, out var entity)) return;
 
       if (!command.HasChunkPos && !command.HasPos && !GetEntPos(command, entity))
       {
@@ -436,6 +437,15 @@ namespace BCM.Commands
       }
 
       SendOutput("Processing Command...");
+
+      var affectedChunks = GetAffectedChunks(command, world);
+      if (affectedChunks == null)
+      {
+        SendOutput("Aborting, unable to load all chunks in area before timeout.");
+        SendOutput("Use /timeout=#### to override the default 2000 millisecond limit, or wait for the requested chunks to finish loading and try again.");
+
+        return;
+      }
 
       var location = "";
       if (command.HasPos)
@@ -455,9 +465,6 @@ namespace BCM.Commands
         SendOutput(location);
       }
 
-      //var affectedChunks = LoadChunks();
-      //  Option for fail on chunk=null (default), force wait (/force), best effort (/try), defer to subthread (/defer)
-
       var reload = ReloadMode.None;
 
       switch (command.Command)
@@ -475,7 +482,7 @@ namespace BCM.Commands
           reload = ReloadMode.Target;
           break;
         case "lock":
-          Options.TryGetValue("pwd", out string pwd);
+          Options.TryGetValue("pwd", out var pwd);
           SetLocked(command, true, Options.ContainsKey("pwd"), pwd ?? string.Empty, world);
           reload = ReloadMode.All;
           break;
@@ -517,11 +524,9 @@ namespace BCM.Commands
           break;
       }
 
-      //RELOAD CHUNKS FOR PLAYER
+      //RELOAD CHUNKS FOR PLAYER(S) - If steamId is empty then all players in area will get reload
       if (reload == ReloadMode.None) return;
-      BCChunks.ReloadForClients(
-        GetAffectedChunks(command, world),
-        reload == ReloadMode.Target ? steamId : string.Empty);
+      BCChunks.ReloadForClients(affectedChunks, reload == ReloadMode.Target ? steamId : string.Empty);
     }
 
     #region Params
@@ -586,7 +591,7 @@ namespace BCM.Commands
 
     private static bool GetChunkSizeXyzw(CmdParams command)
     {
-      if (!int.TryParse(Params[1], out int x) || !int.TryParse(Params[2], out int y) || !int.TryParse(Params[3], out int z) || !int.TryParse(Params[4], out int w))
+      if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) || !int.TryParse(Params[3], out var z) || !int.TryParse(Params[4], out var w))
       {
         SendOutput("Unable to parse x,z x2,z2 into ints");
 
@@ -601,7 +606,7 @@ namespace BCM.Commands
 
     private static bool GetChunkPosXz(CmdParams command)
     {
-      if (!int.TryParse(Params[1], out int x) || !int.TryParse(Params[2], out int z))
+      if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var z))
       {
         SendOutput("Unable to parse x,z into ints");
 
@@ -634,7 +639,7 @@ namespace BCM.Commands
 
     private static bool GetPositionXyz(CmdParams command)
     {
-      if (!int.TryParse(Params[1], out int x) || !int.TryParse(Params[2], out int y) || !int.TryParse(Params[3], out int z))
+      if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) || !int.TryParse(Params[3], out var z))
       {
         SendOutput("Unable to parse x,y,z into ints");
 
@@ -651,14 +656,14 @@ namespace BCM.Commands
 
     private static bool GetPosSizeXyz(CmdParams command)
     {
-      if (!int.TryParse(Params[1], out int x) || !int.TryParse(Params[2], out int y) || !int.TryParse(Params[3], out int z))
+      if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) || !int.TryParse(Params[3], out var z))
       {
         SendOutput("Unable to parse x,y,z into ints");
 
         return false;
       }
 
-      if (!int.TryParse(Params[4], out int x2) || !int.TryParse(Params[5], out int y2) || !int.TryParse(Params[6], out int z2))
+      if (!int.TryParse(Params[4], out var x2) || !int.TryParse(Params[5], out var y2) || !int.TryParse(Params[6], out var z2))
       {
         SendOutput("Unable to parse x2,y2,z2 into ints");
 
@@ -735,10 +740,10 @@ namespace BCM.Commands
       {
         command.ChunkBounds = new BCMVector4
         {
-          x = World.toChunkXZ((int) entity.position.x - command.Radius),
-          y = World.toChunkXZ((int) entity.position.z - command.Radius),
-          z = World.toChunkXZ((int) entity.position.x + command.Radius),
-          w = World.toChunkXZ((int) entity.position.z + command.Radius)
+          x = World.toChunkXZ((int)entity.position.x - command.Radius),
+          y = World.toChunkXZ((int)entity.position.z - command.Radius),
+          z = World.toChunkXZ((int)entity.position.x + command.Radius),
+          w = World.toChunkXZ((int)entity.position.z + command.Radius)
         };
       }
       else
@@ -753,25 +758,66 @@ namespace BCM.Commands
 
     private static Dictionary<long, Chunk> GetAffectedChunks(CmdParams command, World world)
     {
-      var modifiedChunks = new Dictionary<long, Chunk>();
+      //request any unloaded chunks in area
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
       {
         for (var z = command.ChunkBounds.y; z <= command.ChunkBounds.w; z++)
         {
-          var chunkSync = world.GetChunkSync(x, z) as Chunk;
-          //todo: force mode, error mode
-          if (chunkSync == null)
+          var chunkKey = WorldChunkCache.MakeChunkKey(x, z);
+          if (!world.ChunkCache.ContainsChunkSync(chunkKey))
           {
-            SendOutput($"Unable to load chunk @ {x},{z}");
-          }
-          else
-          {
-            if (modifiedChunks.ContainsKey(chunkSync.Key)) continue;
-
-            modifiedChunks.Add(chunkSync.Key, chunkSync);
+            world.ChunkCache.ChunkProvider.RequestChunk(x, z);
           }
         }
       }
+
+      var modifiedChunks = new Dictionary<long, Chunk>();
+      var chunkCount = (command.ChunkBounds.z - command.ChunkBounds.x) * (command.ChunkBounds.w - command.ChunkBounds.y);
+
+      var count = 0;
+      var sw = System.Diagnostics.Stopwatch.StartNew();
+      var timeout = 2000;
+      if (Options.ContainsKey("timeout"))
+      {
+        if (Options["timeout"] != null)
+        {
+          int.TryParse(Options["timeout"], out timeout);
+        }
+      }
+
+      while (count < chunkCount && sw.ElapsedMilliseconds < timeout)
+      {
+        for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
+        {
+          for (var z = command.ChunkBounds.y; z <= command.ChunkBounds.w; z++)
+          {
+            //check if already loaded
+            var chunkKey = WorldChunkCache.MakeChunkKey(x, z);
+            if (modifiedChunks.ContainsKey(chunkKey) && modifiedChunks[chunkKey] != null) continue;
+
+            //check if chunk has loaded, add to dict if it has
+            modifiedChunks[chunkKey] = world.GetChunkSync(chunkKey) as Chunk;
+            if (modifiedChunks[chunkKey] != null)
+            {
+              count++;
+            }
+          }
+        }
+
+        //short delay to give chunks a chance to load
+        System.Threading.Thread.Sleep(10);
+      }
+
+      sw.Stop();
+
+      if (count < chunkCount)
+      {
+        SendOutput($"Unable to load {chunkCount - count}/{chunkCount} chunks");
+
+        return null;
+      }
+
+      SendOutput($"Loading {chunkCount} chunks took {Math.Round(sw.ElapsedMilliseconds / 1000f, 2)} seconds");
 
       return modifiedChunks;
     }
@@ -994,7 +1040,7 @@ namespace BCM.Commands
       }
       if (tiles.Count > 0)
       {
-        SendJson(new {Count = count, Tiles = tiles});
+        SendJson(new { Count = count, Tiles = tiles });
       }
       else
       {
