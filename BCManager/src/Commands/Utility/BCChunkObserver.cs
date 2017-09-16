@@ -1,5 +1,4 @@
 using System;
-using BCM.Models;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +6,6 @@ namespace BCM.Commands
 {
   public class BCChunkObserver : BCCommandAbstract
   {
-
     public override void Process()
     {
       if (Params.Count == 0)

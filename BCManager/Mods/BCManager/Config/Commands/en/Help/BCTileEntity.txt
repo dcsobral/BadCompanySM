@@ -13,10 +13,15 @@
             Command with no co-ords will use player location as a chunk position
             <cx> <cz> - chunk co-ordinates. In this mode the entire chunk is part of the area
             <cx2> <cz2> - chunk co-ordinates. The second pair defines an area of chunks
-            /r=0-5 - defines a radius if using chunk location. max of 5, 'bc-te scan 0 0 /r=5' would scan the 11x11 chunk grid around 0,0
+            /r=0-13 - defines a radius if using chunk location. max of 13, 'bc-te scan 0 0 /r=5' would scan the 11x11 chunk grid around 0,0
+            /loc - use your current position and a stored loc from bc-loc to define area
             <x> <y> <z> - block position single block, when combined with <x2> <y2> <z2> becomes an area instead
             /id=<steamid> for an online player can be used, if absent the command executor is used instead
             target = the commader, or id=<name|entityid|steamid> player, must be online
+            /forcesync - Makes the command execute synchronously which will cause the server to lag until the command completes.
+                         Should only be used to get output results from web issued commands rather than pushing to log.
+                         Will only work on areas already loaded, the first attempt on an unloaded area will always fail as the chunks can't finish loading until this command finishes.
+                         Additional attempts on the same area will work once the chunks finish loading (until the last observer times out).
             Sub Commands:
             scan - scans the defined area and reports on detials of tile entities found
             owner - sets the target as the owner of targeted secure blocks in area
@@ -26,6 +31,6 @@
             unlock - unlocks all targeted secure tiles in area
             empty - removes all loot from targeted tiles in area
             reset - removes all loot and resets touched status so loot tiles become untouched (including player placed blocks)
-            additem - add items to a specific loot container, options for /quality=1-600 or /count=1-# (if # is more than a stack them multiple stacks will be added)
-            removeitem - removes items in the specific loot container, if no /slot=1-# given then smallest stack is reduced, and overflow into extra stacks if required
+            additem - add items to a specific loot container, /item=<itemclass id or exact name>, options for /q=1-600 or /c=1-# (if # is more than a stack them multiple stacks will be added)
+            removeitem - removes items in the specific loot container, /item=<itemclass id or exact name>, if no /slot=1-# given then smallest stack is reduced, and overflow into extra stacks if required
             remove - DESTROYS all targeted tiles in area. Must use /confirm to execute as there is no undo

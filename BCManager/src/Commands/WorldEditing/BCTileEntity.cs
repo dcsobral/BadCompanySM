@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using BCM.Models;
 
@@ -351,7 +350,27 @@ namespace BCM.Commands
         return;
       }
 
-      SendOutput("Processing Command...");
+      DoProcess(world, command, steamId);
+    }
+
+    private void DoProcess(World world, CmdParams command, string steamId)
+    {
+      if (Options.ContainsKey("forcesync"))
+      {
+        SendOutput("Processing Command synchronously...");
+        ProcessCommand(world, command, steamId);
+
+        return;
+      }
+
+      if (SenderInfo.NetworkConnection != null && !(SenderInfo.NetworkConnection is TelnetConnection))
+      {
+        SendOutput("Processing Async Command... Sending output to log");
+      }
+      else
+      {
+        SendOutput("Processing Async Command...");
+      }
       ThreadManager.AddSingleTask(info => ProcessCommand(world, command, steamId));
     }
 
@@ -1394,7 +1413,7 @@ namespace BCM.Commands
                 var sl = (kvp.Value as TileEntitySecureLootContainer);
                 if (sl == null) continue;
                 if (sl.IsLocked() == locked && !setPwd) continue;
-
+                
                 sl.SetLocked(locked);
                 if (locked && setPwd)
                 {

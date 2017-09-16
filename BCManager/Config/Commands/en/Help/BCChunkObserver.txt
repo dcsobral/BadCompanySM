@@ -1,0 +1,10 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} <subcommand>
+      Notes:
+            list - provides chunk observer info, such as id, pos, view dist, chunk count, and entityid
+            spawn - create a new chunk observer at location to get chunks to load
+            remove - despawns the observer and unloads any unobserved chunks
+            move - moves the observer to a new location, causing loaded and unloaded chunks to adjust
