@@ -15,7 +15,7 @@ namespace BCM.Commands
       public string LastWrite;
     }
 
-    public static FileSystemInfo[] GetFiles(string path)
+    private static FileSystemInfo[] GetFiles(string path)
     {
       var root = new DirectoryInfo(path);
       if (!root.Exists) { return null; }
@@ -36,7 +36,8 @@ namespace BCM.Commands
           if (file.Extension != ".ttp") continue;
           var pdf = new BCMPlayerDataFile
           {
-            SteamId = file.Name.Substring(0, file.Name.Length - file.Extension.Length)
+            SteamId = file.Name.Substring(0, file.Name.Length - file.Extension.Length),
+            LastWrite = file.LastWriteTimeUtc.ToString("yyyy-MM-ddTHH:mm:ssZ")
           };
           var player = PersistentContainer.Instance.Players[pdf.SteamId, false];
           if (player != null)
@@ -45,7 +46,6 @@ namespace BCM.Commands
             pdf.LastOnline = player.LastOnline.ToString("yyyy-MM-ddTHH:mm:ssZ");
             pdf.IsOnline = player.IsOnline;
           }
-          pdf.LastWrite = file.LastWriteTimeUtc.ToString("yyyy-MM-ddTHH:mm:ssZ");
 
           players.Add(pdf);
         }

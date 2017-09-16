@@ -1,10 +1,12 @@
-﻿namespace BCM.Neurons
+﻿using System.Collections.Generic;
+
+namespace BCM.Neurons
 {
   public class SaveWorld : NeuronAbstract
   {
     public override void Fire(int b)
     {
-      if (ConnectionManager.Instance.GetClients().Count <= 0) return;
+      if (ConnectionManager.Instance.GetClients().Count == 0) return;
 
       if (!Steam.Network.IsServer)
       {
@@ -13,8 +15,8 @@
         return;
       }
 
-      GameManager.Instance.SaveLocalPlayerData();
-      GameManager.Instance.SaveWorld();
+      var cmd = new ConsoleCmdSaveWorld();
+      cmd.Execute(new List<string>(), new CommandSenderInfo());
 
       Log.Out($"{Config.ModPrefix} World saved");
     }

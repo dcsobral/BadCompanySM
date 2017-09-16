@@ -97,6 +97,11 @@
     <Compile Include="src\Commands\GameObjects\GameObjectsAlias\BCBlocks.cs" />
     <Compile Include="src\Commands\LiveData\BCGetSpawn.cs" />
     <Compile Include="src\Commands\LiveData\BCAdmins.cs" />
+    <Compile Include="src\Commands\Utility\BCChunkObserver.cs" />
+    <Compile Include="src\Models\BCMVector2.cs" />
+    <Compile Include="src\Models\BCMVector4.cs" />
+    <Compile Include="src\Models\BCMVector3.cs" />
+    <Compile Include="src\Models\BCMTileEntity.cs" />
     <Compile Include="src\Commands\WorldEditing\BCTileEntity.cs" />
     <Compile Include="src\Commands\AdminEntities\BCSpawn.cs" />
     <Compile Include="src\Commands\AdminEntities\BCGiveBuffToEntity.cs" />
@@ -155,7 +160,6 @@
     <Compile Include="src\DataManager.cs" />
     <Compile Include="src\EventSystem\Utilities\LogCache.cs" />
     <Compile Include="src\EventSystem\Models\HordeSpawner.cs" />
-    <Compile Include="src\EventSystem\Models\BCMVector3.cs" />
     <Compile Include="src\EventSystem\Models\Spawn.cs" />
     <Compile Include="src\EventSystem\Neurons\BroadcastAPI.cs" />
     <Compile Include="src\EventSystem\Neurons\MapExplorer.cs" />

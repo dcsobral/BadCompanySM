@@ -11,7 +11,7 @@ namespace BCM.Commands
   {
     public static CommandSenderInfo SenderInfo;
     public static List<string> Params = new List<string>();
-    public static Dictionary<string,string> Options = new Dictionary<string, string>();
+    public static Dictionary<string, string> Options = new Dictionary<string, string>();
 
     [Obsolete]
     public string Sep = "";
@@ -127,8 +127,11 @@ namespace BCM.Commands
       if (Options.ContainsKey("log"))
       {
         Log.Out(output);
+
+        return;
       }
-      else if (Options.ContainsKey("chat"))
+
+      if (Options.ContainsKey("chat"))
       {
         if (Options.ContainsKey("color"))
         {
@@ -138,14 +141,36 @@ namespace BCM.Commands
         {
           GameManager.Instance.GameMessageServer(null, EnumGameMessages.Chat, text, "Server", false, string.Empty, false);
         }
+
+        return;
       }
-      else
+
+      if (ThreadManager.IsMainThread())
       {
         foreach (var text in output.Split('\n'))
         {
           SdtdConsole.Instance.Output(text);
         }
+
+        return;
       }
+
+      if (SenderInfo.RemoteClientInfo != null)
+      {
+        SenderInfo.RemoteClientInfo.SendPackage(new NetPackageConsoleCmdClient(output, false));
+
+        return;
+      }
+
+      if (SenderInfo.NetworkConnection != null && SenderInfo.NetworkConnection is TelnetConnection)
+      {
+        SenderInfo.NetworkConnection.SendLine(output);
+
+        return;
+      }
+
+      //todo: async web output, or store result for viewing with bc-tasks command
+      Log.Out($"BCM:{output}");
     }
 
     public static List<string> GetFilters(string type)

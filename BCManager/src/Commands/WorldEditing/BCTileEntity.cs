@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using BCM.Models;
 
 namespace BCM.Commands
 {
@@ -13,98 +15,6 @@ namespace BCM.Commands
       None,
       Target,
       All
-    }
-
-    private class BCMTileEntity
-    {
-      public string Type;
-      public BCMVector3 Pos;
-
-      public BCMTileEntity(Vector3i pos, TileEntity te)
-      {
-        Type = te.GetTileEntityType().ToString();
-        Pos = new BCMVector3(pos);
-      }
-    }
-
-    private class BCMVector2
-    {
-      public int x;
-      public int y;
-      public BCMVector2()
-      {
-        x = 0;
-        y = 0;
-      }
-      public BCMVector2(int x, int y)
-      {
-        this.x = x;
-        this.y = y;
-      }
-      public BCMVector2(Vector2 v)
-      {
-        x = Mathf.RoundToInt(v.x);
-        y = Mathf.RoundToInt(v.y);
-      }
-      public BCMVector2(Vector2i v)
-      {
-        x = v.x;
-        y = v.y;
-      }
-    }
-
-    private class BCMVector3
-    {
-      public int x;
-      public int y;
-      public int z;
-      public BCMVector3()
-      {
-        x = 0;
-        y = 0;
-        z = 0;
-      }
-      public BCMVector3(Vector3 v)
-      {
-        x = Mathf.RoundToInt(v.x);
-        y = Mathf.RoundToInt(v.y);
-        z = Mathf.RoundToInt(v.z);
-      }
-      public BCMVector3(Vector3i v)
-      {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-      }
-
-      public BCMVector3(int x, int y, int z)
-      {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-      }
-    }
-
-    private class BCMVector4
-    {
-      public int x;
-      public int y;
-      public int z;
-      public int w;
-      public BCMVector4()
-      {
-        x = 0;
-        y = 0;
-        z = 0;
-        w = 0;
-      }
-      public BCMVector4(int x, int y, int z, int w)
-      {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = w;
-      }
     }
 
     private class BCMParts
@@ -427,7 +337,12 @@ namespace BCM.Commands
       var command = new CmdParams();
       if (!ProcessParams(command)) return;
 
-      if (!GetIds(world, out var steamId, out var entity)) return;
+      if (!GetIds(world, out var steamId, out var entity))
+      {
+        SendOutput("Command requires a position when not run by a player.");
+
+        return;
+      }
 
       if (!command.HasChunkPos && !command.HasPos && !GetEntPos(command, entity))
       {
@@ -437,7 +352,11 @@ namespace BCM.Commands
       }
 
       SendOutput("Processing Command...");
+      ThreadManager.AddSingleTask(info => ProcessCommand(world, command, steamId));
+    }
 
+    private void ProcessCommand(World world, CmdParams command, string steamId)
+    {
       var affectedChunks = GetAffectedChunks(command, world);
       if (affectedChunks == null)
       {
@@ -511,8 +430,11 @@ namespace BCM.Commands
           ScanTiles(command, world);
           break;
         case "additem":
-          //todo: adds items to a lootcontainer
-          //either add to first empty, or add at specific slot. Specific slot can be use to adjust stack size or type of itemvalue
+          AddLoot(command, world);
+          //todo: more options
+          //      add to first empty
+          //      or add at specific slot
+          //      Specific slot can be use to adjust stack size or type of itemvalue
           break;
         case "removeitem":
           //todo: removes items from a lootcontainer
@@ -525,8 +447,16 @@ namespace BCM.Commands
       }
 
       //RELOAD CHUNKS FOR PLAYER(S) - If steamId is empty then all players in area will get reload
-      if (reload == ReloadMode.None) return;
-      BCChunks.ReloadForClients(affectedChunks, reload == ReloadMode.Target ? steamId : string.Empty);
+      if (reload != ReloadMode.None)
+      {
+        BCChunks.ReloadForClients(affectedChunks, reload == ReloadMode.Target ? steamId : string.Empty);
+      }
+    }
+
+    private static void DoCleanup(World world, ChunkManager.ChunkObserver co, int ts = 0)
+    {
+      Thread.Sleep(ts * 1000);
+      world.m_ChunkManager.RemoveChunkObserver(co);
     }
 
     #region Params
@@ -544,8 +474,9 @@ namespace BCM.Commands
 
       public bool HasChunkPos;
       public BCMVector4 ChunkBounds;
+      public ItemStack ItemStack;
 
-      public bool IsWithinPosSize(Vector3i pos)
+      public bool IsWithinBounds(Vector3i pos)
       {
         if (!HasPos) return false;
 
@@ -553,39 +484,6 @@ namespace BCM.Commands
         return (Position.x <= pos.x && pos.x <= Position.x + size.x) &&
                (Position.y <= pos.y && pos.y <= Position.y + size.y) &&
                (Position.z <= pos.z && pos.z <= Position.z + size.z);
-      }
-    }
-
-    private static bool ProcessCmdAndBounds(CmdParams command)
-    {
-      if (Options.ContainsKey("type"))
-      {
-        command.Filter = Options["type"];
-      }
-      switch (Params.Count)
-      {
-        case 1:
-          //command with no extras
-          command.Command = Params[0];
-          return true;
-        case 3:
-          //XZ single chunk with /r
-          command.Command = Params[0];
-          return GetChunkPosXz(command);
-        case 4:
-          //XYZ single block
-          command.Command = Params[0];
-          return GetPositionXyz(command);
-        case 5:
-          //XZ multi chunk
-          command.Command = Params[0];
-          return GetChunkSizeXyzw(command);
-        case 7:
-          //XZYXYZ world pos bounds
-          command.Command = Params[0];
-          return GetPosSizeXyz(command);
-        default:
-          return false;
       }
     }
 
@@ -616,10 +514,10 @@ namespace BCM.Commands
       if (Options.ContainsKey("r"))
       {
         ushort.TryParse(Options["r"], out command.Radius);
-        if (command.Radius > 5)
+        if (command.Radius > 14)
         {
-          command.Radius = 5;
-          SendOutput("Setting radius to maximum of +5 chunks");
+          command.Radius = 14;
+          SendOutput("Setting radius to maximum of +14 chunks");
         }
         else
         {
@@ -651,6 +549,51 @@ namespace BCM.Commands
 
       command.ChunkBounds = new BCMVector4(World.toChunkXZ(x), World.toChunkXZ(z), World.toChunkXZ(x), World.toChunkXZ(z));
       command.HasChunkPos = true;
+
+      return !Options.ContainsKey("item") || command.Command != "additem" || GetItemStack(command);
+    }
+
+    private static bool GetItemStack(CmdParams command)
+    {
+      var quality = -1;
+      var count = 1;
+      if (Options.ContainsKey("q"))
+      {
+        if (!int.TryParse(Options["q"], out quality))
+        {
+          SendOutput("Unable to parse quality, using random value");
+        }
+      }
+      if (Options.ContainsKey("c"))
+      {
+        if (!int.TryParse(Options["c"], out count))
+        {
+          SendOutput($"Unable to parse count, using default value of {count}");
+        }
+      }
+
+      var ic = int.TryParse(Options["item"], out var id) ? ItemClass.GetForId(id) : XMLData.Item.ItemData.GetForName(Options["item"]);
+      if (ic == null)
+      {
+        SendOutput($"Unable to get item or block from given value '{Options["item"]}'");
+
+        return false;
+      }
+
+      command.ItemStack = new ItemStack
+      {
+        itemValue = new ItemValue(ic.Id, true),
+        count = count <= ic.Stacknumber.Value ? count : ic.Stacknumber.Value
+      };
+      if (command.ItemStack.count < count)
+      {
+        SendOutput("Using max stack size for " + ic.Name + " of " + command.ItemStack.count);
+      }
+      if (command.ItemStack.itemValue.HasQuality && quality > 0)
+      {
+        command.ItemStack.itemValue.Quality = quality;
+      }
+
       return true;
     }
 
@@ -673,7 +616,7 @@ namespace BCM.Commands
       command.Position = new BCMVector3(Math.Min(x, x2), Math.Min(y, y2), Math.Min(z, z2));
       command.HasPos = true;
 
-      command.Size = new BCMVector3(Math.Abs(x - x2), Math.Abs(y - y2), Math.Abs(z - z2));
+      command.Size = new BCMVector3(Math.Abs(x - x2) + 1, Math.Abs(y - y2) + 1, Math.Abs(z - z2) + 1);
       command.HasSize = true;
 
       command.ChunkBounds = new BCMVector4(
@@ -689,18 +632,39 @@ namespace BCM.Commands
 
     private bool ProcessParams(CmdParams command)
     {
+      if (Options.ContainsKey("type"))
+      {
+        command.Filter = Options["type"];
+      }
       switch (Params.Count)
       {
         case 1:
+          //command with no extras, blocks if /loc, chunks if /r= or nothing
+          command.Command = Params[0];
+          return true;
+
         case 3:
+          //XZ single chunk with /r
+          command.Command = Params[0];
+          return GetChunkPosXz(command);
+
         case 4:
+          //XYZ single block
+          command.Command = Params[0];
+          return GetPositionXyz(command);
+
         case 5:
+          //XZ multi chunk
+          command.Command = Params[0];
+          return GetChunkSizeXyzw(command);
+
         case 7:
-          return ProcessCmdAndBounds(command);
+          //XZYXYZ world pos bounds
+          command.Command = Params[0];
+          return GetPosSizeXyz(command);
 
         default:
           SendOutput(GetHelp());
-
           return false;
       }
     }
@@ -734,17 +698,39 @@ namespace BCM.Commands
 
     private static bool GetEntPos(CmdParams command, EntityPlayer entity)
     {
-      //todo: if /loc and a loc is set then use loc and player pos as the bounds instad of radius, /loc and /r connot be used together
       //todo: if /h=#,# then set y to pos + [0], y2 to pos + [1], if only 1 number then y=pos y2=pos+#
       if (entity != null)
       {
+        var loc = new Vector3i(int.MinValue, 0, int.MinValue);
+        var hasLoc = false;
+        if (Options.ContainsKey("loc"))
+        {
+          loc = BCLocation.GetPos(SenderInfo.RemoteClientInfo?.playerId);
+          if (loc.x == int.MinValue)
+          {
+            SendOutput("No location stored or player not found. Use bc-loc to store a location.");
+
+            return false;
+          }
+          hasLoc = true;
+
+          command.Position = new BCMVector3((int)entity.position.x, (int)entity.position.y, (int)entity.position.z);
+          command.HasPos = true;
+          command.Position = new BCMVector3(Math.Min(loc.x, (int)entity.position.x), Math.Min(loc.y, (int)entity.position.y), Math.Min(loc.z, (int)entity.position.z));
+          command.HasPos = true;
+
+          command.Size = new BCMVector3(Math.Abs(loc.x - (int)entity.position.x) + 1, Math.Abs(loc.y - (int)entity.position.y) + 1, Math.Abs(loc.z - (int)entity.position.z) + 1);
+          command.HasSize = true;
+        }
+
         command.ChunkBounds = new BCMVector4
         {
-          x = World.toChunkXZ((int)entity.position.x - command.Radius),
-          y = World.toChunkXZ((int)entity.position.z - command.Radius),
-          z = World.toChunkXZ((int)entity.position.x + command.Radius),
-          w = World.toChunkXZ((int)entity.position.z + command.Radius)
+          x = World.toChunkXZ(hasLoc ? Math.Min(loc.x, (int)entity.position.x) : (int)entity.position.x - command.Radius),
+          y = World.toChunkXZ(hasLoc ? Math.Min(loc.z, (int)entity.position.z) : (int)entity.position.z - command.Radius),
+          z = World.toChunkXZ(hasLoc ? Math.Max(loc.x, (int)entity.position.x) : (int)entity.position.x + command.Radius),
+          w = World.toChunkXZ(hasLoc ? Math.Max(loc.z, (int)entity.position.z) : (int)entity.position.z + command.Radius)
         };
+        command.HasChunkPos = true;
       }
       else
       {
@@ -758,25 +744,9 @@ namespace BCM.Commands
 
     private static Dictionary<long, Chunk> GetAffectedChunks(CmdParams command, World world)
     {
-      //request any unloaded chunks in area
-      for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
-      {
-        for (var z = command.ChunkBounds.y; z <= command.ChunkBounds.w; z++)
-        {
-          var chunkKey = WorldChunkCache.MakeChunkKey(x, z);
-          if (!world.ChunkCache.ContainsChunkSync(chunkKey))
-          {
-            world.ChunkCache.ChunkProvider.RequestChunk(x, z);
-          }
-        }
-      }
-
       var modifiedChunks = new Dictionary<long, Chunk>();
-      var chunkCount = (command.ChunkBounds.z - command.ChunkBounds.x) * (command.ChunkBounds.w - command.ChunkBounds.y);
 
-      var count = 0;
-      var sw = System.Diagnostics.Stopwatch.StartNew();
-      var timeout = 2000;
+      var timeout = 1000;
       if (Options.ContainsKey("timeout"))
       {
         if (Options["timeout"] != null)
@@ -785,17 +755,35 @@ namespace BCM.Commands
         }
       }
 
+      ChunkObserver(command, world, timeout / 1000);
+
+      //request any unloaded chunks in area
+      for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
+      {
+        for (var z = command.ChunkBounds.y; z <= command.ChunkBounds.w; z++)
+        {
+          var chunkKey = WorldChunkCache.MakeChunkKey(x, z);
+          modifiedChunks.Add(chunkKey, null);
+        }
+      }
+
+      var chunkCount = (command.ChunkBounds.z - command.ChunkBounds.x + 1) * (command.ChunkBounds.w - command.ChunkBounds.y + 1);
+      var count = 0;
+      var sw = System.Diagnostics.Stopwatch.StartNew();
+
       while (count < chunkCount && sw.ElapsedMilliseconds < timeout)
       {
         for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
         {
           for (var z = command.ChunkBounds.y; z <= command.ChunkBounds.w; z++)
           {
-            //check if already loaded
+            //check if already in list
             var chunkKey = WorldChunkCache.MakeChunkKey(x, z);
             if (modifiedChunks.ContainsKey(chunkKey) && modifiedChunks[chunkKey] != null) continue;
 
-            //check if chunk has loaded, add to dict if it has
+            //check if chunk has loaded
+            if (!world.ChunkCache.ContainsChunkSync(chunkKey)) continue;
+
             modifiedChunks[chunkKey] = world.GetChunkSync(chunkKey) as Chunk;
             if (modifiedChunks[chunkKey] != null)
             {
@@ -803,9 +791,6 @@ namespace BCM.Commands
             }
           }
         }
-
-        //short delay to give chunks a chance to load
-        System.Threading.Thread.Sleep(10);
       }
 
       sw.Stop();
@@ -821,9 +806,123 @@ namespace BCM.Commands
 
       return modifiedChunks;
     }
+
+    private static void ChunkObserver(CmdParams command, World world, int timeoutSec)
+    {
+      var pos = command.HasPos ? command.Position.ToV3() : command.ChunkBounds.ToV3();
+      var viewDim = !Options.ContainsKey("r") ? command.Radius : command.ChunkBounds.GetRadius();
+      var chunkObserver = world.m_ChunkManager.AddChunkObserver(pos, false, viewDim, -1);
+
+      var timerSec = 60;
+      if (Options.ContainsKey("ts") && Options["ts"] != null)
+      {
+        int.TryParse(Options["ts"], out timerSec);
+      }
+      timerSec += timeoutSec;
+      ThreadManager.AddSingleTask(info => DoCleanup(world, chunkObserver, timerSec));
+    }
     #endregion
 
     #region Actions
+    private static void AddLoot(CmdParams command, World world)
+    {
+      if (!command.HasPos || command.ItemStack == null)
+      {
+        SendOutput("AddLoot option requires a specific x y z and a value /item value");
+
+        return;
+      }
+
+      for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
+      {
+        for (var z = command.ChunkBounds.y; z <= command.ChunkBounds.w; z++)
+        {
+          var chunkSync = world.ChunkCache.GetChunkSync(x, z);
+          var tileEntities = chunkSync?.GetTileEntities();
+          if (tileEntities == null) return;
+
+          var chunkXyz = new Vector3i(World.toBlockXZ(command.Position.x), command.Position.y, World.toBlockXZ(command.Position.z));
+          if (!tileEntities.dict.ContainsKey(chunkXyz))
+          {
+            SendOutput($"Tile Entity not found at given location {command.Position}");
+
+            return;
+          }
+          var te = tileEntities.dict[chunkXyz];
+          if (te.IsUserAccessing())
+          {
+            SendOutput("Tile Entity is currently being accessed");
+
+            return;
+          }
+
+          if (command.Filter != null &&
+              !(command.Filter.Equals("all", StringComparison.OrdinalIgnoreCase) ||
+                command.Filter.Equals(te.GetTileEntityType().ToString(), StringComparison.OrdinalIgnoreCase
+                ))) return;
+
+          switch (te.GetTileEntityType())
+          {
+            case TileEntityType.None:
+              break;
+            case TileEntityType.Loot:
+              if (te is TileEntityLootContainer loot)
+              {
+                if (!loot.AddItem(command.ItemStack))
+                {
+                  SendOutput("Couldn't add item, container is full?");
+                }
+              }
+              break;
+            case TileEntityType.Trader:
+              break;
+            case TileEntityType.VendingMachine:
+              break;
+            case TileEntityType.Forge:
+              break;
+            case TileEntityType.Campfire:
+              break;
+            case TileEntityType.SecureLoot:
+              if (te is TileEntitySecureLootContainer secureLoot)
+              {
+                if (!secureLoot.AddItem(command.ItemStack))
+                {
+                  SendOutput("Couldn't add item, container is full?");
+                }
+              }
+              break;
+            case TileEntityType.SecureDoor:
+              break;
+            case TileEntityType.Workstation:
+              break;
+            case TileEntityType.Sign:
+              break;
+            case TileEntityType.GoreBlock:
+              if (te is TileEntityGoreBlock goreBlock)
+              {
+                if (!goreBlock.AddItem(command.ItemStack))
+                {
+                  SendOutput("Couldn't add item, container is full?");
+                }
+              }
+              break;
+            case TileEntityType.Powered:
+              break;
+            case TileEntityType.PowerSource:
+              break;
+            case TileEntityType.PowerRangeTrap:
+              break;
+            case TileEntityType.Trigger:
+              break;
+            default:
+              SendOutput($"Error finding TileEntity Type at {command.Position}");
+              break;
+          }
+        }
+      }
+      SendOutput($"Added to loot container: {command.ItemStack.itemValue.ItemClass.Name} x{command.ItemStack.count} at {command.Position}");
+    }
+
     private static void ScanTiles(CmdParams command, World world)
     {
       var count = 0;
@@ -842,7 +941,7 @@ namespace BCM.Commands
           foreach (var kvp in tileEntities.dict)
           {
             var pos = kvp.Key + worldPos;
-            if (command.HasPos && !command.IsWithinPosSize(pos)) continue;
+            if (command.HasPos && !command.IsWithinBounds(pos)) continue;
             if (command.Filter != null &&
                 !(command.Filter.Equals("all", StringComparison.OrdinalIgnoreCase) ||
                   command.Filter.Equals(kvp.Value.GetTileEntityType().ToString(), StringComparison.OrdinalIgnoreCase
@@ -1064,7 +1163,7 @@ namespace BCM.Commands
           foreach (var kvp in tileEntities.dict)
           {
             var pos = kvp.Key + worldPos;
-            if (command.HasPos && !command.IsWithinPosSize(pos)) continue;
+            if (command.HasPos && !command.IsWithinBounds(pos)) continue;
             if (command.Filter != null &&
                 !(command.Filter.Equals("all", StringComparison.OrdinalIgnoreCase) ||
                   command.Filter.Equals(kvp.Value.GetTileEntityType().ToString(), StringComparison.OrdinalIgnoreCase
@@ -1097,8 +1196,10 @@ namespace BCM.Commands
           var worldPos = new Vector3i(x << 4, 0, z << 4);
           foreach (var kvp in tileEntities.dict)
           {
+            if (kvp.Value.IsUserAccessing()) continue;
+
             var pos = kvp.Key + worldPos;
-            if (command.HasPos && !command.IsWithinPosSize(pos)) continue;
+            if (command.HasPos && !command.IsWithinBounds(pos)) continue;
             if (command.Filter != null &&
                 !(command.Filter.Equals("all", StringComparison.OrdinalIgnoreCase) ||
                   command.Filter.Equals(kvp.Value.GetTileEntityType().ToString(), StringComparison.OrdinalIgnoreCase
@@ -1187,8 +1288,10 @@ namespace BCM.Commands
           var worldPos = new Vector3i(x << 4, 0, z << 4);
           foreach (var kvp in tileEntities.dict)
           {
+            if (kvp.Value.IsUserAccessing()) continue;
+
             var pos = kvp.Key + worldPos;
-            if (command.HasPos && !command.IsWithinPosSize(pos)) continue;
+            if (command.HasPos && !command.IsWithinBounds(pos)) continue;
             if (command.Filter != null &&
                 !(command.Filter.Equals("all", StringComparison.OrdinalIgnoreCase) ||
                   command.Filter.Equals(kvp.Value.GetTileEntityType().ToString(), StringComparison.OrdinalIgnoreCase
@@ -1200,6 +1303,7 @@ namespace BCM.Commands
                 break;
               case TileEntityType.Loot:
                 (kvp.Value as TileEntityLootContainer)?.SetEmpty();
+                count++;
                 break;
               case TileEntityType.Trader:
                 break;
@@ -1221,6 +1325,7 @@ namespace BCM.Commands
                 break;
               case TileEntityType.GoreBlock:
                 (kvp.Value as TileEntityGoreBlock)?.SetEmpty();
+                count++;
                 break;
               case TileEntityType.Powered:
                 break;
@@ -1255,7 +1360,7 @@ namespace BCM.Commands
           foreach (var kvp in tileEntities.dict)
           {
             var pos = kvp.Key + worldPos;
-            if (command.HasPos && !command.IsWithinPosSize(pos)) continue;
+            if (command.HasPos && !command.IsWithinBounds(pos)) continue;
             if (command.Filter != null &&
                 !(command.Filter.Equals("all", StringComparison.OrdinalIgnoreCase) ||
                   command.Filter.Equals(kvp.Value.GetTileEntityType().ToString(), StringComparison.OrdinalIgnoreCase
@@ -1272,6 +1377,7 @@ namespace BCM.Commands
               case TileEntityType.VendingMachine:
                 var vm = (kvp.Value as TileEntityVendingMachine);
                 if (vm == null) continue;
+                if (vm.IsLocked() == locked && !setPwd) continue;
 
                 vm.SetLocked(locked);
                 if (locked && setPwd)
@@ -1287,6 +1393,7 @@ namespace BCM.Commands
               case TileEntityType.SecureLoot:
                 var sl = (kvp.Value as TileEntitySecureLootContainer);
                 if (sl == null) continue;
+                if (sl.IsLocked() == locked && !setPwd) continue;
 
                 sl.SetLocked(locked);
                 if (locked && setPwd)
@@ -1298,6 +1405,7 @@ namespace BCM.Commands
               case TileEntityType.SecureDoor:
                 var sd = (kvp.Value as TileEntitySecureDoor);
                 if (sd == null) continue;
+                if (sd.IsLocked() == locked && !setPwd) continue;
 
                 sd.SetLocked(locked);
                 if (locked && setPwd)
@@ -1311,6 +1419,7 @@ namespace BCM.Commands
               case TileEntityType.Sign:
                 var sign = (kvp.Value as TileEntitySign);
                 if (sign == null) continue;
+                if (sign.IsLocked() == locked && !setPwd) continue;
 
                 sign.SetLocked(locked);
                 if (locked && setPwd)
@@ -1354,7 +1463,7 @@ namespace BCM.Commands
           foreach (var kvp in tileEntities.dict)
           {
             var pos = kvp.Key + worldPos;
-            if (command.HasPos && !command.IsWithinPosSize(pos)) continue;
+            if (command.HasPos && !command.IsWithinBounds(pos)) continue;
             if (command.Filter != null &&
                 !(command.Filter.Equals("all", StringComparison.OrdinalIgnoreCase) ||
                   command.Filter.Equals(kvp.Value.GetTileEntityType().ToString(), StringComparison.OrdinalIgnoreCase
@@ -1449,7 +1558,7 @@ namespace BCM.Commands
           foreach (var kvp in tileEntities.dict)
           {
             var pos = kvp.Key + worldPos;
-            if (command.HasPos && !command.IsWithinPosSize(pos)) continue;
+            if (command.HasPos && !command.IsWithinBounds(pos)) continue;
             if (command.Filter != null &&
                 !(command.Filter.Equals("all", StringComparison.OrdinalIgnoreCase) ||
                   command.Filter.Equals(kvp.Value.GetTileEntityType().ToString(), StringComparison.OrdinalIgnoreCase
@@ -1544,7 +1653,7 @@ namespace BCM.Commands
           foreach (var kvp in tileEntities.dict)
           {
             var pos = kvp.Key + worldPos;
-            if (command.HasPos && !command.IsWithinPosSize(pos)) continue;
+            if (command.HasPos && !command.IsWithinBounds(pos)) continue;
             if (command.Filter != null &&
                 !(command.Filter.Equals("all", StringComparison.OrdinalIgnoreCase) ||
                   command.Filter.Equals(kvp.Value.GetTileEntityType().ToString(), StringComparison.OrdinalIgnoreCase

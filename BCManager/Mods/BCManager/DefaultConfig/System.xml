@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <System>
-  <LogCache enabled="true"/>
+  <LogCache enabled="false"/>
   <Heartbeat isalive="true"/>
   <BPM rate="60"/>
   <!--Spawn System-->
   <Synapse name="spawnmanager" enabled="false" beats="1"/> <!-- experimental synapse, use at own risk -->
-  <Synapse name="entityspawnmutator" enabled="true" beats="30" options="EntityEnemy,EntityNPC"/> <!-- firing the neuron attempts to add the monitor, it will report instantly on spawns -->
+  <Synapse name="entityspawnmutator" enabled="false" beats="30" options="EntityEnemy,EntityNPC"/> <!-- firing the neuron attempts to add the monitor, it will report instantly on spawns -->
 
   <!--Character Management-->
   <Synapse name="bagmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
@@ -19,7 +19,7 @@
   <Synapse name="pingkicker" enabled="false" beats="60"/><!-- todo: not implemented -->
 
   <!--Admin Functions-->
-  <Synapse name="saveworld" enabled="true" beats="600"/>
+  <Synapse name="saveworld" enabled="false" beats="600"/>
   <Synapse name="trashcollector" enabled="false" beats="1250"/> <!-- not needed? -->
   <Synapse name="mapexplorer" enabled="false" beats="5"/>
 

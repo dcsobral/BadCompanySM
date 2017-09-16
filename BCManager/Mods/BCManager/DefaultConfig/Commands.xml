@@ -12,6 +12,7 @@
   <Command name="BCMemTrash" commands="bc-trash" defaultpermissionlevel="0"/>
   <Command name="BCBroadcastAPI" commands="bc-api" defaultpermissionlevel="0"/>
   <Command name="BCTest" commands="bc-test" defaultpermissionlevel="0"/>
+  <Command name="BCChunkObserver" commands="bc-co" defaultpermissionlevel="0" defaultoptions=""/>
 
   <!-- ********* LIVE DATA ********* -->
   <Command name="BCPlayers" commands="bc-lp" defaultpermissionlevel="0" defaultoptions="online,strpos,pp" chathook="bc-lp" chatoptions="online filter=0,1,2 chat color=ff0000"/>

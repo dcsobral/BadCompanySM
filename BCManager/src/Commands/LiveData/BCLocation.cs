@@ -57,7 +57,7 @@ namespace BCM.Commands
 
     public static Vector3i GetPos(string steamId)
     {
-      return _cache.ContainsKey(steamId) ? _cache[steamId] : new Vector3i(int.MinValue, 0, int.MinValue);
+      return steamId == null || !_cache.ContainsKey(steamId) ? new Vector3i(int.MinValue, 0, int.MinValue) : _cache[steamId];
     }
 
     public static void SetPos(string steamId, Vector3i pos)

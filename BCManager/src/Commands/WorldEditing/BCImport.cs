@@ -301,39 +301,42 @@ namespace BCM.Commands
       {
         ProcessSleepers(prefab, world, null, dest);
       }
-      
+
 
       var chunkSync = world.ChunkCache.GetChunkSync(World.toChunkXZ(dest.x), World.toChunkXZ(dest.z));
 
-      for (var x = 0; x < prefab.size.x; ++x)
+      if (!Options.ContainsKey("refresh"))
       {
-        for (var z = 0; z < prefab.size.z; ++z)
+        for (var x = 0; x < prefab.size.x; ++x)
         {
-          var chunkX = World.toChunkXZ(x + dest.x);
-          var chunkZ = World.toChunkXZ(z + dest.z);
-          var blockX = World.toBlockXZ(x + dest.x);
-          var blockZ = World.toBlockXZ(z + dest.z);
-          if (chunkSync == null || chunkSync.X != chunkX || chunkSync.Z != chunkZ)
+          for (var z = 0; z < prefab.size.z; ++z)
           {
-            chunkSync = world.ChunkCache.GetChunkSync(chunkX, chunkZ);
-          }
+            var chunkX = World.toChunkXZ(x + dest.x);
+            var chunkZ = World.toChunkXZ(z + dest.z);
+            var blockX = World.toBlockXZ(x + dest.x);
+            var blockZ = World.toBlockXZ(z + dest.z);
+            if (chunkSync == null || chunkSync.X != chunkX || chunkSync.Z != chunkZ)
+            {
+              chunkSync = world.ChunkCache.GetChunkSync(chunkX, chunkZ);
+            }
 
-          //todo:
-          if (chunkSync == null) continue;
+            //todo:
+            if (chunkSync == null) continue;
 
-          for (var y = 0; y < prefab.size.y; ++y)
-          {
-            var blockY = World.toBlockY(y + dest.y);
-            var chunkBlock = chunkSync.GetBlock(blockX, blockY, blockZ);
+            for (var y = 0; y < prefab.size.y; ++y)
+            {
+              var blockY = World.toBlockY(y + dest.y);
+              var chunkBlock = chunkSync.GetBlock(blockX, blockY, blockZ);
 
-            //REMOVE PARENT OF MULTIDIM
-            if (!chunkBlock.Block.isMultiBlock || !chunkBlock.ischild) continue;
+              //REMOVE PARENT OF MULTIDIM
+              if (!chunkBlock.Block.isMultiBlock || !chunkBlock.ischild) continue;
 
-            var parentPos = chunkBlock.Block.multiBlockPos.GetParentPos(new Vector3i(dest.x + x, dest.y + y, dest.z + z), chunkBlock);
-            var parent = world.ChunkClusters[0].GetBlock(parentPos);
-            if (parent.ischild || parent.type != chunkBlock.type) continue;
+              var parentPos = chunkBlock.Block.multiBlockPos.GetParentPos(new Vector3i(dest.x + x, dest.y + y, dest.z + z), chunkBlock);
+              var parent = world.ChunkClusters[0].GetBlock(parentPos);
+              if (parent.ischild || parent.type != chunkBlock.type) continue;
 
-            world.ChunkClusters[0].SetBlock(parentPos, BlockValue.Air, false, false);
+              world.ChunkClusters[0].SetBlock(parentPos, BlockValue.Air, false, false);
+            }
           }
         }
       }
@@ -381,7 +384,7 @@ namespace BCM.Commands
             //REMOVE LOOT - Make optional for reimporting same prefab over existing loot blocks
             if (Options.ContainsKey("clearloot"))
             {
-              
+
             }
 
             //TERRAIN FILLER
