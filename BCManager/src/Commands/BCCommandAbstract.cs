@@ -157,14 +157,20 @@ namespace BCM.Commands
 
       if (SenderInfo.RemoteClientInfo != null)
       {
-        SenderInfo.RemoteClientInfo.SendPackage(new NetPackageConsoleCmdClient(output, false));
+        foreach (var text in output.Split('\n'))
+        {
+          SenderInfo.RemoteClientInfo.SendPackage(new NetPackageConsoleCmdClient(text, false));
+        }
 
         return;
       }
 
       if (SenderInfo.NetworkConnection != null && SenderInfo.NetworkConnection is TelnetConnection)
       {
-        SenderInfo.NetworkConnection.SendLine(output);
+        foreach (var text in output.Split('\n'))
+        {
+          SenderInfo.NetworkConnection.SendLine(text);
+        }
 
         return;
       }
@@ -181,7 +187,7 @@ namespace BCM.Commands
       var filters = Options["filter"].ToLower().Split(',').ToList();
       foreach (var cur in filters)
       {
-        var str = int.TryParse(cur, out int intFilter) ? GetFilter(intFilter, type) : cur;
+        var str = int.TryParse(cur, out var intFilter) ? GetFilter(intFilter, type) : cur;
         if (str == null) continue;
 
         if (filter.Contains(str))

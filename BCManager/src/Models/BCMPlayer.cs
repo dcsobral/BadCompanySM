@@ -590,7 +590,7 @@ namespace BCM.Models
 
     private void GetUnderground(PlayerInfo pInfo) => Bin.Add("Underground", Underground = pInfo.EP != null ? (int)pInfo.EP.position.y - GameManager.Instance.World.GetHeight((int)pInfo.EP.position.x, (int)pInfo.EP.position.z) - 1 : 0);
 
-    private void GetLastOnline(PlayerInfo pInfo) => Bin.Add("LastOnline", pInfo.EP == null ? LastOnline = pInfo.PCP != null ? pInfo.PCP.LastOnline.ToString("yyyy-MM-ddTHH:mm:ssZ") : "" : null);
+    private void GetLastOnline(PlayerInfo pInfo) => Bin.Add("LastOnline", pInfo.EP == null ? LastOnline = pInfo.PCP != null ? pInfo.PCP.LastOnline.ToUtcStr() : "" : null);
 
     private void GetSessionPlaytime(PlayerInfo pInfo) => Bin.Add("SessionPlayTime", pInfo.EP != null ? SessionPlayTime = Math.Round((Time.timeSinceLevelLoad - pInfo.EP.CreationTimeSinceLevelLoad) / 60, 2) : 0);
 

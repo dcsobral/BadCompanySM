@@ -2,18 +2,20 @@
       Aliases: {commands}
       Default Options: {defaultoptions}
       Usage:
-            1. {command}
-            2. {command} <filtertext>
-            3. {command} <x y>
-            4. {command} <x y> <filtertext>
+            1. {command} /r=# /o=x,y
+            2. {command} <filtertext> /r=# /o=x,y
       Notes:
             Use bc-help to get a list of common /options
-            <filtertext> - a string to compare against prefab names
-            <x y> - the grid co-ords for the cells, 0 0 being the central hub, limit between -5 and 6.
+            <filtertext> - a string to compare against prefab names, works on partial matches. Leave out to get a full list in the area
+                           Example: bc-hcd /o=0,0 /r=1 trader - would find all trader PoIs in the 9 cells around the central cell 0,0
+            The first time an area is scanned after a server reboot it will need to load data from disk.
+            This is a much slower process compared to using the cache, so it can cause lag on the server while the data is loading.
+            Limit the area scanned when running on a server with players.
       Options:
-            /current - will use the cell you are standing in as the x y co-ords
-            /all - will return all prefabs for all cells. Should only be used in conjunction with /log as the output will be too long for console or chat. Only works when no x y or filter is defined
-      Examples:
-            bc-lhcd /all /log /nl (send a full list of all prefabs to the log file)
-            bc-lhcd /current /nl trader (all traders in the current cell)
-            bc-lhcd 4 2 house /nl (a list of prefabs in cell 4,2 with the word house in the name)
+            /o=<x,y> - sets the origin cell for the scan, 0,0 being the central hub, limit between -5 and 6 for a 10k world radius.
+                       You can scan further but if the file for those co-ords don't exist there will be no results for that cell.
+            /r=# - set the radius in cells from the origin, there is no limit but as with the /o any areas scaned with no related file will have no results.
+            /full - returns more details. The default view only has prefab name and position, 
+                    full option has cell/hub/wilderness rules, townshiptypes, and full lot details such as instance id and rotation
+            /reset - clears the cached data. Subsequent calls for data will require reloading from disk.
+            /min - strips the field names from the json for the basic output option (i.e doesnt work with /full yet)

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace BCM
 {
@@ -11,6 +12,11 @@ namespace BCM
     public static string ToStringRgbHex(this Color c)
     {
       return $"#{(int) (c.r * 255):X2}{(int) (c.g * 255):X2}{(int) (c.b * 255):X2}";
+    }
+
+    public static string ToUtcStr(this DateTime d)
+    {
+      return d.ToString("yyyy-MM-ddTHH:mm:ssZ");
     }
   }
 }

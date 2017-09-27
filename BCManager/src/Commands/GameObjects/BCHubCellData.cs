@@ -176,7 +176,7 @@ namespace BCM.Commands
 
     private void GetHubCellData()
     {
-      GetCellsRange(out int r, out int xOff, out int yOff);
+      GetCellsRange(out var r, out var xOff, out var yOff);
 
       var hcdDir = GameUtils.GetSaveGameDir() + "/HubCellData/";
       for (var x = -r + xOff; x <= r + xOff; x++)
@@ -231,7 +231,7 @@ namespace BCM.Commands
 
       if (Params.Count == 1)
       {
-        GetMinMax(out int minX, out int minY, out int maxX, out int maxY);
+        GetMinMax(out var minX, out var minY, out var maxX, out var maxY);
 
         foreach (var hubCell in _hubCellData)
         {
@@ -285,7 +285,7 @@ namespace BCM.Commands
 
     private static void GetMinMax(out int minX, out int minY, out int maxX, out int maxY)
     {
-      GetCellsRange(out int r, out int xOff, out int yOff);
+      GetCellsRange(out var r, out var xOff, out var yOff);
       minX = -r + xOff;
       minY = -r + yOff;
       maxX = r + xOff;

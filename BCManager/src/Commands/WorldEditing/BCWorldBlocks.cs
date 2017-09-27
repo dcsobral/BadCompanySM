@@ -64,10 +64,6 @@ namespace BCM.Commands
         p.Load(Utils.GetGameDir(UndoDir), pCache.Filename);
         BCImport.InsertPrefab(p, pCache.Pos.x, pCache.Pos.y, pCache.Pos.z, pCache.Pos);
 
-        //workaround for multi dim blocks, insert undo prefab twice
-        //todo: clear all blocks (turn to air) before inserting the prefab instead
-        BCImport.InsertPrefab(p, pCache.Pos.x, pCache.Pos.y, pCache.Pos.z, pCache.Pos);
-
         var cacheFile = Utils.GetGameDir($"{UndoDir}{pCache.Filename}");
         if (Utils.FileExists($"{cacheFile}.tts"))
         {
@@ -83,15 +79,10 @@ namespace BCM.Commands
 
     public override void Process()
     {
-      //todo: multidim blocks
-      //      claim stones replaced need to be removed from persistent data.
-      //      map visitor for unloaded chunks
       //todo: damage
       //todo: use Chunk.RecalcHeightAt(int _x, int _yMaxStart, int _z)
 
-      //todo: change command to load chunks and offload the setblock calls to a subthread that waits for all chunks to load
-      //      limit size to 512 x 512
-      //      allow /y=-1 too be used to offset the insert when using player locs to allow sub areas to be accessed without underground clipping
+      //todo: allow /y=-1 too be used to offset the insert when using player locs to allow sub areas to be accessed without underground clipping
       //      /y=terrain to set the bottom y co-ord to the lowest non terrain block -1
 
       //todo: apply a custom placeholder mapping to a block value in the area
@@ -108,7 +99,6 @@ namespace BCM.Commands
       var p2 = new Vector3i(int.MinValue, 0, int.MinValue);
       string blockname;
       string blockname2 = null;
-      int blockId;
 
       //get loc and player current pos
       EntityPlayer sender = null;
@@ -195,7 +185,7 @@ namespace BCM.Commands
       );
 
       //**************** GET BLOCKVALUE
-      var bvNew = int.TryParse(blockname, out blockId) ? Block.GetBlockValue(blockId) : Block.GetBlockValue(blockname);
+      var bvNew = int.TryParse(blockname, out var blockId) ? Block.GetBlockValue(blockId) : Block.GetBlockValue(blockname);
 
       var modifiedChunks = GetAffectedChunks(p3, size);
 
@@ -225,6 +215,10 @@ namespace BCM.Commands
       else if (Options.ContainsKey("nopaint"))
       {
         //todo
+      }
+      else if (Options.ContainsKey("lit"))
+      {
+        //todo - _blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!isOn) ? 0 : 2));
       }
       else if (Options.ContainsKey("scan"))
       {
@@ -498,37 +492,6 @@ namespace BCM.Commands
       {
         stats.Add($"{bv.type:D4}:{name}", 1);
       }
-    }
-
-    private void Notes()
-    {
-      //  //bc-wblocks - lists options / help details (see below)
-      //  //  <co-ords> = 2x vector3i pos
-
-      //  //bc-wblocks <co-ords> /fill <blockid> - fills the area with the specified block
-      //  //bc-wblocks <co-ords> /fill <blockid> [/face0=textureId] [/face1=textureId] [/face2=textureId] [/face3=textureId] [/face4=textureId] [/face5=textureId]
-      //  //bc-wblocks <co-ords> /swap <targetblockid> <replacementblockid> [/face0=textureId] [/face1=textureId] [/face2=textureId] [/face3=textureId] [/face4=textureId] [/face5=textureId]
-      //  //bc-wblocks <co-ords> /chown <entityid> (or /self) - sets the owner of the tileentity blocks and land claims in the area to the entityid listed (or the commander if /self used)
-      //  //bc-wblocks <co-ords> /densify <density> - set the density of blocks within the area. If <density> is neg: set terrain blocks, positive: set cube blocks (or is that reversed?)
-      //  //  /noair - option means it will only swap the blocks if original block is not air (applies to /fill and /swap)
-      //  //  /nowet - option means it will only swap the blocks if original block is not water (applies to /fill and /swap)
-      //  //  /noclaim - skips processing of claim blocks in target area
-      //  //  /random=1,2,3,4,5 a list of blocks to use for /fill and /swap to randomly replace blocks in target area
-      //  //  /circle - instead of two vector3i provide a single vector3i and an inner+outer radius and height, optionally a pair of values for arc degrees
-      //  //  /prefab - a prefab to insert repeatedly within the area
-
-
-      //  //loc - shows player current location (/worldpos /etc), and sets the pos for prafab and block commands
-      //  //bc-rb, bc-renderblocks, bc-block, block
-      //  //bc-block upgrade - upgrades the blocks 1 step within an area
-      //  //bc-block repair - repairs all blocks in the area
-      //  //bc-block swap - swaps source block with target block for blocks in the area
-      //  //bc-block randomdam - randomly damages all blocks in the area
-      //  //bc-block downgrade /nodestroy - downgrades all blocks in area, optional for no destroy but only those not on the last stage
-      //  //bc-block insert /fill=terrain /fill=air /fill=cube[/texture=0,1,2,3,4,5] [default]/fill=all - changes all blocks in an area with the block specified, options act as filters what blocks get replaced in the target area
-      //  //bc-block prefab /nopartial /2d - renders a prefab in the area defined repeating the prefab to fill the area, optional on nopartial to prevent the insertion of partial prefabs at the edges of the area. 2d optional to only draw 1 layer of prefabs rather than stacking them (default)
-      //  //bc-chunk reset - resets the chunk to its rwg original state
-      //  //bc-chunk reload <player> - reloads the chunks in that players loaded chunk list
     }
   }
 }

@@ -104,6 +104,8 @@
     <Compile Include="src\Commands\LiveData\BCGetSpawn.cs" />
     <Compile Include="src\Commands\LiveData\BCAdmins.cs" />
     <Compile Include="src\Commands\Utility\BCChunkObserver.cs" />
+    <Compile Include="src\Commands\Utility\BCTask.cs" />
+    <Compile Include="src\Models\CmdParams.cs" />
     <Compile Include="src\Models\BCMVector2.cs" />
     <Compile Include="src\Models\BCMVector4.cs" />
     <Compile Include="src\Models\BCMVector3.cs" />

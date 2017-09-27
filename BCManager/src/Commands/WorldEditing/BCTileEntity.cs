@@ -9,6 +9,32 @@ namespace BCM.Commands
   public class BCTileEntity : BCCommandAbstract
   {
     #region Properties
+    public class BCTileEntityCmd : BCCmd
+    {
+      public string Filter;
+      public ushort Radius;
+
+      public bool HasPos;
+      public BCMVector3 Position;
+
+      public bool HasSize;
+      public BCMVector3 Size;
+
+      public bool HasChunkPos;
+      public BCMVector4 ChunkBounds;
+      public ItemStack ItemStack;
+
+      public bool IsWithinBounds(Vector3i pos)
+      {
+        if (!HasPos) return false;
+
+        var size = HasSize ? Size : new BCMVector3(0, 0, 0);
+        return (Position.x <= pos.x && pos.x <= Position.x + size.x) &&
+               (Position.y <= pos.y && pos.y <= Position.y + size.y) &&
+               (Position.z <= pos.z && pos.z <= Position.z + size.z);
+      }
+    }
+
     private enum ReloadMode
     {
       None,
@@ -333,10 +359,10 @@ namespace BCM.Commands
         return;
       }
 
-      var command = new CmdParams();
+      var command = new BCTileEntityCmd();
       if (!ProcessParams(command)) return;
 
-      if (!GetIds(world, out var steamId, out var entity))
+      if (!GetIds(world, command, out var entity))
       {
         SendOutput("Command requires a position when not run by a player.");
 
@@ -350,15 +376,15 @@ namespace BCM.Commands
         return;
       }
 
-      DoProcess(world, command, steamId);
+      DoProcess(world, command);
     }
 
-    private void DoProcess(World world, CmdParams command, string steamId)
+    private void DoProcess(World world, BCTileEntityCmd command)
     {
       if (Options.ContainsKey("forcesync"))
       {
         SendOutput("Processing Command synchronously...");
-        ProcessCommand(world, command, steamId);
+        ProcessCommand(world, command);
 
         return;
       }
@@ -371,10 +397,18 @@ namespace BCM.Commands
       {
         SendOutput("Processing Async Command...");
       }
-      ThreadManager.AddSingleTask(info => ProcessCommand(world, command, steamId));
+
+      BCTask.AddTask(
+        "TileEntity",
+        ThreadManager.AddSingleTask(
+            info => ProcessCommand(world, command), 
+            null,
+            (info, e) => BCTask.DelTask("TileEntity", info.GetHashCode()))
+          .GetHashCode(),
+        command);
     }
 
-    private void ProcessCommand(World world, CmdParams command, string steamId)
+    private void ProcessCommand(World world, BCTileEntityCmd command)
     {
       var affectedChunks = GetAffectedChunks(command, world);
       if (affectedChunks == null)
@@ -408,15 +442,15 @@ namespace BCM.Commands
       switch (command.Command)
       {
         case "owner":
-          SetOwner(command, steamId, world);
+          SetOwner(command, world);
           reload = ReloadMode.Target;
           break;
         case "access":
-          GrantAccess(command, steamId, world);
+          GrantAccess(command, world);
           reload = ReloadMode.Target;
           break;
         case "revoke":
-          RevokeAccess(command, steamId, world);
+          RevokeAccess(command, world);
           reload = ReloadMode.Target;
           break;
         case "lock":
@@ -466,47 +500,25 @@ namespace BCM.Commands
       }
 
       //RELOAD CHUNKS FOR PLAYER(S) - If steamId is empty then all players in area will get reload
-      if (reload != ReloadMode.None)
+      if (reload != ReloadMode.None && !(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
       {
-        BCChunks.ReloadForClients(affectedChunks, reload == ReloadMode.Target ? steamId : string.Empty);
+        BCChunks.ReloadForClients(affectedChunks, reload == ReloadMode.Target ? command.SteamId : string.Empty);
       }
     }
 
-    private static void DoCleanup(World world, ChunkManager.ChunkObserver co, int ts = 0)
+    private static void DoCleanup(World world, ChunkManager.ChunkObserver co, int ts = 0, ThreadManager.TaskInfo taskInfo = null)
     {
-      Thread.Sleep(ts * 1000);
+      var bcmTask = BCTask.GetTask("TileEntity", taskInfo?.GetHashCode());
+      for (var i = 0; i < ts; i++)
+      {
+        if (bcmTask != null) bcmTask.Output = new { timer = i, total = ts };
+        Thread.Sleep(1000);
+      }
       world.m_ChunkManager.RemoveChunkObserver(co);
     }
 
     #region Params
-    private class CmdParams
-    {
-      public string Command = string.Empty;
-      public string Filter;
-      public ushort Radius;
-
-      public bool HasPos;
-      public BCMVector3 Position;
-
-      public bool HasSize;
-      public BCMVector3 Size;
-
-      public bool HasChunkPos;
-      public BCMVector4 ChunkBounds;
-      public ItemStack ItemStack;
-
-      public bool IsWithinBounds(Vector3i pos)
-      {
-        if (!HasPos) return false;
-
-        var size = HasSize ? Size : new BCMVector3(0, 0, 0);
-        return (Position.x <= pos.x && pos.x <= Position.x + size.x) &&
-               (Position.y <= pos.y && pos.y <= Position.y + size.y) &&
-               (Position.z <= pos.z && pos.z <= Position.z + size.z);
-      }
-    }
-
-    private static bool GetChunkSizeXyzw(CmdParams command)
+    private static bool GetChunkSizeXyzw(BCTileEntityCmd command)
     {
       if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) || !int.TryParse(Params[3], out var z) || !int.TryParse(Params[4], out var w))
       {
@@ -521,7 +533,7 @@ namespace BCM.Commands
       return true;
     }
 
-    private static bool GetChunkPosXz(CmdParams command)
+    private static bool GetChunkPosXz(BCTileEntityCmd command)
     {
       if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var z))
       {
@@ -554,7 +566,7 @@ namespace BCM.Commands
       return true;
     }
 
-    private static bool GetPositionXyz(CmdParams command)
+    private static bool GetPositionXyz(BCTileEntityCmd command)
     {
       if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) || !int.TryParse(Params[3], out var z))
       {
@@ -572,7 +584,7 @@ namespace BCM.Commands
       return !Options.ContainsKey("item") || command.Command != "additem" || GetItemStack(command);
     }
 
-    private static bool GetItemStack(CmdParams command)
+    private static bool GetItemStack(BCTileEntityCmd command)
     {
       var quality = -1;
       var count = 1;
@@ -616,7 +628,7 @@ namespace BCM.Commands
       return true;
     }
 
-    private static bool GetPosSizeXyz(CmdParams command)
+    private static bool GetPosSizeXyz(BCTileEntityCmd command)
     {
       if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) || !int.TryParse(Params[3], out var z))
       {
@@ -649,7 +661,7 @@ namespace BCM.Commands
       return true;
     }
 
-    private bool ProcessParams(CmdParams command)
+    private bool ProcessParams(BCTileEntityCmd command)
     {
       if (Options.ContainsKey("type"))
       {
@@ -688,23 +700,22 @@ namespace BCM.Commands
       }
     }
 
-    private static bool GetIds(World world, out string steamId, out EntityPlayer entity)
+    private static bool GetIds(World world, BCTileEntityCmd command, out EntityPlayer entity)
     {
-      steamId = null;
       entity = null;
       int? entityId = null;
 
       if (Options.ContainsKey("id"))
       {
-        if (!PlayerStore.GetId(Options["id"], out steamId, "CON")) return false;
+        if (!PlayerStore.GetId(Options["id"], out command.SteamId, "CON")) return false;
 
-        entityId = ConsoleHelper.ParseParamSteamIdOnline(steamId)?.entityId;
+        entityId = ConsoleHelper.ParseParamSteamIdOnline(command.SteamId)?.entityId;
       }
 
-      if (steamId == null)
+      if (command.SteamId == null)
       {
         entityId = SenderInfo.RemoteClientInfo?.entityId;
-        steamId = SenderInfo.RemoteClientInfo?.playerId;
+        command.SteamId = SenderInfo.RemoteClientInfo?.playerId;
       }
 
       if (entityId != null)
@@ -715,7 +726,7 @@ namespace BCM.Commands
       return entity != null || Params.Count >= 3;
     }
 
-    private static bool GetEntPos(CmdParams command, EntityPlayer entity)
+    private static bool GetEntPos(BCTileEntityCmd command, EntityPlayer entity)
     {
       //todo: if /h=#,# then set y to pos + [0], y2 to pos + [1], if only 1 number then y=pos y2=pos+#
       if (entity != null)
@@ -761,7 +772,7 @@ namespace BCM.Commands
       return true;
     }
 
-    private static Dictionary<long, Chunk> GetAffectedChunks(CmdParams command, World world)
+    private static Dictionary<long, Chunk> GetAffectedChunks(BCTileEntityCmd command, World world)
     {
       var modifiedChunks = new Dictionary<long, Chunk>();
 
@@ -826,7 +837,7 @@ namespace BCM.Commands
       return modifiedChunks;
     }
 
-    private static void ChunkObserver(CmdParams command, World world, int timeoutSec)
+    private static void ChunkObserver(BCTileEntityCmd command, World world, int timeoutSec)
     {
       var pos = command.HasPos ? command.Position.ToV3() : command.ChunkBounds.ToV3();
       var viewDim = !Options.ContainsKey("r") ? command.Radius : command.ChunkBounds.GetRadius();
@@ -838,12 +849,19 @@ namespace BCM.Commands
         int.TryParse(Options["ts"], out timerSec);
       }
       timerSec += timeoutSec;
-      ThreadManager.AddSingleTask(info => DoCleanup(world, chunkObserver, timerSec));
+      BCTask.AddTask(
+        "TileEntity",
+        ThreadManager.AddSingleTask(
+          info => DoCleanup(world, chunkObserver, timerSec, info),
+          null,
+          (info, e) => BCTask.DelTask("TileEntity", info.GetHashCode(), 120)
+        ).GetHashCode(),
+        command);
     }
     #endregion
 
     #region Actions
-    private static void AddLoot(CmdParams command, World world)
+    private static void AddLoot(BCTileEntityCmd command, World world)
     {
       if (!command.HasPos || command.ItemStack == null)
       {
@@ -942,7 +960,7 @@ namespace BCM.Commands
       SendOutput($"Added to loot container: {command.ItemStack.itemValue.ItemClass.Name} x{command.ItemStack.count} at {command.Position}");
     }
 
-    private static void ScanTiles(CmdParams command, World world)
+    private static void ScanTiles(BCTileEntityCmd command, World world)
     {
       var count = 0;
       var tiles = new Dictionary<string, List<BCMTileEntity>>();
@@ -1166,7 +1184,7 @@ namespace BCM.Commands
       }
     }
 
-    private static void RemoveTiles(CmdParams command, World world)
+    private static void RemoveTiles(BCTileEntityCmd command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1201,7 +1219,7 @@ namespace BCM.Commands
       SendOutput($"Removed {count} blocks");
     }
 
-    private static void ResetTouched(CmdParams command, World world)
+    private static void ResetTouched(BCTileEntityCmd command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1293,7 +1311,7 @@ namespace BCM.Commands
       SendOutput($"Reset {count} loot containers");
     }
 
-    private static void EmptyContainers(CmdParams command, World world)
+    private static void EmptyContainers(BCTileEntityCmd command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1364,7 +1382,7 @@ namespace BCM.Commands
       SendOutput($"Emptied {count} loot containers");
     }
 
-    private static void SetLocked(CmdParams command, bool locked, bool setPwd, string pwd, World world)
+    private static void SetLocked(BCTileEntityCmd command, bool locked, bool setPwd, string pwd, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1413,7 +1431,7 @@ namespace BCM.Commands
                 var sl = (kvp.Value as TileEntitySecureLootContainer);
                 if (sl == null) continue;
                 if (sl.IsLocked() == locked && !setPwd) continue;
-                
+
                 sl.SetLocked(locked);
                 if (locked && setPwd)
                 {
@@ -1467,7 +1485,7 @@ namespace BCM.Commands
       SendOutput($"Set {(locked ? "locked" : "unlocked")} on {count} secure blocks {(setPwd ? " with new password" : "")}");
     }
 
-    private static void GrantAccess(CmdParams command, string steamId, World world)
+    private static void GrantAccess(BCTileEntityCmd command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1501,8 +1519,8 @@ namespace BCM.Commands
                 if (vendingMachine != null)
                 {
                   var users = vendingMachine.GetUsers();
-                  if (users.Contains(steamId)) continue;
-                  users.Add(steamId);
+                  if (users.Contains(command.SteamId)) continue;
+                  users.Add(command.SteamId);
                 }
                 count++;
                 break;
@@ -1515,8 +1533,8 @@ namespace BCM.Commands
                 if (secureLoot != null)
                 {
                   var users = secureLoot.GetUsers();
-                  if (users.Contains(steamId)) continue;
-                  users.Add(steamId);
+                  if (users.Contains(command.SteamId)) continue;
+                  users.Add(command.SteamId);
                 }
                 count++;
                 break;
@@ -1525,8 +1543,8 @@ namespace BCM.Commands
                 if (secureDoor != null)
                 {
                   var users = secureDoor.GetUsers();
-                  if (users.Contains(steamId)) continue;
-                  users.Add(steamId);
+                  if (users.Contains(command.SteamId)) continue;
+                  users.Add(command.SteamId);
                 }
                 count++;
                 break;
@@ -1537,8 +1555,8 @@ namespace BCM.Commands
                 if (sign != null)
                 {
                   var users = sign.GetUsers();
-                  if (users.Contains(steamId)) continue;
-                  users.Add(steamId);
+                  if (users.Contains(command.SteamId)) continue;
+                  users.Add(command.SteamId);
                 }
                 count++;
                 break;
@@ -1562,7 +1580,7 @@ namespace BCM.Commands
       SendOutput($"Granted access to {count} secure blocks");
     }
 
-    private static void RevokeAccess(CmdParams command, string steamId, World world)
+    private static void RevokeAccess(BCTileEntityCmd command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1596,8 +1614,8 @@ namespace BCM.Commands
                 if (vendingMachine != null)
                 {
                   var users = vendingMachine.GetUsers();
-                  if (!users.Contains(steamId)) continue;
-                  users.Remove(steamId);
+                  if (!users.Contains(command.SteamId)) continue;
+                  users.Remove(command.SteamId);
                 }
                 count++;
                 break;
@@ -1610,8 +1628,8 @@ namespace BCM.Commands
                 if (secureLoot != null)
                 {
                   var users = secureLoot.GetUsers();
-                  if (!users.Contains(steamId)) continue;
-                  users.Remove(steamId);
+                  if (!users.Contains(command.SteamId)) continue;
+                  users.Remove(command.SteamId);
                 }
                 count++;
                 break;
@@ -1620,8 +1638,8 @@ namespace BCM.Commands
                 if (secureDoor != null)
                 {
                   var users = secureDoor.GetUsers();
-                  if (!users.Contains(steamId)) continue;
-                  users.Remove(steamId);
+                  if (!users.Contains(command.SteamId)) continue;
+                  users.Remove(command.SteamId);
                 }
                 count++;
                 break;
@@ -1632,8 +1650,8 @@ namespace BCM.Commands
                 if (sign != null)
                 {
                   var users = sign.GetUsers();
-                  if (!users.Contains(steamId)) continue;
-                  users.Remove(steamId);
+                  if (!users.Contains(command.SteamId)) continue;
+                  users.Remove(command.SteamId);
                 }
                 count++;
                 break;
@@ -1657,7 +1675,7 @@ namespace BCM.Commands
       SendOutput($"Revoked access for {count} secure blocks");
     }
 
-    private static void SetOwner(CmdParams command, string steamId, World world)
+    private static void SetOwner(BCTileEntityCmd command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1687,7 +1705,7 @@ namespace BCM.Commands
               case TileEntityType.Trader:
                 break;
               case TileEntityType.VendingMachine:
-                (kvp.Value as TileEntityVendingMachine)?.SetOwner(steamId);
+                (kvp.Value as TileEntityVendingMachine)?.SetOwner(command.SteamId);
                 count++;
                 break;
               case TileEntityType.Forge:
@@ -1695,17 +1713,17 @@ namespace BCM.Commands
               case TileEntityType.Campfire:
                 break;
               case TileEntityType.SecureLoot:
-                (kvp.Value as TileEntitySecureLootContainer)?.SetOwner(steamId);
+                (kvp.Value as TileEntitySecureLootContainer)?.SetOwner(command.SteamId);
                 count++;
                 break;
               case TileEntityType.SecureDoor:
-                (kvp.Value as TileEntitySecureDoor)?.SetOwner(steamId);
+                (kvp.Value as TileEntitySecureDoor)?.SetOwner(command.SteamId);
                 count++;
                 break;
               case TileEntityType.Workstation:
                 break;
               case TileEntityType.Sign:
-                (kvp.Value as TileEntitySign)?.SetOwner(steamId);
+                (kvp.Value as TileEntitySign)?.SetOwner(command.SteamId);
                 count++;
                 break;
               case TileEntityType.GoreBlock:
@@ -1713,15 +1731,15 @@ namespace BCM.Commands
               case TileEntityType.Powered:
                 break;
               case TileEntityType.PowerSource:
-                (kvp.Value as TileEntityPowerSource)?.SetOwner(steamId);
+                (kvp.Value as TileEntityPowerSource)?.SetOwner(command.SteamId);
                 count++;
                 break;
               case TileEntityType.PowerRangeTrap:
-                (kvp.Value as TileEntityPoweredRangedTrap)?.SetOwner(steamId);
+                (kvp.Value as TileEntityPoweredRangedTrap)?.SetOwner(command.SteamId);
                 count++;
                 break;
               case TileEntityType.Trigger:
-                (kvp.Value as TileEntityPoweredTrigger)?.SetOwner(steamId);
+                (kvp.Value as TileEntityPoweredTrigger)?.SetOwner(command.SteamId);
                 count++;
                 break;
               default:

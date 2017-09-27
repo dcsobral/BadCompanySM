@@ -1,6 +1,7 @@
 using BCM.PersistentData;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace BCM.Commands
 {
@@ -25,7 +26,7 @@ namespace BCM.Commands
 
     public override void Process()
     {
-      var players = new List<object>();
+      var players = new List<BCMPlayerDataFile>();
       var path = GameUtils.GetPlayerDataDir();
       var files = GetFiles(path);
 
@@ -37,20 +38,31 @@ namespace BCM.Commands
           var pdf = new BCMPlayerDataFile
           {
             SteamId = file.Name.Substring(0, file.Name.Length - file.Extension.Length),
-            LastWrite = file.LastWriteTimeUtc.ToString("yyyy-MM-ddTHH:mm:ssZ")
+            LastWrite = file.LastWriteTimeUtc.ToUtcStr()
           };
           var player = PersistentContainer.Instance.Players[pdf.SteamId, false];
           if (player != null)
           {
             pdf.Name = player.Name;
-            pdf.LastOnline = player.LastOnline.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            pdf.LastOnline = player.LastOnline.ToUtcStr();
             pdf.IsOnline = player.IsOnline;
           }
 
           players.Add(pdf);
         }
       }
-      SendJson(players);
+      if (Options.ContainsKey("min"))
+      {
+        SendJson(players.Select(player => new[]
+          {
+            player.Name, player.SteamId, player.IsOnline.ToString(), player.LastOnline, player.LastWrite
+          }
+        ).ToList());
+      }
+      else
+      {
+        SendJson(players);
+      }
     }
   }
 }

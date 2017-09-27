@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace BCM.Commands
@@ -6,6 +7,7 @@ namespace BCM.Commands
   {
     private MapVisitor _mapVisitor;
     private ClientInfo _lastSender;
+    private int _hash;
 
     public override void Process()
     {
@@ -32,11 +34,11 @@ namespace BCM.Commands
       {
         SendOutput("VisitRegion already running. You can stop it with \"bc-visitregion /stop\".");
       }
-      else if (!int.TryParse(Params[0], out int x))
+      else if (!int.TryParse(Params[0], out var x))
       {
         SendOutput("The given x1 coordinate is not a valid integer");
       }
-      else if (!int.TryParse(Params[1], out int z))
+      else if (!int.TryParse(Params[1], out var z))
       {
         SendOutput("The given z1 coordinate is not a valid integer");
       }
@@ -60,14 +62,20 @@ namespace BCM.Commands
         _mapVisitor.OnVisitChunk += GetMapColors;
         _mapVisitor.OnVisitMapDone += ReportCompletion;
         _mapVisitor.Start();
+
+        _hash = _mapVisitor.GetHashCode();
+        BCTask.AddTask("MapVisitor", _mapVisitor.GetHashCode(), null);
       }
     }
 
-    private static void ReportStatus(Chunk chunk, int count, int total, float elapsedTime)
+    private void ReportStatus(Chunk chunk, int count, int total, float elapsedTime)
     {
+      var bcmTask = BCTask.GetTask("MapVisitor", _hash);
+      if (bcmTask != null) bcmTask.Output = new { Count = count, Total = total, Time = Math.Round(elapsedTime, 2) };
+
       if (count % 128 != 0) return;
 
-      Log.Out($"VisitRegion ({Mathf.RoundToInt(100f * (count / (float) total)):00}%): {count} / {total} chunks done (estimated time left {(total - count) * (elapsedTime / count):0.00} seconds)");
+      Log.Out($"VisitRegion ({Mathf.RoundToInt(100f * (count / (float)total)):00}%): {count} / {total} chunks done (estimated time left {(total - count) * (elapsedTime / count):0.00} seconds)");
     }
 
     private static void GetMapColors(Chunk chunk, int count, int total, float elapsedTime)
@@ -77,6 +85,14 @@ namespace BCM.Commands
 
     private void ReportCompletion(int total, float elapsedTime)
     {
+      var bcmTask = BCTask.GetTask("MapVisitor", _hash);
+      if (bcmTask != null)
+      {
+        bcmTask.Status = BCTask.Status.Complete;
+        bcmTask.Output = $"VisitRegion done, visited {total} chunks in {elapsedTime:0.00} seconds (average {total / elapsedTime:0.00} chunks/sec).";
+        BCTask.DelTask("MapVisitor", _hash);
+      }
+
       Log.Out($"VisitRegion done, visited {total} chunks in {elapsedTime:0.00} seconds (average {total / elapsedTime:0.00} chunks/sec).");
 
       if (_lastSender != null)
