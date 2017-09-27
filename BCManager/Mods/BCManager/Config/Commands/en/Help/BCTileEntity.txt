@@ -22,6 +22,7 @@
                          Should only be used to get output results from web issued commands rather than pushing to log.
                          Will only work on areas already loaded, the first attempt on an unloaded area will always fail as the chunks can't finish loading until this command finishes.
                          Additional attempts on the same area will work once the chunks finish loading (until the last observer times out).
+            /type=<typename> - filter the targeted tiles based on the type filter
             Sub Commands:
             scan - scans the defined area and reports on detials of tile entities found
             owner - sets the target as the owner of targeted secure blocks in area

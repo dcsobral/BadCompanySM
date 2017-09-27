@@ -13,7 +13,7 @@
             Limit the area scanned when running on a server with players.
       Options:
             /o=<x,y> - sets the origin cell for the scan, 0,0 being the central hub, limit between -5 and 6 for a 10k world radius.
-                       You can scan further but if the file for those co-ords don't exist there will be no results for that cell.
+                       You can scan further but if the file for those co-ords doesn't exist there will be no results for that cell.
             /r=# - set the radius in cells from the origin, there is no limit but as with the /o any areas scaned with no related file will have no results.
             /full - returns more details. The default view only has prefab name and position, 
                     full option has cell/hub/wilderness rules, townshiptypes, and full lot details such as instance id and rotation
