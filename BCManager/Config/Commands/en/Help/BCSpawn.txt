@@ -9,14 +9,13 @@
       Notes:
             Use bc-help to get a list of common /options
             for all options: with x y z it will target that location
-                             without x y z it will target the command giver, unless one of the below targeting options is used
+                             without x y z it will target the command giver unless one of the below targeting options is used
                              /player=<name|entityid|steamid> - targets that player
                              /p=x,y,z or /position=x,y,z - targets that location
                              /min=# and /max=# to change the default distance from the target to spawn. 
                              /max must be greater than /min to get valid spawns (/min=0 /max=1 is the closest spawn option)
             subcommands:
-            horde -  spawns a horde of zombies in a cirlcle around the target
+            horde -  spawns a horde of zombies in a circle around the target
                      use /count=# to set the number to spawn with the command, default is 25
                      use /group=<entitygroupname> to set the group to select entities from, default is ZombiesAll
             entity - spawns a single entity of the <entityClassName>, near the target (default 40-60 blocks distance)
-
