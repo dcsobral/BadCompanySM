@@ -9,101 +9,115 @@ namespace BCM.Commands
     {
       position = new Vector3(0, 0, 0);
 
-      if (Params.Count == 4)
+      switch (Params.Count)
       {
-        if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) ||
-            !int.TryParse(Params[3], out var z))
-        {
-          SendOutput("Unable to parse x y z for numbers");
-
-          return false;
-        }
-        position = new Vector3(x, y, z);
-      }
-      else
-      {
-
-        if (Options.ContainsKey("player"))
-        {
-          ConsoleHelper.ParseParamPartialNameOrId(Options["player"], out string _, out var ci);
-          if (ci == null)
+        case 5:
           {
-            SendOutput("Unable to get player position from remote client");
+            if (!int.TryParse(Params[2], out var x) || !int.TryParse(Params[3], out var y) ||
+                !int.TryParse(Params[4], out var z))
+            {
+              SendOutput("Unable to parse x y z for numbers");
 
-            return false;
+              return false;
+            }
+            position = new Vector3(x, y, z);
+            break;
           }
-
-          var p = GameManager.Instance.World?.Players.dict[ci.entityId]?.position;
-          if (p == null)
+        case 4:
           {
-            SendOutput("Unable to get player position from client entity");
+            if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) ||
+                !int.TryParse(Params[3], out var z))
+            {
+              SendOutput("Unable to parse x y z for numbers");
 
-            return false;
+              return false;
+            }
+            position = new Vector3(x, y, z);
+            break;
           }
-
-          position = (Vector3)p;
-        }
-        else if (Options.ContainsKey("p"))
-        {
-          var pos = Options["p"].Split(',');
-          if (pos.Length != 3)
+        default:
+          if (Options.ContainsKey("player"))
           {
-            SendOutput($"Unable to get position from {Options["p"]}, incorrect number of co-ords: /p=x,y,z");
+            ConsoleHelper.ParseParamPartialNameOrId(Options["player"], out string _, out var ci);
+            if (ci == null)
+            {
+              SendOutput("Unable to get player position from remote client");
 
-            return false;
+              return false;
+            }
+
+            var p = GameManager.Instance.World?.Players.dict[ci.entityId]?.position;
+            if (p == null)
+            {
+              SendOutput("Unable to get player position from client entity");
+
+              return false;
+            }
+
+            position = (Vector3)p;
           }
-          if (!int.TryParse(pos[0], out var x) ||
-              !int.TryParse(pos[1], out var y) ||
-              !int.TryParse(pos[2], out var z)
-          )
+          else if (Options.ContainsKey("p"))
           {
-            SendOutput($"Unable to get x y z for {Options["p"]}");
+            var pos = Options["p"].Split(',');
+            if (pos.Length != 3)
+            {
+              SendOutput($"Unable to get position from {Options["p"]}, incorrect number of co-ords: /p=x,y,z");
 
-            return false;
+              return false;
+            }
+            if (!int.TryParse(pos[0], out var x) ||
+                !int.TryParse(pos[1], out var y) ||
+                !int.TryParse(pos[2], out var z)
+            )
+            {
+              SendOutput($"Unable to get x y z for {Options["p"]}");
+
+              return false;
+            }
+            position = new Vector3(x, y, z);
           }
-          position = new Vector3(x, y, z);
-        }
-        else if (Options.ContainsKey("position"))
-        {
-          var pos = Options["position"].Split(',');
-          if (pos.Length != 3)
+          else if (Options.ContainsKey("position"))
           {
-            SendOutput($"Unable to get position from '{Options["position"]}', incorrect number of co-ords: /position=x,y,z");
+            var pos = Options["position"].Split(',');
+            if (pos.Length != 3)
+            {
+              SendOutput($"Unable to get position from '{Options["position"]}', incorrect number of co-ords: /position=x,y,z");
 
-            return false;
+              return false;
+            }
+            if (!int.TryParse(pos[0], out var x) ||
+                !int.TryParse(pos[1], out var y) ||
+                !int.TryParse(pos[2], out var z)
+            )
+            {
+              SendOutput($"Unable to get x y z from '{Options["position"]}'");
+
+              return false;
+            }
+
+            position = new Vector3(x, y, z);
           }
-          if (!int.TryParse(pos[0], out var x) ||
-              !int.TryParse(pos[1], out var y) ||
-              !int.TryParse(pos[2], out var z)
-          )
+          else if (SenderInfo.RemoteClientInfo != null)
           {
-            SendOutput($"Unable to get x y z from '{Options["position"]}'");
+            var ci = SenderInfo.RemoteClientInfo;
+            if (ci == null)
+            {
+              SendOutput("Unable to get player position from remote client");
 
-            return false;
+              return false;
+            }
+
+            var p = GameManager.Instance.World?.Players.dict[ci.entityId]?.position;
+            if (p == null)
+            {
+              SendOutput("Unable to get player position from client entity");
+
+              return false;
+            }
+
+            position = (Vector3)p;
           }
-
-          position = new Vector3(x, y, z);
-        }
-        else if (SenderInfo.RemoteClientInfo != null)
-        {
-          var ci = SenderInfo.RemoteClientInfo;
-          if (ci == null)
-          {
-            SendOutput("Unable to get player position from remote client");
-
-            return false;
-          }
-
-          var p = GameManager.Instance.World?.Players.dict[ci.entityId]?.position;
-          if (p == null)
-          {
-            SendOutput("Unable to get player position from client entity");
-
-            return false;
-          }
-
-          position = (Vector3)p;
-        }
+          break;
       }
       return true;
     }
@@ -134,6 +148,29 @@ namespace BCM.Commands
       return false;
     }
 
+    private static bool GetMinMax(out int min, out int max)
+    {
+      var valid = true;
+      min = 40;
+      max = 60;
+
+      if (!Options.ContainsKey("min") && !Options.ContainsKey("max")) return true;
+
+      if (Options.ContainsKey("min") && !int.TryParse(Options["min"], out min))
+      {
+        SendOutput($"Unable to parse min '{Options["min"]}'");
+        valid = false;
+      }
+
+      if (Options.ContainsKey("max") && !int.TryParse(Options["max"], out max))
+      {
+        SendOutput($"Unable to parse max '{Options["max"]}'");
+        valid = false;
+      }
+
+      return valid;
+    }
+
     public override void Process()
     {
       if (Params.Count == 0)
@@ -150,6 +187,7 @@ namespace BCM.Commands
             if (!GetPos(out var position)) return;
             if (!GetGroup(out var groupName)) return;
             if (!GetCount(out var count)) return;
+            if (!GetMinMax(out var min, out var max)) return;
 
             //todo: refine method to ensure unique id
             var spawnerId = DateTime.UtcNow.Ticks;
@@ -168,7 +206,9 @@ namespace BCM.Commands
               {
                 EntityClassId = classId,
                 SpawnerId = spawnerId,
-                TargetPos = position
+                TargetPos = position,
+                MinRange = min,
+                MaxRange = max
               };
 
               EntitySpawner.SpawnQueue.Enqueue(spawn);
@@ -179,13 +219,14 @@ namespace BCM.Commands
 
         case "entity":
           {
-            if (Params.Count != 2)
+            if (Params.Count != 2 && Params.Count != 5)
             {
-              SendOutput("Spawn entity requires a name");
+              SendOutput("Spawn entity requires an entity class name");
 
               return;
             }
             if (!GetPos(out var position)) return;
+            if (!GetMinMax(out var min, out var max)) return;
 
             //todo: refine method to ensure unique id
             var spawnerId = DateTime.UtcNow.Ticks;
@@ -204,8 +245,8 @@ namespace BCM.Commands
               EntityClassId = classId,
               SpawnerId = spawnerId,
               TargetPos = position,
-              MinRange = 10,
-              MaxRange = 20
+              MinRange = min,
+              MaxRange = max
             };
 
             EntitySpawner.SpawnQueue.Enqueue(spawn);
