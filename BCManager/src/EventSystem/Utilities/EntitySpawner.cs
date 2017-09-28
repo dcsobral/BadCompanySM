@@ -32,7 +32,7 @@ namespace BCM
             var spawn = SpawnQueue.Dequeue();
             var world = GameManager.Instance.World;
 
-            if (world.GetRandomSpawnPositionMinMaxToPosition(new Vector3(spawn.Pos.x, spawn.Pos.y, spawn.Pos.z), spawn.MinRange, spawn.MaxRange, false, out Vector3 pos, true))
+            if (world.GetRandomSpawnPositionMinMaxToPosition(new Vector3(spawn.TargetPos.x, spawn.TargetPos.y, spawn.TargetPos.z), spawn.MinRange, spawn.MaxRange, false, out var pos, true))
             {
               //todo: change to use EntityCreationData method?
               var entity = EntityFactory.CreateEntity(spawn.EntityClassId, pos) as EntityEnemy;
@@ -82,7 +82,7 @@ namespace BCM
                 entity.speedApproachNight = entity.speedApproach;
               }
 
-              Log.Out($"{Config.ModPrefix} Spawning {entity.entityType}({entity.entityId}):{entity.EntityName} @{pos} targeting: {spawn.Pos}");
+              Log.Out($"{Config.ModPrefix} Spawning {entity.entityType}({entity.entityId}):{entity.EntityName} @{pos} targeting: {spawn.TargetPos}");
               world.Entities.Add(entity.entityId, entity);
 
               if (entity.IsEntityAttachedToChunk && !entity.addedToChunk)
@@ -95,12 +95,12 @@ namespace BCM
               world.entityDistributer.Add(entity);
               entity.Spawned = true;
               world.aiDirector.AddEntity(entity);
-              entity.SetInvestigatePosition(new Vector3(spawn.Pos.x, spawn.Pos.y, spawn.Pos.z), 6000);
+              entity.SetInvestigatePosition(new Vector3(spawn.TargetPos.x, spawn.TargetPos.y, spawn.TargetPos.z), 6000);
             }
             else
             {
               Log.Out(
-                $"{Config.ModPrefix} Unable to find Spawn Point near {spawn.Pos}, min:{spawn.MinRange}, max:{spawn.MaxRange}");
+                $"{Config.ModPrefix} Unable to find Spawn Point near {spawn.TargetPos}, min:{spawn.MinRange}, max:{spawn.MaxRange}");
             }
 
           }

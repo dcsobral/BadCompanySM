@@ -3,10 +3,18 @@ using BCM.Models;
 
 namespace BCM
 {
+  public enum TargetType
+  {
+    Position,
+    Passive,
+    Tracked
+  }
+
   public struct HordeSpawner
   {
     public int SpawnerId;
     public string Type;
+    public TargetType TargetType;
     public int AliveCount;
     public ulong LastSpawntick;
     public int SpawnDelay;

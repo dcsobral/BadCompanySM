@@ -2,19 +2,19 @@
 
 namespace BCM
 {
-  public struct Spawn
+  public class Spawn
   {
-    public int SpawnerId;
-    public int EntityId;
-    public int TargetId;
     public int EntityClassId;
-    public Vector3 Pos;
-    public int MinRange;
-    public int MaxRange;
-    public bool IsObserver;
-    public bool IsFeral;
-    public float SpeedMul;
-    public float SpeedBase;
-    public bool NightRun;
+    public long SpawnerId;
+    public Vector3 TargetPos;
+    public int EntityId = -1;
+    public int TargetId = -1;
+    public int MinRange = 40;
+    public int MaxRange = 60;
+    public bool IsObserver = true;
+    public bool IsFeral = false;
+    public float SpeedMul = 1f;
+    public float SpeedBase = 0f;
+    public bool NightRun = false;
   }
 }

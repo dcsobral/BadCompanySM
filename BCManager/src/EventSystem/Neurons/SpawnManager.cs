@@ -45,7 +45,7 @@ namespace BCM.Neurons
         return;
       }
 
-      if (!settings.TryGetValue("group", out string groupName))
+      if (!settings.TryGetValue("group", out var groupName))
       {
         groupName = "ZombiesAll";
       }
@@ -75,7 +75,7 @@ namespace BCM.Neurons
         EntityId = 0,
         SpawnerId = target.entityId,
         TargetId = target.entityId,
-        Pos = target.position,
+        TargetPos = target.position,
         MinRange = 40,
         MaxRange = 60,
         IsObserver = true,
