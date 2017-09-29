@@ -171,6 +171,48 @@ namespace BCM.Commands
       return valid;
     }
 
+    private static bool GetSpawnPos(Vector3 position, out Vector3 targetPos)
+    {
+      targetPos = position;
+
+      if (Options.ContainsKey("target") || Options.ContainsKey("t"))
+      {
+        var pos = (Options.ContainsKey("t") ? Options["t"] : Options["target"]).Split(',');
+        if (pos.Length == 3)
+        {
+          if (!int.TryParse(pos[0], out var x) ||
+              !int.TryParse(pos[1], out var y) ||
+              !int.TryParse(pos[2], out var z))
+          {
+            SendOutput("Unable to parse target");
+
+            return false;
+          }
+          targetPos = new Vector3(x, y, z);
+        }
+      }
+      else if (Options.ContainsKey("vector") || Options.ContainsKey("v"))
+      {
+        var sv = (Options.ContainsKey("v") ? Options["v"] : Options["vector"]).Split(',');
+        if (sv.Length == 2)
+        {
+          if (!int.TryParse(sv[0], out var dist) ||
+              !int.TryParse(sv[1], out var angle))
+          {
+            SendOutput("Unable to parse spawnvector");
+
+            return false;
+          }
+
+          var x = Math.Sin(angle * Math.PI / 180) * dist;
+          var z = Math.Cos(angle * Math.PI / 180) * dist;
+          targetPos = new Vector3(position.x + Mathf.Round((float)x), position.y, position.z + Mathf.Round((float)z));
+        }
+      }
+
+      return true;
+    }
+
     public override void Process()
     {
       if (Params.Count == 0)
@@ -188,6 +230,7 @@ namespace BCM.Commands
             if (!GetGroup(out var groupName)) return;
             if (!GetCount(out var count)) return;
             if (!GetMinMax(out var min, out var max)) return;
+            if (!GetSpawnPos(position, out var targetPos)) return;
 
             //todo: refine method to ensure unique id
             var spawnerId = DateTime.UtcNow.Ticks;
@@ -206,12 +249,18 @@ namespace BCM.Commands
               {
                 EntityClassId = classId,
                 SpawnerId = spawnerId,
-                TargetPos = position,
+                SpawnPos = position,
+                TargetPos = targetPos,
                 MinRange = min,
                 MaxRange = max
               };
 
               EntitySpawner.SpawnQueue.Enqueue(spawn);
+            }
+            SendOutput($"Spawning horde of {count} around {position.x} {position.y} {position.z}");
+            if (targetPos != position)
+            {
+              SendOutput($"Moving towards {targetPos.x} {targetPos.y} {targetPos.z}");
             }
 
             return;
@@ -227,6 +276,7 @@ namespace BCM.Commands
             }
             if (!GetPos(out var position)) return;
             if (!GetMinMax(out var min, out var max)) return;
+            if (!GetSpawnPos(position, out var targetPos)) return;
 
             //todo: refine method to ensure unique id
             var spawnerId = DateTime.UtcNow.Ticks;
@@ -244,12 +294,19 @@ namespace BCM.Commands
             {
               EntityClassId = classId,
               SpawnerId = spawnerId,
+              SpawnPos = position,
               TargetPos = position,
               MinRange = min,
               MaxRange = max
             };
 
             EntitySpawner.SpawnQueue.Enqueue(spawn);
+
+            SendOutput($"Spawning entity {Params[1]} around {position.x} {position.y} {position.z}");
+            if (targetPos != position)
+            {
+              SendOutput($"Moving towards {targetPos.x} {targetPos.y} {targetPos.z}");
+            }
 
             return;
           }
@@ -260,7 +317,6 @@ namespace BCM.Commands
 
           return;
       }
-
     }
   }
 }

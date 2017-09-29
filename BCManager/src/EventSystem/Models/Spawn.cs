@@ -6,6 +6,7 @@ namespace BCM
   {
     public int EntityClassId;
     public long SpawnerId;
+    public Vector3 SpawnPos;
     public Vector3 TargetPos;
     public int EntityId = -1;
     public int TargetId = -1;

@@ -14,14 +14,15 @@ namespace BCM
     public void ProcessSpawnQueue()
     {
       // 10,000,000 ticks per second
-      if (DateTime.UtcNow.Ticks <= _lastTick + 5000000L) return;
+      if (DateTime.UtcNow.Ticks <= _lastTick + 500000L) return;
 
       _lastTick = DateTime.UtcNow.Ticks;
-      if (SpawnQueue.Count <= 0) return;
+      if (SpawnQueue.Count == 0) return;
 
       lock (SpawnQueue)
       {
-        for (; SpawnQueue.Count > 0;)
+        var sw = new MicroStopwatch();
+        for (; SpawnQueue.Count > 0 && sw.ElapsedTicks < 250000L;)
         {
           //todo: max execution time limit so that too many queued spawns doesnt bog server
           try
@@ -32,7 +33,7 @@ namespace BCM
             var spawn = SpawnQueue.Dequeue();
             var world = GameManager.Instance.World;
 
-            if (world.GetRandomSpawnPositionMinMaxToPosition(new Vector3(spawn.TargetPos.x, spawn.TargetPos.y, spawn.TargetPos.z), spawn.MinRange, spawn.MaxRange, false, out var pos, true))
+            if (world.GetRandomSpawnPositionMinMaxToPosition(new Vector3(spawn.SpawnPos.x, spawn.SpawnPos.y, spawn.SpawnPos.z), spawn.MinRange, spawn.MaxRange, false, out var pos, true))
             {
               //todo: change to use EntityCreationData method?
               var entity = EntityFactory.CreateEntity(spawn.EntityClassId, pos) as EntityEnemy;
@@ -109,6 +110,7 @@ namespace BCM
             Log.Out($"{Config.ModPrefix} Error in {GetType().Name}.{MethodBase.GetCurrentMethod().Name}: {e}");
           }
         }
+        sw.Stop();
       }
     }
   }

@@ -518,6 +518,28 @@ namespace BCM.Commands
     }
 
     #region Params
+
+    private void GetRadius(BCTileEntityCmd command)
+    {
+      if (Options.ContainsKey("r"))
+      {
+        ushort.TryParse(Options["r"], out command.Radius);
+        if (command.Radius > 14)
+        {
+          command.Radius = 14;
+          SendOutput("Setting radius to maximum of +14 chunks");
+        }
+        else
+        {
+          SendOutput($"Setting radius to +{command.Radius} chunks");
+        }
+      }
+      else
+      {
+        SendOutput("Setting radius to default of +0 chunk");
+      }
+    }
+
     private static bool GetChunkSizeXyzw(BCTileEntityCmd command)
     {
       if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) || !int.TryParse(Params[3], out var z) || !int.TryParse(Params[4], out var w))
@@ -541,25 +563,7 @@ namespace BCM.Commands
 
         return false;
       }
-
-      if (Options.ContainsKey("r"))
-      {
-        ushort.TryParse(Options["r"], out command.Radius);
-        if (command.Radius > 14)
-        {
-          command.Radius = 14;
-          SendOutput("Setting radius to maximum of +14 chunks");
-        }
-        else
-        {
-          SendOutput($"Setting radius to +{command.Radius} chunks");
-        }
-      }
-      else
-      {
-        SendOutput("Setting radius to default of +0 chunk");
-      }
-
+      
       command.ChunkBounds = new BCMVector4(x - command.Radius, z - command.Radius, x + command.Radius, z + command.Radius);
       command.HasChunkPos = true;
 
@@ -671,12 +675,14 @@ namespace BCM.Commands
       {
         case 1:
           //command with no extras, blocks if /loc, chunks if /r= or nothing
+          GetRadius(command);
           command.Command = Params[0];
           return true;
 
         case 3:
           //XZ single chunk with /r
           command.Command = Params[0];
+          GetRadius(command);
           return GetChunkPosXz(command);
 
         case 4:
@@ -1207,7 +1213,7 @@ namespace BCM.Commands
                   ))) continue;
 
             (kvp.Value as TileEntityLootContainer)?.SetEmpty();
-            locations.Add(pos);
+            locations.Add(kvp.Key);
           }
           foreach (var p in locations)
           {
