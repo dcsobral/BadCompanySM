@@ -83,7 +83,7 @@ namespace BCM
                 entity.speedApproachNight = entity.speedApproach;
               }
 
-              Log.Out($"{Config.ModPrefix} Spawning {entity.entityType}({entity.entityId}):{entity.EntityName} @{pos} targeting: {spawn.TargetPos}");
+              Log.Out($"{Config.ModPrefix} Spawning {entity.entityType}({entity.entityId}):{entity.EntityName} @{pos.x} {pos.y} {pos.z} => {spawn.TargetPos.x} {spawn.TargetPos.y} {spawn.TargetPos.z}");
               world.Entities.Add(entity.entityId, entity);
 
               if (entity.IsEntityAttachedToChunk && !entity.addedToChunk)

@@ -21,7 +21,7 @@ namespace BCM.Commands
               return false;
             }
             position = new Vector3(x, y, z);
-            break;
+            return true;
           }
         case 4:
           {
@@ -33,7 +33,7 @@ namespace BCM.Commands
               return false;
             }
             position = new Vector3(x, y, z);
-            break;
+            return true;
           }
         default:
           if (Options.ContainsKey("player"))
@@ -55,6 +55,7 @@ namespace BCM.Commands
             }
 
             position = (Vector3)p;
+            return true;
           }
           else if (Options.ContainsKey("p"))
           {
@@ -75,6 +76,7 @@ namespace BCM.Commands
               return false;
             }
             position = new Vector3(x, y, z);
+            return true;
           }
           else if (Options.ContainsKey("position"))
           {
@@ -96,6 +98,7 @@ namespace BCM.Commands
             }
 
             position = new Vector3(x, y, z);
+            return true;
           }
           else if (SenderInfo.RemoteClientInfo != null)
           {
@@ -116,10 +119,10 @@ namespace BCM.Commands
             }
 
             position = (Vector3)p;
+            return true;
           }
-          break;
+          return false;
       }
-      return true;
     }
 
     private static bool GetGroup(out string groupName)
