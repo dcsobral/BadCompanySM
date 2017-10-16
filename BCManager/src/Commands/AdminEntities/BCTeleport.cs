@@ -143,7 +143,6 @@ namespace BCM.Commands
       return ci != null;
     }
 
-
     public override void Process()
     {
       if (Params.Count == 0)
