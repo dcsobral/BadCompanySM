@@ -53,6 +53,7 @@
   <Command name="BCRemove" commands="bc-remove,remove" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCSpawn" commands="bc-spawn,spawn" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCHordeSpawners" commands="bc-showspawn,manager" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCTeleport" commands="bc-tele,move" defaultpermissionlevel="0" defaultoptions=""/>
 
   <!-- World Editing -->
   <Command name="BCWorldBlocks" commands="bc-wblocks,block" defaultpermissionlevel="0" defaultoptions=""/>

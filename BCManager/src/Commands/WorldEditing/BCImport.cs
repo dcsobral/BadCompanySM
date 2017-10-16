@@ -203,7 +203,10 @@ namespace BCM.Commands
       //prefab.CopyIntoLocal(world.ChunkCache, pos, true, true);
 
       //RELOAD CHUNKS
-      BCChunks.ReloadForClients(modifiedChunks);
+      if (!(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
+      {
+        BCChunks.ReloadForClients(modifiedChunks);
+      }
     }
 
     private static void AddSleeperSpawns(Prefab prefab, int idx, Vector3i dest, SleeperVolume volume, Vector3i volStart, Vector3i volMax)

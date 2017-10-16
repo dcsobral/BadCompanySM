@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace BCM.Models
 {
+  [Serializable]
   public class BCMVector3
   {
     public int x;
@@ -15,6 +17,7 @@ namespace BCM.Models
     }
     public BCMVector3(Vector3 v)
     {
+      //todo: use floor instead?
       x = Mathf.RoundToInt(v.x);
       y = Mathf.RoundToInt(v.y);
       z = Mathf.RoundToInt(v.z);

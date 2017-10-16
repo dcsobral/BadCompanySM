@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace BCM.Commands
@@ -139,9 +140,26 @@ namespace BCM.Commands
       return false;
     }
 
-    private static bool GetCount(out int count)
+    //todo: byNameOrId
+    private static bool GetItemValue(out ItemValue item)
     {
-      count = 25;
+      var name = "";
+      item = null;
+      if (Options.ContainsKey("name"))
+      {
+        name = Options["name"];
+        item = ItemClass.GetItem(name, true);
+
+        if (ItemClass.list[item.type] != null) return true;
+      }
+
+      SendOutput($"ItemClass not found '{name}'");
+      return false;
+    }
+
+    private static bool GetCount(out int count, int c = 25)
+    {
+      count = c;
 
       if (!Options.ContainsKey("count")) return true;
 
@@ -151,11 +169,11 @@ namespace BCM.Commands
       return false;
     }
 
-    private static bool GetMinMax(out int min, out int max)
+    private static bool GetMinMax(out int min, out int max, string mode = "")
     {
       var valid = true;
-      min = 40;
-      max = 60;
+      min = mode == "qual" ? 600 : 40;
+      max = mode == "qual" ? 600 : 60;
 
       if (!Options.ContainsKey("min") && !Options.ContainsKey("max")) return true;
 
@@ -310,6 +328,47 @@ namespace BCM.Commands
             {
               SendOutput($"Moving towards {targetPos.x} {targetPos.y} {targetPos.z}");
             }
+
+            return;
+          }
+
+        case "item":
+          {
+            if (!GetPos(out var position)) return;
+            if (!GetItemValue(out var item)) return;
+            if (!GetCount(out var count, 1)) return;
+            if (!GetMinMax(out var min, out var max, "qual")) return;
+
+            if (item == null || item.type == ItemValue.None.type)
+            {
+              SendOutput("Item class not found'");
+
+              return;
+            }
+
+            var itemValue = new ItemValue(item.type, true);
+
+            var quality = UnityEngine.Random.Range(min, max);
+            if (ItemClass.list[itemValue.type].HasParts)
+            {
+              count = 1;
+              for (var i = 0; i < itemValue.Parts.Length; i++)
+              {
+                var item2 = itemValue.Parts[i];
+                item2.Quality = quality;
+                itemValue.Parts[i] = item2;
+              }
+            }
+            else if (itemValue.HasQuality)
+            {
+              count = 1;
+              itemValue.Quality = quality;
+            }
+
+            var itemStack = new ItemStack(itemValue, count);
+            GameManager.Instance.ItemDropServer(itemStack, position, Vector3.zero);
+
+            SendOutput($"Spawning {count}x {itemValue.ItemClass.Name} at {position.x} {position.y} {position.z}");
 
             return;
           }

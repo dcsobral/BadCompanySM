@@ -6,10 +6,10 @@ namespace BCM
 {
   public static class BCChunks
   {
-    public static void ReloadForClients(Dictionary<long, Chunk> chunks, string steamId = "")
+    public static int ReloadForClients(Dictionary<long, Chunk> chunks, string steamId = "")
     {
       var world = GameManager.Instance.World;
-      if (world == null) return;
+      if (world == null) return 0;
 
       //RESET CHUNK STABILITY
       ResetStability(world, chunks);
@@ -96,6 +96,8 @@ namespace BCM
         }
 
       }
+
+      return reloadforclients.Count;
     }
 
     private static void ResetStability(World world, Dictionary<long, Chunk> chunks)
@@ -103,11 +105,13 @@ namespace BCM
       var si = new StabilityInitializer(world);
       foreach (var chunk in chunks.Values)
       {
-        chunk.ResetStability();
+        chunk?.ResetStability();
       }
 
       foreach (var chunk in chunks.Values)
       {
+        if (chunk == null) continue;
+
         si.DistributeStability(chunk);
         chunk.NeedsRegeneration = true;
         chunk.NeedsLightCalculation = true;

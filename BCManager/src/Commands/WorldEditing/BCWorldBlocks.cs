@@ -314,7 +314,10 @@ namespace BCM.Commands
       SendOutput("Use bc-wblock /undo to revert the changes");
 
       //RELOAD CHUNKS
-      BCChunks.ReloadForClients(modifiedChunks);
+      if (!(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
+      {
+        BCChunks.ReloadForClients(modifiedChunks);
+      }
     }
 
     private static void FillBlocks(Vector3i p3, Vector3i size, BlockValue bv, string search, Dictionary<long, Chunk> modifiedChunks)
@@ -341,7 +344,10 @@ namespace BCM.Commands
       }
 
       //RELOAD CHUNKS
-      BCChunks.ReloadForClients(modifiedChunks);
+      if (!(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
+      {
+        BCChunks.ReloadForClients(modifiedChunks);
+      }
     }
 
     private static void SetBlocks(int clrIdx, Vector3i p0, Vector3i size, BlockValue bvNew, bool searchAll)

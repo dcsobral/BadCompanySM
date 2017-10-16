@@ -177,8 +177,11 @@ namespace BCM.Models
       {
         GetEntityId(entity);
         GetType(entity);
-        GetName(entity);
         GetPosition(entity);
+
+        if (!Options.ContainsKey("full")) return;
+
+        GetName(entity);
         GetRotation(entity);
         GetLifetime(entity);
 

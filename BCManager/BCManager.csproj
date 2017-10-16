@@ -66,6 +66,9 @@
     <Content Include="Config\Commands\en\Description\BCChunkObserver.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Config\Commands\en\Description\BCTeleport.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\Commands\en\Description\BCTime.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -84,6 +87,9 @@
     <Content Include="Config\Commands\en\Help\BCChunkObserver.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Config\Commands\en\Help\BCTeleport.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\Commands\en\Help\BCTime.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -99,6 +105,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="src\API.cs" />
     <Compile Include="src\Commands\AdminEntities\BCHordeSpawners.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCTeleport.cs" />
     <Compile Include="src\Commands\GameObjects\GameObjectsAlias\BCItems.cs" />
     <Compile Include="src\Commands\GameObjects\GameObjectsAlias\BCBlocks.cs" />
     <Compile Include="src\Commands\LiveData\BCGetSpawn.cs" />

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BCM.Models;
+using System;
+using System.Runtime.Serialization;
+using UnityEngine;
 
 namespace BCM.PersistentData
 {
@@ -13,6 +16,8 @@ namespace BCM.PersistentData
     private long _totalPlayTime;
     private DateTime _lastOnline;
     private int _gamestage;
+    [OptionalField]
+    private BCMVector3 _lastPos;
 
     //CLIENT INFO DATA
     [NonSerialized] private ClientInfo _clientInfo;
@@ -24,9 +29,11 @@ namespace BCM.PersistentData
 
     //ENTITY PLAYER DATA
     public int Gamestage => _gamestage;
+    public BCMVector3 LastLogoutPos => _lastPos;
 
     //PLAYER DATA FILE DATA - Used for non saved cache of player file data for commands
     [NonSerialized] private PlayerDataReader _playerData;
+
     public PlayerDataReader DataCache => _playerData ?? (_playerData = new PlayerDataReader());
 
     //CONSTRUCTOR
@@ -40,6 +47,7 @@ namespace BCM.PersistentData
       _totalPlayTime += (long)(DateTime.UtcNow - _lastOnline).TotalSeconds;
       _lastOnline = DateTime.UtcNow;
        _gamestage = ep != null ? ep.gameStage : -1;
+      _lastPos = new BCMVector3(ep != null ? ep.position : Vector3.zero);
       _clientInfo = null;
       _playerData = null;
     }

@@ -5,7 +5,7 @@ namespace BCM.Commands
 {
   public class BCLocation : BCCommandAbstract
   {
-    private static Dictionary<string, Vector3i> _cache = new Dictionary<string, Vector3i>();
+    private static readonly Dictionary<string, Vector3i> Cache = new Dictionary<string, Vector3i>();
 
     public override void Process()
     {
@@ -22,47 +22,53 @@ namespace BCM.Commands
         }
       }
 
-      if (Params.Count == 0)
+      switch (Params.Count)
       {
-        if (sender == null || steamId == null)
-        {
-          SendOutput("Error getting location of command sender.");
-        }
-        else
-        {
-          SetPos(steamId, pos);
+        case 0:
+          if (sender == null || steamId == null)
+          {
+            SendOutput("Error getting location of command sender.");
+          }
+          else
+          {
+            SetPos(steamId, pos);
 
-          SendOutput("Current Location: " + pos.x + " " + pos.y + " " + pos.z);
-          if (Options.ContainsKey("h"))
-          {
-            int height = GameManager.Instance.World.GetHeight(pos.x, pos.z);
-            SendOutput("Distance To Ground Height: " + (pos.y - height - 1));
+            SendOutput("Current Location: " + pos.x + " " + pos.y + " " + pos.z);
+            if (Options.ContainsKey("h"))
+            {
+              int height = GameManager.Instance.World.GetHeight(pos.x, pos.z);
+              SendOutput("Distance To Ground Height: " + (pos.y - height - 1));
+            }
+            if (Options.ContainsKey("c"))
+            {
+              SendOutput("ChunkXZ: " + (pos.x >> 4) + "," + (pos.z >> 4) + " + " + "ChunkBlockXZ: " + (pos.x & 15) + "," +
+                         (pos.z & 15));
+            }
+            if (Options.ContainsKey("r"))
+            {
+              SendOutput("RegionXZ: " + (pos.x >> 9) + "," + (pos.z >> 9));
+            }
           }
-          if (Options.ContainsKey("c"))
-          {
-            SendOutput("ChunkXZ: " + (pos.x >> 4) + "," + (pos.z >> 4) + " + " + "ChunkBlockXZ: " + (pos.x & 15) + "," +
-                       (pos.z & 15));
-          }
-          if (Options.ContainsKey("r"))
-          {
-            SendOutput("RegionXZ: " + (pos.x >> 9) + "," + (pos.z >> 9));
-          }
-        }
-      }
-      else if (Params.Count == 3 && int.TryParse(Params[0], out pos.x) && int.TryParse(Params[1], out pos.y) && int.TryParse(Params[2], out pos.z) && sender != null && steamId != null)
-      {
-        SetPos(steamId, pos);
+          break;
+
+        case 3 when int.TryParse(Params[0], out pos.x) && int.TryParse(Params[1], out pos.y) && int.TryParse(Params[2], out pos.z) && sender != null && steamId != null:
+          SetPos(steamId, pos);
+          break;
+
+        default:
+          SendOutput(GetHelp());
+          break;
       }
     }
 
     public static Vector3i GetPos(string steamId)
     {
-      return steamId == null || !_cache.ContainsKey(steamId) ? new Vector3i(int.MinValue, 0, int.MinValue) : _cache[steamId];
+      return steamId == null || !Cache.ContainsKey(steamId) ? new Vector3i(int.MinValue, 0, int.MinValue) : Cache[steamId];
     }
 
-    public static void SetPos(string steamId, Vector3i pos)
+    private static void SetPos(string steamId, Vector3i pos)
     {
-      _cache[steamId] = pos;
+      Cache[steamId] = pos;
     }
   }
 }

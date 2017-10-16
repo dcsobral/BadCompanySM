@@ -1,0 +1,9 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} entity <target> /p|position|player=
+            1. {command} entity <target> x y z
+      Notes:
+            Teleport the given entity to a new location
+            <target> can be an entity id for all entity typs, and also steamid or name for players

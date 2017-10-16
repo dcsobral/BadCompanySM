@@ -2,6 +2,8 @@ using BCM.PersistentData;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEngine;
+using BCM.Models;
 
 namespace BCM.Commands
 {
@@ -14,6 +16,7 @@ namespace BCM.Commands
       public bool IsOnline;
       public string LastOnline;
       public string LastWrite;
+      public string LastLogPos;
     }
 
     private static FileSystemInfo[] GetFiles(string path)
@@ -46,6 +49,7 @@ namespace BCM.Commands
             pdf.Name = player.Name;
             pdf.LastOnline = player.LastOnline.ToUtcStr();
             pdf.IsOnline = player.IsOnline;
+            pdf.LastLogPos = player.LastLogoutPos?.ToString();
           }
 
           players.Add(pdf);
@@ -55,7 +59,7 @@ namespace BCM.Commands
       {
         SendJson(players.Select(player => new[]
           {
-            player.Name, player.SteamId, player.IsOnline.ToString(), player.LastOnline, player.LastWrite
+            player.Name, player.SteamId, player.IsOnline.ToString(), player.LastOnline, player.LastWrite, player.LastLogPos
           }
         ).ToList());
       }

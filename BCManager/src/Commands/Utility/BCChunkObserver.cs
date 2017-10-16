@@ -43,6 +43,10 @@ namespace BCM.Commands
           DoMove(observedEntities, world);
           break;
 
+        case "reload":
+          DoReload();
+          break;
+
         //case "radius":
         //  SetRadius(observedEntities, world);
         //  break;
@@ -122,7 +126,7 @@ namespace BCM.Commands
       {
         if (oe.id != id) continue;
 
-        if (IsPlayer(oe, world)) return;
+        if (IsPlayer(oe)) return;
 
         oe.SetPosition(new Vector3(x, y, z));
         SendOutput($"Moved chunk observer {oe.id} to {x} {y} {z}");
@@ -132,13 +136,9 @@ namespace BCM.Commands
       SendOutput($"Unable to find observer with id: {id}");
     }
 
-    private static bool IsPlayer(ChunkManager.ChunkObserver oe, World world)
+    private static bool IsPlayer(ChunkManager.ChunkObserver oe)
     {
-      if (!world.Players.dict.ContainsKey(oe.entityIdToSendChunksTo)) return false;
-
-      SendOutput("Can't change player observers");
-
-      return true;
+      return GameManager.Instance.World.Players.dict.ContainsKey(oe.entityIdToSendChunksTo);
     }
 
     private void DoRemove(IEnumerable<ChunkManager.ChunkObserver> observedEntities, World world)
@@ -155,7 +155,7 @@ namespace BCM.Commands
       {
         if (oe.id != id) continue;
 
-        if (IsPlayer(oe, world)) return;
+        if (IsPlayer(oe)) return;
 
         world.m_ChunkManager.RemoveChunkObserver(oe);
         SendOutput($"Removed chunk observer {oe.id}");
@@ -163,6 +163,63 @@ namespace BCM.Commands
       }
 
       SendOutput($"Unable to find observer with id: {id}");
+    }
+
+    private void DoReload()
+    {
+      if (Params.Count != 5 && Params.Count != 3)
+      {
+        SendOutput("Incorrect params count for reload");
+        SendOutput(GetHelp());
+
+        return;
+      }
+
+      int cx;
+      int cy;
+      int cz;
+      int cw;
+
+      if (Params.Count == 3)
+      {
+        if (!int.TryParse(Params[1], out cx) || !int.TryParse(Params[2], out cy))
+        {
+          SendOutput("Unable to parse chunk co-ords from params");
+          SendOutput(GetHelp());
+
+          return;
+        }
+        cz = cx;
+        cw = cy;
+      }
+      else
+      {
+        if (!int.TryParse(Params[1], out cx) || !int.TryParse(Params[2], out cy) ||
+            !int.TryParse(Params[3], out cz) || !int.TryParse(Params[4], out cw))
+        {
+          SendOutput("Unable to parse chunk co-ords from params");
+          SendOutput(GetHelp());
+
+          return;
+        }
+      }
+
+      var x1 = Math.Min(cx, cz);
+      var x2 = Math.Max(cx, cz);
+      var z1 = Math.Min(cy, cw);
+      var z2 = Math.Max(cy, cw);
+
+      var chunks = new Dictionary<long, Chunk>();
+      for (var x = x1; x <= x2; x++)
+      {
+        for (var z = z1; z <= z2; z++)
+        {
+          var chunkKey = WorldChunkCache.MakeChunkKey(x, z);
+          chunks[chunkKey] = null;
+        }
+      }
+      var count = BCChunks.ReloadForClients(chunks);
+      SendOutput($"Chunks reloaded for {count} clients in area: {x1},{z1} to {x2},{z2}");
     }
 
     private static void GetList(ICollection<ChunkManager.ChunkObserver> observedEntities)
