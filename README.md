@@ -7,4 +7,4 @@ After that you will need to [Follow the Instructions](https://github.com/7days2m
 
 For further infomation please check out the [Bad Company Wiki](https://github.com/7days2mod/BadCompanySM/wiki) for videos and other tutorials and command api references.
 
-Also check out the Web Interface [BadCompanySM-UI](https://github.com/7days2mod/BadCompanySM-WebUI) project for the latest version of the GUI for Bad Company SM
+Also check out the Web Interface project [BadCompanySM-UI](https://github.com/7days2mod/BadCompanySM-WebUI) for the latest version of the GUI for Bad Company SM
