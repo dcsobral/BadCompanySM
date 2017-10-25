@@ -1,0 +1,12 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} {subcommand: list}
+            2. {command} {subcommand: volume} <index>
+            3. {command} {subcommand: chunk, clear} <cx> <cz>
+      Notes:
+            chunk - display the sleeper volumes in a chunk, if <cx> <cz> are ommited then uses current player chunk location - requires <cx> <cz>
+            clear - removes the volumes from the given chunk - requires <cx> <cz>
+            list - reports all sleeper volumes added to the world
+            volume - displays detailed information about the given sleeper volume - requires <index>

@@ -246,15 +246,8 @@ namespace BCM.Commands
       }
     }
 
-    private static void ProcessSleepers(Prefab prefab, WorldBase world, Chunk chunk, Vector3i dest)
+    private static void ProcessSleepers(Prefab prefab, World world, /*Chunk chunk, */Vector3i dest)
     {
-      var chunkPosMin = Vector3i.zero;
-      var chunkPosMax = Vector3i.zero;
-      if (chunk != null)
-      {
-        chunkPosMin = chunk.GetWorldPos();
-        chunkPosMax = chunkPosMin + new Vector3i(16, 256, 16);
-      }
       for (var index = 0; index < prefab.SleeperVolumesStart.Count; ++index)
       {
         if (!prefab.SleeperVolumeUsed[index]) continue;
@@ -264,22 +257,25 @@ namespace BCM.Commands
         var volMax = volStart + volSize;
         var volStartDest = volStart + dest;
         var volMaxDest = volMax + dest;
-        if (chunk != null)
-        {
-          if ((volStartDest.x >= chunkPosMax.x || volMaxDest.x <= chunkPosMin.x || volStartDest.y >= chunkPosMax.y || volMaxDest.y <= chunkPosMin.y ||
-            volStartDest.z >= chunkPosMax.z ? 1 : (volMaxDest.z <= chunkPosMin.z ? 1 : 0)) != 0) continue;
+        //if (chunk != null)
+        //{
+        //  var chunkPosMin = chunk.GetWorldPos();
+        //  var chunkPosMax = chunkPosMin + new Vector3i(16, 256, 16);
 
-          var volKey = world.FindSleeperVolume(volStartDest, volMaxDest);
-          if (volKey == -1)
-          {
-            var volume = SleeperVolume.Create(prefab.SleeperVolumesGroup[index], volStartDest, volMaxDest, dest, prefab.SleeperVolumeGameStageAdjust[index]);
-            volKey = world.AddSleeperVolume(volume);
-            AddSleeperSpawns(prefab, index, dest, volume, volStart, volMax);
-          }
-          chunk.GetSleeperVolumes().Add(volKey);
-        }
-        else
-        {
+        //  if ((volStartDest.x >= chunkPosMax.x || volMaxDest.x <= chunkPosMin.x || volStartDest.y >= chunkPosMax.y || volMaxDest.y <= chunkPosMin.y ||
+        //    volStartDest.z >= chunkPosMax.z ? 1 : (volMaxDest.z <= chunkPosMin.z ? 1 : 0)) != 0) continue;
+
+        //  var volKey = world.FindSleeperVolume(volStartDest, volMaxDest);
+        //  if (volKey == -1)
+        //  {
+        //    var volume = SleeperVolume.Create(prefab.SleeperVolumesGroup[index], volStartDest, volMaxDest, dest, prefab.SleeperVolumeGameStageAdjust[index]);
+        //    volKey = world.AddSleeperVolume(volume);
+        //    AddSleeperSpawns(prefab, index, dest, volume, volStart, volMax);
+        //  }
+        //  chunk.GetSleeperVolumes().Add(volKey);
+        //}
+        //else
+        //{
           var chunkXz1 = World.toChunkXZ(volStartDest.x);
           var chunkXz2 = World.toChunkXZ(volMaxDest.x);
           var chunkXz3 = World.toChunkXZ(volStartDest.z);
@@ -294,7 +290,7 @@ namespace BCM.Commands
               ((Chunk)world.GetChunkSync(chunkX, 0, chunkZ))?.GetSleeperVolumes().Add(volKey);
             }
           }
-        }
+        //}
       }
     }
 
@@ -302,7 +298,7 @@ namespace BCM.Commands
     {
       if (!Options.ContainsKey("sblocks"))
       {
-        ProcessSleepers(prefab, world, null, dest);
+        ProcessSleepers(prefab, world, dest);
       }
 
 
