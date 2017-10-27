@@ -20,10 +20,12 @@ namespace BCM.Commands
       public int Enemies;
       public int Observers;
       public int Chunks;
-      public int GO;
+      public int ChunkInst;
+      public int Objects;
       public int Items;
       public double Heap;
       public double Max;
+      public double Rss;
 
       public BCMTime()
       {
@@ -48,17 +50,18 @@ namespace BCM.Commands
         Players = world.Players.list.Count;
         Enemies = GameStats.GetInt(EnumGameStats.EnemyCount);
         Observers = world.m_ChunkManager.m_ObservedEntities.Count;
-        Chunks = world.ChunkClusters[0].Count(); //Chunks = Chunk.InstanceCount;
-        GO = world.m_ChunkManager.GetDisplayedChunkGameObjectsCount();
+        Chunks = world.ChunkClusters[0].Count();
+        ChunkInst = Chunk.InstanceCount;
+        Objects = world.m_ChunkManager.GetDisplayedChunkGameObjectsCount();
         Items = EntityItem.ItemInstanceCount;
 
-        if (Options.ContainsKey("mem"))
-        {
-          //properties will be null without /mem option
-          long totalMemory = GC.GetTotalMemory(true);
-          Heap = Math.Floor(totalMemory / 1048576f);
-          Max = Math.Floor(GameManager.MaxMemoryConsumption / 1048576f);
-        }
+        if (!Options.ContainsKey("mem")) return;
+
+        //properties will be null without /mem option
+        var totalMemory = GC.GetTotalMemory(false);
+        Heap = Math.Floor(totalMemory / 1048576f);
+        Max = Math.Floor(GameManager.MaxMemoryConsumption / 1048576f);
+        Rss = Math.Floor(GetRSS.GetCurrentRSS() / 1048576f);
       }
     }
 

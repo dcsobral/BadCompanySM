@@ -165,6 +165,7 @@ namespace BCM.Commands
           resources.Add(resource.GetType().ToString(), new List<string> { resource.name });
         }
       }
+      Resources.UnloadUnusedAssets();
 
       return resources;
     }
