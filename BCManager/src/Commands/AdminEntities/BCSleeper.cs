@@ -7,7 +7,7 @@ namespace BCM.Commands
 {
   public class BCSleeper : BCCommandAbstract
   {
-    private readonly string _volumesFunction = "EF";
+    private readonly string _volumesFunction = "LW";
 
     public override void Process()
     {

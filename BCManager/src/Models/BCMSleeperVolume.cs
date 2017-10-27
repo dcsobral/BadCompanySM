@@ -11,7 +11,7 @@ namespace BCM.Models
 
     public BCMSleeperVolumeDetialed(int index, SleeperVolume volume, World world) : base(index, volume, world)
     {
-      var spawns = typeof(SleeperVolume).GetField("UC", BindingFlags.NonPublic | BindingFlags.Instance);
+      var spawns = typeof(SleeperVolume).GetField("VH", BindingFlags.NonPublic | BindingFlags.Instance);
       if (spawns != null)
       {
         if (!(spawns.GetValue(volume) is List<SleeperVolume.SpawnPoint> spawnPoints)) return;
@@ -52,7 +52,7 @@ namespace BCM.Models
     public BCMSleeperVolume(int index, SleeperVolume volume, World world)
     {
       Index = index;
-      var volumeGroup = typeof(SleeperVolume).GetField("JC", BindingFlags.NonPublic | BindingFlags.Instance);
+      var volumeGroup = typeof(SleeperVolume).GetField("QH", BindingFlags.NonPublic | BindingFlags.Instance);
       if (volumeGroup != null)
       {
         if (!(volumeGroup.GetValue(volume) is string name)) return;
@@ -63,7 +63,7 @@ namespace BCM.Models
       Extent = new BCMVector3(volume.maxs);
       Size = new BCMVector3(volume.maxs - volume.mins + Vector3i.one);
 
-      var timer = typeof(SleeperVolume).GetField("QC", BindingFlags.NonPublic | BindingFlags.Instance);
+      var timer = typeof(SleeperVolume).GetField("IH", BindingFlags.NonPublic | BindingFlags.Instance);
       if (timer != null)
       {
         if (!(timer.GetValue(volume) is ulong timerValue)) return;

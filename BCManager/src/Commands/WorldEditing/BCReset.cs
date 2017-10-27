@@ -5,6 +5,8 @@ namespace BCM.Commands
 {
   public class BCReset : BCCommandAbstract
   {
+    private readonly string _decorateFunction = "MH";
+
     public override void Process()
     {
       if (Params.Count == 0)
@@ -140,7 +142,7 @@ namespace BCM.Commands
                 return;
               }
             }
-            var decorateWithNeigbours = typeof(ChunkProviderGenerateWorld).GetMethod("OC", BindingFlags.NonPublic | BindingFlags.Instance);
+            var decorateWithNeigbours = typeof(ChunkProviderGenerateWorld).GetMethod(_decorateFunction, BindingFlags.NonPublic | BindingFlags.Instance);
             if (decorateWithNeigbours == null)
             {
               SendOutput("Couldn't access method for DecorateWithNeigbours");
