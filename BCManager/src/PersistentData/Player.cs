@@ -40,13 +40,16 @@ namespace BCM.PersistentData
     public Player(string steamId) => _steamId = steamId;
 
     //SET OFFLINE
-    public void SetOffline(EntityPlayer ep)
+    public void SetOffline(ClientInfo ci)
     {
       if (_clientInfo == null) return;
 
       _totalPlayTime += (long)(DateTime.UtcNow - _lastOnline).TotalSeconds;
       _lastOnline = DateTime.UtcNow;
-       _gamestage = ep != null ? ep.gameStage : -1;
+
+      var players = GameManager.Instance.World.Players.dict;
+      var ep = players.ContainsKey(ci.entityId) ? players[ci.entityId] : null;
+      _gamestage = ep != null ? ep.gameStage : -1;
       _lastPos = new BCMVector3(ep != null ? ep.position : Vector3.zero);
       _clientInfo = null;
       _playerData = null;

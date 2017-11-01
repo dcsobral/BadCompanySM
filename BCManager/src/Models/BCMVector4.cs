@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace BCM.Commands
+namespace BCM.Models
 {
   public class BCMVector4
   {

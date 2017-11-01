@@ -140,17 +140,6 @@ namespace BCM.Commands
           for (var pz = 0; pz < prefab.size.z; pz++)
           {
             var bv = prefab.GetBlock(px, py, pz);
-            // ENTITIES
-            //List<EntityCreationData> entities = prefab.GetEntities();
-            //foreach (EntityCreationData _ecd in entities)
-            //{
-            //  _ecd.id = -1;
-            //  Entity entity = EntityFactory.CreateEntity(_ecd);
-            //  entity.SetPosition(entity.position + pos.ToVector3());
-            //  GameManager.Instance.World.SpawnEntityInWorld(entity);
-            //}
-
-
             // LOOT PLACEHOLDERS
             if (bv.type == 0) continue;
 

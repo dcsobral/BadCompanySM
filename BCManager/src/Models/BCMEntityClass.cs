@@ -29,7 +29,6 @@ namespace BCM.Models
     public int Id;
     public string Name;
 
-
     public string Class;
     public string Skin;
     public string Parent;
@@ -54,7 +53,10 @@ namespace BCM.Models
     public bool IsObserver;
     public int Experience;
     public string Physics;
+    public int MaxHealth;
     public int DeadHP;
+    public int LootListAlive;
+    public int LootListOnDeath;
     public double SwimOffset;
     public double SightRange;
     public double SearchArea;
@@ -148,7 +150,7 @@ namespace BCM.Models
           }
         }
       }
-  }
+    }
 
     public class BCMVector2
     {
@@ -208,8 +210,7 @@ namespace BCM.Models
 
     public override void GetData(object obj)
     {
-      var ec = obj as EntityClass;
-      if (ec == null) return;
+      if (!(obj is EntityClass ec)) return;
 
       if (IsOption("filter"))
       {
@@ -251,13 +252,16 @@ namespace BCM.Models
         Bin.Add("CorpseId", CorpseId = ec.CorpseBlockId);
         Bin.Add("CorpseChance", CorpseChance = Math.Round(ec.CorpseBlockChance, 6));
         Bin.Add("CorpseDen", CorpseDen = ec.CorpseBlockDensity);
-        Bin.Add("MaxTurn", MaxTurn = Math.Round(ec.MaxTurnSpeed,6));
+        Bin.Add("MaxTurn", MaxTurn = Math.Round(ec.MaxTurnSpeed, 6));
         Bin.Add("RootMotion", RootMotion = ec.RootMotion);
         Bin.Add("HasDeathAnim", HasDeathAnim = ec.HasDeathAnim);
         Bin.Add("IsMale", IsMale = ec.bIsMale);
         Bin.Add("IsObserver", IsObserver = ec.bIsChunkObserver);
         Bin.Add("Experience", Experience = ec.ExperienceValue);
         Bin.Add("Physics", Physics = ec.PhysicsBody?.Name);
+        Bin.Add("MaxHealth", MaxHealth = ec.Properties.Values.ContainsKey(EntityClass.PropMaxHealth) ? int.Parse(ec.Properties.Values[EntityClass.PropMaxHealth]) : 100);
+        Bin.Add("LootListOnDeath", LootListOnDeath = ec.Properties.Values.ContainsKey(EntityClass.PropLootListOnDeath) ? int.Parse(ec.Properties.Values[EntityClass.PropLootListOnDeath]) : 0);
+        Bin.Add("LootListAlive", LootListAlive = ec.Properties.Values.ContainsKey(EntityClass.PropLootListAlive) ? int.Parse(ec.Properties.Values[EntityClass.PropLootListAlive]) : 0);
         Bin.Add("DeadHP", DeadHP = ec.DeadBodyHitPoints);
         Bin.Add("LegCrippleTh", LegCrippleTh = Math.Round(ec.LegCrippleThreshold, 6));
         Bin.Add("LegCrawlerTh", LegCrawlerTh = Math.Round(ec.LegCrawlerThreshold, 6));

@@ -38,7 +38,7 @@ namespace BCM.Models
       public BCMSpawn(SEntityClassAndProb spawn)
       {
         EntityClassId = spawn.entityClassId;
-        Prob = spawn.prob;
+        Prob = Math.Round(spawn.prob, 3);
         ReqMin = spawn.reqMin;
         ReqMax = spawn.reqMax;
       }

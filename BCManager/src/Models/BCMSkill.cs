@@ -86,7 +86,7 @@ namespace BCM.Models
     public double CostMult;
     public List<BCMRequirement> SkillReqs = new List<BCMRequirement>();
     public List<BCMLockedItem> LockedItems = new List<BCMLockedItem>();
-    public Dictionary<string, BCMEffect> Effects = new Dictionary<string, BCMEffect>();
+    public List<BCMEffect> Effects = new List<BCMEffect>();
     //public Skills Parent;
 
     public class BCMRequirement
@@ -271,7 +271,7 @@ namespace BCM.Models
       {
         foreach (var effect in skill.effects)
         {
-          Effects.Add(effect.Key.ToString(), new BCMEffect(effect.Value));
+          Effects.Add(new BCMEffect(effect.Value));
         }
       }
       Bin.Add("Effects", Effects);

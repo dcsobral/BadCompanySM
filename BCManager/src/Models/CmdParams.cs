@@ -1,6 +1,4 @@
-﻿using BCM.Models;
-
-namespace BCM.Commands
+﻿namespace BCM.Models
 {
   public class BCCmd
   {

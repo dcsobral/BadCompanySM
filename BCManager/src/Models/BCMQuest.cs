@@ -69,12 +69,14 @@ namespace BCM.Models
 
     public class BCMQuestAction
     {
+      public string Type;
       public string Id;
       public string Value;
       //public string OwnerQuest;
 
       public BCMQuestAction(BaseQuestAction action)
       {
+        Type = action.GetType().ToString();
         Id = action.ID;
         Value = action.Value;
       }
@@ -82,6 +84,7 @@ namespace BCM.Models
 
     public class BCMRequirement
     {
+      public string Type;
       public string Id;
       public string Value;
       //public bool Complete;
@@ -91,6 +94,7 @@ namespace BCM.Models
 
       public BCMRequirement(BaseRequirement requirement)
       {
+        Type = requirement.GetType().ToString();
         Id = requirement.ID;
         Value = requirement.Value;
       }
@@ -98,6 +102,7 @@ namespace BCM.Models
 
     public class BCMObjective
     {
+      public string Type;
       public string Id;
       public string Value;
       //public byte Version;
@@ -107,6 +112,7 @@ namespace BCM.Models
 
       public BCMObjective(BaseObjective objective)
       {
+        Type = objective.GetType().ToString();
         Id = objective.ID;
         Value = objective.Value;
       }
@@ -114,12 +120,14 @@ namespace BCM.Models
 
     public class BCMReward
     {
+      public string Type;
       public string Id;
       public string Value;
       //public string OwnerQuest;
 
       public BCMReward(BaseReward reward)
       {
+        Type = reward.GetType().ToString();
         Id = reward.ID;
         Value = reward.Value;
       }
