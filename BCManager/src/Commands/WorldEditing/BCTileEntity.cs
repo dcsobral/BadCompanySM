@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using BCM.Models;
 
 namespace BCM.Commands
@@ -9,116 +8,6 @@ namespace BCM.Commands
   public class BCTileEntity : BCCommandAbstract
   {
     #region Properties
-    public class BCTileEntityCmd : BCCmd
-    {
-      public string Filter;
-      public ushort Radius;
-
-      public bool HasPos;
-      public BCMVector3 Position;
-
-      public bool HasSize;
-      public BCMVector3 Size;
-
-      public bool HasChunkPos;
-      public BCMVector4 ChunkBounds;
-      public ItemStack ItemStack;
-
-      public bool IsWithinBounds(Vector3i pos)
-      {
-        if (!HasPos) return false;
-
-        var size = HasSize ? Size : new BCMVector3(0, 0, 0);
-        return (Position.x <= pos.x && pos.x <= Position.x + size.x) &&
-               (Position.y <= pos.y && pos.y <= Position.y + size.y) &&
-               (Position.z <= pos.z && pos.z <= Position.z + size.z);
-      }
-    }
-
-    private enum ReloadMode
-    {
-      None,
-      Target,
-      All
-    }
-
-    private class BCMParts
-    {
-      public int Type;
-      public int Quality;
-      public int UseTimes;
-      public int MaxUse;
-    }
-
-    private class BCMAttachment
-    {
-      public int Type;
-      public int Quality;
-      public int UseTimes;
-      public int MaxUse;
-    }
-
-    private class BCMItemStack
-    {
-      public int Type;
-      public int Quality;
-      public int UseTimes;
-      public int MaxUse;
-      public int AmmoIndex;
-      public int Count;
-      public List<BCMAttachment> Attachments;
-      public List<BCMParts> Parts;
-
-      public BCMItemStack(ItemStack item)
-      {
-        if (item.itemValue.type == 0) return;
-
-        Type = item.itemValue.type;
-        Quality = item.itemValue.Quality;
-        UseTimes = item.itemValue.UseTimes;
-        MaxUse = item.itemValue.MaxUseTimes;
-        AmmoIndex = item.itemValue.SelectedAmmoTypeIndex;
-
-        if (item.itemValue.Attachments != null && item.itemValue.Attachments.Length > 0)
-        {
-          Attachments = new List<BCMAttachment>();
-          foreach (var attachment in item.itemValue.Attachments)
-          {
-            if (attachment != null && attachment.type != 0)
-            {
-              Attachments.Add(new BCMAttachment
-              {
-                Type = attachment.type,
-                Quality = attachment.Quality,
-                MaxUse = attachment.MaxUseTimes,
-                UseTimes = attachment.UseTimes
-              });
-            }
-          }
-        }
-
-        if (item.itemValue.Parts != null && item.itemValue.Parts.Length > 0)
-        {
-          Parts = new List<BCMParts>();
-          foreach (var part in item.itemValue.Parts)
-          {
-            if (part != null && part.type != 0)
-            {
-              Parts.Add(new BCMParts
-              {
-                Type = part.type,
-                Quality = part.Quality,
-                MaxUse = part.MaxUseTimes,
-                UseTimes = part.UseTimes
-              });
-            }
-          }
-        }
-
-        Count = item.count;
-      }
-    }
-
     private class BCMTileEntityLootContainer : BCMTileEntity
     {
       public int LootList;
@@ -359,85 +248,34 @@ namespace BCM.Commands
         return;
       }
 
-      var command = new BCTileEntityCmd();
-      if (!ProcessParams(command)) return;
+      var command = new BCMCmdArea(Params, Options, "TileEntity");
+      if (!BCUtils.ProcessParams(command))
+      {
+        SendOutput(GetHelp());
 
-      if (!GetIds(world, command, out var entity))
+        return;
+      }
+
+      if (!BCUtils.GetIds(world, command, out var entity))
       {
         SendOutput("Command requires a position when not run by a player.");
 
         return;
       }
 
-      if (!command.HasChunkPos && !command.HasPos && !GetEntPos(command, entity))
+      if (!command.HasChunkPos && !command.HasPos && !BCUtils.GetEntPos(command, entity))
       {
         SendOutput("Unable to get position.");
 
         return;
       }
 
-      DoProcess(world, command);
+      BCUtils.DoProcess(world, command, this);
     }
 
-    private void DoProcess(World world, BCTileEntityCmd command)
+    public override void ProcessSwitch(World world, BCMCmdArea command, out ReloadMode reload)
     {
-      if (Options.ContainsKey("forcesync"))
-      {
-        SendOutput("Processing Command synchronously...");
-        ProcessCommand(world, command);
-
-        return;
-      }
-
-      if (SenderInfo.NetworkConnection != null && !(SenderInfo.NetworkConnection is TelnetConnection))
-      {
-        SendOutput("Processing Async Command... Sending output to log");
-      }
-      else
-      {
-        SendOutput("Processing Async Command...");
-      }
-
-      BCTask.AddTask(
-        "TileEntity",
-        ThreadManager.AddSingleTask(
-            info => ProcessCommand(world, command), 
-            null,
-            (info, e) => BCTask.DelTask("TileEntity", info.GetHashCode()))
-          .GetHashCode(),
-        command);
-    }
-
-    private void ProcessCommand(World world, BCTileEntityCmd command)
-    {
-      var affectedChunks = GetAffectedChunks(command, world);
-      if (affectedChunks == null)
-      {
-        SendOutput("Aborting, unable to load all chunks in area before timeout.");
-        SendOutput("Use /timeout=#### to override the default 2000 millisecond limit, or wait for the requested chunks to finish loading and try again.");
-
-        return;
-      }
-
-      var location = "";
-      if (command.HasPos)
-      {
-        location += $"Pos {command.Position.x} {command.Position.y} {command.Position.z} ";
-        if (command.HasSize)
-        {
-          location += $"to {command.Position.x + command.Size.x} {command.Position.y + command.Size.y} {command.Position.z + command.Size.z} ";
-        }
-      }
-      if (command.HasChunkPos)
-      {
-        location += $"Chunks {command.ChunkBounds.x} {command.ChunkBounds.y} to {command.ChunkBounds.z} {command.ChunkBounds.w}";
-      }
-      if (!string.IsNullOrEmpty(location))
-      {
-        SendOutput(location);
-      }
-
-      var reload = ReloadMode.None;
+      reload = ReloadMode.None;
 
       switch (command.Command)
       {
@@ -454,8 +292,8 @@ namespace BCM.Commands
           reload = ReloadMode.Target;
           break;
         case "lock":
-          Options.TryGetValue("pwd", out var pwd);
-          SetLocked(command, true, Options.ContainsKey("pwd"), pwd ?? string.Empty, world);
+          command.Opts.TryGetValue("pwd", out var pwd);
+          SetLocked(command, true, command.Opts.ContainsKey("pwd"), pwd ?? string.Empty, world);
           reload = ReloadMode.All;
           break;
         case "unlock":
@@ -469,7 +307,7 @@ namespace BCM.Commands
           ResetTouched(command, world);
           break;
         case "remove":
-          if (!Options.ContainsKey("confirm"))
+          if (!command.Opts.ContainsKey("confirm"))
           {
             SendOutput("Please use /confirm to confirm that you understand the impact of this command (removes all targeted tile entities)");
           }
@@ -499,375 +337,11 @@ namespace BCM.Commands
           break;
       }
 
-      //RELOAD CHUNKS FOR PLAYER(S) - If steamId is empty then all players in area will get reload
-      if (reload != ReloadMode.None && !(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
-      {
-        BCChunks.ReloadForClients(affectedChunks, reload == ReloadMode.Target ? command.SteamId : string.Empty);
-      }
+      //return reload;
     }
-
-    private static void DoCleanup(World world, ChunkManager.ChunkObserver co, int ts = 0, ThreadManager.TaskInfo taskInfo = null)
-    {
-      var bcmTask = BCTask.GetTask("TileEntity", taskInfo?.GetHashCode());
-      for (var i = 0; i < ts; i++)
-      {
-        if (bcmTask != null) bcmTask.Output = new { timer = i, total = ts };
-        Thread.Sleep(1000);
-      }
-      world.m_ChunkManager.RemoveChunkObserver(co);
-    }
-
-    #region Params
-
-    private void GetRadius(BCTileEntityCmd command)
-    {
-      if (Options.ContainsKey("r"))
-      {
-        ushort.TryParse(Options["r"], out command.Radius);
-        if (command.Radius > 14)
-        {
-          command.Radius = 14;
-          SendOutput("Setting radius to maximum of +14 chunks");
-        }
-        else
-        {
-          SendOutput($"Setting radius to +{command.Radius} chunks");
-        }
-      }
-      else
-      {
-        SendOutput("Setting radius to default of +0 chunk");
-      }
-    }
-
-    private static bool GetChunkSizeXyzw(BCTileEntityCmd command)
-    {
-      if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) || !int.TryParse(Params[3], out var z) || !int.TryParse(Params[4], out var w))
-      {
-        SendOutput("Unable to parse x,z x2,z2 into ints");
-
-        return false;
-      }
-
-      command.ChunkBounds = new BCMVector4(Math.Min(x, z), Math.Min(y, w), Math.Max(x, z), Math.Max(y, w));
-      command.HasChunkPos = true;
-
-      return true;
-    }
-
-    private static bool GetChunkPosXz(BCTileEntityCmd command)
-    {
-      if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var z))
-      {
-        SendOutput("Unable to parse x,z into ints");
-
-        return false;
-      }
-      
-      command.ChunkBounds = new BCMVector4(x - command.Radius, z - command.Radius, x + command.Radius, z + command.Radius);
-      command.HasChunkPos = true;
-
-      return true;
-    }
-
-    private static bool GetPositionXyz(BCTileEntityCmd command)
-    {
-      if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) || !int.TryParse(Params[3], out var z))
-      {
-        SendOutput("Unable to parse x,y,z into ints");
-
-        return false;
-      }
-
-      command.Position = new BCMVector3(x, y, z);
-      command.HasPos = true;
-
-      command.ChunkBounds = new BCMVector4(World.toChunkXZ(x), World.toChunkXZ(z), World.toChunkXZ(x), World.toChunkXZ(z));
-      command.HasChunkPos = true;
-
-      return !Options.ContainsKey("item") || command.Command != "additem" || GetItemStack(command);
-    }
-
-    private static bool GetItemStack(BCTileEntityCmd command)
-    {
-      var quality = -1;
-      var count = 1;
-      if (Options.ContainsKey("q"))
-      {
-        if (!int.TryParse(Options["q"], out quality))
-        {
-          SendOutput("Unable to parse quality, using random value");
-        }
-      }
-      if (Options.ContainsKey("c"))
-      {
-        if (!int.TryParse(Options["c"], out count))
-        {
-          SendOutput($"Unable to parse count, using default value of {count}");
-        }
-      }
-
-      var ic = int.TryParse(Options["item"], out var id) ? ItemClass.GetForId(id) : XMLData.Item.ItemData.GetForName(Options["item"]);
-      if (ic == null)
-      {
-        SendOutput($"Unable to get item or block from given value '{Options["item"]}'");
-
-        return false;
-      }
-
-      command.ItemStack = new ItemStack
-      {
-        itemValue = new ItemValue(ic.Id, true),
-        count = count <= ic.Stacknumber.Value ? count : ic.Stacknumber.Value
-      };
-      if (command.ItemStack.count < count)
-      {
-        SendOutput("Using max stack size for " + ic.Name + " of " + command.ItemStack.count);
-      }
-      if (command.ItemStack.itemValue.HasQuality && quality > 0)
-      {
-        command.ItemStack.itemValue.Quality = quality;
-      }
-
-      return true;
-    }
-
-    private static bool GetPosSizeXyz(BCTileEntityCmd command)
-    {
-      if (!int.TryParse(Params[1], out var x) || !int.TryParse(Params[2], out var y) || !int.TryParse(Params[3], out var z))
-      {
-        SendOutput("Unable to parse x,y,z into ints");
-
-        return false;
-      }
-
-      if (!int.TryParse(Params[4], out var x2) || !int.TryParse(Params[5], out var y2) || !int.TryParse(Params[6], out var z2))
-      {
-        SendOutput("Unable to parse x2,y2,z2 into ints");
-
-        return false;
-      }
-
-      command.Position = new BCMVector3(Math.Min(x, x2), Math.Min(y, y2), Math.Min(z, z2));
-      command.HasPos = true;
-
-      command.Size = new BCMVector3(Math.Abs(x - x2) + 1, Math.Abs(y - y2) + 1, Math.Abs(z - z2) + 1);
-      command.HasSize = true;
-
-      command.ChunkBounds = new BCMVector4(
-        World.toChunkXZ(Math.Min(x, x2)),
-        World.toChunkXZ(Math.Min(z, z2)),
-        World.toChunkXZ(Math.Max(x, x2)),
-        World.toChunkXZ(Math.Max(z, z2))
-      );
-      command.HasChunkPos = true;
-
-      return true;
-    }
-
-    private bool ProcessParams(BCTileEntityCmd command)
-    {
-      if (Options.ContainsKey("type"))
-      {
-        command.Filter = Options["type"];
-      }
-      switch (Params.Count)
-      {
-        case 1:
-          //command with no extras, blocks if /loc, chunks if /r= or nothing
-          GetRadius(command);
-          command.Command = Params[0];
-          return true;
-
-        case 3:
-          //XZ single chunk with /r
-          command.Command = Params[0];
-          GetRadius(command);
-          return GetChunkPosXz(command);
-
-        case 4:
-          //XYZ single block
-          command.Command = Params[0];
-          return GetPositionXyz(command);
-
-        case 5:
-          //XZ multi chunk
-          command.Command = Params[0];
-          return GetChunkSizeXyzw(command);
-
-        case 7:
-          //XZYXYZ world pos bounds
-          command.Command = Params[0];
-          return GetPosSizeXyz(command);
-
-        default:
-          SendOutput(GetHelp());
-          return false;
-      }
-    }
-
-    private static bool GetIds(World world, BCTileEntityCmd command, out EntityPlayer entity)
-    {
-      entity = null;
-      int? entityId = null;
-
-      if (Options.ContainsKey("id"))
-      {
-        if (!PlayerStore.GetId(Options["id"], out command.SteamId, "CON")) return false;
-
-        entityId = ConsoleHelper.ParseParamSteamIdOnline(command.SteamId)?.entityId;
-      }
-
-      if (command.SteamId == null)
-      {
-        entityId = SenderInfo.RemoteClientInfo?.entityId;
-        command.SteamId = SenderInfo.RemoteClientInfo?.playerId;
-      }
-
-      if (entityId != null)
-      {
-        entity = world.Players.dict[(int)entityId];
-      }
-
-      return entity != null || Params.Count >= 3;
-    }
-
-    private static bool GetEntPos(BCTileEntityCmd command, EntityPlayer entity)
-    {
-      //todo: if /h=#,# then set y to pos + [0], y2 to pos + [1], if only 1 number then y=pos y2=pos+#
-      if (entity != null)
-      {
-        var loc = new Vector3i(int.MinValue, 0, int.MinValue);
-        var hasLoc = false;
-        if (Options.ContainsKey("loc"))
-        {
-          loc = BCLocation.GetPos(SenderInfo.RemoteClientInfo?.playerId);
-          if (loc.x == int.MinValue)
-          {
-            SendOutput("No location stored or player not found. Use bc-loc to store a location.");
-
-            return false;
-          }
-          hasLoc = true;
-
-          command.Position = new BCMVector3((int)entity.position.x, (int)entity.position.y, (int)entity.position.z);
-          command.HasPos = true;
-          command.Position = new BCMVector3(Math.Min(loc.x, (int)entity.position.x), Math.Min(loc.y, (int)entity.position.y), Math.Min(loc.z, (int)entity.position.z));
-          command.HasPos = true;
-
-          command.Size = new BCMVector3(Math.Abs(loc.x - (int)entity.position.x) + 1, Math.Abs(loc.y - (int)entity.position.y) + 1, Math.Abs(loc.z - (int)entity.position.z) + 1);
-          command.HasSize = true;
-        }
-
-        command.ChunkBounds = new BCMVector4
-        {
-          x = World.toChunkXZ(hasLoc ? Math.Min(loc.x, (int)entity.position.x) : (int)entity.position.x - command.Radius),
-          y = World.toChunkXZ(hasLoc ? Math.Min(loc.z, (int)entity.position.z) : (int)entity.position.z - command.Radius),
-          z = World.toChunkXZ(hasLoc ? Math.Max(loc.x, (int)entity.position.x) : (int)entity.position.x + command.Radius),
-          w = World.toChunkXZ(hasLoc ? Math.Max(loc.z, (int)entity.position.z) : (int)entity.position.z + command.Radius)
-        };
-        command.HasChunkPos = true;
-      }
-      else
-      {
-        SendOutput("Unable to get a position");
-
-        return false;
-      }
-
-      return true;
-    }
-
-    private static Dictionary<long, Chunk> GetAffectedChunks(BCTileEntityCmd command, World world)
-    {
-      var modifiedChunks = new Dictionary<long, Chunk>();
-
-      var timeout = 1000;
-      if (Options.ContainsKey("timeout"))
-      {
-        if (Options["timeout"] != null)
-        {
-          int.TryParse(Options["timeout"], out timeout);
-        }
-      }
-
-      ChunkObserver(command, world, timeout / 1000);
-
-      //request any unloaded chunks in area
-      for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
-      {
-        for (var z = command.ChunkBounds.y; z <= command.ChunkBounds.w; z++)
-        {
-          var chunkKey = WorldChunkCache.MakeChunkKey(x, z);
-          modifiedChunks.Add(chunkKey, null);
-        }
-      }
-
-      var chunkCount = (command.ChunkBounds.z - command.ChunkBounds.x + 1) * (command.ChunkBounds.w - command.ChunkBounds.y + 1);
-      var count = 0;
-      var sw = System.Diagnostics.Stopwatch.StartNew();
-
-      while (count < chunkCount && sw.ElapsedMilliseconds < timeout)
-      {
-        for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
-        {
-          for (var z = command.ChunkBounds.y; z <= command.ChunkBounds.w; z++)
-          {
-            //check if already in list
-            var chunkKey = WorldChunkCache.MakeChunkKey(x, z);
-            if (modifiedChunks.ContainsKey(chunkKey) && modifiedChunks[chunkKey] != null) continue;
-
-            //check if chunk has loaded
-            if (!world.ChunkCache.ContainsChunkSync(chunkKey)) continue;
-
-            modifiedChunks[chunkKey] = world.GetChunkSync(chunkKey) as Chunk;
-            if (modifiedChunks[chunkKey] != null)
-            {
-              count++;
-            }
-          }
-        }
-      }
-
-      sw.Stop();
-
-      if (count < chunkCount)
-      {
-        SendOutput($"Unable to load {chunkCount - count}/{chunkCount} chunks");
-
-        return null;
-      }
-
-      SendOutput($"Loading {chunkCount} chunks took {Math.Round(sw.ElapsedMilliseconds / 1000f, 2)} seconds");
-
-      return modifiedChunks;
-    }
-
-    private static void ChunkObserver(BCTileEntityCmd command, World world, int timeoutSec)
-    {
-      var pos = command.HasPos ? command.Position.ToV3() : command.ChunkBounds.ToV3();
-      var viewDim = !Options.ContainsKey("r") ? command.Radius : command.ChunkBounds.GetRadius();
-      var chunkObserver = world.m_ChunkManager.AddChunkObserver(pos, false, viewDim, -1);
-
-      var timerSec = 60;
-      if (Options.ContainsKey("ts") && Options["ts"] != null)
-      {
-        int.TryParse(Options["ts"], out timerSec);
-      }
-      timerSec += timeoutSec;
-      BCTask.AddTask(
-        "TileEntity",
-        ThreadManager.AddSingleTask(
-          info => DoCleanup(world, chunkObserver, timerSec, info),
-          null,
-          (info, e) => BCTask.DelTask("TileEntity", info.GetHashCode(), 120)
-        ).GetHashCode(),
-        command);
-    }
-    #endregion
 
     #region Actions
-    private static void AddLoot(BCTileEntityCmd command, World world)
+    private static void AddLoot(BCMCmdArea command, World world)
     {
       if (!command.HasPos || command.ItemStack == null)
       {
@@ -966,7 +440,7 @@ namespace BCM.Commands
       SendOutput($"Added to loot container: {command.ItemStack.itemValue.ItemClass.Name} x{command.ItemStack.count} at {command.Position}");
     }
 
-    private static void ScanTiles(BCTileEntityCmd command, World world)
+    private static void ScanTiles(BCMCmdArea command, World world)
     {
       var count = 0;
       var tiles = new Dictionary<string, List<BCMTileEntity>>();
@@ -1190,7 +664,7 @@ namespace BCM.Commands
       }
     }
 
-    private static void RemoveTiles(BCTileEntityCmd command, World world)
+    private static void RemoveTiles(BCMCmdArea command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1225,7 +699,7 @@ namespace BCM.Commands
       SendOutput($"Removed {count} blocks");
     }
 
-    private static void ResetTouched(BCTileEntityCmd command, World world)
+    private static void ResetTouched(BCMCmdArea command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1317,7 +791,7 @@ namespace BCM.Commands
       SendOutput($"Reset {count} loot containers");
     }
 
-    private static void EmptyContainers(BCTileEntityCmd command, World world)
+    private static void EmptyContainers(BCMCmdArea command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1388,7 +862,7 @@ namespace BCM.Commands
       SendOutput($"Emptied {count} loot containers");
     }
 
-    private static void SetLocked(BCTileEntityCmd command, bool locked, bool setPwd, string pwd, World world)
+    private static void SetLocked(BCMCmdArea command, bool locked, bool setPwd, string pwd, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1491,7 +965,7 @@ namespace BCM.Commands
       SendOutput($"Set {(locked ? "locked" : "unlocked")} on {count} secure blocks {(setPwd ? " with new password" : "")}");
     }
 
-    private static void GrantAccess(BCTileEntityCmd command, World world)
+    private static void GrantAccess(BCMCmdArea command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1586,7 +1060,7 @@ namespace BCM.Commands
       SendOutput($"Granted access to {count} secure blocks");
     }
 
-    private static void RevokeAccess(BCTileEntityCmd command, World world)
+    private static void RevokeAccess(BCMCmdArea command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -1681,7 +1155,7 @@ namespace BCM.Commands
       SendOutput($"Revoked access for {count} secure blocks");
     }
 
-    private static void SetOwner(BCTileEntityCmd command, World world)
+    private static void SetOwner(BCMCmdArea command, World world)
     {
       var count = 0;
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)

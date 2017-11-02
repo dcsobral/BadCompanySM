@@ -54,6 +54,11 @@ namespace BCM.Commands
       // this allows param parsing and exception handling to be done in this class
     }
 
+    public virtual void ProcessSwitch(World world, BCMCmdArea command, out ReloadMode reload)
+    {
+      reload = ReloadMode.None;
+    }
+
     private void ParseParams(List<string> _params)
     {
       foreach (var param in _params)

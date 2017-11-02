@@ -1,5 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using BCM.Commands;
+using BCM.Models;
+using UnityEngine;
+using XMLData.Item;
 
 namespace BCM
 {
@@ -10,16 +16,16 @@ namespace BCM
       return ColorToHex(UIntToColor(c));
     }
 
-    public static UnityEngine.Color UIntToColor(uint c)
+    public static Color UIntToColor(uint c)
     {
-      var a = (byte)(c >> 24);
+      //var a = (byte)(c >> 24);
       var r = (byte)(c >> 16);
       var g = (byte)(c >> 8);
       var b = (byte)c;
-      return new UnityEngine.Color32(r, g, b, 255);
+      return new Color32(r, g, b, 255);
     }
 
-    public static string ColorToHex(UnityEngine.Color color)
+    public static string ColorToHex(Color color)
     {
       return $"{(int) (color.r * 255):X02}{(int) (color.g * 255):X02}{(int) (color.b * 255):X02}";
     }
@@ -66,5 +72,425 @@ namespace BCM
 
       return filteredEntities;
     }
+
+    public static void GetRadius(BCMCmdArea command, ushort max)
+    {
+      if (command.Opts.ContainsKey("r"))
+      {
+        ushort.TryParse(command.Opts["r"], out command.Radius);
+        if (command.Radius > max)
+        {
+          command.Radius = max;
+        }
+        BCCommandAbstract.SendOutput($"Setting radius to +{command.Radius}");
+      }
+      else
+      {
+        BCCommandAbstract.SendOutput("Setting radius to default of +0");
+      }
+    }
+
+    public static bool GetChunkSizeXyzw(BCMCmdArea command)
+    {
+      if (!int.TryParse(command.Pars[1], out var x) || !int.TryParse(command.Pars[2], out var y) || !int.TryParse(command.Pars[3], out var z) || !int.TryParse(command.Pars[4], out var w))
+      {
+        BCCommandAbstract.SendOutput("Unable to parse x,z x2,z2 into ints");
+
+        return false;
+      }
+
+      command.ChunkBounds = new BCMVector4(Math.Min(x, z), Math.Min(y, w), Math.Max(x, z), Math.Max(y, w));
+      command.HasChunkPos = true;
+
+      return true;
+    }
+
+    public static bool GetChunkPosXz(BCMCmdArea command)
+    {
+      if (!int.TryParse(command.Pars[1], out var x) || !int.TryParse(command.Pars[2], out var z))
+      {
+        BCCommandAbstract.SendOutput("Unable to parse x,z into ints");
+
+        return false;
+      }
+
+      command.ChunkBounds = new BCMVector4(x - command.Radius, z - command.Radius, x + command.Radius, z + command.Radius);
+      command.HasChunkPos = true;
+
+      return true;
+    }
+
+    public static bool GetPositionXyz(BCMCmdArea command)
+    {
+      if (!int.TryParse(command.Pars[1], out var x) || !int.TryParse(command.Pars[2], out var y) || !int.TryParse(command.Pars[3], out var z))
+      {
+        BCCommandAbstract.SendOutput("Unable to parse x,y,z into ints");
+
+        return false;
+      }
+
+      command.Position = new BCMVector3(x, y, z);
+      command.HasPos = true;
+
+      command.ChunkBounds = new BCMVector4(World.toChunkXZ(x), World.toChunkXZ(z), World.toChunkXZ(x), World.toChunkXZ(z));
+      command.HasChunkPos = true;
+
+      return !command.Opts.ContainsKey("item") || command.Command != "additem" || GetItemStack(command);
+    }
+
+    public static bool GetItemStack(BCMCmdArea command)
+    {
+      var quality = -1;
+      var count = 1;
+      if (command.Opts.ContainsKey("q"))
+      {
+        if (!int.TryParse(command.Opts["q"], out quality))
+        {
+          BCCommandAbstract.SendOutput("Unable to parse quality, using random value");
+        }
+      }
+      if (command.Opts.ContainsKey("c"))
+      {
+        if (!int.TryParse(command.Opts["c"], out count))
+        {
+          BCCommandAbstract.SendOutput($"Unable to parse count, using default value of {count}");
+        }
+      }
+
+      var ic = int.TryParse(command.Opts["item"], out var id) ? ItemClass.GetForId(id) : ItemData.GetForName(command.Opts["item"]);
+      if (ic == null)
+      {
+        BCCommandAbstract.SendOutput($"Unable to get item or block from given value '{command.Opts["item"]}'");
+
+        return false;
+      }
+
+      command.ItemStack = new ItemStack
+      {
+        itemValue = new ItemValue(ic.Id, true),
+        count = count <= ic.Stacknumber.Value ? count : ic.Stacknumber.Value
+      };
+      if (command.ItemStack.count < count)
+      {
+        BCCommandAbstract.SendOutput("Using max stack size for " + ic.Name + " of " + command.ItemStack.count);
+      }
+      if (command.ItemStack.itemValue.HasQuality && quality > 0)
+      {
+        command.ItemStack.itemValue.Quality = quality;
+      }
+
+      return true;
+    }
+
+    public static bool GetPosSizeXyz(BCMCmdArea command)
+    {
+      if (!int.TryParse(command.Pars[1], out var x) || !int.TryParse(command.Pars[2], out var y) || !int.TryParse(command.Pars[3], out var z))
+      {
+        BCCommandAbstract.SendOutput("Unable to parse x,y,z into ints");
+
+        return false;
+      }
+
+      if (!int.TryParse(command.Pars[4], out var x2) || !int.TryParse(command.Pars[5], out var y2) || !int.TryParse(command.Pars[6], out var z2))
+      {
+        BCCommandAbstract.SendOutput("Unable to parse x2,y2,z2 into ints");
+
+        return false;
+      }
+
+      command.Position = new BCMVector3(Math.Min(x, x2), Math.Min(y, y2), Math.Min(z, z2));
+      command.HasPos = true;
+
+      command.Size = new BCMVector3(Math.Abs(x - x2) + 1, Math.Abs(y - y2) + 1, Math.Abs(z - z2) + 1);
+      command.HasSize = true;
+
+      command.ChunkBounds = new BCMVector4(
+        World.toChunkXZ(Math.Min(x, x2)),
+        World.toChunkXZ(Math.Min(z, z2)),
+        World.toChunkXZ(Math.Max(x, x2)),
+        World.toChunkXZ(Math.Max(z, z2))
+      );
+      command.HasChunkPos = true;
+
+      return true;
+    }
+
+    public static bool GetIds(World world, BCMCmdArea command, out EntityPlayer entity)
+    {
+      entity = null;
+      int? entityId = null;
+
+      if (command.Opts.ContainsKey("id"))
+      {
+        if (!PlayerStore.GetId(command.Opts["id"], out command.SteamId, "CON")) return false;
+
+        entityId = ConsoleHelper.ParseParamSteamIdOnline(command.SteamId)?.entityId;
+      }
+
+      if (command.SteamId == null)
+      {
+        entityId = BCCommandAbstract.SenderInfo.RemoteClientInfo?.entityId;
+        command.SteamId = BCCommandAbstract.SenderInfo.RemoteClientInfo?.playerId;
+      }
+
+      if (entityId != null)
+      {
+        entity = world.Players.dict[(int)entityId];
+      }
+
+      return entity != null || BCCommandAbstract.Params.Count >= 3;
+    }
+
+    public static bool GetEntPos(BCMCmdArea command, EntityPlayer entity)
+    {
+      //todo: if /h=#,# then set y to pos + [0], y2 to pos + [1], if only 1 number then y=pos y2=pos+#
+      if (entity != null)
+      {
+        var loc = new Vector3i(int.MinValue, 0, int.MinValue);
+        var hasLoc = false;
+        if (command.Opts.ContainsKey("loc"))
+        {
+          loc = BCLocation.GetPos(BCCommandAbstract.SenderInfo.RemoteClientInfo?.playerId);
+          if (loc.x == int.MinValue)
+          {
+            BCCommandAbstract.SendOutput("No location stored or player not found. Use bc-loc to store a location.");
+
+            return false;
+          }
+          hasLoc = true;
+
+          command.Position = new BCMVector3((int)entity.position.x, (int)entity.position.y, (int)entity.position.z);
+          command.HasPos = true;
+          command.Position = new BCMVector3(Math.Min(loc.x, (int)entity.position.x), Math.Min(loc.y, (int)entity.position.y), Math.Min(loc.z, (int)entity.position.z));
+          command.HasPos = true;
+
+          command.Size = new BCMVector3(Math.Abs(loc.x - (int)entity.position.x) + 1, Math.Abs(loc.y - (int)entity.position.y) + 1, Math.Abs(loc.z - (int)entity.position.z) + 1);
+          command.HasSize = true;
+        }
+
+        command.ChunkBounds = new BCMVector4
+        {
+          x = World.toChunkXZ(hasLoc ? Math.Min(loc.x, (int)entity.position.x) : (int)entity.position.x - command.Radius),
+          y = World.toChunkXZ(hasLoc ? Math.Min(loc.z, (int)entity.position.z) : (int)entity.position.z - command.Radius),
+          z = World.toChunkXZ(hasLoc ? Math.Max(loc.x, (int)entity.position.x) : (int)entity.position.x + command.Radius),
+          w = World.toChunkXZ(hasLoc ? Math.Max(loc.z, (int)entity.position.z) : (int)entity.position.z + command.Radius)
+        };
+        command.HasChunkPos = true;
+      }
+      else
+      {
+        BCCommandAbstract.SendOutput("Unable to get a position");
+
+        return false;
+      }
+
+      return true;
+    }
+
+    public static Dictionary<long, Chunk> GetAffectedChunks(BCMCmdArea command, World world)
+    {
+      var modifiedChunks = new Dictionary<long, Chunk>();
+
+      var timeout = 1000;
+      if (command.Opts.ContainsKey("timeout"))
+      {
+        if (command.Opts["timeout"] != null)
+        {
+          int.TryParse(command.Opts["timeout"], out timeout);
+        }
+      }
+
+      ChunkObserver(command, world, timeout / 1000);
+
+      //request any unloaded chunks in area
+      for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
+      {
+        for (var z = command.ChunkBounds.y; z <= command.ChunkBounds.w; z++)
+        {
+          var chunkKey = WorldChunkCache.MakeChunkKey(x, z);
+          modifiedChunks.Add(chunkKey, null);
+        }
+      }
+
+      var chunkCount = (command.ChunkBounds.z - command.ChunkBounds.x + 1) * (command.ChunkBounds.w - command.ChunkBounds.y + 1);
+      var count = 0;
+      var sw = Stopwatch.StartNew();
+
+      while (count < chunkCount && sw.ElapsedMilliseconds < timeout)
+      {
+        for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
+        {
+          for (var z = command.ChunkBounds.y; z <= command.ChunkBounds.w; z++)
+          {
+            //check if already in list
+            var chunkKey = WorldChunkCache.MakeChunkKey(x, z);
+            if (modifiedChunks.ContainsKey(chunkKey) && modifiedChunks[chunkKey] != null) continue;
+
+            //check if chunk has loaded
+            if (!world.ChunkCache.ContainsChunkSync(chunkKey)) continue;
+
+            modifiedChunks[chunkKey] = world.GetChunkSync(chunkKey) as Chunk;
+            if (modifiedChunks[chunkKey] != null)
+            {
+              count++;
+            }
+          }
+        }
+      }
+
+      sw.Stop();
+
+      if (count < chunkCount)
+      {
+        BCCommandAbstract.SendOutput($"Unable to load {chunkCount - count}/{chunkCount} chunks");
+
+        return null;
+      }
+
+      BCCommandAbstract.SendOutput($"Loading {chunkCount} chunks took {Math.Round(sw.ElapsedMilliseconds / 1000f, 2)} seconds");
+
+      return modifiedChunks;
+    }
+
+    public static void ChunkObserver(BCMCmdArea command, World world, int timeoutSec)
+    {
+      var pos = command.HasPos ? command.Position.ToV3() : command.ChunkBounds.ToV3();
+      var viewDim = !command.Opts.ContainsKey("r") ? command.Radius : command.ChunkBounds.GetRadius();
+      var chunkObserver = world.m_ChunkManager.AddChunkObserver(pos, false, viewDim, -1);
+
+      var timerSec = 60;
+      if (command.Opts.ContainsKey("ts") && command.Opts["ts"] != null)
+      {
+        int.TryParse(command.Opts["ts"], out timerSec);
+      }
+      timerSec += timeoutSec;
+      BCTask.AddTask(
+        command.CmdType,
+        ThreadManager.AddSingleTask(
+          info => DoCleanup(world, chunkObserver, command.CmdType, timerSec, info),
+          null,
+          (info, e) => BCTask.DelTask(command.CmdType, info.GetHashCode(), 120)
+        ).GetHashCode(),
+        command);
+    }
+
+    public static void DoCleanup(World world, ChunkManager.ChunkObserver co, string commandType, int ts = 0, ThreadManager.TaskInfo taskInfo = null)
+    {
+      var bcmTask = BCTask.GetTask(commandType, taskInfo?.GetHashCode());
+      for (var i = 0; i < ts; i++)
+      {
+        if (bcmTask != null) bcmTask.Output = new { timer = i, total = ts };
+        Thread.Sleep(1000);
+      }
+      world.m_ChunkManager.RemoveChunkObserver(co);
+    }
+
+    public static bool ProcessParams(BCMCmdArea command)
+    {
+      if (command.Opts.ContainsKey("type"))
+      {
+        command.Filter = command.Opts["type"];
+      }
+      switch (command.Pars.Count)
+      {
+        case 1:
+          //command with no extras, blocks if /loc, chunks if /r= or nothing
+          GetRadius(command, 14);
+          command.Command = command.Pars[0];
+          return true;
+
+        case 3:
+          //XZ single chunk with /r
+          command.Command = command.Pars[0];
+          GetRadius(command, 14);
+          return GetChunkPosXz(command);
+
+        case 4:
+          //XYZ single block
+          command.Command = command.Pars[0];
+          return GetPositionXyz(command);
+
+        case 5:
+          //XY-ZW multi chunk
+          command.Command = command.Pars[0];
+          return GetChunkSizeXyzw(command);
+
+        case 7:
+          //XYZ-XYZ world pos bounds
+          command.Command = command.Pars[0];
+          return GetPosSizeXyz(command);
+
+        default:
+          return false;
+      }
+    }
+
+    public static void DoProcess(World world, BCMCmdArea command, BCCommandAbstract cmdRef)
+    {
+      if (command.Opts.ContainsKey("forcesync"))
+      {
+        BCCommandAbstract.SendOutput("Processing Command synchronously...");
+        ProcessCommand(world, command, cmdRef);
+
+        return;
+      }
+
+      if (BCCommandAbstract.SenderInfo.NetworkConnection != null && !(BCCommandAbstract.SenderInfo.NetworkConnection is TelnetConnection))
+      {
+        BCCommandAbstract.SendOutput("Processing Async Command... Sending output to log");
+      }
+      else
+      {
+        BCCommandAbstract.SendOutput("Processing Async Command...");
+      }
+
+      BCTask.AddTask(
+        command.CmdType,
+        ThreadManager.AddSingleTask(
+            info => ProcessCommand(world, command, cmdRef),
+            null,
+            (info, e) => BCTask.DelTask(command.CmdType, info.GetHashCode()))
+          .GetHashCode(),
+        command);
+    }
+
+    public static void ProcessCommand(World world, BCMCmdArea command, BCCommandAbstract cmdRef)
+    {
+      var affectedChunks = GetAffectedChunks(command, world);
+      if (affectedChunks == null)
+      {
+        BCCommandAbstract.SendOutput("Aborting, unable to load all chunks in area before timeout.");
+        BCCommandAbstract.SendOutput("Use /timeout=#### to override the default 2000 millisecond limit, or wait for the requested chunks to finish loading and try again.");
+
+        return;
+      }
+
+      var location = "";
+      if (command.HasPos)
+      {
+        location += $"Pos {command.Position.x} {command.Position.y} {command.Position.z} ";
+        if (command.HasSize)
+        {
+          location += $"to {command.Position.x + command.Size.x} {command.Position.y + command.Size.y} {command.Position.z + command.Size.z} ";
+        }
+      }
+      if (command.HasChunkPos)
+      {
+        location += $"Chunks {command.ChunkBounds.x} {command.ChunkBounds.y} to {command.ChunkBounds.z} {command.ChunkBounds.w}";
+      }
+      if (!string.IsNullOrEmpty(location))
+      {
+        BCCommandAbstract.SendOutput(location);
+      }
+
+      cmdRef.ProcessSwitch(world, command, out var reload);
+
+      //RELOAD CHUNKS FOR PLAYER(S) - If steamId is empty then all players in area will get reload
+      if (reload != ReloadMode.None && !(command.Opts.ContainsKey("noreload") || command.Opts.ContainsKey("nr")))
+      {
+        BCChunks.ReloadForClients(affectedChunks, reload == ReloadMode.Target ? command.SteamId : string.Empty);
+      }
+    }
+
   }
 }
