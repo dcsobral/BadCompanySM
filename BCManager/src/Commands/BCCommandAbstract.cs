@@ -88,6 +88,7 @@ namespace BCM.Commands
         if ((add != "online" || !Options.ContainsKey("offline") && !Options.ContainsKey("all")) &&
             (add != "offline" || !Options.ContainsKey("online") && !Options.ContainsKey("all")) &&
             (add != "nl" || !Options.ContainsKey("nonl")) && (add != "csv" || !Options.ContainsKey("nocsv")) &&
+            (add != "loc" || !Options.ContainsKey("r")) &&
             (add != "details" || !Options.ContainsKey("nodetails")) &&
             (add != "strpos" || !Options.ContainsKey("vectors")) &&
             (add != "strpos" || !Options.ContainsKey("csvpos")) &&

@@ -33,5 +33,8 @@
             empty - removes all loot from targeted tiles in area
             reset - removes all loot and resets touched status so loot tiles become untouched (including player placed blocks)
             additem - add items to a specific loot container, /item=<itemclass id or exact name>, options for /q=1-600 or /c=1-# (if # is more than a stack them multiple stacks will be added)
-            removeitem - removes items in the specific loot container, /item=<itemclass id or exact name>, if no /slot=1-# given then smallest stack is reduced, and overflow into extra stacks if required
+            removeitem(TO BE IMPLEMENTED) - removes items in the specific loot container, /item=<itemclass id or exact name>, if no /slot=1-# given then smallest stack is reduced, and overflow into extra stacks if required
             remove - DESTROYS all targeted tiles in area. Must use /confirm to execute as there is no undo
+            settext - sets the text of signs in the area.
+                /text=<string> - string must not have any spaces or they are considered seperate params. Use _ as a placeholder
+                /ph=<char> - X is the placeholder to use as a replacement for space, default is _

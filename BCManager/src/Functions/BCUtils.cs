@@ -291,7 +291,7 @@ namespace BCM
     {
       var modifiedChunks = new Dictionary<long, Chunk>();
 
-      var timeout = 1000;
+      var timeout = 2000;
       if (command.Opts.ContainsKey("timeout"))
       {
         if (command.Opts["timeout"] != null)
@@ -300,7 +300,7 @@ namespace BCM
         }
       }
 
-      ChunkObserver(command, world, timeout / 1000);
+      ChunkObserver(command, world, timeout / 2000);
 
       //request any unloaded chunks in area
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
@@ -385,7 +385,7 @@ namespace BCM
       world.m_ChunkManager.RemoveChunkObserver(co);
     }
 
-    public static bool ProcessParams(BCMCmdArea command)
+    public static bool ProcessParams(BCMCmdArea command, ushort maxRadius)
     {
       if (command.Opts.ContainsKey("type"))
       {
@@ -395,14 +395,14 @@ namespace BCM
       {
         case 1:
           //command with no extras, blocks if /loc, chunks if /r= or nothing
-          GetRadius(command, 14);
+          GetRadius(command, maxRadius);
           command.Command = command.Pars[0];
           return true;
 
         case 3:
           //XZ single chunk with /r
           command.Command = command.Pars[0];
-          GetRadius(command, 14);
+          GetRadius(command, maxRadius);
           return GetChunkPosXz(command);
 
         case 4:

@@ -2,15 +2,48 @@
       Aliases: {commands}
       Default Options: {defaultoptions}
       Usage:
-            1. {command}
-            2. {command} <replacement: blockid | blockName>
-            3. {command} <replacement: blockid | blockName> <target: blockid | blockName> /swap
-            4. {command} <x1> <y1> <z1> <x2> <y2> <z2> <replacement: blockid | blockName>
-            5. {command} <x1> <y1> <z1> <x2> <y2> <z2> <replacement: blockid | blockName> <target: blockid | blockName> /swap
+            1. {command} <subcommand> <block1> [block2]
+            2. {command} <subcommand> <cx> <cz> <block1> [block2]
+            3. {command} <subcommand> <x> <y> <z> <block1> [block2]
+            4. {command} <subcommand> <cx> <cz> <cx2> <cz2> <block1> [block2]
+            5. {command} <subcommand> <x> <y> <z> <x2> <y2> <z2> <block1> [block2]
       Notes:
             Use bc-help to get a list of common /options
-            default mode is fill - the block specified is rendered into the area given or the area between the stored loc (see bc-location) and your current location
-            /swap - replaces the second block specified with the first block specified within the area given
-            /scan - gives stats on blocks within the area given - param * for block name will give stats on all blocks, warning: this will overflow your console if done in a large area
+            Command with no co-ords will use player location and the loc location, or chunks if /r is used
+            <cx> <cz> - chunk co-ordinates. In this mode the entire chunk is part of the area
+            <cx2> <cz2> - chunk co-ordinates. The second pair defines an area of chunks
+            /r=0-13 - defines a radius if using chunk location. max of 13, 'bc-te scan 0 0 /r=5' would scan the 11x11 chunk grid around 0,0
+            /loc - use your current position and a stored loc from bc-loc to define area (default)
+            <x> <y> <z> - block position single block, when combined with <x2> <y2> <z2> becomes an area instead
+            <block1> is the name or id of the block to use. asterisk (*) can be used in place of a specific block to process all blocks in area.
+            [block2] a second block is also required for the swap command as the block to be replaced by <block1>
             /undo will override any other param or option and undo the last import
+
+            Sub Commands:
+            scan - gives stats on blocks within the area given - param * for block name will give stats on all blocks
+            fill - the block specified is rendered into the area given or the area between the stored loc (see bc-location) and your current location
+                /d=# - the density to use, from -127 to 128. Invalid density wont be applied
+                /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
+                /delmulti - removes multidim blocks in the area
+            swap - replaces the second block specified with the first block specified within the area given. Requires [block2]
+                /d=# - the density to use, from -127 to 128. Invalid density wont be applied
+                /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
+            repair - removes all damage from blocks in the area
+            damage - causes damage to blocks in the area
+                /d=# | /d=#,# - set the damage to cause, or a randomised range per block
+                /nobreak - if the damage would otherwise break the block, instead it will be set to 1 health
+                /overkill - the damage given will overflow into downgrade blocks until all damage is allocated or the block becomes air
+            upgrade - sets the blocks to the next step in their upgrade path, if any
+            downgrade - sets the blocks to the next step in their downgrade path
+            paint - paints all sides of blocks in the area
+                /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
+            paintface = paints one side of blocks in the area
+                /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
+                /face=0-5 - 0=Top, 1=Bottom, 2=North, 3=West, 4=South, 5=East
+            paintstrip - removes all paint from blocks in the area
+            density - sets density on blocks in the area
+                /d=# - the density to use, from -127 to 128. Invalid density wont be applied
+            rotate - rotates blocks in the area
+                /rot=# - sets the value for the rotation to apply
+
 

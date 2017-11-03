@@ -249,7 +249,7 @@ namespace BCM.Commands
       }
 
       var command = new BCMCmdArea(Params, Options, "TileEntity");
-      if (!BCUtils.ProcessParams(command))
+      if (!BCUtils.ProcessParams(command, 14))
       {
         SendOutput(GetHelp());
 
@@ -331,16 +331,98 @@ namespace BCM.Commands
           //todo: removes items from a lootcontainer
           // clears the given slot, or the first stack of a type give, or reduces the total inventory count for a type starting at smallest stack first.
           break;
+        case "settext":
+          SetText(command, world);
+          break;
         default:
           SendOutput($"Unknown param {command.Command}");
           SendOutput(GetHelp());
           break;
       }
-
-      //return reload;
     }
 
     #region Actions
+    private static void SetText(BCMCmdArea command, World world)
+    {
+      command.Opts.TryGetValue("text", out var t);
+      var text = "";
+      if (t != null)
+      {
+        var placeHolder = "_";
+        if (Options.ContainsKey("p"))
+        {
+          placeHolder = Options["p"].Substring(0, 1);
+        }
+        text = t.Replace(placeHolder, " ");
+      }
+
+      var count = 0;
+      for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
+      {
+        for (var z = command.ChunkBounds.y; z <= command.ChunkBounds.w; z++)
+        {
+          var chunkSync = world.ChunkCache.GetChunkSync(x, z);
+          var tileEntities = chunkSync?.GetTileEntities();
+          if (tileEntities == null) continue;
+
+          var worldPos = new Vector3i(x << 4, 0, z << 4);
+          foreach (var kvp in tileEntities.dict)
+          {
+            var pos = kvp.Key + worldPos;
+            if (command.HasPos && !command.IsWithinBounds(pos)) continue;
+            if (command.Filter != null &&
+                !(command.Filter.Equals("all", StringComparison.OrdinalIgnoreCase) ||
+                  command.Filter.Equals(kvp.Value.GetTileEntityType().ToString(), StringComparison.OrdinalIgnoreCase
+                  ))) continue;
+
+            switch (kvp.Value.GetTileEntityType())
+            {
+              case TileEntityType.None:
+                break;
+              case TileEntityType.Loot:
+                break;
+              case TileEntityType.Trader:
+                break;
+              case TileEntityType.VendingMachine:
+                break;
+              case TileEntityType.Forge:
+                break;
+              case TileEntityType.Campfire:
+                break;
+              case TileEntityType.SecureLoot:
+                break;
+              case TileEntityType.SecureDoor:
+                break;
+              case TileEntityType.Workstation:
+                break;
+              case TileEntityType.Sign:
+                var sign = (kvp.Value as TileEntitySign);
+                if (sign == null) continue;
+
+                sign.SetText(text);
+                count++;
+                break;
+              case TileEntityType.GoreBlock:
+                break;
+              case TileEntityType.Powered:
+                break;
+              case TileEntityType.PowerSource:
+                break;
+              case TileEntityType.PowerRangeTrap:
+                break;
+              case TileEntityType.Trigger:
+                break;
+              default:
+                SendOutput($"Error finding TileEntity Type at {pos}");
+                break;
+            }
+          }
+        }
+      }
+      SendOutput($"Set {text} on {count} secure blocks");
+
+    }
+
     private static void AddLoot(BCMCmdArea command, World world)
     {
       if (!command.HasPos || command.ItemStack == null)

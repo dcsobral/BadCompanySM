@@ -57,9 +57,9 @@
   <Command name="BCSleeper" commands="bc-sleeper,sleeper" defaultpermissionlevel="0" defaultoptions=""/>
   
   <!-- World Editing -->
-  <Command name="BCWorldBlocks" commands="bc-wblocks,block" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCWorldBlocks" commands="bc-wblocks,block" defaultpermissionlevel="0" defaultoptions="loc"/>
   <Command name="BCImport" commands="bc-import,import" defaultpermissionlevel="0" defaultoptions=""/>
-  <Command name="BCExport" commands="bc-export,export" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCExport" commands="bc-export,export" defaultpermissionlevel="0" defaultoptions="loc"/>
   <Command name="BCVisitRegion" commands="bc-visitregion,visit" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCTileEntity" commands="bc-te,tile" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCReset" commands="bc-reset" defaultpermissionlevel="0" defaultoptions=""/>

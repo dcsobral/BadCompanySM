@@ -79,13 +79,12 @@ namespace BCM.Commands
 
     public override void Process()
     {
-      //todo: damage
       //todo: use Chunk.RecalcHeightAt(int _x, int _yMaxStart, int _z)
-
       //todo: allow /y=-1 too be used to offset the insert when using player locs to allow sub areas to be accessed without underground clipping
       //      /y=terrain to set the bottom y co-ord to the lowest non terrain block -1
-
       //todo: apply a custom placeholder mapping to a block value in the area
+
+      //todo: refactor to use CmdArea and tasks
 
       var world = GameManager.Instance.World;
       if (world == null)
@@ -128,8 +127,8 @@ namespace BCM.Commands
 
       switch (Params.Count)
       {
-        case 1:
         case 2:
+        case 3:
           if (steamId != null)
           {
             p1 = BCLocation.GetPos(steamId);
@@ -140,10 +139,10 @@ namespace BCM.Commands
               return;
             }
 
-            blockname = Params[0];
-            if (Params.Count == 2)
+            blockname = Params[1];
+            if (Params.Count == 3)
             {
-              blockname2 = Params[1];
+              blockname2 = Params[2];
             }
           }
           else
@@ -153,19 +152,19 @@ namespace BCM.Commands
             return;
           }
           break;
-        case 7:
         case 8:
+        case 9:
           //parse params
-          if (!int.TryParse(Params[0], out p1.x) || !int.TryParse(Params[1], out p1.y) || !int.TryParse(Params[2], out p1.z) || !int.TryParse(Params[3], out p2.x) || !int.TryParse(Params[4], out p2.y) || !int.TryParse(Params[5], out p2.z))
+          if (!int.TryParse(Params[1], out p1.x) || !int.TryParse(Params[2], out p1.y) || !int.TryParse(Params[3], out p1.z) || !int.TryParse(Params[4], out p2.x) || !int.TryParse(Params[5], out p2.y) || !int.TryParse(Params[6], out p2.z))
           {
             SendOutput("Error: unable to parse coordinates");
 
             return;
           }
-          blockname = Params[6];
-          if (Params.Count == 8)
+          blockname = Params[7];
+          if (Params.Count == 9)
           {
-            blockname2 = Params[7];
+            blockname2 = Params[8];
           }
           break;
         default:
@@ -196,72 +195,437 @@ namespace BCM.Commands
         CreateUndo(sender, p3, size);
       }
 
-      if (Options.ContainsKey("swap"))
+      switch (Params[0])
       {
-        SwapBlocks(p3, size, bvNew, blockname2, modifiedChunks);
-      }
-      else if (Options.ContainsKey("smooth"))
-      {
-        //todo
-      }
-      else if (Options.ContainsKey("repair"))
-      {
-        //todo
-      }
-      else if (Options.ContainsKey("upgrade"))
-      {
-        //todo
-      }
-      else if (Options.ContainsKey("nopaint"))
-      {
-        //todo
-      }
-      else if (Options.ContainsKey("lit"))
-      {
-        //todo - _blockValue.meta = (byte)(((int)_blockValue.meta & -3) | ((!isOn) ? 0 : 2));
-      }
-      else if (Options.ContainsKey("scan"))
-      {
-        ScanBlocks(size, p3, bvNew, blockname);
-      }
-      else
-      {
-        FillBlocks(p3, size, bvNew, blockname, modifiedChunks);
+        case "scan":
+          ScanBlocks(p3, size, bvNew, blockname);
+          break;
+        case "fill":
+          FillBlocks(p3, size, bvNew, blockname, modifiedChunks);
+          break;
+        case "swap":
+          SwapBlocks(p3, size, bvNew, blockname2, modifiedChunks);
+          break;
+        case "repair":
+          RepairBlocks(p3, size, modifiedChunks);
+          break;
+        case "damage":
+          DamageBlocks(p3, size, modifiedChunks);
+          break;
+        case "upgrade":
+          UpgradeBlocks(p3, size, modifiedChunks);
+          break;
+        case "downgrade":
+          DowngradeBlocks(p3, size, modifiedChunks);
+          break;
+        case "paint":
+          SetPaint(p3, size, modifiedChunks);
+          break;
+        case "paintface":
+          SetPaintFace(p3, size, modifiedChunks);
+          break;
+        case "paintstrip":
+          RemovePaint(p3, size, modifiedChunks);
+          break;
+        case "density":
+          SetDensity(p3, size, modifiedChunks);
+          break;
+        case "rotate":
+          SetRotation(p3, size, modifiedChunks);
+          break;
+        default:
+          SendOutput(GetHelp());
+          break;
       }
     }
 
-    private static Dictionary<long, Chunk> GetAffectedChunks(Vector3i p3, Vector3i size)
+    private static void SetDensity(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
     {
-      //GET AFFECTED CHUNKS
-      //todo: get an array of chunk keys instead, trigger loading here, if not done by end of process, then defer changes to sub thread
-      var modifiedChunks = new Dictionary<long, Chunk>();
-      for (var cx = -1; cx <= size.x + 16; cx = cx + 16)
+      sbyte density = 1;
+      if (Options.ContainsKey("d"))
       {
-        for (var cz = -1; cz <= size.z + 16; cz = cz + 16)
+        if (sbyte.TryParse(Options["d"], out density))
         {
-          var chunk = GameManager.Instance.World.GetChunkFromWorldPos(p3.x + cx, p3.y, p3.z + cz) as Chunk;
-          if (chunk == null)
-          {
-            SendOutput($"Unable to load chunk for insert @ {p3.x + cx},{p3.z + cz}");
-          }
-          else
-          {
-            if (modifiedChunks.ContainsKey(chunk.Key)) continue;
+          SendOutput($"Using density {density}");
+        }
+      }
 
-            modifiedChunks.Add(chunk.Key, chunk);
+      const int clrIdx = 0;
+      var counter = 0;
+      for (var j = 0; j < size.y; j++)
+      {
+        for (var i = 0; i < size.x; i++)
+        {
+          for (var k = 0; k < size.z; k++)
+          {
+            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+            if (blockValue.Equals(BlockValue.Air) || blockValue.ischild) continue;
+
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, false, blockValue, true, density, false, false);
+            counter++;
           }
         }
       }
 
-      return modifiedChunks;
+      SendOutput($"Setting density on {counter} blocks '{density}' @ {p3} to {p3 + size}");
+      SendOutput("Use bc-wblock /undo to revert the changes");
+      Reload(modifiedChunks);
+    }
+
+    private static void SetRotation(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    {
+      byte rotation = 0;
+      if (Options.ContainsKey("rot"))
+      {
+        if (!byte.TryParse(Options["rot"], out rotation))
+        {
+          SendOutput($"Unable to parse rotation '{Options["rot"]}'");
+
+          return;
+        }
+      }
+
+      const int clrIdx = 0;
+      var counter = 0;
+      for (var j = 0; j < size.y; j++)
+      {
+        for (var i = 0; i < size.x; i++)
+        {
+          for (var k = 0; k < size.z; k++)
+          {
+            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+            if (blockValue.Equals(BlockValue.Air) || blockValue.ischild || !blockValue.Block.shape.IsRotatable) continue;
+
+            blockValue.rotation = rotation;
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, blockValue, false, false);
+            counter++;
+          }
+        }
+      }
+
+      SendOutput($"Setting rotation on '{counter}' blocks @ {p3} to {p3 + size}");
+      SendOutput("Use bc-wblock /undo to revert the changes");
+      Reload(modifiedChunks);
+    }
+
+    private static void DowngradeBlocks(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    {
+      const int clrIdx = 0;
+      var counter = 0;
+      for (var j = 0; j < size.y; j++)
+      {
+        for (var i = 0; i < size.x; i++)
+        {
+          for (var k = 0; k < size.z; k++)
+          {
+            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+            var downgradeBlockValue = blockValue.Block.DowngradeBlock;
+            if (downgradeBlockValue.Equals(BlockValue.Air) || blockValue.ischild) continue;
+
+            downgradeBlockValue.rotation = blockValue.rotation;
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, downgradeBlockValue, false, false);
+            counter++;
+          }
+        }
+      }
+
+      SendOutput($"Downgrading {counter} blocks @ {p3} to {p3 + size}");
+      SendOutput("Use bc-wblock /undo to revert the changes");
+      Reload(modifiedChunks);
+    }
+
+    private static void UpgradeBlocks(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    {
+      const int clrIdx = 0;
+      var counter = 0;
+      for (var j = 0; j < size.y; j++)
+      {
+        for (var i = 0; i < size.x; i++)
+        {
+          for (var k = 0; k < size.z; k++)
+          {
+            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+            var upgradeBlockValue = blockValue.Block.UpgradeBlock;
+            if (upgradeBlockValue.Equals(BlockValue.Air) || blockValue.ischild) continue;
+
+            upgradeBlockValue.rotation = blockValue.rotation;
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, upgradeBlockValue, false, false);
+            counter++;
+          }
+        }
+      }
+
+      SendOutput($"Upgrading {counter} blocks @ {p3} to {p3 + size}");
+      SendOutput("Use bc-wblock /undo to revert the changes");
+      Reload(modifiedChunks);
+    }
+
+    private static void DamageBlocks(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    {
+      var damageMin = 0;
+      var damageMax = 0;
+      if (Options.ContainsKey("d"))
+      {
+        if (Options["d"].IndexOf(",", StringComparison.InvariantCulture) > -1)
+        {
+          var dRange = Options["d"].Split(',');
+          if (dRange.Length != 2)
+          {
+            SendOutput("Unable to parse damage values");
+
+            return;
+          }
+
+          if (!int.TryParse(dRange[0], out damageMin))
+          {
+            SendOutput("Unable to parse damage min value");
+
+            return;
+          }
+
+          if (!int.TryParse(dRange[1], out damageMax))
+          {
+            SendOutput("Unable to parse damage max value");
+
+            return;
+          }
+        }
+        else
+        {
+          if (!int.TryParse(Options["d"], out damageMin))
+          {
+            SendOutput("Unable to parse damage value");
+
+            return;
+          }
+        }
+      }
+
+      const int clrIdx = 0;
+      var counter = 0;
+      for (var j = 0; j < size.y; j++)
+      {
+        for (var i = 0; i < size.x; i++)
+        {
+          for (var k = 0; k < size.z; k++)
+          {
+            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+            if (blockValue.Equals(BlockValue.Air)) continue;
+
+            var max = blockValue.Block.blockMaterial.MaxDamage;
+            var damage = (damageMax != 0 ? UnityEngine.Random.Range(damageMin, damageMax) : damageMin) + blockValue.damage;
+            if (Options.ContainsKey("nobreak"))
+            {
+              blockValue.damage = Math.Min(damage, max - 1);
+            }
+            else if (Options.ContainsKey("overkill"))
+            {
+              //needs to downgrade if overflow damage, then apply remaining damage until all used or downgraded to air
+              var d = damage;
+              while (d > 0 || blockValue.type != 0)
+              {
+                var downgrade = blockValue.Block.DowngradeBlock;
+                downgrade.rotation = blockValue.rotation;
+                blockValue = downgrade;
+                blockValue.damage = d;
+                d = d - max;
+              }
+              blockValue.damage = damageMin;
+            }
+            else
+            {
+              //needs to downgrade if damage > max, no overflow damage
+              if (damage >= max)
+              {
+                var downgrade = blockValue.Block.DowngradeBlock;
+                downgrade.rotation = blockValue.rotation;
+                blockValue = downgrade;
+              }
+              else
+              {
+                blockValue.damage = damage;
+              }
+            }
+
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, blockValue, false, false);
+            counter++;
+          }
+        }
+      }
+
+      SendOutput($"Damaging {counter} blocks @ {p3} to {p3 + size}");
+      SendOutput("Use bc-wblock /undo to revert the changes");
+      Reload(modifiedChunks);
+    }
+
+    private static void RepairBlocks(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    {
+      const int clrIdx = 0;
+      var counter = 0;
+      for (var j = 0; j < size.y; j++)
+      {
+        for (var i = 0; i < size.x; i++)
+        {
+          for (var k = 0; k < size.z; k++)
+          {
+            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+            if (blockValue.Equals(BlockValue.Air)) continue;
+
+            blockValue.damage = 0;
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, blockValue, false, false);
+            counter++;
+          }
+        }
+      }
+
+      SendOutput($"Repairing {counter} blocks @ {p3} to {p3 + size}");
+      SendOutput("Use bc-wblock /undo to revert the changes");
+      Reload(modifiedChunks);
+    }
+
+    private static void SetPaintFace(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    {
+      byte texture = 0;
+      if (Options.ContainsKey("t"))
+      {
+        if (!byte.TryParse(Options["t"], out texture))
+        {
+          SendOutput("Unable to parse texture value");
+
+          return;
+        }
+        if (BlockTextureData.list[texture] == null)
+        {
+          SendOutput($"Unknown texture index {texture}");
+
+          return;
+        }
+      }
+      uint setFace = 0;
+      if (Options.ContainsKey("face"))
+      {
+        if (!uint.TryParse(Options["face"], out setFace))
+        {
+          SendOutput("Unable to parse face value");
+
+          return;
+        }
+      }
+      if (setFace > 5)
+      {
+        SendOutput("Face must be between 0 and 5");
+
+        return;
+      }
+
+      const int clrIdx = 0;
+      var counter = 0;
+      for (var j = 0; j < size.y; j++)
+      {
+        for (var i = 0; i < size.x; i++)
+        {
+          for (var k = 0; k < size.z; k++)
+          {
+            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+            if (blockValue.Equals(BlockValue.Air)) continue;
+
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlockFaceTexture(p5, (BlockFace)setFace, texture);
+            counter++;
+          }
+        }
+      }
+
+      SendOutput($"Painting {counter} blocks on face '{((BlockFace)setFace).ToString()}' with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {p3} to {p3 + size}");
+      SendOutput("Use bc-wblock /undo to revert the changes");
+      Reload(modifiedChunks);
+    }
+
+    private static void SetPaint(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    {
+      var texture = 0;
+      if (Options.ContainsKey("t"))
+      {
+        if (!int.TryParse(Options["t"], out texture))
+        {
+          SendOutput("Unable to parse texture value");
+
+          return;
+        }
+        if (BlockTextureData.list[texture] == null)
+        {
+          SendOutput($"Unknown texture index {texture}");
+
+          return;
+        }
+      }
+
+      var num = 0L;
+      for (var face = 0; face < 6; face++)
+      {
+        var num2 = face * 8;
+        num &= ~(255L << num2);
+        num |= (long)(texture & 255) << num2;
+      }
+      var textureFull = num;
+
+      const int clrIdx = 0;
+      var counter = 0;
+      for (var j = 0; j < size.y; j++)
+      {
+        for (var i = 0; i < size.x; i++)
+        {
+          for (var k = 0; k < size.z; k++)
+          {
+            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+            if (blockValue.Block.shape.IsTerrain() || blockValue.Equals(BlockValue.Air)) continue;
+
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetTextureFull(p5, textureFull);
+            counter++;
+          }
+        }
+      }
+
+      SendOutput($"Painting {counter} blocks with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {p3} to {p3 + size}");
+      SendOutput("Use bc-wblock /undo to revert the changes");
+      Reload(modifiedChunks);
+    }
+
+    private static void RemovePaint(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    {
+      const int clrIdx = 0;
+      var counter = 0;
+      for (var j = 0; j < size.y; j++)
+      {
+        for (var i = 0; i < size.x; i++)
+        {
+          for (var k = 0; k < size.z; k++)
+          {
+            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+            if (blockValue.Block.shape.IsTerrain() || blockValue.Equals(BlockValue.Air)) continue;
+
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetTextureFull(p5, 0L);
+            counter++;
+          }
+        }
+      }
+
+      SendOutput($"Paint removed from {counter} blocks @ {p3} to {p3 + size}");
+      SendOutput("Use bc-wblock /undo to revert the changes");
+      Reload(modifiedChunks);
     }
 
     private static void SwapBlocks(Vector3i p3, Vector3i size, BlockValue newbv, string blockname, Dictionary<long, Chunk> modifiedChunks)
     {
-      var targetbv = int.TryParse(blockname, out int blockId) ? Block.GetBlockValue(blockId) : Block.GetBlockValue(blockname);
-
-      const int clrIdx = 0;
-      var counter = 0;
+      var targetbv = int.TryParse(blockname, out var blockId) ? Block.GetBlockValue(blockId) : Block.GetBlockValue(blockname);
 
       var block1 = Block.list[targetbv.type];
       if (block1 == null)
@@ -279,6 +643,8 @@ namespace BCM.Commands
         return;
       }
 
+      const int clrIdx = 0;
+      var counter = 0;
       var world = GameManager.Instance.World;
       for (var i = 0; i < size.x; i++)
       {
@@ -286,17 +652,51 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            //todo:
             sbyte density = 1;
-            var textureFull = 0L;
-
-            if (newbv.Equals(BlockValue.Air))
+            if (Options.ContainsKey("d"))
             {
-              density = MarchingCubes.DensityAir;
+              if (sbyte.TryParse(Options["d"], out density))
+              {
+                SendOutput($"Using density {density}");
+              }
             }
-            else if (newbv.Block.shape.IsTerrain())
+            else
             {
-              density = MarchingCubes.DensityTerrain;
+              if (newbv.Equals(BlockValue.Air))
+              {
+                density = MarchingCubes.DensityAir;
+              }
+              else if (newbv.Block.shape.IsTerrain())
+              {
+                density = MarchingCubes.DensityTerrain;
+              }
+            }
+
+            var textureFull = 0L;
+            if (Options.ContainsKey("t"))
+            {
+              if (!byte.TryParse(Options["t"], out var texture))
+              {
+                SendOutput("Unable to parse texture index");
+
+                return;
+              }
+
+              if (BlockTextureData.list[texture] == null)
+              {
+                SendOutput($"Unknown texture index {texture}");
+
+                return;
+              }
+
+              var num = 0L;
+              for (var face = 0; face < 6; face++)
+              {
+                var num2 = face * 8;
+                num &= ~(255L << num2);
+                num |= (long)(texture & 255) << num2;
+              }
+              textureFull = num;
             }
 
             var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
@@ -304,20 +704,14 @@ namespace BCM.Commands
 
             world.ChunkClusters[clrIdx].SetBlock(p5, true, newbv, false, density, false, false);
             world.ChunkClusters[clrIdx].SetTextureFull(p5, textureFull);
-
             counter++;
           }
         }
       }
 
-      SendOutput($@"Replaced {counter} '{block1.GetBlockName()}' blocks with '{block2.GetBlockName()}' @ {p3} to {p3 + size}");
+      SendOutput($"Replaced {counter} '{block1.GetBlockName()}' blocks with '{block2.GetBlockName()}' @ {p3} to {p3 + size}");
       SendOutput("Use bc-wblock /undo to revert the changes");
-
-      //RELOAD CHUNKS
-      if (!(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
-      {
-        BCChunks.ReloadForClients(modifiedChunks);
-      }
+      Reload(modifiedChunks);
     }
 
     private static void FillBlocks(Vector3i p3, Vector3i size, BlockValue bv, string search, Dictionary<long, Chunk> modifiedChunks)
@@ -335,20 +729,38 @@ namespace BCM.Commands
 
       if (Options.ContainsKey("delmulti"))
       {
-        SendOutput($@"Removed multidim blocks @ {p3} to {p3 + size}");
+        SendOutput($"Removed multidim blocks @ {p3} to {p3 + size}");
       }
       else
       {
-        SendOutput($@"Inserting block '{Block.list[bv.type].GetBlockName()}' @ {p3} to {p3 + size}");
+        SendOutput($"Inserting block '{Block.list[bv.type].GetBlockName()}' @ {p3} to {p3 + size}");
         SendOutput("Use bc-wblock /undo to revert the changes");
       }
 
-      //RELOAD CHUNKS
-      if (!(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
-      {
-        BCChunks.ReloadForClients(modifiedChunks);
-      }
+      Reload(modifiedChunks);
     }
+
+    //private static void LightBlocks(Vector3i p3, Vector3i size, bool isOn, Dictionary<long, Chunk> modifiedChunks)
+    //{
+    //  const int clrIdx = 0;
+    //  for (var j = 0; j < size.y; j++)
+    //  {
+    //    for (var i = 0; i < size.x; i++)
+    //    {
+    //      for (var k = 0; k < size.z; k++)
+    //      {
+    //        var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+    //        var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+    //        if (blockValue.Block is BlockLight)
+    //        {
+    //          blockValue.meta = (byte)((blockValue.meta & -3) | (!isOn ? 0 : 2));
+    //        }
+    //      }
+    //    }
+    //  }
+
+    //  Reload(modifiedChunks);
+    //}
 
     private static void SetBlocks(int clrIdx, Vector3i p0, Vector3i size, BlockValue bvNew, bool searchAll)
     {
@@ -367,7 +779,19 @@ namespace BCM.Commands
       var textureFull = 0L;
       if (Options.ContainsKey("t"))
       {
-        sbyte.TryParse(Options["t"], out sbyte texture);
+        if (!byte.TryParse(Options["t"], out var texture))
+        {
+          SendOutput("Unable to parse texture index");
+
+          return;
+        }
+
+        if (BlockTextureData.list[texture] == null)
+        {
+          SendOutput($"Unknown texture index {texture}");
+
+          return;
+        }
 
         var num = 0L;
         for (var face = 0; face < 6; face++)
@@ -439,11 +863,9 @@ namespace BCM.Commands
           }
         }
       }
-
-
     }
 
-    private static void ScanBlocks(Vector3i size, Vector3i p3, BlockValue bv, string search)
+    private static void ScanBlocks(Vector3i p3, Vector3i size, BlockValue bv, string search)
     {
       var block1 = Block.list[bv.type];
       if (block1 == null && search != "*")
@@ -498,6 +920,39 @@ namespace BCM.Commands
       {
         stats.Add($"{bv.type:D4}:{name}", 1);
       }
+    }
+
+    private static void Reload(Dictionary<long, Chunk> modifiedChunks)
+    {
+      if (!(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
+      {
+        BCChunks.ReloadForClients(modifiedChunks);
+      }
+    }
+
+    private static Dictionary<long, Chunk> GetAffectedChunks(Vector3i p3, Vector3i size)
+    {
+      //GET AFFECTED CHUNKS
+      var modifiedChunks = new Dictionary<long, Chunk>();
+      for (var cx = -1; cx <= size.x + 16; cx = cx + 16)
+      {
+        for (var cz = -1; cz <= size.z + 16; cz = cz + 16)
+        {
+          var chunk = GameManager.Instance.World.GetChunkFromWorldPos(p3.x + cx, p3.y, p3.z + cz) as Chunk;
+          if (chunk == null)
+          {
+            SendOutput($"Unable to load chunk for insert @ {p3.x + cx},{p3.z + cz}");
+          }
+          else
+          {
+            if (modifiedChunks.ContainsKey(chunk.Key)) continue;
+
+            modifiedChunks.Add(chunk.Key, chunk);
+          }
+        }
+      }
+
+      return modifiedChunks;
     }
   }
 }

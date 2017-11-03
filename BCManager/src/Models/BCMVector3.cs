@@ -41,6 +41,10 @@ namespace BCM.Models
       return $"{x} {y} {z}";
     }
 
+    public Vector3i ToV3Int()
+    {
+      return new Vector3i(x, y, z);
+    }
 
     public Vector3 ToV3()
     {
