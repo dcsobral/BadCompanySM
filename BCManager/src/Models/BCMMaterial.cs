@@ -33,7 +33,7 @@ namespace BCM.Models
       //public const string Friction = "friction";
     }
 
-    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
       { 0, StrFilters.Id },
       { 1, StrFilters.Experience },
@@ -58,11 +58,7 @@ namespace BCM.Models
       { 20, StrFilters.IsPlant }
       //{ 21, StrFilters.Friction }
     };
-    public static Dictionary<int, string> FilterMap
-    {
-      get => _filterMap;
-      set => _filterMap = value;
-    }
+    public static Dictionary<int, string> FilterMap => _filterMap;
     #endregion
 
     #region Properties
@@ -96,8 +92,7 @@ namespace BCM.Models
 
     public override void GetData(object obj)
     {
-      var material = obj as MaterialBlock;
-      if (material == null) return;
+      if (!(obj is MaterialBlock material)) return;
 
       if (IsOption("filter"))
       {
@@ -236,7 +231,7 @@ namespace BCM.Models
 
     private void GetIsCollidable(MaterialBlock material) => Bin.Add("IsCollidable", IsCollidable = material.IsCollidable);
 
-    private void GetResistance(MaterialBlock material) => Bin.Add("Resistance", Resistance = material.Resistance);
+    private void GetResistance(MaterialBlock material) => Bin.Add("Resistance", Resistance = Math.Round(material.Resistance, 3));
 
     private void GetStepSound(MaterialBlock material) => Bin.Add("StepSound", StepSound = material.stepSound?.name);
 

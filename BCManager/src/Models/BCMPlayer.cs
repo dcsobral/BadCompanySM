@@ -70,7 +70,7 @@ namespace BCM.Models
       public const string LPBlocks = "lpblocks";
     }
 
-    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
       { 0,  StrFilters.SteamId },
       { 1,  StrFilters.Name },
@@ -131,7 +131,6 @@ namespace BCM.Models
       { 56,  StrFilters.LPBlocks }
     };
     public static Dictionary<int, string> FilterMap => _filterMap;
-
     #endregion
 
     #region Properties
@@ -186,32 +185,6 @@ namespace BCM.Models
     public bool? Remote;
 
     //BAG
-    public class BCMParts
-    {
-      public int Type;
-      public int Quality;
-      public int UseTimes;
-      public int MaxUse;
-    }
-    public class BCMAttachment
-    {
-      public int Type;
-      public int Quality;
-      public int UseTimes;
-      public int MaxUse;
-    }
-    public class BCMItemStack
-    {
-      public int Type;
-      public int Quality;
-      public int UseTimes;
-      public int MaxUse;
-      public int AmmoIndex;
-      public int Count;
-
-      public List<BCMAttachment> Attachments;
-      public List<BCMParts> Parts;
-    }
     public Dictionary<string, BCMItemStack> Bag;
 
     //BELT
@@ -287,37 +260,6 @@ namespace BCM.Models
     public List<BCMQuest> Quests;
 
     //SPAWNPOINTS+WAYPOINTS+MARKER
-    public class BCMVector3
-    {
-      public int x;
-      public int y;
-      public int z;
-      public BCMVector3()
-      {
-        x = 0;
-        y = 0;
-        z = 0;
-      }
-      public BCMVector3(Vector3 v)
-      {
-        x = Mathf.RoundToInt(v.x);
-        y = Mathf.RoundToInt(v.y);
-        z = Mathf.RoundToInt(v.z);
-      }
-      public BCMVector3(Vector3i v)
-      {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-      }
-    }
-
-    public class BCMWaypoint
-    {
-      public string Name;
-      public string Icon;
-      public BCMVector3 Pos;
-    }
     public List<BCMVector3> Spawnpoints;
     public List<BCMWaypoint> Waypoints;
     public BCMVector3 Marker;
@@ -580,13 +522,13 @@ namespace BCM.Models
       }
     }
 
-    private void GetLpBlocks(PlayerInfo pInfo) => Bin.Add("LPBlocks", LPBlocks = pInfo.PPD?.LPBlocks?.Select(lpb => GetVectorObj(new BCMVector3(lpb))).ToList());
+    private void GetLpBlocks(PlayerInfo pInfo) => Bin.Add("LPBlocks", LPBlocks = pInfo.PPD?.LPBlocks?.Select(lpb => BCUtils.GetVectorObj(new BCMVector3(lpb), Options)).ToList());
 
     private void GetFriends(PlayerInfo pInfo) => Bin.Add("Friends", Friends = pInfo.PPD?.ACL?.ToList());
 
-    private void GetRotation(PlayerInfo pInfo) => Bin.Add("Rotation", GetVectorObj(Rotation = new BCMVector3(pInfo.EP != null ? pInfo.EP.rotation : pInfo.PDF.ecd.rot)));
+    private void GetRotation(PlayerInfo pInfo) => Bin.Add("Rotation", BCUtils.GetVectorObj(Rotation = new BCMVector3(pInfo.EP != null ? pInfo.EP.rotation : pInfo.PDF.ecd.rot), Options));
 
-    private void GetPosition(PlayerInfo pInfo) => Bin.Add("Position", GetVectorObj(Position = new BCMVector3(pInfo.EP != null ? pInfo.EP.position : pInfo.PDF.ecd.pos)));
+    private void GetPosition(PlayerInfo pInfo) => Bin.Add("Position", BCUtils.GetVectorObj(Position = new BCMVector3(pInfo.EP != null ? pInfo.EP.position : pInfo.PDF.ecd.pos), Options));
 
     private void GetUnderground(PlayerInfo pInfo) => Bin.Add("Underground", Underground = pInfo.EP != null ? (int)pInfo.EP.position.y - GameManager.Instance.World.GetHeight((int)pInfo.EP.position.x, (int)pInfo.EP.position.z) - 1 : 0);
 
@@ -610,7 +552,7 @@ namespace BCM.Models
     private void GetRentedVendorExpire(PlayerInfo pInfo) => Bin.Add("RentedVendorExpire", RentedVendorExpire = pInfo.EP != null ? pInfo.EP.RentalEndTime : pInfo.PDF.rentalEndTime);
 
     //todo:EP not updating
-    private void GetRentedVendor(PlayerInfo pInfo) => Bin.Add("RentedVendor", GetVectorObj(RentedVendor = new BCMVector3(pInfo.EP != null ? pInfo.EP.RentedVMPosition : pInfo.PDF.rentedVMPosition)));
+    private void GetRentedVendor(PlayerInfo pInfo) => Bin.Add("RentedVendor", BCUtils.GetVectorObj(RentedVendor = new BCMVector3(pInfo.EP != null ? pInfo.EP.RentedVMPosition : pInfo.PDF.rentedVMPosition), Options));
 
     private void GetLastZombieAttacked(PlayerInfo pInfo) => Bin.Add("LastZombieAttacked", pInfo.EP != null
         ? LastZombieAttacked = Math.Round((GameManager.Instance.World.worldTime - pInfo.EP.LastZombieAttackTime) / 600f, 2) : null);
@@ -660,8 +602,8 @@ namespace BCM.Models
 
     //todo: check this is updating while online
     private void GetDroppedPack(PlayerInfo pInfo) => Bin.Add("DroppedPack",
-      GetVectorObj(DroppedPack = new BCMVector3(pInfo.EP != null ? pInfo.EP.GetDroppedBackpackPosition()
-        : pInfo.PDF.droppedBackpackPosition)));
+      BCUtils.GetVectorObj(DroppedPack = new BCMVector3(pInfo.EP != null ? pInfo.EP.GetDroppedBackpackPosition()
+        : pInfo.PDF.droppedBackpackPosition), Options));
 
     private void GetDistanceWalked(PlayerInfo pInfo) => Bin.Add("DistanceWalked",
       DistanceWalked = Math.Round(pInfo.EP != null ? pInfo.EP.distanceWalked
@@ -759,52 +701,7 @@ namespace BCM.Models
         BCMItemStack slot = null;
         if (item.itemValue.type != 0)
         {
-          slot = new BCMItemStack
-          {
-            Type = item.itemValue.type,
-            Quality = item.itemValue.Quality,
-            UseTimes = item.itemValue.UseTimes,
-            MaxUse = item.itemValue.MaxUseTimes,
-            AmmoIndex = item.itemValue.SelectedAmmoTypeIndex
-          };
-
-          if (item.itemValue.Attachments != null && item.itemValue.Attachments.Length > 0)
-          {
-            slot.Attachments = new List<BCMAttachment>();
-            foreach (var attachment in item.itemValue.Attachments)
-            {
-              if (attachment != null && attachment.type != 0)
-              {
-                slot.Attachments.Add(new BCMAttachment
-                {
-                  Type = attachment.type,
-                  Quality = attachment.Quality,
-                  MaxUse = attachment.MaxUseTimes,
-                  UseTimes = attachment.UseTimes
-                });
-              }
-            }
-          }
-
-          if (item.itemValue.Parts != null && item.itemValue.Parts.Length > 0)
-          {
-            slot.Parts = new List<BCMParts>();
-            foreach (var part in item.itemValue.Parts)
-            {
-              if (part != null && part.type != 0)
-              {
-                slot.Parts.Add(new BCMParts
-                {
-                  Type = part.type,
-                  Quality = part.Quality,
-                  MaxUse = part.MaxUseTimes,
-                  UseTimes = part.UseTimes
-                });
-              }
-            }
-          }
-
-          slot.Count = item.count;
+          slot = new BCMItemStack(item);
         }
         Belt.Add(j.ToString(), slot);
         j++;
@@ -1082,74 +979,12 @@ namespace BCM.Models
         BCMItemStack slot = null;
         if (item.itemValue.type != 0)
         {
-          slot = new BCMItemStack
-          {
-            Type = item.itemValue.type,
-            Quality = item.itemValue.Quality,
-            UseTimes = item.itemValue.UseTimes,
-            MaxUse = item.itemValue.MaxUseTimes,
-            AmmoIndex = item.itemValue.SelectedAmmoTypeIndex
-          };
-
-          if (item.itemValue.Attachments != null && item.itemValue.Attachments.Length > 0)
-          {
-            slot.Attachments = new List<BCMAttachment>();
-            foreach (var attachment in item.itemValue.Attachments)
-            {
-              if (attachment != null && attachment.type != 0)
-              {
-                slot.Attachments.Add(new BCMAttachment
-                {
-                  Type = attachment.type,
-                  Quality = attachment.Quality,
-                  MaxUse = attachment.MaxUseTimes,
-                  UseTimes = attachment.UseTimes
-                });
-              }
-            }
-          }
-
-          if (item.itemValue.Parts != null && item.itemValue.Parts.Length > 0)
-          {
-            slot.Parts = new List<BCMParts>();
-            foreach (var part in item.itemValue.Parts)
-            {
-              if (part != null && part.type != 0)
-              {
-                slot.Parts.Add(new BCMParts
-                {
-                  Type = part.type,
-                  Quality = part.Quality,
-                  MaxUse = part.MaxUseTimes,
-                  UseTimes = part.UseTimes
-                });
-              }
-            }
-          }
-
-          slot.Count = item.count;
+          slot = new BCMItemStack(item);
         }
         Bag.Add(i.ToString(), slot);
         i++;
       }
       Bin.Add("Bag", Bag);
-    }
-
-    private object GetVectorObj(BCMVector3 p)
-    {
-      if (Options.ContainsKey("strpos"))
-      {
-        return p.x + " " + p.y + " " + p.z;
-      }
-      if (Options.ContainsKey("worldpos"))
-      {
-        return GameUtils.WorldPosToStr(new Vector3(p.x, p.y, p.z), " ");
-      }
-      if (Options.ContainsKey("csvpos"))
-      {
-        return new[] { p.x, p.y, p.z };
-      }
-      return p;//vectors
     }
   }
 }

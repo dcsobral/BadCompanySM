@@ -4,6 +4,7 @@ namespace BCM.Commands
 {
   public class BCTeleport : BCCommandAbstract
   {
+    //todo: add teleport in facing direction x meters
     private static bool GetPos(out Vector3 position)
     {
       position = new Vector3(0, 0, 0);

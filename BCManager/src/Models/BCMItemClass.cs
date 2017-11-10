@@ -15,16 +15,20 @@ namespace BCM.Models
       public const string IsBlock = "block";
       public const string Material = "material";
       public const string StackNumber = "stack";
+      public const string Icon = "icon";
+      public const string IconTint = "icontint";
     }
 
-    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
       { 0,  StrFilters.Id },
       { 1,  StrFilters.Name },
       { 2,  StrFilters.Local },
       { 3,  StrFilters.IsBlock },
       { 4,  StrFilters.Material },
-      { 5,  StrFilters.StackNumber }
+      { 5,  StrFilters.StackNumber },
+      { 6,  StrFilters.Icon },
+      { 7,  StrFilters.IconTint }
     };
     public static Dictionary<int, string> FilterMap => _filterMap;
     #endregion
@@ -36,6 +40,8 @@ namespace BCM.Models
     public bool IsBlock;
     public string Material;
     public int StackNumber;
+    public string Icon;
+    public string IconTint;
     #endregion;
 
     public BCMItemClass(object obj, string typeStr, Dictionary<string, string> options, List<string> filters) : base(obj, typeStr, options, filters)
@@ -44,8 +50,7 @@ namespace BCM.Models
 
     public override void GetData(object obj)
     {
-      var item = obj as ItemClass;
-      if (item == null) return;
+      if (!(obj is ItemClass item)) return;
 
       if (IsOption("filter"))
       {
@@ -71,6 +76,12 @@ namespace BCM.Models
             case StrFilters.StackNumber:
               GetStackNumber(item);
               break;
+            case StrFilters.Icon:
+              GetIcon(item);
+              break;
+            case StrFilters.IconTint:
+              GetIconTint(item);
+              break;
             default:
               Log.Out($"{Config.ModPrefix} Unknown filter {f}");
               break;
@@ -85,8 +96,22 @@ namespace BCM.Models
         GetIsBlock(item);
         GetMaterial(item);
         GetStackNumber(item);
+        GetIcon(item);
+        GetIconTint(item);
+
+        if (Options.ContainsKey("properties"))
+        {
+          Bin.Add("Properties.Values", item.Properties.Values);
+          Bin.Add("Properties.Params1", item.Properties.Params1);
+          Bin.Add("Properties.Params2", item.Properties.Params2);
+          Bin.Add("Properties.Classes", item.Properties.Classes);
+        }
       }
     }
+
+    private void GetIconTint(ItemClass item) => Bin.Add("IconTint", IconTint = item.GetIconTint().ToStringRgbHex(hash:false));
+
+    private void GetIcon(ItemClass item) => Bin.Add("Icon", Icon = item.GetIconName());
 
     private void GetStackNumber(ItemClass item) => Bin.Add("StackNumber", StackNumber = item.Stacknumber.Value);
 

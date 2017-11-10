@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Enumerable = System.Linq.Enumerable;
 
 namespace BCM.Models
 {
@@ -23,7 +22,7 @@ namespace BCM.Models
       public const string SubBiomes = "subbiomes";
     }
 
-    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
       { 0,  StrFilters.Id },
       { 1,  StrFilters.Name },
@@ -38,7 +37,6 @@ namespace BCM.Models
       { 10,  StrFilters.SubBiomes }
     };
     public static Dictionary<int, string> FilterMap => _filterMap;
-
     #endregion
 
     #region Properties
@@ -57,101 +55,9 @@ namespace BCM.Models
     public List<BCMBiomeBlockDecoration> DecoBlocks = new List<BCMBiomeBlockDecoration>();
     public List<BCMBiomePrefabDecoration> DecoPrefabs = new List<BCMBiomePrefabDecoration>();
     public List<BCMSubBiome> SubBiomes = new List<BCMSubBiome>();
-
-    public class BCMBiomeBlockDecoration
-    {
-      public int Type;
-      public double Prob;
-      //public double CProb;
-      public string Gen;
-      public int RotMax;
-
-      public BCMBiomeBlockDecoration(BiomeBlockDecoration block)
-      {
-        Type = block.m_BlockValue.type;
-        Prob = Math.Round(block.m_Prob, 6);
-        //CProb = Math.Round(block.m_dClusterProb, 6);
-        Gen = block.m_resourceGeneration.ToString();
-        RotMax = block.randomRotateMax;
-      }
-    }
-
-    public class BCMBiomeLayer
-    {
-      public BCMBiomeBlockDecoration Block;
-      public int Depth;
-      public int FillTo;
-      public List<List<BCMBiomeBlockDecoration>> Resources = new List<List<BCMBiomeBlockDecoration>>();
-      //public List<List<double>> SumResProbs = new List<List<double>>();
-      //public List<double> MaxResProb = new List<double>();
-
-      public BCMBiomeLayer(BiomeLayer layer)
-      {
-        Block = new BCMBiomeBlockDecoration(layer.m_Block);
-        Depth = layer.m_Depth;
-        FillTo = layer.m_FillUpTo;
-        foreach (var p in layer.m_Resources)
-        {
-          Resources.Add(Enumerable.ToList(Enumerable.Select(p, deco => new BCMBiomeBlockDecoration(deco))));
-        }
-      }
-    }
-
-    public class BCMBiomePrefabDecoration
-    {
-      public string Name;
-      public double Prob;
-
-      public BCMBiomePrefabDecoration(BiomePrefabDecoration prefab)
-      {
-        Name = prefab.m_sPrefabName;
-        Prob = Math.Round(prefab.m_Prob, 6);
-      }
-    }
-
-    public class BCMSubBiome
-    {
-      public byte Id;
-      public string Name;
-      //public uint Color;
-      //public int Rad;
-      //public string Spec;
-      public double Freq;
-      public int Depth;
-      public double Prob;
-      public List<BCMBiomeLayer> Layers = new List<BCMBiomeLayer>();
-      public List<BCMBiomeBlockDecoration> DecoBlocks = new List<BCMBiomeBlockDecoration>();
-      public List<BCMBiomePrefabDecoration> DecoPrefabs = new List<BCMBiomePrefabDecoration>();
-
-      public BCMSubBiome(BiomeDefinition sub)
-      {
-        Id = sub.m_Id;
-        Name = sub.m_sBiomeName;
-        //Color = sub.m_uiColor;
-        //Rad = sub.m_RadiationLevel;
-        //Spec = sub.m_SpectrumName;
-        Freq = Math.Round(sub.freq, 6);
-        Depth = sub.TotalLayerDepth;
-        Prob = Math.Round(sub.prob, 6);
-        foreach (var layer in sub.m_Layers)
-        {
-          Layers.Add(new BCMBiomeLayer(layer));
-        }
-        foreach (var deco in sub.m_DecoBlocks)
-        {
-          DecoBlocks.Add(new BCMBiomeBlockDecoration(deco));
-        }
-        foreach (var deco in sub.m_DecoPrefabs)
-        {
-          DecoPrefabs.Add(new BCMBiomePrefabDecoration(deco));
-        }
-      }
-    }
-
     //public WeatherPackage weatherPackage = new WeatherPackage();
     //public BiomeDefinition.Probabilities weatherProbabilities = new BiomeDefinition.Probabilities();
     //public TGMAbstract m_Terrain;
-
     #endregion;
 
     public BCMBiome(object obj, string typeStr, Dictionary<string, string> options, List<string> filters) : base(obj, typeStr, options, filters)
@@ -160,8 +66,7 @@ namespace BCM.Models
 
     public override void GetData(object obj)
     {
-      var biome = obj as BiomeDefinition;
-      if (biome == null) return;
+      if (!(obj is BiomeDefinition biome)) return;
 
       if (IsOption("filter"))
       {

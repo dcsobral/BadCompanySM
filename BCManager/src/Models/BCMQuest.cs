@@ -25,7 +25,7 @@ namespace BCM.Models
       public const string Rewards = "rewards";
     }
 
-    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
       {0, StrFilters.Id},
       {1, StrFilters.Name},
@@ -61,77 +61,10 @@ namespace BCM.Models
     //public byte HighestPhase;
     //public string Completion;
 
-      //todo: additional properties from derived types
     public List<BCMQuestAction> Actions = new List<BCMQuestAction>();
-    public List<BCMRequirement> Requirements = new List<BCMRequirement>();
-    public List<BCMObjective> Objectives = new List<BCMObjective>();
-    public List<BCMReward> Rewards = new List<BCMReward>();
-
-    public class BCMQuestAction
-    {
-      public string Type;
-      public string Id;
-      public string Value;
-      //public string OwnerQuest;
-
-      public BCMQuestAction(BaseQuestAction action)
-      {
-        Type = action.GetType().ToString();
-        Id = action.ID;
-        Value = action.Value;
-      }
-    }
-
-    public class BCMRequirement
-    {
-      public string Type;
-      public string Id;
-      public string Value;
-      //public bool Complete;
-      //public string Description;
-      //public string StatusText;
-      //public Quest OwnerQuest;
-
-      public BCMRequirement(BaseRequirement requirement)
-      {
-        Type = requirement.GetType().ToString();
-        Id = requirement.ID;
-        Value = requirement.Value;
-      }
-    }
-
-    public class BCMObjective
-    {
-      public string Type;
-      public string Id;
-      public string Value;
-      //public byte Version;
-      //public bool Complete;
-      //public byte Phase;
-      //public Quest OwnerQuest;
-
-      public BCMObjective(BaseObjective objective)
-      {
-        Type = objective.GetType().ToString();
-        Id = objective.ID;
-        Value = objective.Value;
-      }
-    }
-
-    public class BCMReward
-    {
-      public string Type;
-      public string Id;
-      public string Value;
-      //public string OwnerQuest;
-
-      public BCMReward(BaseReward reward)
-      {
-        Type = reward.GetType().ToString();
-        Id = reward.ID;
-        Value = reward.Value;
-      }
-    }
+    public List<BCMQuestRequirement> Requirements = new List<BCMQuestRequirement>();
+    public List<BCMQuestObjective> Objectives = new List<BCMQuestObjective>();
+    public List<BCMQuestReward> Rewards = new List<BCMQuestReward>();
     #endregion;
 
     public BCMQuest(object obj, string typeStr, Dictionary<string, string> options, List<string> filters) : base(obj, typeStr, options, filters)
@@ -140,8 +73,7 @@ namespace BCM.Models
 
     public override void GetData(object obj)
     {
-      var quest = obj as QuestClass;
-      if (quest == null) return;
+      if (!(obj is QuestClass quest)) return;
 
       if (IsOption("filter"))
       {
@@ -220,7 +152,7 @@ namespace BCM.Models
     {
       foreach (var reward in quest.Rewards)
       {
-        Rewards.Add(new BCMReward(reward));
+        Rewards.Add(new BCMQuestReward(reward));
       }
       Bin.Add("Rewards", Rewards);
     }
@@ -229,7 +161,7 @@ namespace BCM.Models
     {
       foreach (var objective in quest.Objectives)
       {
-        Objectives.Add(new BCMObjective(objective));
+        Objectives.Add(new BCMQuestObjective(objective));
       }
       Bin.Add("Objectives", Objectives);
     }
@@ -238,7 +170,7 @@ namespace BCM.Models
     {
       foreach (var requirement in quest.Requirements)
       {
-        Requirements.Add(new BCMRequirement(requirement));
+        Requirements.Add(new BCMQuestRequirement(requirement));
       }
       Bin.Add("Requirements", Requirements);
     }

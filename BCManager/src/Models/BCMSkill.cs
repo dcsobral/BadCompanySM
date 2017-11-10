@@ -34,7 +34,7 @@ namespace BCM.Models
       public const string Effects = "effects";
     }
 
-    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
       { 0,  StrFilters.Id },
       { 1,  StrFilters.Name },
@@ -87,7 +87,6 @@ namespace BCM.Models
     public List<BCMRequirement> SkillReqs = new List<BCMRequirement>();
     public List<BCMLockedItem> LockedItems = new List<BCMLockedItem>();
     public List<BCMEffect> Effects = new List<BCMEffect>();
-    //public Skills Parent;
 
     public class BCMRequirement
     {
@@ -153,8 +152,7 @@ namespace BCM.Models
 
     public override void GetData(object obj)
     {
-      var skill = obj as Skill;
-      if (skill == null) return;
+      if (!(obj is Skill skill)) return;
 
       if (IsOption("filter"))
       {
@@ -301,95 +299,41 @@ namespace BCM.Models
       Bin.Add("SkillReqs", SkillReqs);
     }
 
-    private void GetCostMult(Skill skill)
-    {
-      Bin.Add("CostMult", CostMult = Math.Round(skill.SkillPointCostMultiplier, 6));
-    }
+    private void GetCostMult(Skill skill) => Bin.Add("CostMult", CostMult = Math.Round(skill.SkillPointCostMultiplier, 6));
 
-    private void GetCostPer(Skill skill)
-    {
-      Bin.Add("CostPer", CostPer = skill.SkillPointCostPerLevel);
-    }
+    private void GetCostPer(Skill skill) => Bin.Add("CostPer", CostPer = skill.SkillPointCostPerLevel);
 
-    private void GetAlwaysFire(Skill skill)
-    {
-      Bin.Add("AlwaysFire", AlwaysFire = skill.AlwaysFire);
-    }
+    private void GetAlwaysFire(Skill skill) => Bin.Add("AlwaysFire", AlwaysFire = skill.AlwaysFire);
 
-    private void GetIsCrafting(Skill skill)
-    {
-      Bin.Add("IsCrafting", IsCrafting = skill.IsCrafting);
-    }
+    private void GetIsCrafting(Skill skill) => Bin.Add("IsCrafting", IsCrafting = skill.IsCrafting);
 
-    private void GetIsPerk(Skill skill)
-    {
-      Bin.Add("IsPerk", IsPerk = skill.IsPerk);
-    }
+    private void GetIsPerk(Skill skill) => Bin.Add("IsPerk", IsPerk = skill.IsPerk);
 
-    private void GetIsPassive(Skill skill)
-    {
-      Bin.Add("IsPassive", IsPassive = skill.IsPassive);
-    }
+    private void GetIsPassive(Skill skill) => Bin.Add("IsPassive", IsPassive = skill.IsPassive);
 
-    private void GetExpMult(Skill skill)
-    {
-      Bin.Add("ExpMult", ExpMult = Math.Round(skill.ExpMultiplier, 6));
-    }
+    private void GetExpMult(Skill skill) => Bin.Add("ExpMult", ExpMult = Math.Round(skill.ExpMultiplier, 6));
 
-    private void GetBaseExpTo(Skill skill)
-    {
-      Bin.Add("BaseExpTo", BaseExpTo = skill.BaseExpToLevel);
-    }
+    private void GetBaseExpTo(Skill skill) => Bin.Add("BaseExpTo", BaseExpTo = skill.BaseExpToLevel);
 
-    private void GetMaxLevel(Skill skill)
-    {
-      Bin.Add("MaxLevel", MaxLevel = skill.MaxLevel);
-    }
+    private void GetMaxLevel(Skill skill) => Bin.Add("MaxLevel", MaxLevel = skill.MaxLevel);
 
-    private void GetIcon(Skill skill)
-    {
-      Bin.Add("Icon", Icon = skill.Icon);
-    }
+    private void GetIcon(Skill skill) => Bin.Add("Icon", Icon = skill.Icon);
 
-    private void GetDescKey(Skill skill)
-    {
-      Bin.Add("DescKey", DescKey = skill.DescriptionKey);
-    }
+    private void GetDescKey(Skill skill) => Bin.Add("DescKey", DescKey = skill.DescriptionKey);
 
-    private void GetTitleKey(Skill skill)
-    {
-      Bin.Add("TitleKey", TitleKey = skill.TitleKey);
-    }
+    private void GetTitleKey(Skill skill) => Bin.Add("TitleKey", TitleKey = skill.TitleKey);
 
-    private void GetIsLocked(Skill skill)
-    {
-      Bin.Add("IsLocked", IsLocked = skill.IsLocked);
-    }
+    private void GetIsLocked(Skill skill) => Bin.Add("IsLocked", IsLocked = skill.IsLocked);
 
-    private void GetLevel(Skill skill)
-    {
-      Bin.Add("Level", Level = skill.Level);
-    }
+    private void GetLevel(Skill skill) => Bin.Add("Level", Level = skill.Level);
 
-    private void GetExpToNext(Skill skill)
-    {
-      Bin.Add("ExpToNext", ExpToNext = skill.ExpToNextLevel);
-    }
+    private void GetExpToNext(Skill skill) => Bin.Add("ExpToNext", ExpToNext = skill.ExpToNextLevel);
 
-    private void GetGroup(Skill skill)
-    {
-      Bin.Add("Group", Group = skill.Group);
-    }
+    private void GetGroup(Skill skill) => Bin.Add("Group", Group = skill.Group);
 
-    private void GetExpGainMult(Skill skill)
-    {
-      Bin.Add("ExpGainMult", ExpGainMult = Math.Round(skill.ExpGainMultiplier, 6));
-    }
+    private void GetExpGainMult(Skill skill) => Bin.Add("ExpGainMult", ExpGainMult = Math.Round(skill.ExpGainMultiplier, 6));
 
-    private void GetLocalized(Skill skill)
-    {
-      Bin.Add("Localized", Local = skill.LocalizedName);
-    }
+    private void GetLocalized(Skill skill) => Bin.Add("Localized", Local = skill.LocalizedName);
 
     private void GetName(Skill skill) => Bin.Add("Name", Name = skill.Name);
 

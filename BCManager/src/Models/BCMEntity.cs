@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace BCM.Models
 {
@@ -17,7 +16,6 @@ namespace BCM.Models
       public const string Rotation = "rot";
       public const string Lifetime = "lifetime";
       public const string IsAlive = "isalive";
-
       public const string CreationTime = "creationtime";
       public const string MaxHealth = "maxhealth";
       public const string Health = "health";
@@ -28,7 +26,7 @@ namespace BCM.Models
       public const string IsSleeping = "issleeping";
     }
 
-    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
       { 0,  StrFilters.EntityId },
       { 1,  StrFilters.Type },
@@ -54,32 +52,8 @@ namespace BCM.Models
     public string Type;
     public string Name;
 
-    public class BCMVector3i
-    {
-      public int x;
-      public int y;
-      public int z;
-      public BCMVector3i()
-      {
-        x = 0;
-        y = 0;
-        z = 0;
-      }
-      public BCMVector3i(Vector3 v)
-      {
-        x = Mathf.RoundToInt(v.x);
-        y = Mathf.RoundToInt(v.y);
-        z = Mathf.RoundToInt(v.z);
-      }
-      public BCMVector3i(Vector3i v)
-      {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-      }
-    }
-    public BCMVector3i Position;
-    public BCMVector3i Rotation;
+    public BCMVector3 Position;
+    public BCMVector3 Rotation;
     public double? Lifetime;
     public bool IsAlive;
     public double CreationTime;
@@ -219,31 +193,14 @@ namespace BCM.Models
 
     private void GetLifetime(Entity entity) => Bin.Add("Lifetime", Lifetime = entity.lifetime < float.MaxValue ? entity.lifetime : (double?)null);
 
-    private void GetRotation(Entity entity) => Bin.Add("Rotation", GetVectorObj(Rotation = new BCMVector3i(entity.rotation)));
+    private void GetRotation(Entity entity) => Bin.Add("Rotation", BCUtils.GetVectorObj(Rotation = new BCMVector3(entity.rotation), Options));
 
-    private void GetPosition(Entity entity) => Bin.Add("Position", GetVectorObj(Position = new BCMVector3i(entity.position)));
+    private void GetPosition(Entity entity) => Bin.Add("Position", BCUtils.GetVectorObj(Position = new BCMVector3(entity.position), Options));
 
     private void GetName(Entity entity) => Bin.Add("Name", Name = EntityClass.list[entity.entityClass]?.entityClassName);
 
     private void GetType(Entity entity) => Bin.Add("Type", Type = entity.GetType().ToString());
 
     private void GetEntityId(Entity entity) => Bin.Add("EntityId", EntityId = entity.entityId);
-
-    private object GetVectorObj(BCMVector3i p)
-    {
-      if (Options.ContainsKey("strpos"))
-      {
-        return p.x + " " + p.y + " " + p.z;
-      }
-      if (Options.ContainsKey("worldpos"))
-      {
-        return GameUtils.WorldPosToStr(new Vector3(p.x, p.y, p.z), " ");
-      }
-      if (Options.ContainsKey("csvpos"))
-      {
-        return new[] { p.x, p.y, p.z };
-      }
-      return p;//vectors
-    }
   }
 }

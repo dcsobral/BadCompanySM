@@ -42,7 +42,7 @@ namespace BCM.Models
       public const string FFCheck = "ff";
     }
 
-    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
       {0, StrFilters.Id},
       {1, StrFilters.Name},
@@ -109,56 +109,6 @@ namespace BCM.Models
     public List<BCMBuffCondition> BuffConditions = new List<BCMBuffCondition>();
     public List<BCMBuffCondition> DebuffConditions = new List<BCMBuffCondition>();
     public List<BCMBuffModifier> Modifiers = new List<BCMBuffModifier>();
-
-    public class BCMBuffCondition
-    {
-      public string Counter;
-      public string Type;
-      public double Value;
-
-      public BCMBuffCondition(MultiBuffClassCondition condition)
-      {
-        if (condition == null) return;
-
-        Counter = condition.Counter;
-        Type = condition.ConditionType.ToString();
-        Value = condition.Value;
-      }
-    }
-
-    public class BCMBuffModifier
-    {
-      public string Stat;
-      public string Type;
-      public string Cat;
-      public int Max;
-      public int IDur;
-      public int UID;
-      public double FDur;
-      public double ValStart;
-      public double ValEnd;
-      public double Freq;
-      public double ApplyTime;
-      public string Target;
-
-      public BCMBuffModifier(MultiBuffClass.Modifier modifier)
-      {
-        if (modifier == null) return;
-
-        Stat = modifier.TargetStat.ToString();
-        Type = modifier.TypeOfModifier.ToString();
-        Cat = modifier.CategoryFlags.ToString();
-        Max = modifier.ModifierStackMax;
-        IDur = modifier.ModifierIDuration;
-        UID = modifier.ModifierUID;
-        FDur = Math.Round(modifier.ModifierFDuration, 6);
-        ValStart = Math.Round(modifier.ModifierValueStart, 6);
-        ValEnd = Math.Round(modifier.ModifierValueEnd, 6);
-        Freq = Math.Round(modifier.ModifierFrequency, 6);
-        ApplyTime = Math.Round(modifier.ModifierApplyTime, 6);
-        Target = modifier.TargetBuff;
-      }
-    }
     #endregion;
 
     public BCMBuff(object obj, string typeStr, Dictionary<string, string> options, List<string> filters) : base(obj, typeStr, options, filters)
@@ -167,8 +117,7 @@ namespace BCM.Models
 
     public override void GetData(object obj)
     {
-      var buff = obj as MultiBuffClass;
-      if (buff == null) return;
+      if (!(obj is MultiBuffClass buff)) return;
 
       if (IsOption("filter"))
       {
@@ -182,7 +131,6 @@ namespace BCM.Models
             case StrFilters.Name:
               GetName(buff);
               break;
-
             case StrFilters.Duration:
               GetDuration(buff);
               break;

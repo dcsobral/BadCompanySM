@@ -21,7 +21,7 @@ namespace BCM.Models
       public const string HubLayouts = "layouts";
     }
 
-    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
       { 0,  StrFilters.Rulesets },
       { 1,  StrFilters.CellRules },
@@ -36,33 +36,6 @@ namespace BCM.Models
     #endregion
 
     #region Properties
-
-    public class BCMVector2
-    {
-      public int x;
-      public int y;
-      public BCMVector2()
-      {
-        x = 0;
-        y = 0;
-      }
-      public BCMVector2(int x, int y)
-      {
-        this.x = x;
-        this.y = y;
-      }
-      public BCMVector2(Vector2 v)
-      {
-        x = Mathf.RoundToInt(v.x);
-        y = Mathf.RoundToInt(v.y);
-      }
-      public BCMVector2(Vector2i v)
-      {
-        x = v.x;
-        y = v.y;
-      }
-    }
-
     public class BCMVector2D
     {
       public double x;
@@ -180,6 +153,7 @@ namespace BCM.Models
         PrefabRules = hubRule.PrefabSpawnRules.ToDictionary(r => r.Key, r => (object)new { Prob = Math.Round(r.Value.Probability, 3) });
       }
     }
+
     public class BCMWildernessRule
     {
       public string Name;
@@ -236,6 +210,7 @@ namespace BCM.Models
         }
       }
     }
+
     public class BCMBiomeSpawnRule
     {
       public string Name;
@@ -271,6 +246,7 @@ namespace BCM.Models
         }
       }
     }
+
     public class BCMStreetInfo
     {
       public string Name;
@@ -350,8 +326,7 @@ namespace BCM.Models
 
     public override void GetData(object obj)
     {
-      var rwgSections = obj as Dictionary<string, object>;
-      if (rwgSections == null) return;
+      if (!(obj is Dictionary<string, object> rwgSections)) return;
 
       if (IsOption("filter"))
       {
@@ -397,60 +372,66 @@ namespace BCM.Models
         GetHubLayouts(rwgSections["HubLayouts"]);
       }
     }
+
     private void GetHubLayouts(object obj)
     {
-      var rwgHubLayouts = obj as Dictionary<string, HubLayout>;
-      if (rwgHubLayouts == null) return;
+      if (!(obj is Dictionary<string, HubLayout> rwgHubLayouts)) return;
+
       foreach (var layout in rwgHubLayouts.Values)
       {
         HubLayouts.Add(new BCMHubLayout(layout));
       }
       Bin.Add("HubLayouts", HubLayouts);
     }
+
     private void GetBiomeSpawnRules(object obj)
     {
-      var rwgBiomeSpawnRules = obj as List<BiomeSpawnRule>;
-      if (rwgBiomeSpawnRules == null) return;
+      if (!(obj is List<BiomeSpawnRule> rwgBiomeSpawnRules)) return;
+
       foreach (var biomeSpawnRule in rwgBiomeSpawnRules)
       {
         BiomeSpawnRules.Add(new BCMBiomeSpawnRule(biomeSpawnRule));
       }
       Bin.Add("BiomeSpawnRules", BiomeSpawnRules);
     }
+
     private void GetPrefabSpawnRules(object obj)
     {
-      var rwgPrefabSpawnRules = obj as Dictionary<string, PrefabSpawnRule>;
-      if (rwgPrefabSpawnRules == null) return;
+      if (!(obj is Dictionary<string, PrefabSpawnRule> rwgPrefabSpawnRules)) return;
+
       foreach (var prefabSpawnRule in rwgPrefabSpawnRules.Values)
       {
         PrefabSpawnRules.Add(new BCMPrefabSpawnRule(prefabSpawnRule));
       }
       Bin.Add("PrefabSpawnRules", PrefabSpawnRules);
     }
+
     private void GetWildernessRules(object obj)
     {
-      var rwgWildernessRules = obj as Dictionary<string, WildernessRule>;
-      if (rwgWildernessRules == null) return;
+      if (!(obj is Dictionary<string, WildernessRule> rwgWildernessRules)) return;
+
       foreach (var wildernessRule in rwgWildernessRules.Values)
       {
         WildernessRules.Add(new BCMWildernessRule(wildernessRule));
       }
       Bin.Add("WildernessRules", WildernessRules);
     }
+
     private void GetHubRules(object obj)
     {
-      var rwgHubRules = obj as Dictionary<string, HubRule>;
-      if (rwgHubRules == null) return;
+      if (!(obj is Dictionary<string, HubRule> rwgHubRules)) return;
+
       foreach (var hubRule in rwgHubRules.Values)
       {
         HubRules.Add(new BCMHubRule(hubRule));
       }
       Bin.Add("HubRules", HubRules);
     }
+
     private void GetCellrules(object obj)
     {
-      var rwgCellRules = obj as Dictionary<string, CellRule>;
-      if (rwgCellRules == null) return;
+      if (!(obj is Dictionary<string, CellRule> rwgCellRules)) return;
+
       foreach (var cellRule in rwgCellRules.Values)
       {
         CellRules.Add(new BCMCellRule(cellRule));
@@ -460,8 +441,8 @@ namespace BCM.Models
 
     private void GetRulesets(object obj)
     {
-      var rwgRulesets = obj as Dictionary<string, Ruleset>;
-      if (rwgRulesets == null) return;
+      if (!(obj is Dictionary<string, Ruleset> rwgRulesets)) return;
+
       foreach (var ruleset in rwgRulesets.Values)
       {
         Rulesets.Add(new BCMRuleset(ruleset));

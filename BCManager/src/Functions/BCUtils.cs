@@ -11,6 +11,23 @@ namespace BCM
 {
   public static class BCUtils
   {
+    public static object GetVectorObj(BCMVector3 p, IDictionary<string, string> o)
+    {
+      if (o.ContainsKey("strpos"))
+      {
+        return p.x + " " + p.y + " " + p.z;
+      }
+      if (o.ContainsKey("worldpos"))
+      {
+        return GameUtils.WorldPosToStr(new Vector3(p.x, p.y, p.z), " ");
+      }
+      if (o.ContainsKey("csvpos"))
+      {
+        return new[] { p.x, p.y, p.z };
+      }
+      return p;//vectors
+    }
+
     public static string UIntToHex(uint c)
     {
       return ColorToHex(UIntToColor(c));

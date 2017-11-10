@@ -18,6 +18,7 @@ namespace BCM.Models
     }
     public BCMVector2(Vector2 v)
     {
+      //todo: use floor instead?
       x = Mathf.RoundToInt(v.x);
       y = Mathf.RoundToInt(v.y);
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BCM.Models
 {
@@ -38,7 +37,6 @@ namespace BCM.Models
       { 10,  StrFilters.Expressions }
     };
     public static Dictionary<int, string> FilterMap => _filterMap;
-
     #endregion
 
     #region Properties
@@ -48,55 +46,9 @@ namespace BCM.Models
     public string EyeColor;
     public string SkinColor;
     public string Type;
-    public class BCMSlot
-    {
-      public string Name;
-      //public string UISlot;
-      public string EqSlot;
-      public string EqLayer;
-      public bool AltHair;
-      public List<string> Textures;
-      public List<string> Colors;
-      public Dictionary<string, string> Masks;
-
-      public BCMSlot(UMASlot slot)
-      {
-        Name = slot.Name;
-        //UISlot = slot.UISlot.ToString();
-        EqSlot = slot.EquipmentSlot.ToString();
-        EqLayer = slot.EquipmentLayer.ToString();
-        AltHair = slot.ShowAltHair;
-        Textures = slot.Textures;
-        Colors = slot.Colors;
-        Masks = slot.Masks.ToDictionary(s => s.EquipmentSlot.ToString(), s => s.EquipmentLayer.ToString());
-      }
-    }
-    private List<BCMSlot> _baseSlots;
-    public List<BCMSlot> BaseSlots => _baseSlots ?? (_baseSlots = new List<BCMSlot>());
-    private List<BCMSlot> _previewSlots;
-    public List<BCMSlot> PreviewSlots => _previewSlots ?? (_previewSlots = new List<BCMSlot>());
-
-    private Dictionary<string, double> _dna;
-    public Dictionary<string, double> Dna => _dna ?? (_dna = new Dictionary<string, double>());
-
-    public class BCMExpressionData
-    {
-      public bool Blink;
-      public bool Saccades;
-      public double BlinkDur;
-      public int BlinkMin;
-      public int BlinkMax;
-      public Dictionary<string, double> Values;
-      public BCMExpressionData(UMAExpressionData expression)
-      {
-        Blink = expression.BlinkingEnabled;
-        Saccades = expression.SaccadesEnabled;
-        BlinkDur = Math.Round(expression.BlinkDuration, 3);
-        BlinkMin = expression.BlinkMinDelay;
-        BlinkMax = expression.BlinkMaxDelay;
-        Values = expression.ExpressionValues.ToDictionary(v => v.Key, v => Math.Round(v.Value, 3));
-      }
-    }
+    public List<BCMSlot> BaseSlots =new List<BCMSlot>();
+    public List<BCMSlot> PreviewSlots = new List<BCMSlot>();
+    public Dictionary<string, double> Dna = new Dictionary<string, double>();
     public BCMExpressionData Expressions;
     public string VoiceSet;
     #endregion;
@@ -107,8 +59,7 @@ namespace BCM.Models
 
     public override void GetData(object obj)
     {
-      var archetype = obj as Archetype;
-      if (archetype == null) return;
+      if (!(obj is Archetype archetype)) return;
 
       if (IsOption("filter"))
       {
@@ -160,7 +111,9 @@ namespace BCM.Models
         GetName(archetype);
         GetType(archetype);
         GetGender(archetype);
+
         if (!IsOption("full")) return;
+
         GetEyes(archetype);
         GetHair(archetype);
         GetSkin(archetype);

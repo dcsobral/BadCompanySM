@@ -9,9 +9,9 @@ namespace BCM
     {
       return $"{c.r:F3}, {c.g:F3}, {c.b:F3}, {c.a:F3}";
     }
-    public static string ToStringRgbHex(this Color c)
+    public static string ToStringRgbHex(this Color c, bool hash = true)
     {
-      return $"#{(int) (c.r * 255):X2}{(int) (c.g * 255):X2}{(int) (c.b * 255):X2}";
+      return $"{(hash ? "#": "")}{(int) (c.r * 255):X2}{(int) (c.g * 255):X2}{(int) (c.b * 255):X2}";
     }
 
     public static string ToUtcStr(this DateTime d)

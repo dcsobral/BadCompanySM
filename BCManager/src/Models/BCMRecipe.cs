@@ -21,11 +21,11 @@ namespace BCM.Models
       public const string IsScrappable = "scrappable";
       public const string IsWildCamp = "wildcamp";
       public const string IsWildForge = "wildforge";
-      public const string SkillGroup = "skill";
+      public const string Skill = "skill";
       public const string Ingredients = "ingredients";
     }
 
-    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
       { 0,  StrFilters.Type },
       { 1,  StrFilters.Count },
@@ -38,11 +38,10 @@ namespace BCM.Models
       { 8,  StrFilters.IsScrappable },
       { 9,  StrFilters.IsWildCamp },
       { 10,  StrFilters.IsWildForge },
-      { 11,  StrFilters.SkillGroup },
+      { 11,  StrFilters.Skill },
       { 12,  StrFilters.Ingredients }
     };
     public static Dictionary<int, string> FilterMap => _filterMap;
-
     #endregion
 
     #region Properties
@@ -57,7 +56,7 @@ namespace BCM.Models
     public bool IsScrappable;
     public bool IsWildCamp;
     public bool IsWildForge;
-    public string SkillGroup;
+    public string Skill;
     public class BCMIngredient
     {
       public int Type;
@@ -72,8 +71,7 @@ namespace BCM.Models
 
     public override void GetData(object obj)
     {
-      var recipe = obj as Recipe;
-      if (recipe == null) return;
+      if (!(obj is Recipe recipe)) return;
 
       if (IsOption("filter"))
       {
@@ -111,8 +109,8 @@ namespace BCM.Models
               case StrFilters.IsWildForge:
                 GetWildForge(recipe);
                 break;
-              case StrFilters.SkillGroup:
-                GetSkillGroup(recipe);
+              case StrFilters.Skill:
+                GetSkill(recipe);
                 break;
               case StrFilters.Tooltip:
                 GetTooltip(recipe);
@@ -138,7 +136,7 @@ namespace BCM.Models
         GetScrappable(recipe);
         GetWildCamp(recipe);
         GetWildForge(recipe);
-        GetSkillGroup(recipe);
+        GetSkill(recipe);
         GetTooltip(recipe);
         GetIngredients(recipe);
       }
@@ -146,7 +144,7 @@ namespace BCM.Models
 
     private void GetTooltip(Recipe recipe) => Bin.Add("Tooltip", Tooltip = recipe.tooltip);
 
-    private void GetSkillGroup(Recipe recipe) => Bin.Add("SkillGroup", SkillGroup = ItemClass.list[recipe.itemValueType]?.CraftingSkillGroup);
+    private void GetSkill(Recipe recipe) => Bin.Add("Skill", Skill = ItemClass.list[recipe.itemValueType]?.CraftingSkillGroup);
 
     private void GetWildForge(Recipe recipe) => Bin.Add("IsWildForge", IsWildForge = recipe.wildcardForgeCategory);
 
@@ -158,7 +156,7 @@ namespace BCM.Models
 
     private void GetCraftTool(Recipe recipe) => Bin.Add("CraftTool", CraftTool = recipe.craftingToolType);
 
-    private void GetCraftTime(Recipe recipe) => Bin.Add("CraftTime", CraftTime = recipe.craftingTime);
+    private void GetCraftTime(Recipe recipe) => Bin.Add("CraftTime", CraftTime = Math.Round(recipe.craftingTime, 2));
 
     private void GetCraftExp(Recipe recipe) => Bin.Add("CraftExp", CraftExp = recipe.craftExpGain);
 

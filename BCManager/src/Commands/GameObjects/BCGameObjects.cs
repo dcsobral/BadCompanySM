@@ -44,15 +44,21 @@ namespace BCM.Commands
         case 1:
           //ALL OBJECTS OF A TYPE
           type = Params[0].ToLower();
-          GetObjects(type, out List<object> objects);
-          ProcessObjects(type, objects, out List<object> data, GetFilters(type));
+          //todo: count sub command that returns a count of each object type
+          //if (type == "count")
+          //{
+          //  CountObjects();
+          //  return;
+          //}
+          GetObjects(type, out var objects);
+          ProcessObjects(type, objects, out var data, GetFilters(type));
           SendJson(data);
           return;
 
         case 2:
           //SPECIFIC OBJECT
           type = Params[0].ToLower();
-          if (!GetObject(type, out object obj)) { return; }
+          if (!GetObject(type, out var obj)) { return; }
           var gameObject = new BCMGameObject(obj, type, Options, GetFilters(type));
           SendObject(gameObject);
           return;
@@ -178,7 +184,7 @@ namespace BCM.Commands
           obj = Archetypes.Instance.GetArchetype(key);
           break;
         case BCMGameObject.GOTypes.Biomes:
-          if (byte.TryParse(key, out byte id))
+          if (byte.TryParse(key, out var id))
           {
             obj = world.Biomes.GetBiome(id);
           }

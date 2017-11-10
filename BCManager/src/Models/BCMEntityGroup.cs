@@ -13,43 +13,17 @@ namespace BCM.Models
       public const string Entities = "entities";
     }
 
-    private static Dictionary<int, string> _filterMap = new Dictionary<int, string>
+    private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
       { 0,  StrFilters.Name },
       { 1,  StrFilters.Entities }
     };
-    public static Dictionary<int, string> FilterMap
-    {
-      get => _filterMap;
-      set => _filterMap = value;
-    }
+    public static Dictionary<int, string> FilterMap => _filterMap;
     #endregion
 
     #region Properties
     public string Name;
-
-    public class BCMSpawn
-    {
-      public int EntityClassId;
-      public double Prob;
-      public int ReqMin;
-      public int ReqMax;
-
-      public BCMSpawn(SEntityClassAndProb spawn)
-      {
-        EntityClassId = spawn.entityClassId;
-        Prob = Math.Round(spawn.prob, 3);
-        ReqMin = spawn.reqMin;
-        ReqMax = spawn.reqMax;
-      }
-    }
-
-    private List<BCMSpawn> _entities;
-    public List<BCMSpawn> Entities
-    {
-      get => _entities ?? (_entities = new List<BCMSpawn>());
-      set => _entities = value;
-    }
+    public List<BCMGroupSpawn> Entities = new List<BCMGroupSpawn>();
     #endregion;
 
     public BCMEntityGroup(object obj, string typeStr, Dictionary<string, string> options, List<string> filters) : base(obj, typeStr, options, filters)
@@ -91,7 +65,7 @@ namespace BCM.Models
     {
       foreach (var sEntityClassAndProb in entityGroups.Value)
       {
-        Entities.Add(new BCMSpawn(sEntityClassAndProb));
+        Entities.Add(new BCMGroupSpawn(sEntityClassAndProb));
       }
       Bin.Add("Entities", Entities);
     }
