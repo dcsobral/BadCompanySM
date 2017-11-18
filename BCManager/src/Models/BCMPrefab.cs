@@ -342,17 +342,20 @@ namespace BCM.Models
     {
       var sleeperVolumes = new List<BCMPrefabSleeperVolume>();
 
-      for (var x = 0; x <= prefab.SleeperVolumeUsed.Count - 1; x++)
+      if (prefab.SleeperVolumeUsed != null)
       {
-        sleeperVolumes.Add(new BCMPrefabSleeperVolume
+        for (var x = 0; x <= prefab.SleeperVolumeUsed.Count - 1; x++)
         {
-          Used = prefab.SleeperVolumeUsed[x],
-          Start = new BCMVector3(prefab.SleeperVolumesStart[x]),
-          Size = new BCMVector3(prefab.SleeperVolumesSize[x]),
-          Group = prefab.SleeperVolumesGroup[x],
-          Adjust = prefab.SleeperVolumeGameStageAdjust[x],
-          IsLoot = prefab.SleeperIsLootVolume[x]
-        });
+          sleeperVolumes.Add(new BCMPrefabSleeperVolume
+          {
+            Used = prefab.SleeperVolumeUsed[x],
+            Start = new BCMVector3(prefab.SleeperVolumesStart[x]),
+            Size = new BCMVector3(prefab.SleeperVolumesSize[x]),
+            Group = prefab.SleeperVolumesGroup[x],
+            Adjust = prefab.SleeperVolumeGameStageAdjust[x],
+            IsLoot = prefab.SleeperIsLootVolume[x]
+          });
+        }
       }
 
       Bin.Add("SleeperVolumes", SleeperVolumes = sleeperVolumes);

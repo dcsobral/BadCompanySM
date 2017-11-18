@@ -12,6 +12,7 @@ namespace BCM.Models
     #region Filters
     public static class StrFilters
     {
+      public const string RulesetName = "rulesetname";
       public const string Rulesets = "rules";
       public const string CellRules = "cells";
       public const string HubRules = "hubs";
@@ -23,19 +24,22 @@ namespace BCM.Models
 
     private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
     {
-      { 0,  StrFilters.Rulesets },
-      { 1,  StrFilters.CellRules },
-      { 2,  StrFilters.HubRules },
-      { 3,  StrFilters.WildernessRules },
-      { 4,  StrFilters.PrefabSpawnRules },
-      { 5,  StrFilters.BiomeSpawnRules },
-      { 6,  StrFilters.HubLayouts }
+      { 0,  StrFilters.RulesetName },
+      { 1,  StrFilters.Rulesets },
+      { 2,  StrFilters.CellRules },
+      { 3,  StrFilters.HubRules },
+      { 4,  StrFilters.WildernessRules },
+      { 5,  StrFilters.PrefabSpawnRules },
+      { 6,  StrFilters.BiomeSpawnRules },
+      { 7,  StrFilters.HubLayouts }
     };
     public static Dictionary<int, string> FilterMap => _filterMap;
 
     #endregion
 
     #region Properties
+    public string RulesetName;
+
     public class BCMVector2D
     {
       public double x;
@@ -214,7 +218,7 @@ namespace BCM.Models
     public class BCMBiomeSpawnRule
     {
       public string Name;
-      public double Prob;
+      //public double Prob;
       public readonly List<BCMVector2D> BiomeList = new List<BCMVector2D>();
       public readonly List<BCMVector2> DistList = new List<BCMVector2>();
       public readonly List<BCMVector2> TerrainList = new List<BCMVector2>();
@@ -222,7 +226,7 @@ namespace BCM.Models
       public BCMBiomeSpawnRule(BiomeSpawnRule spawnRule)
       {
         Name = spawnRule.Name;
-        Prob = Math.Round(spawnRule.probability, 3);
+        //Prob = Math.Round(spawnRule.probability, 3);
         if (spawnRule.BiomeGenRanges != null)
         {
           foreach (var b in spawnRule.BiomeGenRanges)
@@ -334,6 +338,9 @@ namespace BCM.Models
         {
           switch (f)
           {
+            case StrFilters.RulesetName:
+              GetRulesetName(rwgSections["RulesetName"]);
+              break;
             case StrFilters.Rulesets:
               GetRulesets(rwgSections["Rulesets"]);
               break;
@@ -363,6 +370,7 @@ namespace BCM.Models
       }
       else
       {
+        GetRulesetName(rwgSections["RulesetName"]);
         GetRulesets(rwgSections["Rulesets"]);
         GetCellrules(rwgSections["CellRules"]);
         GetHubRules(rwgSections["HubRules"]);
@@ -371,6 +379,13 @@ namespace BCM.Models
         GetBiomeSpawnRules(rwgSections["BiomeSpawnRules"]);
         GetHubLayouts(rwgSections["HubLayouts"]);
       }
+    }
+
+    private void GetRulesetName(object obj)
+    {
+      if (!(obj is string rwgRulesetName)) return;
+
+      Bin.Add("RulesetName", rwgRulesetName);
     }
 
     private void GetHubLayouts(object obj)

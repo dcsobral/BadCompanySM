@@ -37,7 +37,7 @@
             downgrade - sets the blocks to the next step in their downgrade path
             paint - paints all sides of blocks in the area
                 /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
-            paintface = paints one side of blocks in the area
+            paintface - paints one side of blocks in the area
                 /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
                 /face=0-5 - 0=Top, 1=Bottom, 2=North, 3=West, 4=South, 5=East
             paintstrip - removes all paint from blocks in the area

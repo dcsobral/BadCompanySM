@@ -273,6 +273,5 @@ namespace BCM.Commands
           return null;
       }
     }
-
   }
 }

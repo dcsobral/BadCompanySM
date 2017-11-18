@@ -7,12 +7,56 @@ namespace BCM.Commands
   {
     public override void Process()
     {
+      if (Options.ContainsKey("sm"))
+      {
+        if (Params.Count > 0)
+        {
+          var command  = SdtdConsole.Instance.GetCommand(Params[0]);
+          if (command == null)
+          {
+            SendJsonError($"Command not found: {Params[0]}");
+
+            return;
+          }
+
+          var help = command.GetHelp();
+          var helpLines = help.Split('\n');
+          var i = 0;
+          foreach (var helpLine in helpLines)
+          {
+            helpLines[i] = helpLine.TrimEnd('\r');
+            i++;
+          }
+          SendJson(helpLines);
+
+          return;
+        }
+
+        //var commands = GameManager.Instance.adminTools.GetCommands();
+        var commands = new Dictionary<string, object>();
+        foreach (var command in SdtdConsole.Instance.GetCommands())
+        {
+          var key = command.GetType().ToString();
+          var comString = string.Join(" ", command.GetCommands());
+          if (commands.ContainsKey(key))
+          {
+            Log.Out(Config.ModPrefix + " Command with key '" + key + "' already added");
+
+            continue;
+          }
+          commands.Add(key, new { Commands = comString, Description = command.GetDescription(), Permission = command.DefaultPermissionLevel });
+        }
+        SendJson(commands);
+
+        return;
+      }
+
       //todo: change to a string builder instead of output each line, then apss to SendOutput
       //todo: pull options text from a config file
       //todo: add permission checking to display only commands sender has permission to execute
       //      AdminTools.CommandAllowedFor(string[] _cmdNames, string _playerId)
       SendOutput("***Bad Company Commands***");
-      foreach(KeyValuePair<string, BCMCommand> kvp in Config.CommandDictionary)
+      foreach (KeyValuePair<string, BCMCommand> kvp in Config.CommandDictionary)
       {
         if (kvp.Value.Name != "BCCommandAbstract")
         {

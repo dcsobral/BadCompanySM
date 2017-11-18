@@ -52,7 +52,7 @@ namespace BCM.Commands
           //}
           GetObjects(type, out var objects);
           ProcessObjects(type, objects, out var data, GetFilters(type));
-          SendJson(data);
+          SendJson(type == BCMGameObject.GOTypes.Rwg ? data[0] : data);
           return;
 
         case 2:
@@ -69,90 +69,6 @@ namespace BCM.Commands
           return;
       }
     }
-
-    //private static List<string> GetFilters(string type)
-    //{
-    //  if (!Options.ContainsKey("filter")) return new List<string>();
-
-    //  var filter = new List<string>();
-    //  var filters = Options["filter"].ToLower().Split(',').ToList();
-    //  foreach (var cur in filters)
-    //  {
-    //    var str = int.TryParse(cur, out int intFilter) ? GetFilter(intFilter, type) : cur;
-    //    if (str == null) continue;
-
-    //    if (filter.Contains(str))
-    //    {
-    //      Log.Out($"{Config.ModPrefix} Duplicate filter index *{str}* in {filters.Aggregate("", (c, f) => c + (f == cur ? $"*{f}*," : $"{f},"))} skipping");
-
-    //      continue;
-    //    }
-
-    //    filter.Add(str);
-    //  }
-    //  return filter;
-    //}
-
-    //private static void SendObject(BCMAbstract gameobj)
-    //{
-    //  if (Options.ContainsKey("min"))
-    //  {
-    //    SendJson(new List<List<object>> { gameobj.Data().Select(d => d.Value).ToList() });
-    //  }
-    //  else
-    //  {
-    //    SendJson(gameobj.Data());
-    //  }
-    //}
-
-    //private static string GetFilter(int f, string type)
-    //{
-    //  switch (type)
-    //  {
-    //    case BCMGameObject.GOTypes.Archetypes:
-    //      return BCMArchetype.FilterMap.ContainsKey(f) ? BCMArchetype.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.BiomeSpawning:
-    //      return BCMBiomeSpawn.FilterMap.ContainsKey(f) ? BCMBiomeSpawn.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.Biomes:
-    //      return BCMBiome.FilterMap.ContainsKey(f) ? BCMBiome.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.Blocks:
-    //      return BCMItemClass.FilterMap.ContainsKey(f) ? BCMItemClass.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.Buffs:
-    //      return BCMBuff.FilterMap.ContainsKey(f) ? BCMBuff.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.EntityClasses:
-    //      return BCMEntityClass.FilterMap.ContainsKey(f) ? BCMEntityClass.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.EntityGroups:
-    //      return BCMEntityGroup.FilterMap.ContainsKey(f) ? BCMEntityGroup.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.ItemClasses:
-    //      return BCMItemClass.FilterMap.ContainsKey(f) ? BCMItemClass.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.Items:
-    //      return BCMItemClass.FilterMap.ContainsKey(f) ? BCMItemClass.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.LootContainers:
-    //      return BCMLootContainer.FilterMap.ContainsKey(f) ? BCMLootContainer.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.LootGroups:
-    //      return BCMLootGroup.FilterMap.ContainsKey(f) ? BCMLootGroup.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.LootProbabilityTemplates:
-    //      return BCMLootProbabilityTemplate.FilterMap.ContainsKey(f) ? BCMLootProbabilityTemplate.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.LootQualityTemplates:
-    //      return BCMLootQualityTemplate.FilterMap.ContainsKey(f) ? BCMLootQualityTemplate.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.Materials:
-    //      return BCMMaterial.FilterMap.ContainsKey(f) ? BCMMaterial.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.Prefabs:
-    //      return BCMPrefab.FilterMap.ContainsKey(f) ? BCMPrefab.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.Quests:
-    //      return BCMQuest.FilterMap.ContainsKey(f) ? BCMQuest.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.Recipes:
-    //      return BCMRecipe.FilterMap.ContainsKey(f) ? BCMRecipe.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.Rwg:
-    //      return BCMRWG.FilterMap.ContainsKey(f) ? BCMRWG.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.Skills:
-    //      return BCMSkill.FilterMap.ContainsKey(f) ? BCMSkill.FilterMap[f] : null;
-    //    case BCMGameObject.GOTypes.Spawners:
-    //      return BCMSpawner.FilterMap.ContainsKey(f) ? BCMSpawner.FilterMap[f] : null;
-    //    default:
-    //      return null;
-    //  }
-    //}
 
     private static void ProcessObjects(string type, IEnumerable<object> objects, out List<object> data, List<string> filter)
     {
@@ -378,7 +294,8 @@ namespace BCM.Commands
         {"WildernessRules", RWGRules.Instance.WildernessRules},
         {"PrefabSpawnRules", RWGRules.Instance.PrefabSpawnRules},
         {"BiomeSpawnRules", RWGRules.Instance.BiomeSpawnRules},
-        {"HubLayouts", RWGRules.Instance.HubLayouts}
+        {"HubLayouts", RWGRules.Instance.HubLayouts},
+        {"RulesetName", RWGRules.Instance.RulesetName}
       };
 
       objects.Add(sections);

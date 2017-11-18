@@ -620,8 +620,10 @@ namespace BCM.Models
       var equipment = pInfo.EP != null ? pInfo.EP.equipment.GetItems() : pInfo.PDF.equipment.GetItems();
 
       var k = 1;
-      foreach (var item in equipment)
+      var slotidx = new[] { 16, 9, 10, 27, 19, 3, 28, 29, 5, 6 };
+      foreach (var i in slotidx)
       {
+        var item = equipment[i];
         BCMItemValue slot = null;
         if (item.type != 0)
         {
@@ -741,9 +743,12 @@ namespace BCM.Models
 
       if (pInfo.EP != null)
       {
-        foreach (var spawn in pInfo.EP.SpawnPoints.GetCopy())
+        if (pInfo.EP.SpawnPoints != null)
         {
-          Spawnpoints.Add(new BCMVector3(spawn));
+          foreach (var spawn in pInfo.EP.SpawnPoints.GetCopy())
+          {
+            Spawnpoints.Add(new BCMVector3(spawn));
+          }
         }
       }
       else
@@ -784,10 +789,10 @@ namespace BCM.Models
     //get the updated value from PCP, EP stats doesnt always update on joining
     private void GetSpeedModifier(PlayerInfo pInfo) => Bin.Add("SpeedModifier",
       SpeedModifier = Math.Round(pInfo.EP != null
-        ? (pInfo.EP.Stats.SpeedModifier.Value -1 < 0.01 && pInfo.EP.Stats.SpeedModifier.Value - pInfo.PCP.DataCache.ecd.stats.SpeedModifier.Value > 0.01
+        ? (pInfo.EP.Stats.SpeedModifier.Value - 1 < 0.01 && pInfo.EP.Stats.SpeedModifier.Value - pInfo.PCP.DataCache.ecd.stats.SpeedModifier.Value > 0.01
         ? pInfo.PCP.DataCache.ecd.stats.SpeedModifier.Value
         : pInfo.EP.Stats.SpeedModifier.Value)
-        : pInfo.PDF.ecd.stats.SpeedModifier.Value, 
+        : pInfo.PDF.ecd.stats.SpeedModifier.Value,
         1));
 
     //get the updated value from PCP, values on server not updating

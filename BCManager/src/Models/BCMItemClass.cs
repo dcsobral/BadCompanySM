@@ -17,6 +17,7 @@ namespace BCM.Models
       public const string StackNumber = "stack";
       public const string Icon = "icon";
       public const string IconTint = "icontint";
+      public const string CanSpawn = "spawn";
     }
 
     private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
@@ -28,7 +29,8 @@ namespace BCM.Models
       { 4,  StrFilters.Material },
       { 5,  StrFilters.StackNumber },
       { 6,  StrFilters.Icon },
-      { 7,  StrFilters.IconTint }
+      { 7,  StrFilters.IconTint },
+      { 8, StrFilters.CanSpawn }
     };
     public static Dictionary<int, string> FilterMap => _filterMap;
     #endregion
@@ -42,6 +44,7 @@ namespace BCM.Models
     public int StackNumber;
     public string Icon;
     public string IconTint;
+    public bool CanSpawn;
     #endregion;
 
     public BCMItemClass(object obj, string typeStr, Dictionary<string, string> options, List<string> filters) : base(obj, typeStr, options, filters)
@@ -82,6 +85,9 @@ namespace BCM.Models
             case StrFilters.IconTint:
               GetIconTint(item);
               break;
+            case StrFilters.CanSpawn:
+              GetCanSpawn(item);
+              break;
             default:
               Log.Out($"{Config.ModPrefix} Unknown filter {f}");
               break;
@@ -98,6 +104,7 @@ namespace BCM.Models
         GetStackNumber(item);
         GetIcon(item);
         GetIconTint(item);
+        GetCanSpawn(item);
 
         if (Options.ContainsKey("properties"))
         {
@@ -108,6 +115,8 @@ namespace BCM.Models
         }
       }
     }
+
+    private void GetCanSpawn(ItemClass item) => Bin.Add("CanSpawn", CanSpawn = item.CreativeMode != "None" );
 
     private void GetIconTint(ItemClass item) => Bin.Add("IconTint", IconTint = item.GetIconTint().ToStringRgbHex(hash:false));
 
