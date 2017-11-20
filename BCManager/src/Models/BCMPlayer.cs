@@ -765,7 +765,8 @@ namespace BCM.Models
 
     //get the updated value from PCP, EP stats doesnt always update on joining
     private void GetStamina(PlayerInfo pInfo) => Bin.Add("Stamina",
-      Stamina = (int)(pInfo.EP != null ? (pInfo.EP.Stamina - 100 < 1f && pInfo.EP.Stamina - pInfo.PCP.DataCache.ecd.stats.Stamina.Value > 1f
+      Stamina = (int)(pInfo.EP != null 
+      ? (pInfo.PCP.DataCache.ecd.stats != null && pInfo.EP.Stamina - 100 < 1f && pInfo.EP.Stamina - pInfo.PCP.DataCache.ecd.stats.Stamina.Value > 1f
       ? pInfo.PCP.DataCache.ecd.stats.Stamina.Value
       : pInfo.EP.Stamina)
       : pInfo.PDF.ecd.stats.Stamina.Value));
@@ -773,7 +774,7 @@ namespace BCM.Models
     //get the updated value from PCP, EP stats doesnt always update on joining
     private void GetHealth(PlayerInfo pInfo) => Bin.Add("Health",
       Health = (int)(pInfo.EP != null
-      ? (pInfo.EP.Health == 100 && pInfo.EP.Health != (int)pInfo.PCP.DataCache.ecd.stats.Health.Value
+      ? (pInfo.PCP.DataCache.ecd.stats != null && pInfo.EP.Health == 100 && pInfo.EP.Health != (int)pInfo.PCP.DataCache.ecd.stats.Health.Value
       ? pInfo.PCP.DataCache.ecd.stats.Health.Value
       : pInfo.EP.Health)
       : pInfo.PDF.ecd.stats.Health.Value));
@@ -781,7 +782,7 @@ namespace BCM.Models
     //get the updated value from PCP, EP stats doesnt always update on joining
     private void GetWellness(PlayerInfo pInfo) => Bin.Add("Wellness",
     Wellness = (int)(pInfo.EP != null
-    ? (pInfo.EP.Stats.Wellness.Value - 100 < 1f && pInfo.EP.Stats.Wellness.Value - pInfo.PCP.DataCache.ecd.stats.Wellness.Value > 1
+    ? (pInfo.PCP.DataCache.ecd.stats != null && pInfo.EP.Stats.Wellness.Value - 100 < 1f && pInfo.EP.Stats.Wellness.Value - pInfo.PCP.DataCache.ecd.stats.Wellness.Value > 1
     ? pInfo.PCP.DataCache.ecd.stats.Wellness.Value
     : pInfo.EP.Stats.Wellness.Value)
     : pInfo.PDF.ecd.stats.Wellness.Value));
@@ -789,20 +790,21 @@ namespace BCM.Models
     //get the updated value from PCP, EP stats doesnt always update on joining
     private void GetSpeedModifier(PlayerInfo pInfo) => Bin.Add("SpeedModifier",
       SpeedModifier = Math.Round(pInfo.EP != null
-        ? (pInfo.EP.Stats.SpeedModifier.Value - 1 < 0.01 && pInfo.EP.Stats.SpeedModifier.Value - pInfo.PCP.DataCache.ecd.stats.SpeedModifier.Value > 0.01
+        ? (pInfo.PCP.DataCache.ecd.stats != null && pInfo.EP.Stats.SpeedModifier.Value - 1 < 0.01 && pInfo.EP.Stats.SpeedModifier.Value - pInfo.PCP.DataCache.ecd.stats.SpeedModifier.Value > 0.01
         ? pInfo.PCP.DataCache.ecd.stats.SpeedModifier.Value
         : pInfo.EP.Stats.SpeedModifier.Value)
         : pInfo.PDF.ecd.stats.SpeedModifier.Value,
         1));
 
     //get the updated value from PCP, values on server not updating
-    private void GetCoreTemp(PlayerInfo pInfo) => Bin.Add("CoreTemp", CoreTemp = (int)(pInfo.EP != null ? pInfo.PCP.DataCache.ecd.stats.CoreTemp.Value : pInfo.PDF.ecd.stats.CoreTemp.Value));
+    private void GetCoreTemp(PlayerInfo pInfo) => Bin.Add("CoreTemp", 
+      CoreTemp = (int)(pInfo.EP != null && pInfo.PCP.DataCache.ecd.stats != null ? pInfo.PCP.DataCache.ecd.stats.CoreTemp.Value : pInfo.PDF.ecd.stats.CoreTemp.Value));
 
     //get the updated value from PCP, values on server not updating
-    private void GetDrink(PlayerInfo pInfo) => Bin.Add("Drink", Drink = (int)((pInfo.EP != null ? pInfo.PCP.DataCache.drink.GetLifeLevelFraction() : pInfo.PDF.drink.GetLifeLevelFraction()) * 100));
+    private void GetDrink(PlayerInfo pInfo) => Bin.Add("Drink", Drink = (int)((pInfo.EP != null && pInfo.PCP.DataCache.drink != null ? pInfo.PCP.DataCache.drink.GetLifeLevelFraction() : pInfo.PDF.drink.GetLifeLevelFraction()) * 100));
 
     //get the updated value from PCP, values on server not updating
-    private void GetFood(PlayerInfo pInfo) => Bin.Add("Food", Food = (int)((pInfo.EP != null ? pInfo.PCP.DataCache.food.GetLifeLevelFraction() : pInfo.PDF.food.GetLifeLevelFraction()) * 100));
+    private void GetFood(PlayerInfo pInfo) => Bin.Add("Food", Food = (int)((pInfo.EP != null && pInfo.PCP.DataCache.food != null ? pInfo.PCP.DataCache.food.GetLifeLevelFraction() : pInfo.PDF.food.GetLifeLevelFraction()) * 100));
 
     //get the updated value from PCP, values on server not updating
     private void GetWaypoints(PlayerInfo pInfo)

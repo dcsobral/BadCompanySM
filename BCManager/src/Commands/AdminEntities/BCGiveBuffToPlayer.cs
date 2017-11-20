@@ -4,13 +4,6 @@ namespace BCM.Commands
   {
     public override void Process()
     {
-      if (SenderInfo.IsLocalGame)
-      {
-        SendOutput(@"Use the ""buff"" command for the local player.");
-
-        return;
-      }
-
       if (Params.Count != 2)
       {
         SendOutput("Invalid arguments");
@@ -19,7 +12,7 @@ namespace BCM.Commands
         return;
       }
 
-      var count = ConsoleHelper.ParseParamPartialNameOrId(Params[0], out string _, out ClientInfo clientInfo);
+      var count = ConsoleHelper.ParseParamPartialNameOrId(Params[0], out string _, out var clientInfo);
       if (count == 1)
       {
         if (clientInfo == null)

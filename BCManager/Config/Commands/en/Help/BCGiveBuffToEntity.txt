@@ -11,5 +11,5 @@
             <entity> <buffid> - will add the specified buff to the entity
             <EntityClass> <buffid> /type - will add the specified buff to all entities of the specified entity class
             Use bc-help to get a list of common /options
-            Use bc-buffs to get a list of buff ids
+            Use bc-go buffs to get a list of buff ids
             Use bc-le to get a list of spawned entity types

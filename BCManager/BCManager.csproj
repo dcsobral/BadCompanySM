@@ -57,6 +57,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\Commands\en\Description\BCGiveItemToPlayer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\Commands\en\Description\BCHelp.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -76,6 +79,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Help\BCExport.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCGiveItemToPlayer.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Help\BCHelp.txt">
@@ -110,11 +116,10 @@
   <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="src\API.cs" />
+    <Compile Include="src\Commands\AdminEntities\BCGiveItemToPlayer.cs" />
     <Compile Include="src\Commands\AdminEntities\BCHordeSpawners.cs" />
     <Compile Include="src\Commands\AdminEntities\BCSleeper.cs" />
     <Compile Include="src\Commands\AdminEntities\BCTeleport.cs" />
-    <Compile Include="src\Commands\GameObjects\GameObjectsAlias\BCItems.cs" />
-    <Compile Include="src\Commands\GameObjects\GameObjectsAlias\BCBlocks.cs" />
     <Compile Include="src\Commands\LiveData\BCGetSpawn.cs" />
     <Compile Include="src\Commands\LiveData\BCAdmins.cs" />
     <Compile Include="src\Commands\Utility\BCChunkObserver.cs" />

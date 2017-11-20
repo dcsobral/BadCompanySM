@@ -1,0 +1,9 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} <partialname / entityid / steamid> <itemname or id> /count=<#> [/min=<#> /max=<#> | /q=<#>]
+      Notes:
+            Use bc-help to get a list of common /options
+            The item will appear in the first open inventory slot, or stack with an existing one.
+            If the player inventory is full the item will drop to the ground.

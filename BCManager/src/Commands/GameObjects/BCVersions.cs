@@ -32,16 +32,17 @@ namespace BCM.Commands
     public override void Process()
     {
       var loadedMods = ModManager.GetLoadedMods();
-      var mods = new List<object>();
+      var mods = new List<BCMModInfo>();
 
       var gameVer = new BCMModInfo
       {
-        Name = "7DaysToDie",
-        Version = Constants.cVersion,
+        Name = $"{Constants.cProduct} ({Constants.cProductAbbrev})",
+        Version = $"{Constants.cVersionType} {Constants.cVersionMajor}.{Constants.cVersionMinor} {Constants.cVersionBuild}",
         Website = "http://7daystodie.com"
       };
+
       mods.Add(gameVer);
-      mods.AddRange(loadedMods.Select(mod => new BCMModInfo(mod)).Cast<object>());
+      mods.AddRange(loadedMods.Select(mod => new BCMModInfo(mod)));
 
       SendJson(mods);
     }

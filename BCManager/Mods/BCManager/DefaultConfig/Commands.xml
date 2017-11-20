@@ -43,6 +43,7 @@
   <!-- Admin Players & Entities -->
   <Command name="BCGiveBuffToEntity" commands="bc-geb,bc-gebuff" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCGiveBuffToPlayer" commands="bc-gpb,bc-gpbuff" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCGiveItemToPlayer" commands="bc-give" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCGiveQuestToPlayer" commands="bc-gpq,bc-gpquest" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCSetSkillOnPlayer" commands="bc-setskill,setskill" defaultpermissionlevel="0" defaultoptions=""/>
 
