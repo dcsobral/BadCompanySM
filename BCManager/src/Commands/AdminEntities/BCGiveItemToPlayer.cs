@@ -14,6 +14,13 @@ namespace BCM.Commands
         return;
       }
 
+      if (Params.Count != 2)
+      {
+        SendOutput(GetHelp());
+
+        return;
+      }
+
       var matches = ConsoleHelper.ParseParamPartialNameOrId(Params[0], out string _, out var clientInfo);
       if (matches == 1)
       {
