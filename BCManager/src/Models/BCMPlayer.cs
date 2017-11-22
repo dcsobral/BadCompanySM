@@ -68,6 +68,7 @@ namespace BCM.Models
       public const string Marker = "marker";
       public const string Friends = "friends";
       public const string LPBlocks = "lpblocks";
+      public const string LastSaveSecs = "lastsave";
     }
 
     private static readonly Dictionary<int, string> _filterMap = new Dictionary<int, string>
@@ -128,7 +129,8 @@ namespace BCM.Models
       { 53,  StrFilters.Waypoints },
       { 54,  StrFilters.Marker },
       { 55,  StrFilters.Friends },
-      { 56,  StrFilters.LPBlocks }
+      { 56,  StrFilters.LPBlocks },
+      { 57,  StrFilters.LastSaveSecs }
     };
     public static Dictionary<int, string> FilterMap => _filterMap;
     #endregion
@@ -265,6 +267,8 @@ namespace BCM.Models
     public BCMVector3 Marker;
     public List<string> Friends = new List<string>();
     public List<object> LPBlocks = new List<object>();
+
+    public double? LastSaveSecs;
     #endregion;
 
     public BCMPlayer(object obj, Dictionary<string, string> options, List<string> filters) : base(obj, "Entity", options, filters)
@@ -454,6 +458,9 @@ namespace BCM.Models
             case StrFilters.LPBlocks:
               GetLpBlocks(pInfo);
               break;
+            case StrFilters.LastSaveSecs:
+              GetLastSaveSecs(pInfo);
+              break;
           }
         }
       }
@@ -500,9 +507,9 @@ namespace BCM.Models
         GetLastZombieAttacked(pInfo);
         GetRentedVendor(pInfo);
         GetRentedVendorExpire(pInfo);
+        GetLastSaveSecs(pInfo);
 
         if (!Options.ContainsKey("full")) return;
-        //("bag bg belt bt equipment eq buffs bu skillpoints pt skills sk crafting cq favrecipes fr unlockedrecipes ur quests qu spawns sp waypoints wp")
 
         GetBag(pInfo);
         GetBelt(pInfo);
@@ -531,6 +538,8 @@ namespace BCM.Models
     private void GetPosition(PlayerInfo pInfo) => Bin.Add("Position", BCUtils.GetVectorObj(Position = new BCMVector3(pInfo.EP != null ? pInfo.EP.position : pInfo.PDF.ecd.pos), Options));
 
     private void GetUnderground(PlayerInfo pInfo) => Bin.Add("Underground", Underground = pInfo.EP != null ? (int)pInfo.EP.position.y - GameManager.Instance.World.GetHeight((int)pInfo.EP.position.x, (int)pInfo.EP.position.z) - 1 : 0);
+
+    private void GetLastSaveSecs(PlayerInfo pInfo) => Bin.Add("LastSaveSecs", LastSaveSecs = pInfo.EP != null ? pInfo.PCP != null && pInfo.PCP.LastSaveUtc.Ticks != 0 ? (DateTime.UtcNow - pInfo.PCP.LastSaveUtc).TotalMilliseconds / 1000 : (double?) null : null);
 
     private void GetLastOnline(PlayerInfo pInfo) => Bin.Add("LastOnline", pInfo.EP == null ? LastOnline = pInfo.PCP != null ? pInfo.PCP.LastOnline.ToUtcStr() : "" : null);
 
@@ -708,6 +717,8 @@ namespace BCM.Models
         Belt.Add(j.ToString(), slot);
         j++;
       }
+
+      Bin.Add("SelectedSlot", SelectedSlot);
       Bin.Add("Belt", Belt);
     }
 
@@ -765,7 +776,7 @@ namespace BCM.Models
 
     //get the updated value from PCP, EP stats doesnt always update on joining
     private void GetStamina(PlayerInfo pInfo) => Bin.Add("Stamina",
-      Stamina = (int)(pInfo.EP != null 
+      Stamina = (int)(pInfo.EP != null
       ? (pInfo.PCP.DataCache.ecd.stats != null && pInfo.EP.Stamina - 100 < 1f && pInfo.EP.Stamina - pInfo.PCP.DataCache.ecd.stats.Stamina.Value > 1f
       ? pInfo.PCP.DataCache.ecd.stats.Stamina.Value
       : pInfo.EP.Stamina)
@@ -797,7 +808,7 @@ namespace BCM.Models
         1));
 
     //get the updated value from PCP, values on server not updating
-    private void GetCoreTemp(PlayerInfo pInfo) => Bin.Add("CoreTemp", 
+    private void GetCoreTemp(PlayerInfo pInfo) => Bin.Add("CoreTemp",
       CoreTemp = (int)(pInfo.EP != null && pInfo.PCP.DataCache.ecd.stats != null ? pInfo.PCP.DataCache.ecd.stats.CoreTemp.Value : pInfo.PDF.ecd.stats.CoreTemp.Value));
 
     //get the updated value from PCP, values on server not updating

@@ -18,6 +18,8 @@ namespace BCM.PersistentData
     private int _gamestage;
     [OptionalField]
     private BCMVector3 _lastPos;
+    [OptionalField]
+    private DateTime _lastUpdate;
 
     //CLIENT INFO DATA
     [NonSerialized] private ClientInfo _clientInfo;
@@ -30,6 +32,7 @@ namespace BCM.PersistentData
     //ENTITY PLAYER DATA
     public int Gamestage => _gamestage;
     public BCMVector3 LastLogoutPos => _lastPos;
+    public DateTime LastSaveUtc => _lastUpdate;
 
     //PLAYER DATA FILE DATA - Used for non saved cache of player file data for commands
     [NonSerialized] private PlayerDataReader _playerData;
@@ -68,6 +71,8 @@ namespace BCM.PersistentData
     //Catches the properties from the player data file as it is saved and caches them for use in the player data commands
     public void Update(PlayerDataFile dataFile)
     {
+      _lastUpdate = DateTime.UtcNow;
+
       DataCache.ecd = dataFile.ecd;
       DataCache.food = dataFile.food;
       DataCache.drink = dataFile.drink;

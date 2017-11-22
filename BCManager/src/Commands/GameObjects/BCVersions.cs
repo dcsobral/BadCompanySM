@@ -38,7 +38,9 @@ namespace BCM.Commands
       {
         Name = $"{Constants.cProduct} ({Constants.cProductAbbrev})",
         Version = $"{Constants.cVersionType} {Constants.cVersionMajor}.{Constants.cVersionMinor} {Constants.cVersionBuild}",
-        Website = "http://7daystodie.com"
+        Website = "http://7daystodie.com",
+        Author = "The Fun Pimps",
+        Description = "The survival horde crafting game"
       };
 
       mods.Add(gameVer);
