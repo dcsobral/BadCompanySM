@@ -53,12 +53,24 @@ namespace BCM.Commands
           }
         }
 
-        var itemValue = int.TryParse(Params[1], out var itemId)
-          ? ItemClass.list[itemId] == null
-            ? null
-            : new ItemValue(itemId, min, max, true)
-          : ItemClass.GetItem(Params[1]);
-        if (itemValue == null)
+        ItemValue itemValue;
+        if (int.TryParse(Params[1], out var itemId))
+        {
+          itemValue = ItemClass.list[itemId] == null ? ItemValue.None : new ItemValue(itemId, min, max, true);
+        }
+        else
+        {
+          if (!ItemClass.ItemNames.Contains(Params[1]))
+          {
+            SendOutput($"Unable to find item '{Params[1]}'");
+
+            return;
+          }
+
+          itemValue = new ItemValue(ItemClass.GetItem(Params[1]).type, min, max, true);
+        }
+
+        if (Equals(itemValue, ItemValue.None))
         {
           SendOutput($"Unable to find item '{Params[1]}'");
 
@@ -69,6 +81,10 @@ namespace BCM.Commands
         if (Options.ContainsKey("c"))
         {
           int.TryParse(Options["c"], out count);
+        }
+        if (Options.ContainsKey("count"))
+        {
+          int.TryParse(Options["count"], out count);
         }
 
         var playerId = clientInfo.entityId;
@@ -88,7 +104,11 @@ namespace BCM.Commands
           world.SpawnEntityInWorld(entityItem);
           clientInfo.SendPackage(new NetPackageEntityCollect(entityItem.entityId, playerId));
           world.RemoveEntity(entityItem.entityId, EnumRemoveEntityReason.Killed);
-          SendOutput($"Gave {count}x {itemValue.ItemClass.localizedName} to player: {clientInfo.playerName}");
+          SendOutput($"Gave {count}x {itemValue.ItemClass.localizedName ?? itemValue.ItemClass.Name} to player: {clientInfo.playerName}");
+          if (!Options.ContainsKey("silent"))
+          {
+            clientInfo.SendPackage(new NetPackageGameMessage(EnumGameMessages.Chat, $"{count}x {itemValue.ItemClass.localizedName ?? itemValue.ItemClass.Name} recived. If your bag is full check the ground.", "(Server)", false, "", false));
+          }
         }
         else
         {

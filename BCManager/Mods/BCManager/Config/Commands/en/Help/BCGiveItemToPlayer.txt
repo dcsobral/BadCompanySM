@@ -2,7 +2,7 @@
       Aliases: {commands}
       Default Options: {defaultoptions}
       Usage:
-            1. {command} <partialname / entityid / steamid> <itemname or id> /count=<#> [/min=<#> /max=<#> | /q=<#>]
+            1. {command} <partialname / entityid / steamid> <itemname or id> /c=<#> [/min=<#> /max=<#> | /q=<#>]
       Notes:
             Use bc-help to get a list of common /options
             The item will appear in the first open inventory slot, or stack with an existing one.
@@ -10,5 +10,6 @@
             Item id is the itemclass id, not the item id as it appears in the xml (bc-go itemclasses for a list)
             /min and /max set the min and max for random quality, if either value is not given it will default to 1 for min and 600 for max
             /q will set both min and max to the value given, resulting in an item of that given quality value
-            /count is the number to give, it can be greater than the item max stack size, and will add multiple items in such a case (even items like guns)
+            /c (or /count) is the number to give, it can be greater than the item max stack size, and will add multiple items in such a case (even items like guns)
               items with a quality when using count will all have the same quality if a random range is used
+            /silent will prevent the receiving player from getting the chat notification of the given item
