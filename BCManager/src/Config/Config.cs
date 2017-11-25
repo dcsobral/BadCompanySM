@@ -18,6 +18,8 @@ namespace BCM
     private const string SystemFile = "System.xml";
     private static readonly string DefaultConfigPath = ModDir + "DefaultConfig" + Path.DirectorySeparatorChar;
     public static readonly string ConfigPath = ModDir + "Config" + Path.DirectorySeparatorChar;
+    public static readonly string DefaultEventsPath = DefaultConfigPath + "Events" + Path.DirectorySeparatorChar;
+    public static readonly string EventsPath = ConfigPath + "Events" + Path.DirectorySeparatorChar;
     public static string DefaultLocale = "en";
     public static bool LogCache;
 
@@ -49,6 +51,7 @@ namespace BCM
       var xmlDoc = new XmlDocument();
       try
       {
+        //todo: merge instead of xor
         xmlDoc.Load(File.Exists($"{ConfigPath}{SystemFile}")
           ? $"{ConfigPath}{SystemFile}"
           : $"{DefaultConfigPath}{SystemFile}");
@@ -141,6 +144,11 @@ namespace BCM
             if (node.HasAttribute("options"))
             {
               synapse.Options = node.GetAttribute("options");
+            }
+
+            if (node.HasAttribute("config"))
+            {
+              synapse.Cfg = node.GetAttribute("config");
             }
 
             synapse.WireNeurons();

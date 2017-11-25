@@ -10,6 +10,7 @@ namespace BCM
     public bool IsEnabled;
     public int Beats;
     public string Options;
+    public string Cfg;
     private int _lastfired;
     private readonly List<NeuronAbstract> _neurons = new List<NeuronAbstract>();
 

@@ -170,17 +170,16 @@ namespace BCM.Commands
       {
         for (var cz = -1; cz <= prefab.size.z + 16; cz = cz + 16)
         {
-          var chunk = world.GetChunkFromWorldPos(x + cx, y, z + cz) as Chunk;
-          if (chunk == null)
-          {
-            // todo: generate and observe chunks required
-            SendOutput($"Unable to load chunk for prefab @ {x + cx},{z + cz}");
-          }
-          else
+          if (world.GetChunkFromWorldPos(x + cx, y, z + cz) is Chunk chunk)
           {
             if (modifiedChunks.ContainsKey(chunk.Key)) continue;
 
             modifiedChunks.Add(chunk.Key, chunk);
+          }
+          else
+          {
+            // todo: generate and observe chunks required
+            SendOutput($"Unable to load chunk for prefab @ {x + cx},{z + cz}");
           }
         }
       }

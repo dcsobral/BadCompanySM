@@ -1,19 +1,70 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.IO;
+using System.Xml;
 
 namespace BCM.Neurons
 {
   public class EntitySpawnMutator : NeuronAbstract
   {
     private bool _hasDelegate;
-    private readonly List<string> _options = new List<string>();
+    private readonly bool hasEnemy;
+    private readonly bool hasNpc;
+    private readonly bool hasItem;
+    //private readonly bool hasFallingBlock;
+
+    private readonly float lifetime = 60f;
+    private readonly bool logItems;
 
     public EntitySpawnMutator(Synapse s)
     {
+      if (!string.IsNullOrEmpty(s.Cfg))
+      {
+        var xmlDoc = new XmlDocument();
+        try
+        {
+          xmlDoc.Load(File.Exists($"{Config.EventsPath}{s.Cfg}.xml")
+            ? $"{Config.EventsPath}{s.Cfg}.xml"
+            : $"{Config.DefaultEventsPath}{s.Cfg}.xml");
+
+          var nodeLifetime = xmlDoc.SelectNodes("/SpawnMutator/Lifetime");
+          if (nodeLifetime != null && nodeLifetime.Count != 0 && nodeLifetime.Item(0) is XmlElement n &&
+              n.HasAttribute("value") && !float.TryParse(n.GetAttribute("value"), out lifetime))
+            Log.Out(Config.ModPrefix + " Unable to parse value for lifetime in Spawn Mutator config");
+
+          var nodeLogItems = xmlDoc.SelectNodes("/SpawnMutator/LogDroppedItems");
+          if (nodeLogItems != null && nodeLogItems.Count != 0 && nodeLogItems.Item(0) is XmlElement l &&
+              l.HasAttribute("value") && !bool.TryParse(l.GetAttribute("value"), out logItems))
+            Log.Out(Config.ModPrefix + " Unable to parse value for logitems in Spawn Mutator config");
+        }
+        catch (Exception e)
+        {
+          Log.Error($"{Config.ModPrefix} Error configuring Spawn Mutator\n{e}");
+        }
+      }
+
       foreach (var o in s.Options.Split(','))
       {
-        _options.Add(o);
+        switch (o)
+        {
+          case "EntityEnemy":
+            hasEnemy = true;
+            break;
+          case "EntityNPC":
+            hasNpc = true;
+            break;
+          case "EntityItem":
+            hasItem = true;
+            break;
+          //case "EntityFallingBlock":
+          //  hasFallingBlock = true;
+          //  break;
+          default:
+            Log.Out($"{Config.ModPrefix} Unknown Spawn Mutator entity class");
+            break;
+        }
       }
     }
+
     public override void Fire(int b)
     {
       if (GameManager.Instance.World == null) return;
@@ -27,25 +78,30 @@ namespace BCM.Neurons
 
     private void OnEntityLoaded(Entity entity)
     {
-      if (_options.Contains("EntityEnemy"))
+      if (hasEnemy && entity is EntityEnemy enemy)
       {
-        var enemy = entity as EntityEnemy;
-        if (enemy != null)
-        {
-          ProcessEntityEnemy(enemy);
-        }
+        ProcessEntityEnemy(enemy);
+
+        return;
       }
-      else
+      if (hasNpc && entity is EntityNPC npc)
       {
-        if (_options.Contains("EntityNPC"))
-        {
-          var npc = entity as EntityNPC;
-          if (npc != null)
-          {
-            ProcessEntityNpc(npc);
-          }
-        }
+        ProcessEntityNpc(npc);
+
+        return;
       }
+      if (hasItem && entity is EntityItem item)
+      {
+        ProcessEntityItem(item);
+
+        return;
+      }
+      //if (hasFallingBlock && entity is EntityFallingBlock block)
+      //{
+      //  ProcessEntityFallingBlock(block);
+
+      //  return;
+      //}
 
       //todo: use threaded task to get chunk and report ground pos
       //if (_options.Contains("EntitySupplyCrate"))
@@ -60,6 +116,20 @@ namespace BCM.Neurons
       //todo: apply settings to entity based on config
     }
 
+    //private static void ProcessEntityFallingBlock(EntityFallingBlock block)
+    //{
+
+    //}
+
+    private  void ProcessEntityItem(EntityItem item)
+    {
+      if (logItems)
+      {
+        Log.Out($"{Config.ModPrefix} Item Dropped:[{item.entityId}]{item.itemStack.count}x {item.itemStack.itemValue.ItemClass.Name} @{(int)item.position.x} {(int)item.position.y} {(int)item.position.z}");
+      }
+      item.lifetime = lifetime;
+    }
+
     private static string GetClassName(Entity entity)
     {
       if (!EntityClass.list.ContainsKey(entity.entityClass)) return string.Empty;
@@ -70,12 +140,12 @@ namespace BCM.Neurons
 
     private static void ProcessEntityEnemy(EntityEnemy entity)
     {
-      Log.Out($"{Config.ModPrefix} Spawn Detected:{GetClassName(entity)}[{entity.entityId}]({entity.GetType()})@{(int) entity.position.x} {(int) entity.position.y} {(int) entity.position.z}");
+      Log.Out($"{Config.ModPrefix} Spawn Detected:{GetClassName(entity)}[{entity.entityId}]({entity.GetType()})@{(int)entity.position.x} {(int)entity.position.y} {(int)entity.position.z}");
     }
 
     private static void ProcessEntityNpc(EntityNPC entity)
     {
-      Log.Out($"{Config.ModPrefix} Spawn Detected:{GetClassName(entity)}[{entity.entityId}]({entity.GetType()})@{(int) entity.position.x} {(int) entity.position.y} {(int) entity.position.z}");
+      Log.Out($"{Config.ModPrefix} Spawn Detected:{GetClassName(entity)}[{entity.entityId}]({entity.GetType()})@{(int)entity.position.x} {(int)entity.position.y} {(int)entity.position.z}");
     }
 
     //private void ProcessEntitySupplyCrate(EntitySupplyCrate entity)
