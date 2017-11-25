@@ -108,6 +108,9 @@
     <Content Include="Config\Commands\en\Help\BCWorldBlocks.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Config\Events\SpawnMutator.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ModInfo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -265,7 +268,7 @@
     <None Include="Config\Readme.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Config\Motd.xml">
+    <None Include="Config\Events\Motd.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -478,7 +481,9 @@
 
 
 mkdir "$(ProjectDir)Mods\BCManager\Config"
+mkdir "$(ProjectDir)Mods\BCManager\Config\Events"
 mkdir "$(ProjectDir)Mods\BCManager\DefaultConfig"
+mkdir "$(ProjectDir)Mods\BCManager\DefaultConfig\Events"
 
 xcopy "$(ProjectDir)$(OutDir)Config\Commands" "$(ProjectDir)Mods\BCManager\Config\Commands" /e /y /i /c
 
@@ -486,7 +491,8 @@ copy "$(ProjectDir)$(OutDir)BCManager.dll" "$(ProjectDir)Mods\BCManager\BCManage
 copy "$(ProjectDir)$(OutDir)ModInfo.xml" "$(ProjectDir)Mods\BCManager\ModInfo.xml"
 
 copy "$(ProjectDir)$(OutDir)Config\Commands.xml" "$(ProjectDir)Mods\BCManager\DefaultConfig\Commands.xml"
-copy "$(ProjectDir)$(OutDir)Config\Motd.xml" "$(ProjectDir)Mods\BCManager\DefaultConfig\Motd.xml"
+copy "$(ProjectDir)$(OutDir)Config\Events\Motd.xml" "$(ProjectDir)Mods\BCManager\DefaultConfig\Events\Motd.xml"
+copy "$(ProjectDir)$(OutDir)Config\Events\SpawnMutator.xml" "$(ProjectDir)Mods\BCManager\DefaultConfig\Events\SpawnMutator.xml"
 copy "$(ProjectDir)$(OutDir)Config\System.xml" "$(ProjectDir)Mods\BCManager\DefaultConfig\System.xml"
 copy "$(ProjectDir)$(OutDir)Config\Readme.md" "$(ProjectDir)Mods\BCManager\Config\Readme.md"
 </PostBuildEvent>
