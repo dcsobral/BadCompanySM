@@ -10,6 +10,7 @@ namespace BCM.Models
     public int MaxUse;
     public int AmmoIndex;
     public int Count;
+    public int Meta;
     public List<BCMAttachment> Attachments;
     public List<BCMParts> Parts;
 
@@ -23,6 +24,7 @@ namespace BCM.Models
       MaxUse = item.itemValue.MaxUseTimes;
       AmmoIndex = item.itemValue.SelectedAmmoTypeIndex;
       Count = item.count;
+      Meta = item.itemValue.Meta;
 
       if (item.itemValue.Attachments != null && item.itemValue.Attachments.Length > 0)
       {

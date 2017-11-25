@@ -90,7 +90,7 @@ namespace BCM.Neurons
 
         return;
       }
-      if (hasItem && entity is EntityItem item)
+      if (hasItem && entity.GetType() == typeof(EntityItem) && entity is EntityItem item)
       {
         ProcessEntityItem(item);
 
