@@ -20,5 +20,9 @@ namespace BCM.Neurons
 
       Log.Out($"{Config.ModPrefix} World saved");
     }
+
+    public SaveWorld(Synapse s) : base(s)
+    {
+    }
   }
 }

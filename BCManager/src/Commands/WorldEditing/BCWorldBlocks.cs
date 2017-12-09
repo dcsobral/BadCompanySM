@@ -168,7 +168,6 @@ namespace BCM.Commands
           }
           break;
         default:
-          //todo: make a helper method for below output SendHelp(Enum.InvalidParamCount)
           SendOutput("Error: Incorrect command format.");
           SendOutput(GetHelp());
 
@@ -938,9 +937,9 @@ namespace BCM.Commands
       {
         for (var cz = -1; cz <= size.z + 16; cz = cz + 16)
         {
-          var chunk = GameManager.Instance.World.GetChunkFromWorldPos(p3.x + cx, p3.y, p3.z + cz) as Chunk;
-          if (chunk == null)
+          if (!(GameManager.Instance.World.GetChunkFromWorldPos(p3.x + cx, p3.y, p3.z + cz) is Chunk chunk))
           {
+            //todo: output chunk co-ords instead of world pos? Only needed in force sync mode
             SendOutput($"Unable to load chunk for insert @ {p3.x + cx},{p3.z + cz}");
           }
           else

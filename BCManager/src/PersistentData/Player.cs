@@ -56,6 +56,7 @@ namespace BCM.PersistentData
       _lastPos = new BCMVector3(ep != null ? ep.position : Vector3.zero);
       _clientInfo = null;
       _playerData = null;
+      PersistentContainer.Instance.Save("players");
     }
 
     //SET ONLINE
@@ -65,6 +66,7 @@ namespace BCM.PersistentData
       _name = ci.playerName;
       _ip = ci.ip;
       _lastOnline = DateTime.UtcNow;
+      PersistentContainer.Instance.Save("players");
     }
 
     //UPDATE

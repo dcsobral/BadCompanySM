@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using BCM.Commands;
 using BCM.Models;
+using LitJson;
 using UnityEngine;
 using XMLData.Item;
 
@@ -11,6 +12,58 @@ namespace BCM
 {
   public static class BCUtils
   {
+    public static void WriteVector3i(Vector3i v, JsonWriter w, string format)
+    {
+      switch (format)
+      {
+        case "V":
+          w.WriteObjectStart();
+          w.WritePropertyName("x");
+          w.Write(v.x);
+          w.WritePropertyName("y");
+          w.Write(v.y);
+          w.WritePropertyName("z");
+          w.Write(v.z);
+          w.WriteObjectEnd();
+          return;
+        case "S":
+          w.Write($"{v.x} {v.y} {v.z}");
+          return;
+        case "W":
+          w.Write($"{Math.Abs(v.x)}{(v.x < 0 ? "W" : "E")} {Math.Abs(v.z)}{(v.z > 0 ? "N" : "S")}");
+          return;
+        case "C":
+          w.Write($"{v.x}, {v.y}, {v.z}");
+          return;
+      }
+    }
+
+    public static void WriteVector3(Vector3 v, JsonWriter w, string format)
+    {
+      switch (format)
+      {
+        case "V":
+          w.WriteObjectStart();
+          w.WritePropertyName("x");
+          w.Write(Math.Round(v.x, 2));
+          w.WritePropertyName("y");
+          w.Write(Math.Round(v.y, 2));
+          w.WritePropertyName("z");
+          w.Write(Math.Round(v.z, 2));
+          w.WriteObjectEnd();
+          return;
+        case "S":
+          w.Write($"{Math.Floor(v.x)} {Math.Floor(v.y)} {Math.Floor(v.z)}");
+          return;
+        case "W":
+          w.Write($"{Math.Abs(v.x):0}{(v.x < 0f ? "W" : "E")} {Math.Abs(v.z):0}{(v.z > 0f ? "N" : "S")}");
+          return;
+        case "C":
+          w.Write($"{Math.Floor(v.x)}, {Math.Floor(v.y)}, {Math.Floor(v.z)}");
+          return;
+      }
+    }
+
     public static object GetVectorObj(BCMVector3 p, IDictionary<string, string> o)
     {
       if (o.ContainsKey("strpos"))
@@ -44,7 +97,7 @@ namespace BCM
 
     public static string ColorToHex(Color color)
     {
-      return $"{(int) (color.r * 255):X02}{(int) (color.g * 255):X02}{(int) (color.b * 255):X02}";
+      return $"{(int)(color.r * 255):X02}{(int)(color.g * 255):X02}{(int)(color.b * 255):X02}";
     }
 
     public static Dictionary<int, Entity> FilterEntities(Dictionary<int, Entity> entities, Dictionary<string, string> options)

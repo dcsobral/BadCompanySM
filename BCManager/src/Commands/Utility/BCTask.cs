@@ -23,7 +23,6 @@ namespace BCM.Commands
       public object Output;
       public BCCmd Command;
       public Status Status = Status.InProgress;
-
     }
 
     private static readonly Dictionary<string, BCMTask> Tasks = new Dictionary<string, BCMTask>();

@@ -2,7 +2,7 @@
 {
   public class DeathWatch : NeuronAbstract
   {
-    public DeathWatch()
+    public DeathWatch(Synapse s) : base(s)
     {
     }
     public override void Fire(int b)

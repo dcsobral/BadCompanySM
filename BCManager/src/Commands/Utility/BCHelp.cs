@@ -56,29 +56,32 @@ namespace BCM.Commands
       //todo: pull options text from a config file
       //todo: add permission checking to display only commands sender has permission to execute
       //AdminTools.CommandAllowedFor(string[] _cmdNames, string _playerId)
-      var output = Config.CommandDictionary.Where(kvp => kvp.Value.Name != "BCCommandAbstract").Aggregate(
-        "***Bad Company Commands***",
-        (current, kvp) => current + string.Join(", ", kvp.Value.Commands) + " => " + Config.GetDescription(kvp.Key));
 
-      output += "***Options***";
-      output += "/log => Send the command output to the log file";
-      output += "/chat => Send the command output to chat";
-      output += "/console => Override command default settings for /log or /chat";
-      output += "/color=FFFFFF => Specify a color for text sent to chat";
-      output += "/details => For commands that support it, will give more details on items returned";
-      output += "/nodetails => Override command default settings for /details";
-      output += "/online => For ListPlayers commands it will display only online players (default shows all players)";
-      output += "/offline => For ListPlayers commands it will display only offline players";
-      output += "/all => Override command default settings for /online or /offline";
-      output += "***Output Format Options***";
-      output += "/1l => Returns json output on a single line (for server managers)";
-      output += "/pp => Returns json output with print pretty enabled (default: on)";
-      output += "/vectors => Returns all BCM Vectors as x y z objects rather than single string";
-      output += "/csvpos =>  Converts all Vector3 co-ords to csv seperated (default is space seperated)";
-      output += "/worldpos => Converts all Vector3 co-ords to Map Co-ords";
-      output += "/strpos => Override command default settings for /csvpos or /worldpos";
+      var output = new List<string> { "***Bad Company Commands***" };
+      output.AddRange(
+        Config.CommandDictionary.Where(kvp => kvp.Value.Name != "BCCommandAbstract")
+          .Select(kvp => $"{string.Join(",", kvp.Value.Commands)} => {Config.GetDescription(kvp.Key)}")
+      );
 
-      SendOutput(output);
+      output.Add("***Options***");
+      output.Add("/log => Send the command output to the log file");
+      output.Add("/chat => Send the command output to chat");
+      output.Add("/console => Override command default settings for /log or /chat");
+      output.Add("/color=FFFFFF => Specify a color for text sent to chat");
+      output.Add("/details => For commands that support it, will give more details on items returned");
+      output.Add("/nodetails => Override command default settings for /details");
+      output.Add("/online => For ListPlayers commands it will display only online players (default shows all players)");
+      output.Add("/offline => For ListPlayers commands it will display only offline players");
+      output.Add("/all => Override command default settings for /online or /offline");
+      output.Add("***Output Format Options***");
+      output.Add("/1l => Returns json output on a single line (for server managers)");
+      output.Add("/pp => Returns json output with print pretty enabled (default: on)");
+      output.Add("/vectors => Returns all BCM Vectors as x y z objects rather than single string");
+      output.Add("/csvpos =>  Converts all Vector3 co-ords to csv seperated (default is space seperated)");
+      output.Add("/worldpos => Converts all Vector3 co-ords to Map Co-ords");
+      output.Add("/strpos => Override command default settings for /csvpos or /worldpos");
+
+      SendOutput(string.Join("\n", output.ToArray()));
     }
   }
 }

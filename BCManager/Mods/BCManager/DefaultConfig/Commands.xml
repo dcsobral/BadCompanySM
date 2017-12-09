@@ -20,6 +20,7 @@
   <Command name="BCPlayerFiles" commands="bc-pdf,bc-pfinfo" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCLocation" commands="bc-loc,loc,pos" defaultpermissionlevel="1000" defaultoptions=""/>
   <Command name="BCAdmins" commands="bc-admins" defaultpermissionlevel="0" defaultoptions="pp"/>
+  <Command name="BCEvents" commands="bc-events" defaultpermissionlevel="0" defaultoptions="pp"/>
 
   <!-- Aliases -->
   <Command name="BCPlayersGamestage" commands="bc-gs" defaultpermissionlevel="0" defaultoptions="online,pp" chathook="bc-gs" chatoptions="online chat color=ff0000"/>

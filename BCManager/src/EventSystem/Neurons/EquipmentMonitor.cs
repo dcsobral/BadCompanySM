@@ -2,7 +2,7 @@
 {
   public class EquipmentMonitor : NeuronAbstract
   {
-    public EquipmentMonitor()
+    public EquipmentMonitor(Synapse s) : base(s)
     {
     }
     public override void Fire(int b)

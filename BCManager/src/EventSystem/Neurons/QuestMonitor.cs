@@ -7,7 +7,7 @@ namespace BCM.Neurons
   public class QuestMonitor : NeuronAbstract
   {
     private PersistentContainer _pcCache;
-    public QuestMonitor()
+    public QuestMonitor(Synapse s) : base(s)
     {
       //Log.Out(Config.ModPrefix + " Added Quest Monitor");
     }

@@ -14,13 +14,13 @@ namespace BCM.Commands
         return;
       }
 
-      if (!int.TryParse(Params[0], out int x))
+      if (!int.TryParse(Params[0], out var x))
       {
         SendOutput("x was not a number");
 
         return;
       }
-      if (!int.TryParse(Params[1], out int z))
+      if (!int.TryParse(Params[1], out var z))
       {
         SendOutput("z was not a number");
 
@@ -85,7 +85,7 @@ namespace BCM.Commands
         }
         else
         {
-          if (chunk.FindSpawnPointAtXZ(cx, cz, out int y, 15, 0, 3, 251, true))
+          if (chunk.FindSpawnPointAtXZ(cx, cz, out var y, 15, 0, 3, 251, true))
           {
             SendOutput("SpawnPoint:" + x + " " + y + " " + z);
           }

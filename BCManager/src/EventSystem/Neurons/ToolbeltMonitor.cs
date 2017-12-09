@@ -2,7 +2,7 @@
 {
   public class ToolbeltMonitor : NeuronAbstract
   {
-    public ToolbeltMonitor()
+    public ToolbeltMonitor(Synapse s) : base(s)
     {
     }
     public override void Fire(int b)

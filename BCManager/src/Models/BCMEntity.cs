@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace BCM.Models
 {
@@ -52,8 +53,8 @@ namespace BCM.Models
     public string Type;
     public string Name;
 
-    public BCMVector3 Position;
-    public BCMVector3 Rotation;
+    public Vector3 Position;
+    public Vector3 Rotation;
     public double? Lifetime;
     public bool IsAlive;
     public double CreationTime;
@@ -193,9 +194,9 @@ namespace BCM.Models
 
     private void GetLifetime(Entity entity) => Bin.Add("Lifetime", Lifetime = entity.lifetime < float.MaxValue ? entity.lifetime : (double?)null);
 
-    private void GetRotation(Entity entity) => Bin.Add("Rotation", BCUtils.GetVectorObj(Rotation = new BCMVector3(entity.rotation), Options));
+    private void GetRotation(Entity entity) => Bin.Add("Rotation", Rotation = entity.rotation);
 
-    private void GetPosition(Entity entity) => Bin.Add("Position", BCUtils.GetVectorObj(Position = new BCMVector3(entity.position), Options));
+    private void GetPosition(Entity entity) => Bin.Add("Position", Position = entity.position);
 
     private void GetName(Entity entity) => Bin.Add("Name", Name = EntityClass.list[entity.entityClass]?.entityClassName);
 

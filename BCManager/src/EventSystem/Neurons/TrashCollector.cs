@@ -11,5 +11,9 @@ namespace BCM.Neurons
 
       //Log.Out(Config.ModPrefix + " Trash Disposed");
     }
+
+    public TrashCollector(Synapse s) : base(s)
+    {
+    }
   }
 }

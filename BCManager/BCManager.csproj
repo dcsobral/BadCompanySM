@@ -69,6 +69,12 @@
     <Content Include="Config\Commands\en\Description\BCChunkObserver.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Config\Commands\en\Description\BCEvents.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCPlayerLogs.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\Commands\en\Description\BCTeleport.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -94,6 +100,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Help\BCChunkObserver.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCEvents.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCPlayerLogs.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Help\BCTeleport.txt">
@@ -125,6 +137,7 @@
     <Compile Include="src\Commands\AdminEntities\BCTeleport.cs" />
     <Compile Include="src\Commands\LiveData\BCGetSpawn.cs" />
     <Compile Include="src\Commands\LiveData\BCAdmins.cs" />
+    <Compile Include="src\Commands\LiveData\BCEvents.cs" />
     <Compile Include="src\Commands\Utility\BCChunkObserver.cs" />
     <Compile Include="src\Models\BCMExpressionData.cs" />
     <Compile Include="src\Models\BCMSlot.cs" />
@@ -230,7 +243,6 @@
     <Compile Include="src\EventSystem\Neurons\SaveWorld.cs" />
     <Compile Include="src\EventSystem\Neurons\EntitySpawnMutator.cs" />
     <Compile Include="src\Functions\BCChunks.cs" />
-    <Compile Include="src\Functions\Convert.cs" />
     <Compile Include="src\Functions\PlayerData.cs" />
     <Compile Include="src\Functions\ObjectCopier.cs" />
     <Compile Include="src\Functions\PlayerStore.cs" />
@@ -241,7 +253,6 @@
     <Compile Include="src\Models\BCMEntity.cs" />
     <Compile Include="src\Models\BCMPlayer.cs" />
     <Compile Include="src\EventSystem\NeuronAbstract.cs" />
-    <Compile Include="src\EventSystem\Neurons\TrashCollector.cs" />
     <Compile Include="src\EventSystem\Neurons\BagMonitor.cs" />
     <Compile Include="src\EventSystem\Neurons\EquipmentMonitor.cs" />
     <Compile Include="src\EventSystem\Neurons\ToolbeltMonitor.cs" />
@@ -252,6 +263,8 @@
     <Compile Include="src\EventSystem\Synapse.cs" />
     <Compile Include="src\EventSystem\Brain.cs" />
     <Compile Include="src\EventSystem\Heartbeat.cs" />
+    <Compile Include="src\PersistentData\BCMEventsConfig.cs" />
+    <Compile Include="src\PersistentData\BCMPlayerLogs.cs" />
     <Compile Include="src\PersistentData\BCMSettings.cs" />
     <Compile Include="src\PersistentData\Player.cs" />
     <Compile Include="src\PersistentData\PersistentContainer.cs" />

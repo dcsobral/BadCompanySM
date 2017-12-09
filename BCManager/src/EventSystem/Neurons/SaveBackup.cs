@@ -2,7 +2,7 @@
 {
   public class SaveBackup : NeuronAbstract
   {
-    public SaveBackup()
+    public SaveBackup(Synapse s) : base(s)
     {
     }
     public override void Fire(int b)

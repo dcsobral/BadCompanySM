@@ -22,9 +22,9 @@ namespace BCM.Commands
       }
       else if (Params.Count == 1)
       {
-        if (!int.TryParse(Params[0], out int entityId))
+        if (!int.TryParse(Params[0], out var entityId))
         {
-          SendOutput("Invalid enityId, 1st param is not a valid number");
+          SendOutput("Invalid enity id, 1st param is not a valid number");
 
           return;
         }
@@ -46,31 +46,29 @@ namespace BCM.Commands
       {
         if (!Options.ContainsKey("all"))
         {
-          SendOutput("Invalid entityId, entity not found: " + entityId);
+          SendOutput($"Invalid entityId, entity not found: {entityId}");
         }
 
         return;
       }
 
       var e = world.Entities.dict[entityId];
-      if (e == null)
+      switch (e)
       {
-        if (!Options.ContainsKey("all"))
-        {
-          SendOutput("Invalid entity, entity not found: " + entityId);
-        }
+        case null:
+          if (!Options.ContainsKey("all"))
+          {
+            SendOutput($"Invalid entity, entity not found: {entityId}");
+          }
 
-        return;
-      }
+          return;
+        case EntityPlayer _:
+          if (!Options.ContainsKey("all"))
+          {
+            SendOutput("You can't remove a player!");
+          }
 
-      if (e is EntityPlayer)
-      {
-        if (!Options.ContainsKey("all"))
-        {
-          SendOutput("You can't remove a player!");
-        }
-
-        return;
+          return;
       }
 
       world.RemoveEntity(entityId, EnumRemoveEntityReason.Despawned);
@@ -80,13 +78,13 @@ namespace BCM.Commands
       {
         if (count == null) return;
 
-        if (count.ContainsKey(e.GetType() + ":" + entityClass.entityClassName))
+        if (count.ContainsKey($"{e.GetType()}:{entityClass.entityClassName}"))
         {
-          count[e.GetType() + ":" + entityClass.entityClassName]++;
+          count[$"{e.GetType()}:{entityClass.entityClassName}"]++;
         }
         else
         {
-          count.Add(e.GetType() + ":" + entityClass.entityClassName, 1);
+          count.Add($"{e.GetType()}:{entityClass.entityClassName}", 1);
         }
       }
       else
@@ -95,7 +93,6 @@ namespace BCM.Commands
         v.RoundToInt(e.position);
         SendOutput($"Entity Removed: {e.GetType()}:{(entityClass != null ? entityClass.entityClassName : "")} @{v.x} {v.y} {v.z}");
       }
-
     }
   }
 }

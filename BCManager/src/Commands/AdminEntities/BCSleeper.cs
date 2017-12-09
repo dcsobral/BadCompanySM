@@ -7,7 +7,7 @@ namespace BCM.Commands
 {
   public class BCSleeper : BCCommandAbstract
   {
-    private readonly string _volumesFunction = "LW";
+    private const string _volumesFunction = "LW";
 
     public override void Process()
     {
@@ -57,7 +57,7 @@ namespace BCM.Commands
       }
     }
 
-    private void GetWorldVolumes(World world)
+    private static void GetWorldVolumes(World world)
     {
       var sleeperVolumes = typeof(World).GetField(_volumesFunction, BindingFlags.NonPublic | BindingFlags.Instance);
       if (sleeperVolumes != null)
@@ -73,7 +73,7 @@ namespace BCM.Commands
         }
         SendJson(new
         {
-          Count = volumeList.Count,
+          Total = volumeList.Count,
           Volumes = volumeList
         });
       }

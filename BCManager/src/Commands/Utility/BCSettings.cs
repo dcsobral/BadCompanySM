@@ -40,7 +40,7 @@ namespace BCM.Commands
             SendOutput($"Prev Value:{value}");
           }
           settings.SetValue(path[0], path[1], path[2], path[3], Params[1]);
-          PersistentContainer.Instance.Save();
+          PersistentContainer.Instance.Save("settings");
 
           break;
 

@@ -145,7 +145,7 @@ namespace BCM.Commands
               break;
 
             case "resources":
-              var resources = GetResources(out int count);
+              var resources = GetResources(out var count);
               data.Add(new { Count = count.ToString(), Resources = resources });
               break;
           }
@@ -180,14 +180,14 @@ namespace BCM.Commands
 
       var prebakedAtlas = component.PrebakedAtlas;
 
-      if (!DynamicUIAtlasTools.ReadPrebakedAtlasDescriptor(prebakedAtlas, out List<UISpriteData> sprites, out int _, out int _))
+      if (!DynamicUIAtlasTools.ReadPrebakedAtlasDescriptor(prebakedAtlas, out var sprites, out int _, out int _))
       {
         SendOutput("Could not read dynamic atlas descriptor");
 
         return null;
       }
 
-      if (!DynamicUIAtlasTools.ReadPrebakedAtlasTexture(prebakedAtlas, out Texture2D texture2D))
+      if (!DynamicUIAtlasTools.ReadPrebakedAtlasTexture(prebakedAtlas, out var texture2D))
       {
         SendOutput("Could not read dynamic atlas texture");
 

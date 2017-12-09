@@ -129,13 +129,13 @@ namespace BCM
               Log.Out($"{ModPrefix} Unable to load Synapse \'enabled\' in element #{count}, value is not a valid boolean in {SystemFile}");
             }
 
-            if (!node.HasAttribute("beats"))
-            {
-              Log.Out($"{ModPrefix} Skipping Synapse element #{count}, missing \'beats\' attribute in {SystemFile}");
-              continue;
-            }
+            //if (!node.HasAttribute("beats"))
+            //{
+            //  Log.Out($"{ModPrefix} Skipping Synapse element #{count}, missing \'beats\' attribute in {SystemFile}");
+            //  continue;
+            //}
 
-            if (!int.TryParse(node.GetAttribute("beats"), out synapse.Beats))
+            if (node.HasAttribute("beats") && !int.TryParse(node.GetAttribute("beats"), out synapse.Beats))
             {
               Log.Out($"{ModPrefix} Unable to load Synapse \'beats\' in element #{count}, value not a valid int in {SystemFile}");
               continue;

@@ -112,12 +112,13 @@ namespace BCM
 
       //BAG
       bag = GameUtils.ReadItemStack(_br);
-      if (bag.Length > 32)
-      {
-        var destinationArray = ItemStack.CreateArray(32);
-        Array.Copy(bag, destinationArray, 32);
-        bag = destinationArray;
-      }
+      //REMOVED - To allow for bigger backpack mods
+      //if (bag.Length > 32)
+      //{
+      //  var destinationArray = ItemStack.CreateArray(32);
+      //  Array.Copy(bag, destinationArray, 32);
+      //  bag = destinationArray;
+      //}
 
       //CRAFTED
       alreadyCraftedList = new HashSet<string>();

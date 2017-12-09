@@ -146,8 +146,8 @@ namespace BCM.Models
     public double TotalPlayTime;
     public string LastOnline;
     public int Underground;
-    public BCMVector3 Position;
-    public BCMVector3 Rotation;
+    public Vector3 Position;
+    public Vector3 Rotation;
 
     //STATS
     public int Health;
@@ -181,8 +181,8 @@ namespace BCM.Models
     public double LongestLife;
 
     public string Archetype;
-    public BCMVector3 DroppedPack;
-    public BCMVector3 RentedVendor;
+    public Vector3 DroppedPack;
+    public Vector3 RentedVendor;
     public ulong RentedVendorExpire;
     public bool? Remote;
 
@@ -262,11 +262,11 @@ namespace BCM.Models
     public List<BCMQuest> Quests;
 
     //SPAWNPOINTS+WAYPOINTS+MARKER
-    public List<BCMVector3> Spawnpoints;
+    public List<Vector3> Spawnpoints;
     public List<BCMWaypoint> Waypoints;
-    public BCMVector3 Marker;
+    public Vector3 Marker;
     public List<string> Friends = new List<string>();
-    public List<object> LPBlocks = new List<object>();
+    public List<Vector3> LPBlocks = new List<Vector3>();
 
     public double? LastSaveSecs;
     #endregion;
@@ -529,17 +529,17 @@ namespace BCM.Models
       }
     }
 
-    private void GetLpBlocks(PlayerInfo pInfo) => Bin.Add("LPBlocks", LPBlocks = pInfo.PPD?.LPBlocks?.Select(lpb => BCUtils.GetVectorObj(new BCMVector3(lpb), Options)).ToList());
+    private void GetLpBlocks(PlayerInfo pInfo) => Bin.Add("LPBlocks", LPBlocks = pInfo.PPD?.LPBlocks?.Select(lpb => lpb.ToVector3()).ToList());
 
     private void GetFriends(PlayerInfo pInfo) => Bin.Add("Friends", Friends = pInfo.PPD?.ACL?.ToList());
 
-    private void GetRotation(PlayerInfo pInfo) => Bin.Add("Rotation", BCUtils.GetVectorObj(Rotation = new BCMVector3(pInfo.EP != null ? pInfo.EP.rotation : pInfo.PDF.ecd.rot), Options));
+    private void GetRotation(PlayerInfo pInfo) => Bin.Add("Rotation", Rotation = pInfo.EP != null ? pInfo.EP.rotation : pInfo.PDF.ecd.rot);
 
-    private void GetPosition(PlayerInfo pInfo) => Bin.Add("Position", BCUtils.GetVectorObj(Position = new BCMVector3(pInfo.EP != null ? pInfo.EP.position : pInfo.PDF.ecd.pos), Options));
+    private void GetPosition(PlayerInfo pInfo) => Bin.Add("Position", Position = pInfo.EP != null ? pInfo.EP.position : pInfo.PDF.ecd.pos);
 
     private void GetUnderground(PlayerInfo pInfo) => Bin.Add("Underground", Underground = pInfo.EP != null ? (int)pInfo.EP.position.y - GameManager.Instance.World.GetHeight((int)pInfo.EP.position.x, (int)pInfo.EP.position.z) - 1 : 0);
 
-    private void GetLastSaveSecs(PlayerInfo pInfo) => Bin.Add("LastSaveSecs", LastSaveSecs = pInfo.EP != null ? pInfo.PCP != null && pInfo.PCP.LastSaveUtc.Ticks != 0 ? (DateTime.UtcNow - pInfo.PCP.LastSaveUtc).TotalMilliseconds / 1000 : (double?) null : null);
+    private void GetLastSaveSecs(PlayerInfo pInfo) => Bin.Add("LastSaveSecs", LastSaveSecs = pInfo.EP != null ? pInfo.PCP != null && pInfo.PCP.LastSaveUtc.Ticks != 0 ? (DateTime.UtcNow - pInfo.PCP.LastSaveUtc).TotalMilliseconds / 1000 : (double?)null : null);
 
     private void GetLastOnline(PlayerInfo pInfo) => Bin.Add("LastOnline", pInfo.EP == null ? LastOnline = pInfo.PCP != null ? pInfo.PCP.LastOnline.ToUtcStr() : "" : null);
 
@@ -561,7 +561,7 @@ namespace BCM.Models
     private void GetRentedVendorExpire(PlayerInfo pInfo) => Bin.Add("RentedVendorExpire", RentedVendorExpire = pInfo.EP != null ? pInfo.EP.RentalEndTime : pInfo.PDF.rentalEndTime);
 
     //todo:EP not updating
-    private void GetRentedVendor(PlayerInfo pInfo) => Bin.Add("RentedVendor", BCUtils.GetVectorObj(RentedVendor = new BCMVector3(pInfo.EP != null ? pInfo.EP.RentedVMPosition : pInfo.PDF.rentedVMPosition), Options));
+    private void GetRentedVendor(PlayerInfo pInfo) => Bin.Add("RentedVendor", RentedVendor = pInfo.EP != null ? pInfo.EP.RentedVMPosition.ToVector3() : pInfo.PDF.rentedVMPosition.ToVector3());
 
     private void GetLastZombieAttacked(PlayerInfo pInfo) => Bin.Add("LastZombieAttacked", pInfo.EP != null
         ? LastZombieAttacked = Math.Round((GameManager.Instance.World.worldTime - pInfo.EP.LastZombieAttackTime) / 600f, 2) : null);
@@ -611,8 +611,8 @@ namespace BCM.Models
 
     //todo: check this is updating while online
     private void GetDroppedPack(PlayerInfo pInfo) => Bin.Add("DroppedPack",
-      BCUtils.GetVectorObj(DroppedPack = new BCMVector3(pInfo.EP != null ? pInfo.EP.GetDroppedBackpackPosition()
-        : pInfo.PDF.droppedBackpackPosition), Options));
+      DroppedPack = pInfo.EP != null ? pInfo.EP.GetDroppedBackpackPosition().ToVector3()
+        : pInfo.PDF.droppedBackpackPosition.ToVector3());
 
     private void GetDistanceWalked(PlayerInfo pInfo) => Bin.Add("DistanceWalked",
       DistanceWalked = Math.Round(pInfo.EP != null ? pInfo.EP.distanceWalked
@@ -750,7 +750,7 @@ namespace BCM.Models
 
     private void GetSpawnpoints(PlayerInfo pInfo)
     {
-      Spawnpoints = new List<BCMVector3>();
+      Spawnpoints = new List<Vector3>();
 
       if (pInfo.EP != null)
       {
@@ -758,7 +758,7 @@ namespace BCM.Models
         {
           foreach (var spawn in pInfo.EP.SpawnPoints.GetCopy())
           {
-            Spawnpoints.Add(new BCMVector3(spawn));
+            Spawnpoints.Add(spawn.ToVector3());
           }
         }
       }
@@ -766,7 +766,7 @@ namespace BCM.Models
       {
         foreach (var spawn in pInfo.PDF.spawnPoints)
         {
-          Spawnpoints.Add(new BCMVector3(spawn));
+          Spawnpoints.Add(spawn.ToVector3());
         }
 
       }
@@ -827,7 +827,7 @@ namespace BCM.Models
         Waypoints.Add(new BCMWaypoint
         {
           Name = waypoint.name,
-          Pos = new BCMVector3(waypoint.pos),
+          Pos = waypoint.pos.ToVector3(),
           Icon = waypoint.icon
         });
       }
@@ -839,7 +839,7 @@ namespace BCM.Models
     {
       if (pInfo.PDF != null)
       {
-        Bin.Add("Marker", Marker = new BCMVector3(pInfo.EP != null ? pInfo.PCP.DataCache.markerPosition : pInfo.PDF.markerPosition));
+        Bin.Add("Marker", Marker = pInfo.EP != null ? pInfo.PCP.DataCache.markerPosition.ToVector3() : pInfo.PDF.markerPosition.ToVector3());
       }
     }
 

@@ -25,7 +25,7 @@ namespace BCM.Neurons
 
     Dictionary<string, Listener> listeners = new Dictionary<string, Listener>();
 
-    public BroadcastAPI()
+    public BroadcastAPI(Synapse s) : base(s)
     {
     }
 

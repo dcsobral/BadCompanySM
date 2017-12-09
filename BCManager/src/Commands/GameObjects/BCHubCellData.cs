@@ -46,9 +46,9 @@ namespace BCM.Commands
       }
       public BCMVector3i(Vector3 v)
       {
-        x = Mathf.RoundToInt(v.x);
-        y = Mathf.RoundToInt(v.y);
-        z = Mathf.RoundToInt(v.z);
+        x = (int)Mathf.Floor(v.x);
+        y = (int)Mathf.Floor(v.y);
+        z = (int)Mathf.Floor(v.z);
       }
       public BCMVector3i(Vector3i v)
       {
@@ -231,6 +231,7 @@ namespace BCM.Commands
 
       if (Params.Count == 1)
       {
+        //filter results with param text
         GetMinMax(out var minX, out var minY, out var maxX, out var maxY);
 
         foreach (var hubCell in _hubCellData)
@@ -244,11 +245,11 @@ namespace BCM.Commands
           var newHubCell = new BCMHubCell(hubCell);
           foreach (var lot in hubCell.Lots)
           {
-            if (!lot.Prefab.Contains(Params[0])) continue;
+            if (lot.Prefab.IndexOf(Params[0], StringComparison.OrdinalIgnoreCase) == -1) continue;
 
             newHubCell.Lots.Add(new BCMLot(lot));
-            filteredHCD.Add(newHubCell);
           }
+          filteredHCD.Add(newHubCell);
         }
       }
       else

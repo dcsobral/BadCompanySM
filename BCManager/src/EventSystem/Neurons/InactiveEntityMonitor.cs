@@ -2,7 +2,7 @@
 {
   public class InactiveEntityMonitor : NeuronAbstract
   {
-    public InactiveEntityMonitor()
+    public InactiveEntityMonitor(Synapse s) : base(s)
     {
     }
     public override void Fire(int b)

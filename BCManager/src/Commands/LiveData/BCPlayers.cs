@@ -47,7 +47,7 @@ namespace BCM.Commands
       if (Params.Count == 1)
       {
         //SPECIFIC PLAYER
-        if (!PlayerStore.GetId(Params[0], out string steamId, "CON")) return;
+        if (!PlayerStore.GetId(Params[0], out var steamId, "CON")) return;
 
         var player = new BCMPlayer(PlayerData.PlayerInfo(steamId), Options, GetFilters(BCMGameObject.GOTypes.Players));
         if (Options.ContainsKey("min"))

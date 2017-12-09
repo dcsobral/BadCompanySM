@@ -15,26 +15,26 @@ namespace BCM.Neurons
     private readonly float lifetime = 60f;
     private readonly bool logItems;
 
-    public EntitySpawnMutator(Synapse s)
+    public EntitySpawnMutator(Synapse s) : base (s)
     {
-      if (!string.IsNullOrEmpty(s.Cfg))
+      if (!string.IsNullOrEmpty(synapse.Cfg))
       {
         var xmlDoc = new XmlDocument();
         try
         {
-          xmlDoc.Load(File.Exists($"{Config.EventsPath}{s.Cfg}.xml")
-            ? $"{Config.EventsPath}{s.Cfg}.xml"
-            : $"{Config.DefaultEventsPath}{s.Cfg}.xml");
+          xmlDoc.Load(File.Exists($"{Config.EventsPath}{synapse.Cfg}.xml")
+            ? $"{Config.EventsPath}{synapse.Cfg}.xml"
+            : $"{Config.DefaultEventsPath}{synapse.Cfg}.xml");
 
           var nodeLifetime = xmlDoc.SelectNodes("/SpawnMutator/Lifetime");
           if (nodeLifetime != null && nodeLifetime.Count != 0 && nodeLifetime.Item(0) is XmlElement n &&
               n.HasAttribute("value") && !float.TryParse(n.GetAttribute("value"), out lifetime))
-            Log.Out(Config.ModPrefix + " Unable to parse value for lifetime in Spawn Mutator config");
+            Log.Out($"{Config.ModPrefix} Unable to parse value for lifetime in Spawn Mutator config");
 
           var nodeLogItems = xmlDoc.SelectNodes("/SpawnMutator/LogDroppedItems");
           if (nodeLogItems != null && nodeLogItems.Count != 0 && nodeLogItems.Item(0) is XmlElement l &&
               l.HasAttribute("value") && !bool.TryParse(l.GetAttribute("value"), out logItems))
-            Log.Out(Config.ModPrefix + " Unable to parse value for logitems in Spawn Mutator config");
+            Log.Out($"{Config.ModPrefix} Unable to parse value for logitems in Spawn Mutator config");
         }
         catch (Exception e)
         {
@@ -42,9 +42,9 @@ namespace BCM.Neurons
         }
       }
 
-      foreach (var o in s.Options.Split(','))
+      foreach (var o in synapse.Options.Split(','))
       {
-        switch (o)
+        switch (o.Trim())
         {
           case "EntityEnemy":
             hasEnemy = true;
@@ -59,7 +59,7 @@ namespace BCM.Neurons
           //  hasFallingBlock = true;
           //  break;
           default:
-            Log.Out($"{Config.ModPrefix} Unknown Spawn Mutator entity class");
+            Log.Out($"{Config.ModPrefix} Unknown Spawn Mutator entity class {o}");
             break;
         }
       }
@@ -67,14 +67,26 @@ namespace BCM.Neurons
 
     public override void Fire(int b)
     {
+    }
+
+    public override void Awake()
+    {
       if (GameManager.Instance.World == null) return;
-      if (_hasDelegate || !API.IsAlive) return;
+      if (_hasDelegate || !API.IsAwake) return;
 
       GameManager.Instance.World.EntityLoadedDelegates += OnEntityLoaded;
+
+      //GameManager.Instance.World.ChunkCache.OnBlockChangedDelegates += OnBlockChanged;
+
       Log.Out($"{Config.ModPrefix} EntitySpawnMutator Initialised");
 
       _hasDelegate = true;
     }
+
+    //private void OnBlockChanged(Vector3i _blockpos, BlockValue _blockvalueold, BlockValue _blockvaluenew)
+    //{
+    //  Log.Out($"Block Type: {_blockvalueold.type} changed to {_blockvaluenew.type} @ {_blockpos}");
+    //}
 
     private void OnEntityLoaded(Entity entity)
     {
@@ -121,7 +133,7 @@ namespace BCM.Neurons
 
     //}
 
-    private  void ProcessEntityItem(EntityItem item)
+    private void ProcessEntityItem(EntityItem item)
     {
       if (logItems)
       {

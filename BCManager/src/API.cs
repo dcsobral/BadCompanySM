@@ -7,30 +7,32 @@ namespace BCM
   public class API : ModApiAbstract
   {
     private static readonly EntitySpawner EntitySpawner = new EntitySpawner();
-    public static bool IsAlive;
+    public static bool IsAwake;
+
+    private static void OnWorldChanged(World _world)
+    {
+      if (_world == null) return;
+
+      Log.Out($"{Config.ModPrefix} World State Changed: Loading Reactive Neurons");
+      IsAwake = true;
+      StateManager.WorldAlive();
+    }
 
     public API()
     {
+      StateManager.Init();
       Config.Init();
-      //if (Config.LogCache)
-      //{
-      //  LogCache.Instance.GetType();
-      //}
       Heartbeat.Start();
+      GameManager.Instance.OnWorldChanged += OnWorldChanged;
     }
 
     public override void GameUpdate()
     {
-      if (IsAlive)
-      {
-        EntitySpawner.ProcessSpawnQueue();
-      }
+      if (IsAwake) EntitySpawner.ProcessSpawnQueue();
     }
 
     public override void GameAwake()
     {
-      StateManager.Awake();
-      IsAlive = true;
     }
 
     public override void GameShutdown()
@@ -53,7 +55,6 @@ namespace BCM
       try
       {
         PersistentContainer.Instance.Players[cInfo.playerId, true]?.SetOnline(cInfo);
-        PersistentContainer.Instance.Save();
       }
       catch (Exception e)
       {
@@ -65,8 +66,11 @@ namespace BCM
     {
       try
       {
+        //Player Data Cache
         PersistentContainer.Instance.Players[cInfo.playerId, true]?.SetOffline(cInfo);
-        PersistentContainer.Instance.Save();
+
+        //Log disconnects explictly
+        Synapse.PlayerTracker(cInfo, RespawnType.Unknown, false);
       }
       catch (Exception e)
       {
@@ -74,22 +78,43 @@ namespace BCM
       }
     }
 
-    //public override bool ChatMessage(ClientInfo _cInfo, EnumGameMessages _type, string _msg, string _mainName, bool _localizeMain, string _secondaryName, bool _localizeSecondary)
-    //{
-    //  return ChatHookExample.Hook(_cInfo, _type, _msg, _mainName);
-    //}
+    //public override bool ChatMessage(ClientInfo _cInfo, EnumGameMessages _type, string _msg, string _mainName, bool _localizeMain, string _secondaryName, bool _localizeSecondary) { }
 
-    //public override void CalcChunkColorsDone(Chunk _chunk) {
-    //}
+    //public override void CalcChunkColorsDone(Chunk _chunk) { }
 
-    //public override void GameStartDone() {
-    //}
+    //public override void GameStartDone() { }
 
     public override void PlayerSpawnedInWorld(ClientInfo cInfo, RespawnType respawnReason, Vector3i pos)
     {
-      //_cInfo.SendPackage(new NetPackageConsoleCmdClient("dm", true));
-      //Log.Out(Config.ModPrefix + " Player Spawned: " + _cInfo.entityId + " @" + _pos.x.ToString() + " " + _pos.y.ToString() + " " + _pos.z.ToString());
-    }
+      try
+      {
+        //Log spawns explictly
+        Synapse.PlayerTracker(cInfo, respawnReason);
 
+        //check for respawn events
+        switch (respawnReason)
+        {
+          case RespawnType.Died:
+            Synapse.DeadIsDead(cInfo);
+            break;
+
+          case RespawnType.Teleport:
+            Synapse.PlayerTeleported(cInfo, pos);
+            break;
+
+          case RespawnType.EnterMultiplayer:
+            Synapse.NewPlayer(cInfo, pos);
+            break;
+
+          case RespawnType.JoinMultiplayer:
+            Synapse.ReturnPlayer(cInfo, pos);
+            break;
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Out($"{Config.ModPrefix} Error in {GetType().Name}.{MethodBase.GetCurrentMethod().Name}: {e}");
+      }
+    }
   }
 }

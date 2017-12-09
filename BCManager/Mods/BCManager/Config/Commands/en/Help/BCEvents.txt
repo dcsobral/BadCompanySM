@@ -1,0 +1,8 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} {neuronname} <subcommands>
+      Notes:
+            Use bc-help to get a list of common /options
+            View and edit event system settings and data

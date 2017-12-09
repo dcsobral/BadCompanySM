@@ -4,6 +4,7 @@ using System.Reflection;
 using LitJson;
 using System.Linq;
 using BCM.Models;
+using UnityEngine;
 
 namespace BCM.Commands
 {
@@ -113,11 +114,18 @@ namespace BCM.Commands
         writer.PrettyPrint = true;
       }
 
+      JsonMapper.RegisterExporter<float>((o, w) => w.Write(System.Convert.ToDouble(o)));
+
+      var f = Options.ContainsKey("strpos") ? "S" : Options.ContainsKey("worldpos") ? "W" : Options.ContainsKey("csvpos") ? "C" : "V";
+      JsonMapper.RegisterExporter<Vector3>((v, w) => BCUtils.WriteVector3(v, w, f));
+      JsonMapper.RegisterExporter<Vector3i>((v, w) => BCUtils.WriteVector3i(v, w, f));
+
       var jsonOut = new Dictionary<string, object>();
       if (Options.ContainsKey("tag"))
       {
         jsonOut.Add("tag", Options["tag"]);
         jsonOut.Add("data", data);
+
         JsonMapper.ToJson(jsonOut, writer);
       }
       else

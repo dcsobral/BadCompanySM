@@ -85,7 +85,7 @@ namespace BCM.Commands
           }
           else
           {
-            if (!int.TryParse(Params[0], out int entityId))
+            if (!int.TryParse(Params[0], out var entityId))
             {
               SendOutput("Error parsing entity id");
 

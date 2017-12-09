@@ -5,7 +5,7 @@ namespace BCM
 {
   public static class StateManager
   {
-    public static void Awake()
+    public static void Init()
     {
       try
       {
@@ -17,11 +17,21 @@ namespace BCM
       }
     }
 
+    public static void WorldAlive()
+    {
+      Brain.MakeConscious();
+    }
+
+    public static void Awake()
+    {
+    }
+
     public static void Shutdown()
     {
       try
       {
-        PersistentData.PersistentContainer.Instance.Save();
+        //Save All
+        PersistentData.PersistentContainer.Instance.Save(null);
       }
       catch (Exception e)
       {

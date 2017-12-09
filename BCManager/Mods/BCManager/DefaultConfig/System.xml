@@ -3,32 +3,36 @@
   <LogCache enabled="false"/>
   <Heartbeat isalive="true"/>
   <BPM rate="60"/>
-  <!--Spawn System-->
   <Synapse name="spawnmanager" enabled="false" beats="1"/> <!-- experimental synapse, use at own risk -->
-  <Synapse name="entityspawnmutator" enabled="false" beats="30" options="EntityEnemy,EntityNPC,EntityItem" config="SpawnMutator"/> <!-- firing the neuron attempts to add the monitor, it will report instantly on spawns -->
 
-  <!--Character Management-->
-  <Synapse name="bagmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
-  <Synapse name="buffmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
-  <Synapse name="deadisdead" enabled="false" beats="15"/><!-- todo: not implemented -->
-  <Synapse name="deathwatch" enabled="false" beats="60"/><!-- todo: not implemented -->
-  <Synapse name="equipmentmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
-  <Synapse name="positiontracker" enabled="false" beats="60"/><!-- todo: not implemented -->
-  <Synapse name="questmonitor" enabled="false" beats="15"/><!-- todo: fix -->
-  <Synapse name="toolbeltmonitor" enabled="false" beats="60"/><!-- todo: not implemented -->
-  <Synapse name="pingkicker" enabled="false" beats="60"/><!-- todo: not implemented -->
+  <!-- Non-Heartbeat Synapses -->
+  <Synapse name="spawnmutator" enabled="true" options="EntityEnemy,EntityNPC,EntityItem" config="SpawnMutator"/>
+  <Synapse name="deadisdead" enabled="true" options='{ "global": false }' config="DiDPlayerList"/>
 
-  <!--Admin Functions-->
+  <!-- Heartbeat Synapses -->
+  <Synapse name="tracker" enabled="true" beats="15" config="TrackerPlayersConfig"/>
+  <Synapse name="pingkicker" enabled="true" beats="5" options='{ "threshhold": 300, "count": 12 }'/>
+
+  <!--
   <Synapse name="saveworld" enabled="false" beats="600"/>
-  <Synapse name="trashcollector" enabled="false" beats="1250"/> <!-- not needed? -->
-  <Synapse name="mapexplorer" enabled="false" beats="5"/>
+  <Synapse name="motd" enabled="false" beats="20"/>
+  -->
 
-  <!--Web App Integration-->
-  <Synapse name="broadcastapi" enabled="false" beats="5"/><!-- todo: not implemented -->
+  <!-- todo: not implemented -->
+  <!--
+  <Synapse name="deathwatch" enabled="false" beats="60"/>
+
+  <Synapse name="savebackup" enabled="false" beats="21600"/>
+  <Synapse name="entitymonitor" enabled="false" beats="4"/>
+
+  <Synapse name="bagmonitor" enabled="false" beats="60"/>
+  <Synapse name="equipmentmonitor" enabled="false" beats="60"/>
+  <Synapse name="toolbeltmonitor" enabled="false" beats="60"/>
+
+  <Synapse name="buffmonitor" enabled="false" beats="60"/>
+  <Synapse name="questmonitor" enabled="false" beats="15"/>
   
-  <!--Messaging Systems-->
-  <Synapse name="motd" enabled="false" beats="20"/><!-- todo: not implemented -->
-  
-  <!--Logging-->
-  
+  <Synapse name="mapexplorer" enabled="false" beats="5"/>
+  <Synapse name="broadcastapi" enabled="false" beats="5"/>
+  -->
 </System>

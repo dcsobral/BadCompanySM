@@ -2,7 +2,7 @@
 {
   public class BagMonitor : NeuronAbstract
   {
-    public BagMonitor()
+    public BagMonitor(Synapse s) : base(s)
     {
     }
     public override void Fire(int b)

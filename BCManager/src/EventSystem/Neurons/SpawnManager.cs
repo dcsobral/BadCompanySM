@@ -13,7 +13,7 @@ namespace BCM.Neurons
     private const string EntitiesCollection = "Entities";
     private const string PlayersCollection = "Players";
 
-    public SpawnManager()
+    public SpawnManager(Synapse s) : base(s)
     {
     }
 
@@ -140,7 +140,7 @@ namespace BCM.Neurons
 
     public override void Fire(int b)
     {
-      if (!API.IsAlive || !PersistentContainer.IsLoaded) return;
+      if (!API.IsAwake || !PersistentContainer.IsLoaded) return;
 
       _settings = PersistentContainer.Instance.Settings;
       var world = GameManager.Instance.World;

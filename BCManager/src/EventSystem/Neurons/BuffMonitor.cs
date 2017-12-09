@@ -2,7 +2,7 @@
 {
   public class BuffMonitor : NeuronAbstract
   {
-    public BuffMonitor()
+    public BuffMonitor(Synapse s) : base(s)
     {
     }
     public override void Fire(int b)

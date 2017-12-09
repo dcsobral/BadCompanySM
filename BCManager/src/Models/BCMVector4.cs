@@ -16,6 +16,20 @@ namespace BCM.Models
       z = 0;
       w = 0;
     }
+    public BCMVector4(BCMVector3 v, int w)
+    {
+      x = v.x;
+      y = v.y;
+      z = v.z;
+      this.w = w;
+    }
+    public BCMVector4(Vector3 v, int w)
+    {
+      x = (int)Math.Floor(v.x);
+      y = (int)Math.Floor(v.y);
+      z = (int)Math.Floor(v.z);
+      this.w = w;
+    }
     public BCMVector4(int x, int y, int z, int w)
     {
       this.x = x;

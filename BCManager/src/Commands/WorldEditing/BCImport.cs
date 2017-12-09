@@ -288,8 +288,7 @@ namespace BCM.Commands
       {
         ProcessSleepers(prefab, world, dest);
       }
-
-
+      
       var chunkSync = world.ChunkCache.GetChunkSync(World.toChunkXZ(dest.x), World.toChunkXZ(dest.z));
 
       if (!Options.ContainsKey("refresh"))

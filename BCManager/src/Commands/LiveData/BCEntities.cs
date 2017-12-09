@@ -49,7 +49,7 @@ namespace BCM.Commands
       {
         // specific entity
         Entity e = null;
-        if (int.TryParse(Params[0], out int entityId))
+        if (int.TryParse(Params[0], out var entityId))
         {
           if (world.Entities.dict.ContainsKey(entityId)) e = world.Entities.dict[entityId];
         }

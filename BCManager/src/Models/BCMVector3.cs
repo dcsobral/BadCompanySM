@@ -17,10 +17,9 @@ namespace BCM.Models
     }
     public BCMVector3(Vector3 v)
     {
-      //todo: use floor instead?
-      x = Mathf.RoundToInt(v.x);
-      y = Mathf.RoundToInt(v.y);
-      z = Mathf.RoundToInt(v.z);
+      x = (int)Math.Floor(v.x);
+      y = (int)Math.Floor(v.y);
+      z = (int)Math.Floor(v.z);
     }
     public BCMVector3(Vector3i v)
     {
@@ -49,6 +48,11 @@ namespace BCM.Models
     public Vector3 ToV3()
     {
       return new Vector3(x + 0.5f, y + 0.5f, z + 0.5f);
+    }
+
+    public bool Equals(BCMVector3 obj)
+    {
+      return obj != null && x == obj.x && y == obj.y && z == obj.z;
     }
   }
 }
