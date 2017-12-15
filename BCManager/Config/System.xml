@@ -7,7 +7,7 @@
 
   <!-- Non-Heartbeat Synapses -->
   <Synapse name="spawnmutator" enabled="true" options="EntityEnemy,EntityNPC,EntityItem" config="SpawnMutator"/>
-  <Synapse name="deadisdead" enabled="true" options='{ "global": false }' config="DiDPlayerList"/>
+  <Synapse name="deadisdead" enabled="true" options='{ "global": false }'/>
 
   <!-- Heartbeat Synapses -->
   <Synapse name="tracker" enabled="true" beats="15" config="TrackerPlayersConfig"/>

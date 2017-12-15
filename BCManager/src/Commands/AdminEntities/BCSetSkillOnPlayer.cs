@@ -175,6 +175,12 @@ namespace BCM.Commands
         return;
       }
 
+      //todo: check requirements
+      if (skillOnPlayer.IsLocked)
+      {
+        skillOnPlayer.IsLocked = false;
+      }
+
       if (skillFromXml.IsPerk)
       {
         var fieldInfo2 = typeof(Skill).GetField("expToNextLevel", BindingFlags.NonPublic | BindingFlags.Instance);

@@ -4,13 +4,6 @@ namespace BCM.Commands
   {
     public override void Process()
     {
-      if (SenderInfo.IsLocalGame)
-      {
-        SendOutput(@"Use the ""removequest"" command for the local player.");
-
-        return;
-      }
-
       if (Params.Count != 2)
       {
         SendOutput("Invalid arguments");
@@ -19,16 +12,16 @@ namespace BCM.Commands
         return;
       }
 
-      var count = ConsoleHelper.ParseParamPartialNameOrId(Params[0], out string _, out ClientInfo clientInfo);
+      var count = ConsoleHelper.ParseParamPartialNameOrId(Params[0], out string _, out var clientInfo);
       if (count == 1)
       {
         if (clientInfo == null) return;
 
-        clientInfo.SendPackage(new NetPackageConsoleCmdClient("removequest " + Params[1], true));
+        clientInfo.SendPackage(new NetPackageConsoleCmdClient($"removequest {Params[1]}", true));
       }
       else if (count > 1)
       {
-        SendOutput("Multiple matches found: " + count);
+        SendOutput($"{count} matches found, please refine your search text");
       }
       else
       {

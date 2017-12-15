@@ -116,7 +116,7 @@ namespace BCM.Commands
       SendOutput("Under Development");
     }
 
-    private void ConfigDeadIsDead()
+    public void ConfigDeadIsDead()
     {
       if (Params.Count > 1)
       {
@@ -134,7 +134,8 @@ namespace BCM.Commands
             {
               if (Params.Count != 3)
               {
-                SendOutput("deadisdead add requires a steamId");
+                SendOutput("deadisdead on requires a steamId. Use 'me' as the id to target yourself.");
+
                 return;
               }
               var steamId = Params[2];
@@ -151,7 +152,8 @@ namespace BCM.Commands
             {
               if (Params.Count != 3)
               {
-                SendOutput("deadisdead off requires a steamId");
+                SendOutput("deadisdead off requires a steamId. Use 'me' as the id to target yourself.");
+
                 return;
               }
               var steamId = Params[2];
@@ -176,10 +178,13 @@ namespace BCM.Commands
           case "config":
             {
               SendJson(new { Global = neuron.GlobalMode, Players = neuron.DiDModePlayers });
+
               return;
             }
           case "restore":
             {
+              SendOutput("Work in progress.");
+
               return;
             }
           case "delete":
@@ -187,6 +192,7 @@ namespace BCM.Commands
               if (Params.Count != 3)
               {
                 SendOutput("deadisdead delete requires a steamId");
+
                 return;
               }
               var steamId = Params[2];
@@ -203,6 +209,7 @@ namespace BCM.Commands
               if (Params.Count != 3)
               {
                 SendOutput("deadisdead delete requires a steamId");
+
                 return;
               }
               var steamId = Params[2];
@@ -217,12 +224,13 @@ namespace BCM.Commands
 
           default:
             SendOutput("Invalid sub command");
+
             return;
         }
       }
 
       SendOutput("DeadIsDead sub commands:");
-      SendOutput("add,remove,global,config,restore,delete,backup");
+      SendOutput("on,off,global,config,restore,delete,backup");
     }
 
     public void ConfigTracker()
@@ -273,11 +281,13 @@ namespace BCM.Commands
 
                 SendJson(keys);
               }
+
               return;
             }
 
           default:
             SendOutput("Invalid sub command");
+
             return;
         }
       }
@@ -308,6 +318,7 @@ namespace BCM.Commands
               neuron.WhitelistPlayer(steamId);
               neuron.ClearPlayer(steamId);
               SendOutput($"SteamId {steamId} added to whitelist");
+
               return;
             }
 
@@ -318,6 +329,7 @@ namespace BCM.Commands
               var steamId = Params[2];
               neuron.WhitelistPlayer(steamId, false);
               SendOutput($"SteamId {steamId} removed from whitelist");
+
               return;
             }
 
@@ -327,6 +339,7 @@ namespace BCM.Commands
 
               neuron.SetLimit(limit);
               SendOutput($"Ping limit set to {limit}");
+
               return;
             }
 
@@ -336,12 +349,14 @@ namespace BCM.Commands
 
               neuron.SetBeats(beats);
               SendOutput($"Beats before kick set to {beats}");
+
               return;
             }
 
           case "watchlist":
             {
               SendJson(neuron.GetWatchlist());
+
               return;
             }
 
@@ -352,7 +367,7 @@ namespace BCM.Commands
               {
                 SendJson(neuronConfig.Settings["Whitelist"]);
               }
-              //SendJson(neuron.EventConfig.Settings["Whitelist"]);
+
               return;
             }
 
@@ -363,24 +378,27 @@ namespace BCM.Commands
               {
                 SendJson(neuronConfig.Settings);
               }
-              //SendJson(neuron.EventConfig.Settings);
+
               return;
             }
 
           case "clearcache":
             {
               neuron.ClearCache();
+
               return;
             }
 
           case "clearwhitelist":
             {
               neuron.ClearWhitelist();
+
               return;
             }
 
           default:
             SendOutput("Invalid sub command");
+
             return;
         }
       }

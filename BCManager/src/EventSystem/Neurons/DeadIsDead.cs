@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
+using BCM.PersistentData;
+using UnityEngine;
 
 namespace BCM.Neurons
 {
@@ -13,9 +16,43 @@ namespace BCM.Neurons
     public bool GlobalMode;
     public List<string> DiDModePlayers = new List<string>();
 
+    private struct ConfigOptions
+    {
+      public bool global;
+    }
+
     public DeadIsDead(Synapse s) : base (s)
     {
-      //todo: load config xml, load saved config
+      var neuronConfig = PersistentContainer.Instance.EventsConfig["deadisdead", true];
+      if (neuronConfig == null) return;
+
+      var configOptions = JsonUtility.FromJson<ConfigOptions>(synapse.Options);
+      if (!neuronConfig.Settings.ContainsKey("GlobalMode"))
+      {
+        GlobalMode = configOptions.global;
+      }
+      else if (neuronConfig.Settings["GlobalMode"] is bool mode)
+      {
+        GlobalMode = mode;
+      }
+
+      if (!neuronConfig.Settings.ContainsKey("GlobalMode"))
+      {
+        neuronConfig.SetItem("GlobalMode", GlobalMode);
+      }
+
+      if (!neuronConfig.Settings.ContainsKey("DiDModePlayers"))
+      {
+        neuronConfig.SetItem("DiDModePlayers", new List<string>());
+      }
+      else
+      {
+        if (!(neuronConfig.Settings["DiDModePlayers"] is List<string> didModePlayers)) return;
+
+        DiDModePlayers = didModePlayers;
+      }
+
+      PersistentContainer.Instance.Save("events");
     }
 
     public override void Awake()
@@ -28,7 +65,14 @@ namespace BCM.Neurons
 
     public bool ToggleGlobal(bool? mode = null)
     {
-      return GlobalMode = mode ?? !GlobalMode;
+      var neuronConfig = PersistentContainer.Instance.EventsConfig["deadisdead", false];
+      if (neuronConfig == null) return false;
+
+      GlobalMode = mode ?? !GlobalMode;
+      neuronConfig.SetItem("GlobalMode", GlobalMode);
+      PersistentContainer.Instance.Save("events");
+
+      return GlobalMode;
     }
 
     public void EnableMode(string steamId)
@@ -36,10 +80,24 @@ namespace BCM.Neurons
       if (steamId.Length != 17 || DiDModePlayers.Contains(steamId)) return;
 
       DiDModePlayers.Add(steamId);
+
+      var neuronConfig = PersistentContainer.Instance.EventsConfig["deadisdead", false];
+      if (neuronConfig == null) return;
+
+      neuronConfig.SetItem("DiDModePlayers", DiDModePlayers);
+      PersistentContainer.Instance.Save("events");
     }
-    public bool DisableMode(string steamId)
+    public void DisableMode(string steamId)
     {
-      return DiDModePlayers.Remove(steamId);
+      if (steamId.Length != 17 || !DiDModePlayers.Contains(steamId)) return;
+
+      DiDModePlayers.Remove(steamId);
+
+      var neuronConfig = PersistentContainer.Instance.EventsConfig["deadisdead", false];
+      if (neuronConfig == null) return;
+
+      neuronConfig.SetItem("DiDModePlayers", DiDModePlayers);
+      PersistentContainer.Instance.Save("events");
     }
 
     public string BackupAndDelete(string steamId, bool kickdelete = true)
@@ -79,6 +137,7 @@ namespace BCM.Neurons
         }
 
         //todo: remove lcbs from persistent data
+        //todo: delete dropped backpack if configured
         //todo: remove ownership of chests (would require loading chunks)?
       }
       else
@@ -99,9 +158,7 @@ namespace BCM.Neurons
       return timestamp;
     }
 
-    public override void Fire(int b)
-    {
-    }
+    public override void Fire(int b) { }
   }
 }
 
