@@ -21,7 +21,6 @@ namespace BCM
     public static readonly string DefaultEventsPath = DefaultConfigPath + "Events" + Path.DirectorySeparatorChar;
     public static readonly string EventsPath = ConfigPath + "Events" + Path.DirectorySeparatorChar;
     public static string DefaultLocale = "en";
-    public static bool LogCache;
 
     //todo: implement filesystemwatcher so changes to the config are dynamically updated
     private static FileSystemWatcher _fsw;
@@ -56,20 +55,6 @@ namespace BCM
           ? $"{ConfigPath}{SystemFile}"
           : $"{DefaultConfigPath}{SystemFile}");
 
-        //LogCache.enabled
-        var logNodes = xmlDoc.SelectNodes("/System/LogCache/@enabled");
-        if (logNodes == null || logNodes.Count == 0)
-        {
-          Log.Out($"{ModPrefix} Unable to load LogCache enabled, setting not found in {SystemFile}");
-        }
-        else
-        {
-          if (!bool.TryParse(logNodes.Item(0)?.Value, out LogCache))
-          {
-            Log.Out($"{ModPrefix} Unable to load LogCache, enabled is not a valid boolean in {SystemFile}");
-          }
-        }
-
         //Heartbeat.IsAlive
         var isAlive = xmlDoc.SelectNodes("/System/Heartbeat/@isalive");
         if (isAlive == null || isAlive.Count == 0)
@@ -85,10 +70,10 @@ namespace BCM
         }
 
         //Heartbeat.BPM
-        var bpm = xmlDoc.SelectNodes("/System/BPM/@rate");
+        var bpm = xmlDoc.SelectNodes("/System/Heartbeat/@bpmrate");
         if (bpm == null || bpm.Count <= 0)
         {
-          Log.Out($"{ModPrefix} Unable to load BPM, setting not found in {SystemFile}");
+          Log.Out($"{ModPrefix} Unable to load Heartbeat BPM rate, setting not found in {SystemFile}");
         }
         else
         {
@@ -128,12 +113,6 @@ namespace BCM
             {
               Log.Out($"{ModPrefix} Unable to load Synapse \'enabled\' in element #{count}, value is not a valid boolean in {SystemFile}");
             }
-
-            //if (!node.HasAttribute("beats"))
-            //{
-            //  Log.Out($"{ModPrefix} Skipping Synapse element #{count}, missing \'beats\' attribute in {SystemFile}");
-            //  continue;
-            //}
 
             if (node.HasAttribute("beats") && !int.TryParse(node.GetAttribute("beats"), out synapse.Beats))
             {

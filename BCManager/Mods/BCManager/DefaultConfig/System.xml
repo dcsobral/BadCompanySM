@@ -1,16 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <System>
-  <LogCache enabled="false"/>
-  <Heartbeat isalive="true"/>
-  <BPM rate="60"/>
-  <Synapse name="spawnmanager" enabled="false" beats="1"/> <!-- experimental synapse, use at own risk -->
+  <Heartbeat isalive="true" bpmrate="60"/>
+  
+  <!-- NOTES -->
+  <!-- Synapse 'enable' and 'options' attribute allows for initial config to be passed to the synapse constructors. -->
+  <!-- After first server boot you can reconfigure options via the bc-events command and persist to disk -->
+  <!-- The 'config' attribute if preset points to the *.xml files in the Events folder -->
+  <!-- The 'beats' attribute if preset indicates how many beats should pass for each execution of the Fire method -->
 
-  <!-- Non-Heartbeat Synapses -->
+  <!-- Reactive Synapses -->
   <Synapse name="spawnmutator" enabled="true" options="EntityEnemy,EntityNPC,EntityItem" config="SpawnMutator"/>
   <Synapse name="deadisdead" enabled="true" options='{ "global": false }'/>
+  <Synapse name="logcache" enabled="true"/>
 
   <!-- Heartbeat Synapses -->
-  <Synapse name="tracker" enabled="true" beats="15" config="TrackerPlayersConfig"/>
+  <Synapse name="tracker" enabled="true" beats="15"/>
   <Synapse name="pingkicker" enabled="true" beats="5" options='{ "threshhold": 300, "count": 12 }'/>
 
   <!--
@@ -19,6 +23,7 @@
   -->
 
   <!-- todo: not implemented -->
+  <Synapse name="spawnmanager" enabled="false" beats="1"/> <!-- experimental synapse, use at own risk -->
   <!--
   <Synapse name="deathwatch" enabled="false" beats="60"/>
 

@@ -15,7 +15,7 @@ namespace BCM.Neurons
     public bool GlobalMode;
     public List<string> DiDModePlayers = new List<string>();
 
-    private struct ConfigOptions
+    private struct DiDConfig
     {
       public bool global;
     }
@@ -25,10 +25,10 @@ namespace BCM.Neurons
       var neuronConfig = PersistentContainer.Instance.EventsConfig["deadisdead", true];
       if (neuronConfig == null) return;
 
-      var configOptions = JsonUtility.FromJson<ConfigOptions>(synapse.Options);
+      var didConfig = JsonUtility.FromJson<DiDConfig>(synapse.Options);
       if (!neuronConfig.Settings.ContainsKey("GlobalMode"))
       {
-        GlobalMode = configOptions.global;
+        GlobalMode = didConfig.global;
       }
       else if (neuronConfig.Settings["GlobalMode"] is bool mode)
       {
@@ -86,6 +86,7 @@ namespace BCM.Neurons
       neuronConfig.SetItem("DiDModePlayers", DiDModePlayers);
       PersistentContainer.Instance.Save("events");
     }
+
     public void DisableMode(string steamId)
     {
       if (steamId.Length != 17 || !DiDModePlayers.Contains(steamId)) return;

@@ -48,12 +48,6 @@ namespace BCM.Commands
             }
 
             var synapse = Brain.GetSynapse(Params[1]);
-            if (synapse == null)
-            {
-              SendOutput($"Unknown synapse {Params[1]}");
-
-              return;
-            }
             ProcessSynapseState(synapse);
 
             return;
@@ -72,6 +66,9 @@ namespace BCM.Commands
           return;
         case "spawnmanager":
           ConfigSpawnManager();
+          return;
+        case "logcache":
+          ConfigLogCache();
           return;
         default:
           SendOutput($"Unknown neuron name {Params[0]}");
@@ -104,6 +101,74 @@ namespace BCM.Commands
       }
 
       SendOutput($"Synapse {synapse.Name} is {(synapse.IsEnabled ? "Enabled" : "Disabled")}");
+    }
+
+    public void ConfigLogCache()
+    {
+      if (Params.Count > 1)
+      {
+        var neuron = Brain.GetSynapseNeurons("logcache")?.OfType<LogCache>().FirstOrDefault();
+        if (neuron == null)
+        {
+          SendOutput("Unable to access logcache neuron");
+
+          return;
+        }
+
+        switch (Params[1])
+        {
+          case "list":
+            {
+              if (Params.Count > 2)
+              {
+                switch (Params[2])
+                {
+                  case "chat":
+                    SendJson(neuron.GetChatEntries());
+
+                    return;
+                  case "gmsg":
+                    SendJson(neuron.GetGmsgEntries());
+
+                    return;
+                  case "bcm":
+                    SendJson(neuron.GetBcmEntries());
+
+                    return;
+                  case "error":
+                    SendJson(neuron.GetErrorEntries());
+
+                    return;
+                }
+              }
+              else
+              {
+                SendJson(neuron.GetAllEntries());
+              }
+
+              return;
+            }
+
+          case "config":
+            {
+              var neuronConfig = PersistentContainer.Instance.EventsConfig["logcache", false];
+              if (neuronConfig != null)
+              {
+                SendJson(neuronConfig.Settings);
+              }
+
+              return;
+            }
+
+          default:
+            SendOutput("Invalid sub command");
+
+            return;
+        }
+      }
+
+      SendOutput("LogCache sub commands:");
+      SendOutput("list,config");
     }
 
     public void ConfigSpawnMutator()

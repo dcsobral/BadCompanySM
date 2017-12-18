@@ -30,6 +30,10 @@ namespace BCM
           _neurons.Add(new EntitySpawnMutator(this));
           break;
 
+        case "logcache":
+          _neurons.Add(new LogCache(this));
+          break;
+
         case "tracker":
           _neurons.Add(new PositionTracker(this));
           break;

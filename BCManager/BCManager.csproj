@@ -122,6 +122,7 @@
     </Content>
     <None Include="Config\Events\SpawnMutator.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="ModInfo.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -228,7 +229,7 @@
     <Compile Include="src\Models\BCMCommand.cs" />
     <Compile Include="src\Config\Config.cs" />
     <Compile Include="src\DataManager.cs" />
-    <Compile Include="src\EventSystem\Utilities\LogCache.cs" />
+    <Compile Include="src\EventSystem\Neurons\LogCache.cs" />
     <Compile Include="src\EventSystem\Models\HordeSpawner.cs" />
     <Compile Include="src\EventSystem\Models\Spawn.cs" />
     <Compile Include="src\EventSystem\Neurons\BroadcastAPI.cs" />
