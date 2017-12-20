@@ -50,7 +50,7 @@ namespace BCM
       var xmlDoc = new XmlDocument();
       try
       {
-        //todo: merge instead of xor
+        //todo: Load defaults, then merge in settings from Config/system.xml and persistent data
         xmlDoc.Load(File.Exists($"{ConfigPath}{SystemFile}")
           ? $"{ConfigPath}{SystemFile}"
           : $"{DefaultConfigPath}{SystemFile}");

@@ -24,6 +24,61 @@ namespace BCM.Commands
 
       switch (Params[0])
       {
+        case "persist":
+          //todo: save current settings to system.xml file
+          break;
+
+        case "on":
+          if (Heartbeat.IsAlive)
+          {
+            SendOutput("Heartbeat is already beating");
+
+            return;
+          }
+          Heartbeat.IsAlive = true;
+          Heartbeat.Start();
+          SendOutput("Heatbeat started");
+          break;
+
+        case "off":
+          Heartbeat.IsAlive = false;
+          SendOutput("Heatbeat stopped");
+          break;
+
+        case "bpm":
+          if (Params.Count < 2)
+          {
+            SendOutput($"Current Bpm is: {Heartbeat.Bpm}");
+
+            return;
+          }
+
+          if (!int.TryParse(Params[1], out var bpm))
+          {
+            SendOutput($"Unable to parse bpm from: {Params[1]}");
+
+            return;
+          }
+
+          if (bpm > 300)
+          {
+            SendOutput($"Woah, {bpm} is a bit high, are you trying to give the server a heartattack!? Max is 300");
+
+            return;
+          }
+
+          if (bpm <= 0)
+          {
+            SendOutput("Check your pulse, you might be dead! Bpm must be greater than 0");
+
+            return;
+          }
+
+          Heartbeat.Bpm = bpm;
+          SendOutput($"Bpm now set to {bpm}");
+
+          break;
+
         case "state":
         case "toggle":
         case "disable":
@@ -52,24 +107,31 @@ namespace BCM.Commands
 
             return;
           }
+
         case "deadisdead":
           ConfigDeadIsDead();
           return;
+
         case "pingkicker":
           ConfigPingKicker();
           return;
+
         case "tracker":
           ConfigTracker();
           return;
+
         case "spawnmutator":
           ConfigSpawnMutator();
           return;
+
         case "spawnmanager":
           ConfigSpawnManager();
           return;
+
         case "logcache":
           ConfigLogCache();
           return;
+
         default:
           SendOutput($"Unknown neuron name {Params[0]}");
           return;
