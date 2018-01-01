@@ -65,5 +65,5 @@
   <Command name="BCVisitRegion" commands="bc-visitregion,visit" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCTileEntity" commands="bc-te,tile" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCReset" commands="bc-reset" defaultpermissionlevel="0" defaultoptions=""/>
-
+  <Command name="BCPrefab" commands="bc-prefab" defaultpermissionlevel="0" defaultoptions=""/>
 </Commands>

@@ -24,14 +24,14 @@ namespace BCM.Commands
 
       switch (Params[0])
       {
-        case "persist":
+        case "save":
           //todo: save current settings to system.xml file
           break;
 
         case "on":
           if (Heartbeat.IsAlive)
           {
-            SendOutput("Heartbeat is already beating");
+            SendOutput("Heart is already beating");
 
             return;
           }
@@ -48,7 +48,7 @@ namespace BCM.Commands
         case "bpm":
           if (Params.Count < 2)
           {
-            SendOutput($"Current Bpm is: {Heartbeat.Bpm}");
+            SendOutput($"Current beats per minute is {Heartbeat.Bpm}");
 
             return;
           }

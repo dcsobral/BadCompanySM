@@ -162,8 +162,11 @@ namespace BCM.Commands
       }
       (enumerator as IDisposable)?.Dispose();
 
+      sortedList.Add("ServerHostIP", BCUtils.GetIPAddress());
+
       return sortedList;
     }
+
 
     private readonly string[] _filterPrefs =
     {
@@ -195,15 +198,15 @@ namespace BCM.Commands
         if (!IsViewableStat(enumGameStats)) continue;
 
         var stat = GameStats.GetObject(enumGameStats);
-        if (int.TryParse($"{stat}", out int stati))
+        if (int.TryParse($"{stat}", out var stati))
         {
           sortedList.Add(enumGameStats.ToString(), stati);
         }
-        else if (bool.TryParse($"{stat}", out bool statb))
+        else if (bool.TryParse($"{stat}", out var statb))
         {
           sortedList.Add(enumGameStats.ToString(), statb);
         }
-        else if (double.TryParse($"{stat}", out double statd))
+        else if (double.TryParse($"{stat}", out var statd))
         {
           sortedList.Add(enumGameStats.ToString(), statd);
         }

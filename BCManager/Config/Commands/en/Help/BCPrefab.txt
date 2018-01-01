@@ -1,0 +1,40 @@
+﻿{description}
+      Aliases: {commands}
+      Default Options: {defaultoptions}
+      Usage:
+            1. {command} {prefabname} <subcommands>
+      Notes:
+            Use bc-help to get a list of common /options
+            Edit existing prefabs with the following sub commands:
+
+            list - list the prefabs in the server prefab folder.
+                      /dim to also scan and display the size and block count, will take a few secs and lag server, use sparingly.
+            create - create a new prefab with the given filename and default xml settings, size 1x1x1 or x y z given
+            clone - create a copy of a prefab with a new filename
+            backup - create a copy of a prefab in the backups folder with a timestamp filename in the prefabname subfolder
+            restore - restore a copy of a prefab from a backup version. Backups can also be create when changes are made to a prefab
+            delete - delete a prefab from the server
+            setprop - set a property in the xml. bc-prefab setprop <prefabname> will show all current props, <prefabname> <Property> will give the single value, and <prefabname> <Property> <ValueString> will set a new value and save the xml
+
+            {command} insert - (Work in progress) add a layer in the middle of the prefab, use /x=# or /z=#min,#max etc to specific the layer(s). The prefab size is increased to match
+            {command} cut - (Work in progress) remove blocks from a layer, use /x=# or /z=#min,#max etc to specific the layer(s). The prefab size is reduced to match
+            {command} add <prefab> <side> <count> - add blocks to a side ('left','right','front','back','top','bottom', 'all')
+            {command} trim <prefab> <side> <count> - remove blocks from a side, or all air only layers ('left','right','front','back','top','bottom','air')
+                      trim air will remove layers from all sides until the first layer with not all air blocks (trim whitespace essentially).
+            {command} setsize <prefab> <x> <y> <z> - add blocks to the prefab to reach the new (bigger) size, must use trim to reduce size. 0,0 remains at same point so new layers are added top, right or back
+
+            {command} swap <prefab> <originalId> <replacementId> - swap a block type to a new type for all occurances in a prefab
+            {command} copylayer - (Work in progress) copy a layer of blocks to another layer
+            {command} swaplayer - (Work in progress) swap a layer of blocks with another layer
+            {command} setblock - (Work in progress) set a block within the prefab
+            {command} swapmap - (Work in progress) swap blocks based on a mapping file
+            {command} repair - (Work in progress) remove all damage from blocks
+            {command} lock - (Work in progress) lock all doors and secure containers
+
+            Info Subcommands
+            dim - lists the size and total block count for the prefab
+            xml - display the prefab xml
+            blockcount - breakdown of blocks by type and a count
+            blocks - all blocks and their values
+            type, density, paint, rotation, damage, meta, meta2, meta3, stats - all block values for a specific field
+            
