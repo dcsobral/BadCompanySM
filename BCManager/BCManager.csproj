@@ -57,6 +57,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\Commands\en\Description\BCPrefab.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\Commands\en\Description\BCGiveItemToPlayer.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -82,6 +85,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Description\BCTime.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCPrefab.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Help\BCExport.txt">
@@ -140,6 +146,7 @@
     <Compile Include="src\Commands\LiveData\BCAdmins.cs" />
     <Compile Include="src\Commands\LiveData\BCEvents.cs" />
     <Compile Include="src\Commands\Utility\BCChunkObserver.cs" />
+    <Compile Include="src\Commands\WorldEditing\BCPrefab.cs" />
     <Compile Include="src\Models\BCMExpressionData.cs" />
     <Compile Include="src\Models\BCMSlot.cs" />
     <Compile Include="src\Models\BCMBiomeBlockDecoration.cs" />
