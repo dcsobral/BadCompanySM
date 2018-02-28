@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -110,6 +111,8 @@ namespace BCM
       {
         if (options.ContainsKey("all"))
         {
+          if (!options.ContainsKey("minibike") && e.Value is EntityMinibike) continue;
+
           filteredEntities.Add(e.Key, e.Value);
         }
         else if (options.ContainsKey("type"))
@@ -134,6 +137,13 @@ namespace BCM
 
           filteredEntities.Add(e.Key, e.Value);
         }
+        else if (options.ContainsKey("minibike"))
+        {
+          if (e.Value is EntityMinibike)
+          {
+            filteredEntities.Add(e.Key, e.Value);
+          }
+        }
         else
         {
           if (!(e.Value is EntityEnemy) && !(e.Value is EntityAnimal)) continue;
@@ -156,9 +166,13 @@ namespace BCM
         }
         BCCommandAbstract.SendOutput($"Setting radius to +{command.Radius}");
       }
-      else
+      else if (!command.Opts.ContainsKey("loc"))
       {
         BCCommandAbstract.SendOutput("Setting radius to default of +0");
+      }
+      else
+      {
+        BCCommandAbstract.SendOutput("Using stored location for bounding box");
       }
     }
 
@@ -336,7 +350,11 @@ namespace BCM
           command.Position = new BCMVector3(Math.Min(loc.x, (int)entity.position.x), Math.Min(loc.y, (int)entity.position.y), Math.Min(loc.z, (int)entity.position.z));
           command.HasPos = true;
 
-          command.Size = new BCMVector3(Math.Abs(loc.x - (int)entity.position.x) + 1, Math.Abs(loc.y - (int)entity.position.y) + 1, Math.Abs(loc.z - (int)entity.position.z) + 1);
+          command.Size = new BCMVector3(
+            Math.Min(Math.Abs(loc.x - (int) entity.position.x), 1),
+            Math.Min(Math.Abs(loc.y - (int) entity.position.y), 1),
+            Math.Min(Math.Abs(loc.z - (int) entity.position.z), 1)
+          );
           command.HasSize = true;
         }
 
@@ -575,6 +593,77 @@ namespace BCM
         }
       }
       return "";
+    }
+
+    private class PrefabCache
+    {
+      public string Filename;
+      public Vector3i Pos;
+    }
+    private static readonly Dictionary<int, List<PrefabCache>> _undoCache = new Dictionary<int, List<PrefabCache>>();
+    private const string UndoDir = "Data/Prefabs/BCMUndoCache";
+
+    public static void CreateUndo(CommandSenderInfo SenderInfo, World world, EntityPlayer sender, Vector3i p0, Vector3i size)
+    {
+      var steamId = "_server";
+      //var ci = ConnectionManager.Instance.GetClientInfoForEntityId(sender.entityId);
+      if (SenderInfo.RemoteClientInfo != null)
+      {
+        steamId = SenderInfo.RemoteClientInfo.ownerId;
+      }
+
+      var areaCache = new Prefab();
+      var userId = 0; // id will be 0 for web console issued commands
+      areaCache.CopyFromWorld(world, p0, new Vector3i(p0.x + size.x, p0.y + size.y, p0.z + size.z));
+      areaCache.bCopyAirBlocks = true;
+
+      if (sender != null)
+      {
+        userId = sender.entityId;
+      }
+      Directory.CreateDirectory(Utils.GetGameDir(UndoDir));
+      var filename = $"{steamId}.{p0.x}.{p0.y}.{p0.z}.{DateTime.UtcNow.ToFileTime()}";
+      areaCache.Save(Utils.GetGameDir(UndoDir), filename);
+
+      if (_undoCache.ContainsKey(userId))
+      {
+        _undoCache[userId].Add(new PrefabCache { Filename = filename, Pos = p0 });
+      }
+      else
+      {
+        _undoCache.Add(userId, new List<PrefabCache> { new PrefabCache { Filename = filename, Pos = p0 } });
+      }
+    }
+
+    public static void UndoInsert(EntityPlayer sender)
+    {
+      var userId = 0;
+      if (sender != null)
+      {
+        userId = sender.entityId;
+      }
+      if (!_undoCache.ContainsKey(userId)) return;
+
+      if (_undoCache[userId].Count <= 0) return;
+
+      var pCache = _undoCache[userId][_undoCache[userId].Count - 1];
+      if (pCache != null)
+      {
+        var p = new Prefab();
+        p.Load(Utils.GetGameDir(UndoDir), pCache.Filename);
+        BCImport.InsertPrefab(p, pCache.Pos.x, pCache.Pos.y, pCache.Pos.z, pCache.Pos);
+
+        var cacheFile = Utils.GetGameDir($"{UndoDir}{pCache.Filename}");
+        if (Utils.FileExists($"{cacheFile}.tts"))
+        {
+          Utils.FileDelete($"{cacheFile}.tts");
+        }
+        if (Utils.FileExists($"{cacheFile}.xml"))
+        {
+          Utils.FileDelete($"{cacheFile}.xml");
+        }
+      }
+      _undoCache[userId].RemoveAt(_undoCache[userId].Count - 1);
     }
   }
 }

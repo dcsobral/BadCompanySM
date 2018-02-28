@@ -6,7 +6,6 @@ namespace BCM.Commands
     {
       if (Params.Count != 2)
       {
-        SendOutput("Invalid arguments");
         SendOutput(GetHelp());
 
         return;
@@ -17,15 +16,23 @@ namespace BCM.Commands
       {
         if (clientInfo == null) return;
 
-        clientInfo.SendPackage(new NetPackageConsoleCmdClient($"removequest {Params[1]}", true));
+        if (QuestClass.s_Quests.ContainsKey(Params[1]))
+        {
+          clientInfo.SendPackage(new NetPackageConsoleCmdClient($"removequest {Params[1]}", true));
+          SendOutput($"Quest {Params[1]} removed from player {clientInfo.playerName}");
+        }
+        else
+        {
+          SendOutput($"Unable to find quest {Params[1]}");
+        }
       }
       else if (count > 1)
       {
-        SendOutput($"{count} matches found, please refine your search text");
+        SendOutput($"{count} matches found, please refine your search text.");
       }
       else
       {
-        SendOutput("Playername or entity ID not found.");
+        SendOutput("Unable to find player.");
       }
     }
   }

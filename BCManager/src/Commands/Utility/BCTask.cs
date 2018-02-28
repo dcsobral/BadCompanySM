@@ -7,24 +7,6 @@ namespace BCM.Commands
 {
   public class BCTask : BCCommandAbstract
   {
-    public enum Status
-    {
-      InProgress,
-      Complete
-    }
-
-    public class BCMTask
-    {
-      public int Hash;
-      public string Type;
-      public DateTime Timestamp;
-      public DateTime Completion;
-      public TimeSpan Duration;
-      public object Output;
-      public BCCmd Command;
-      public Status Status = Status.InProgress;
-    }
-
     private static readonly Dictionary<string, BCMTask> Tasks = new Dictionary<string, BCMTask>();
 
     public override void Process()
@@ -78,7 +60,7 @@ namespace BCM.Commands
 
           var bcmTask = Tasks[$"{taskType}_{hash}"];
 
-          bcmTask.Status = Status.Complete;
+          bcmTask.Status = BCMTaskStatus.Complete;
           bcmTask.Completion = DateTime.UtcNow;
           bcmTask.Duration = bcmTask.Completion - bcmTask.Timestamp;
 

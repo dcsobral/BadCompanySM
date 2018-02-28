@@ -1,24 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using BCM.Models;
 
 namespace BCM.Commands
 {
   public class BCGiveBuffToEntity : BCCommandAbstract
   {
-    public class BCMBuff
-    {
-      public string Name;
-      public string Id;
-      public string Duration;
-      public string Percent;
-    }
-    public class BCMEntity
-    {
-      public int EntityId;
-      public string Name;
-      public List<BCMBuff> Buffs;
-    }
-
     public override void Process()
     {
       var entities = GameManager.Instance.World.Entities;
@@ -33,11 +20,11 @@ namespace BCM.Commands
             var entity = entities.list[i] as EntityAlive;
             if (entity == null) continue;
 
-            var e = new BCMEntity
+            var e = new BCMBuffEntity
             {
               EntityId = entity.entityId,
               Name = entity.name,
-              Buffs = new List<BCMBuff>()
+              Buffs = new List<BCMBuffInfo>()
             };
 
             foreach (var current in entity.Stats.Buffs)
@@ -45,7 +32,7 @@ namespace BCM.Commands
               var buff = (MultiBuff) current;
               if (buff == null) continue;
 
-              e.Buffs.Add(new BCMBuff
+              e.Buffs.Add(new BCMBuffInfo
               {
                 Name = buff.Name,
                 Id = buff.MultiBuffClass.Id,
@@ -75,12 +62,15 @@ namespace BCM.Commands
                 break;
               }
 
+              var count = 0;
               foreach (var target in entities.list.OfType<EntityAlive>())
               {
                 if (target.GetType().ToString() != type) continue;
 
                 multiBuffClassAction.Execute(target.entityId, target, false, EnumBodyPartHit.None, null);
+                count++;
               }
+              SendOutput($"{count} {(count == 1 ? "entity" : "entities")} buffed with {buffid}");
             }
           }
           else

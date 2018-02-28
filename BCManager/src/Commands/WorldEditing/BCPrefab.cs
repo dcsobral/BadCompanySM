@@ -2,30 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BCM.Models;
 using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
-  [Serializable]
-  public class BCMBlockValue
-  {
-    public int type;
-    public byte rotation;
-    public byte meta;
-    public byte meta2;
-    public byte meta3;
-
-    public BCMBlockValue(uint rawData)
-    {
-      var bv = new BlockValue(rawData);
-      type = bv.type;
-      rotation = bv.rotation;
-      meta = bv.meta;
-      meta2 = bv.meta2;
-      meta3 = bv.meta3;
-    }
-  }
-
   public class BCPrefab : BCCommandAbstract
   {
     private static readonly char _s = Path.DirectorySeparatorChar;
@@ -175,7 +156,7 @@ namespace BCM.Commands
     private static string GetFaceTex(long n, int f) => $"{(n >> f * 8) & 255L}";
 
     [NotNull]
-    private static string GetTexStr(long n)
+    public static string GetTexStr(long n)
     {
       var d = new string[6];
       var same = true;

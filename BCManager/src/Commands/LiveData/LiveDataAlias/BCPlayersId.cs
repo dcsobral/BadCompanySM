@@ -14,7 +14,7 @@ namespace BCM.Commands
         return;
       }
 
-      string filters = BCMPlayer.StrFilters.EntityId;
+      var filters = BCMPlayer.StrFilters.EntityId;
 
       if (Options.ContainsKey("n"))
       {

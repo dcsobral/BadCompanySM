@@ -71,6 +71,5 @@ namespace BCM.Commands
         ? $"Prefab {prefab.filename} exported @ {command.Position}, size={command.Size}"
         : $"Error: Prefab {prefab.filename} failed to save.");
     }
-
   }
 }

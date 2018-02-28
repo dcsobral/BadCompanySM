@@ -8,27 +8,27 @@
 
   <!-- ********* UTILITY ********* -->
   <Command name="BCHelp" commands="bc-help" defaultpermissionlevel="1000"/>
-  <Command name="BCSettings" commands="bc-settings,set" defaultpermissionlevel="0"/>
-  <Command name="BCMemTrash" commands="bc-trash" defaultpermissionlevel="0"/>
-  <Command name="BCBroadcastAPI" commands="bc-api" defaultpermissionlevel="0"/>
+  <Command name="BCSettings" commands="bc-settings,set" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCMemTrash" commands="bc-trash" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCBroadcastAPI" commands="bc-api" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCChunkObserver" commands="bc-co" defaultpermissionlevel="0" defaultoptions=""/>
-  <Command name="BCTask" commands="bc-task" defaultpermissionlevel="0"/>
-  <Command name="BCTest" commands="bc-test" defaultpermissionlevel="0"/>
+  <Command name="BCTask" commands="bc-task" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCTest" commands="bc-test" defaultpermissionlevel="0" defaultoptions=""/>
 
   <!-- ********* LIVE DATA ********* -->
-  <Command name="BCPlayers" commands="bc-lp" defaultpermissionlevel="0" defaultoptions="online,strpos,pp" chathook="bc-lp" chatoptions="online filter=0,1,2 chat color=ff0000"/>
+  <Command name="BCPlayers" commands="bc-lp" defaultpermissionlevel="0" defaultoptions="online,strpos,pp"/>
   <Command name="BCPlayerFiles" commands="bc-pdf,bc-pfinfo" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCLocation" commands="bc-loc,loc,pos" defaultpermissionlevel="1000" defaultoptions=""/>
   <Command name="BCAdmins" commands="bc-admins" defaultpermissionlevel="0" defaultoptions="pp"/>
   <Command name="BCEvents" commands="bc-events" defaultpermissionlevel="0" defaultoptions="pp"/>
 
   <!-- Aliases -->
-  <Command name="BCPlayersGamestage" commands="bc-gs" defaultpermissionlevel="0" defaultoptions="online,pp" chathook="bc-gs" chatoptions="online chat color=ff0000"/>
+  <Command name="BCPlayersGamestage" commands="bc-gs" defaultpermissionlevel="0" defaultoptions="online,pp"/>
   <Command name="BCPlayersId" commands="bc-id,bc-lpids" defaultpermissionlevel="0" defaultoptions="online,pp"/>
   <Command name="BCPlayersPosition" commands="bc-pos,bc-lppos" defaultpermissionlevel="0" defaultoptions="online,strpos,pp"/>
 
   <!-- Entities -->
-  <Command name="BCEntities" commands="bc-le" defaultpermissionlevel="0" defaultoptions="strpos,pp" chathook="bc-le"/>
+  <Command name="BCEntities" commands="bc-le" defaultpermissionlevel="0" defaultoptions="strpos,pp"/>
 
   <!-- World -->
   <Command name="BCActiveChunks" commands="bc-chunks,bc-cc" defaultpermissionlevel="0" defaultoptions="pp"/>
@@ -36,9 +36,9 @@
   <Command name="BCGetSpawn" commands="bc-getspawn" defaultpermissionlevel="0" defaultoptions=""/>
 
   <!-- ************ GAME OBJECTS ************ -->
-  <Command name="BCAssets" commands="bc-assets" defaultpermissionlevel="0" defaultoptions="csv"/>
+  <Command name="BCAssets" commands="bc-assets" defaultpermissionlevel="0" defaultoptions="pp"/>
   <Command name="BCGameObjects" commands="bc-go" defaultpermissionlevel="0" defaultoptions="pp"/>
-  <Command name="BCHubCellData" commands="bc-lhcd,bc-hcd" defaultpermissionlevel="0" defaultoptions="nl"/>
+  <Command name="BCHubCellData" commands="bc-lhcd,bc-hcd" defaultpermissionlevel="0" defaultoptions="pp"/>
   <Command name="BCVersions" commands="bc-version" defaultpermissionlevel="0" defaultoptions="pp"/>
 
   <!-- Admin Players & Entities -->
@@ -60,6 +60,7 @@
   
   <!-- World Editing -->
   <Command name="BCWorldBlocks" commands="bc-wblocks,block" defaultpermissionlevel="0" defaultoptions="loc"/>
+  <Command name="BCWorldBlocksRPC" commands="bc-wblocksrpc,blockrpc" defaultpermissionlevel="0" defaultoptions="pp"/>
   <Command name="BCImport" commands="bc-import,import" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCExport" commands="bc-export,export" defaultpermissionlevel="0" defaultoptions="loc"/>
   <Command name="BCVisitRegion" commands="bc-visitregion,visit" defaultpermissionlevel="0" defaultoptions=""/>

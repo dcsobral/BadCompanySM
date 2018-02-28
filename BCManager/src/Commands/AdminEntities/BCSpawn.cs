@@ -5,6 +5,153 @@ namespace BCM.Commands
 {
   public class BCSpawn : BCCommandAbstract
   {
+    public override void Process()
+    {
+      if (Params.Count == 0)
+      {
+        SendOutput(GetHelp());
+
+        return;
+      }
+
+      switch (Params[0])
+      {
+        case "horde":
+          {
+            if (!GetPos(out var position)) return;
+            if (!GetGroup(out var groupName)) return;
+            if (!GetCount(out var count)) return;
+            if (!GetMinMax(out var min, out var max)) return;
+            if (!GetSpawnPos(position, out var targetPos)) return;
+
+            //todo: refine method to ensure unique id
+            var spawnerId = DateTime.UtcNow.Ticks;
+
+            for (var i = 0; i < count; i++)
+            {
+              var classId = EntityGroups.GetRandomFromGroup(groupName);
+              if (!EntityClass.list.ContainsKey(classId))
+              {
+                SendOutput($"Entity class not found '{classId}', from group '{groupName}'");
+
+                return;
+              }
+
+              var spawn = new Spawn
+              {
+                EntityClassId = classId,
+                SpawnerId = spawnerId,
+                SpawnPos = position,
+                TargetPos = targetPos,
+                MinRange = min,
+                MaxRange = max
+              };
+
+              EntitySpawner.SpawnQueue.Enqueue(spawn);
+            }
+            SendOutput($"Spawning horde of {count} around {position.x} {position.y} {position.z}");
+            if (targetPos != position)
+            {
+              SendOutput($"Moving towards {targetPos.x} {targetPos.y} {targetPos.z}");
+            }
+
+            return;
+          }
+
+        case "entity":
+          {
+            if (Params.Count != 2 && Params.Count != 5)
+            {
+              SendOutput("Spawn entity requires an entity class name");
+
+              return;
+            }
+            if (!GetPos(out var position)) return;
+            if (!GetMinMax(out var min, out var max)) return;
+            if (!GetSpawnPos(position, out var targetPos)) return;
+
+            //todo: refine method to ensure unique id
+            var spawnerId = DateTime.UtcNow.Ticks;
+
+            var classId = Params[1].GetHashCode();
+
+            if (!EntityClass.list.ContainsKey(classId))
+            {
+              SendOutput($"Entity class not found '{Params[1]}'");
+
+              return;
+            }
+
+            var spawn = new Spawn
+            {
+              EntityClassId = classId,
+              SpawnerId = spawnerId,
+              SpawnPos = position,
+              TargetPos = position,
+              MinRange = min,
+              MaxRange = max
+            };
+
+            EntitySpawner.SpawnQueue.Enqueue(spawn);
+
+            SendOutput($"Spawning entity {Params[1]} around {position.x} {position.y} {position.z}");
+            if (targetPos != position)
+            {
+              SendOutput($"Moving towards {targetPos.x} {targetPos.y} {targetPos.z}");
+            }
+
+            return;
+          }
+
+        case "item":
+          {
+            if (!GetPos(out var position)) return;
+            if (!GetItemValue(out var item)) return;
+            if (!GetCount(out var count, 1)) return;
+            if (!GetMinMax(out var min, out var max, "qual")) return;
+
+            if (item == null || item.type == ItemValue.None.type)
+            {
+              SendOutput("Item class not found'");
+
+              return;
+            }
+
+            var itemValue = new ItemValue(item.type, true);
+
+            var quality = UnityEngine.Random.Range(min, max);
+            if (ItemClass.list[itemValue.type].HasParts)
+            {
+              count = 1;
+              for (var i = 0; i < itemValue.Parts.Length; i++)
+              {
+                var item2 = itemValue.Parts[i];
+                item2.Quality = quality;
+                itemValue.Parts[i] = item2;
+              }
+            }
+            else if (itemValue.HasQuality)
+            {
+              count = 1;
+              itemValue.Quality = quality;
+            }
+
+            var itemStack = new ItemStack(itemValue, count);
+            GameManager.Instance.ItemDropServer(itemStack, position, Vector3.zero);
+
+            SendOutput($"Spawning {count}x {itemValue.ItemClass.Name} at {position.x} {position.y} {position.z}");
+
+            return;
+          }
+
+        default:
+          SendOutput($"Unknown Sub Command {Params[0]}");
+          SendOutput(GetHelp());
+
+          return;
+      }
+    }
+
     private static bool GetPos(out Vector3 position)
     {
       position = new Vector3(0, 0, 0);
@@ -231,153 +378,6 @@ namespace BCM.Commands
       }
 
       return true;
-    }
-
-    public override void Process()
-    {
-      if (Params.Count == 0)
-      {
-        SendOutput(GetHelp());
-
-        return;
-      }
-
-      switch (Params[0])
-      {
-        case "horde":
-          {
-            if (!GetPos(out var position)) return;
-            if (!GetGroup(out var groupName)) return;
-            if (!GetCount(out var count)) return;
-            if (!GetMinMax(out var min, out var max)) return;
-            if (!GetSpawnPos(position, out var targetPos)) return;
-
-            //todo: refine method to ensure unique id
-            var spawnerId = DateTime.UtcNow.Ticks;
-
-            for (var i = 0; i < count; i++)
-            {
-              var classId = EntityGroups.GetRandomFromGroup(groupName);
-              if (!EntityClass.list.ContainsKey(classId))
-              {
-                SendOutput($"Entity class not found '{classId}', from group '{groupName}'");
-
-                return;
-              }
-
-              var spawn = new Spawn
-              {
-                EntityClassId = classId,
-                SpawnerId = spawnerId,
-                SpawnPos = position,
-                TargetPos = targetPos,
-                MinRange = min,
-                MaxRange = max
-              };
-
-              EntitySpawner.SpawnQueue.Enqueue(spawn);
-            }
-            SendOutput($"Spawning horde of {count} around {position.x} {position.y} {position.z}");
-            if (targetPos != position)
-            {
-              SendOutput($"Moving towards {targetPos.x} {targetPos.y} {targetPos.z}");
-            }
-
-            return;
-          }
-
-        case "entity":
-          {
-            if (Params.Count != 2 && Params.Count != 5)
-            {
-              SendOutput("Spawn entity requires an entity class name");
-
-              return;
-            }
-            if (!GetPos(out var position)) return;
-            if (!GetMinMax(out var min, out var max)) return;
-            if (!GetSpawnPos(position, out var targetPos)) return;
-
-            //todo: refine method to ensure unique id
-            var spawnerId = DateTime.UtcNow.Ticks;
-
-            var classId = Params[1].GetHashCode();
-
-            if (!EntityClass.list.ContainsKey(classId))
-            {
-              SendOutput($"Entity class not found '{Params[1]}'");
-
-              return;
-            }
-
-            var spawn = new Spawn
-            {
-              EntityClassId = classId,
-              SpawnerId = spawnerId,
-              SpawnPos = position,
-              TargetPos = position,
-              MinRange = min,
-              MaxRange = max
-            };
-
-            EntitySpawner.SpawnQueue.Enqueue(spawn);
-
-            SendOutput($"Spawning entity {Params[1]} around {position.x} {position.y} {position.z}");
-            if (targetPos != position)
-            {
-              SendOutput($"Moving towards {targetPos.x} {targetPos.y} {targetPos.z}");
-            }
-
-            return;
-          }
-
-        case "item":
-          {
-            if (!GetPos(out var position)) return;
-            if (!GetItemValue(out var item)) return;
-            if (!GetCount(out var count, 1)) return;
-            if (!GetMinMax(out var min, out var max, "qual")) return;
-
-            if (item == null || item.type == ItemValue.None.type)
-            {
-              SendOutput("Item class not found'");
-
-              return;
-            }
-
-            var itemValue = new ItemValue(item.type, true);
-
-            var quality = UnityEngine.Random.Range(min, max);
-            if (ItemClass.list[itemValue.type].HasParts)
-            {
-              count = 1;
-              for (var i = 0; i < itemValue.Parts.Length; i++)
-              {
-                var item2 = itemValue.Parts[i];
-                item2.Quality = quality;
-                itemValue.Parts[i] = item2;
-              }
-            }
-            else if (itemValue.HasQuality)
-            {
-              count = 1;
-              itemValue.Quality = quality;
-            }
-
-            var itemStack = new ItemStack(itemValue, count);
-            GameManager.Instance.ItemDropServer(itemStack, position, Vector3.zero);
-
-            SendOutput($"Spawning {count}x {itemValue.ItemClass.Name} at {position.x} {position.y} {position.z}");
-
-            return;
-          }
-
-        default:
-          SendOutput($"Unknown Sub Command {Params[0]}");
-          SendOutput(GetHelp());
-
-          return;
-      }
     }
   }
 }

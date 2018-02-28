@@ -117,7 +117,7 @@ namespace BCM.Commands
       }
       else if (matches > 1)
       {
-        SendOutput("Multiple matches found: " + matches);
+        SendOutput($"{matches} matches found, please refine your search text.");
       }
       else
       {

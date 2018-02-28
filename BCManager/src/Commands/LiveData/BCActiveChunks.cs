@@ -1,25 +1,10 @@
 using System.Collections.Generic;
+using BCM.Models;
 
 namespace BCM.Commands
 {
   public class BCActiveChunks : BCCommandAbstract
   {
-    public class BCMChunkInfo
-    {
-      public int X;
-      public int Z;
-      public bool IsDisplayed;
-      public int Mem;
-
-      public BCMChunkInfo(Chunk chunk)
-      {
-        X = chunk.X;
-        Z = chunk.Z;
-        IsDisplayed = chunk.IsDisplayed;
-        Mem = chunk.GetUsedMem();
-      }
-    }
-
     public override void Process()
     {
       var data = new Dictionary<string, object>();

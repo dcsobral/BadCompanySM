@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BCM.Models;
 
 namespace BCM.Commands
 {
@@ -9,7 +10,7 @@ namespace BCM.Commands
       var world = GameManager.Instance.World;
       if (world == null) return;
 
-      if (Options.ContainsKey("all") || Options.ContainsKey("istype") || Options.ContainsKey("type"))
+      if (Options.ContainsKey("all") || Options.ContainsKey("istype") || Options.ContainsKey("type") || Options.ContainsKey("minibike"))
       {
         var count = new Dictionary<string, int>();
 
@@ -24,7 +25,7 @@ namespace BCM.Commands
       {
         if (!int.TryParse(Params[0], out var entityId))
         {
-          SendOutput("Invalid enity id, 1st param is not a valid number");
+          SendOutput("Unable to parse entity id");
 
           return;
         }
@@ -69,12 +70,19 @@ namespace BCM.Commands
           }
 
           return;
+        case EntityMinibike _:
+          if (!Options.ContainsKey("minibike"))
+          {
+            SendOutput("Minibike not removed, use /minibike to remove minibikes");
+          }
+
+          return;
       }
 
       world.RemoveEntity(entityId, EnumRemoveEntityReason.Despawned);
 
       var entityClass = EntityClass.list[e.entityClass];
-      if (Options.ContainsKey("all") || Options.ContainsKey("istype") || Options.ContainsKey("type"))
+      if (Options.ContainsKey("all") || Options.ContainsKey("istype") || Options.ContainsKey("type") || Options.ContainsKey("minibike"))
       {
         if (count == null) return;
 
@@ -89,9 +97,8 @@ namespace BCM.Commands
       }
       else
       {
-        var v = new Vector3i();
-        v.RoundToInt(e.position);
-        SendOutput($"Entity Removed: {e.GetType()}:{(entityClass != null ? entityClass.entityClassName : "")} @{v.x} {v.y} {v.z}");
+        var pos = new BCMVector3(e.position);
+        SendOutput($"Entity Removed: {e.GetType()}:{(entityClass != null ? entityClass.entityClassName : "")} @{pos}");
       }
     }
   }

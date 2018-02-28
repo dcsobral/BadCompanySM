@@ -1,3 +1,4 @@
+using BCM.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -7,82 +8,6 @@ namespace BCM.Commands
 {
   public class BCAssets : BCCommandAbstract
   {
-    public class BCMTexture
-    {
-      public int Id;
-      public string Name;
-      public string Local;
-      public ushort TextureId;
-    }
-
-    public class BCMMeshShort
-    {
-      public string Name;
-      public List<BCMMeshDataShort> MetaData;
-    }
-
-    public class BCMMesh : BCMMeshShort
-    {
-      public string AtlasClass;
-      public string MeshType;
-      public bool Shadows;
-      public string BlendMode;
-      public string Tag;
-      public string Collider;
-      public string SecShader;
-      public string ShaderName;
-      public string ShaderDistant;
-      public string MetaName;
-      public string MetaText;
-      public new List<BCMMeshData> MetaData;
-    }
-
-    public class BCMMeshDataShort
-    {
-      public int Id;
-      public string Color;
-      public string Material;
-      public string Texture;
-
-      public BCMMeshDataShort(XmlElement uv)
-      {
-        if (uv.HasAttribute("id")) int.TryParse(uv.GetAttribute("id"), out Id);
-        if (uv.HasAttribute("color"))
-        {
-          var rgb = uv.GetAttribute("color").Split(',');
-          if (rgb.Length == 3 && float.TryParse(rgb[0], out var r) && float.TryParse(rgb[1], out var g) && float.TryParse(rgb[2], out var b))
-          {
-            Color = BCUtils.ColorToHex(new Color(r, g, b));
-          }
-        }
-        Material = uv.HasAttribute("material") ? uv.GetAttribute("material") : "";
-        Texture = uv.HasAttribute("texture") ? uv.GetAttribute("texture").Substring(0, uv.GetAttribute("texture").Length - 4) : "";
-      }
-    }
-
-    public class BCMMeshData : BCMMeshDataShort
-    {
-      public double X;
-      public double Y;
-      public double W;
-      public double H;
-      public int Blockw;
-      public int Blockh;
-      public bool Globaluv;
-
-      public BCMMeshData(XmlElement uv) : base(uv)
-      {
-        if (uv.HasAttribute("x")) double.TryParse(uv.GetAttribute("x"), out X);
-        if (uv.HasAttribute("y")) double.TryParse(uv.GetAttribute("y"), out Y);
-        if (uv.HasAttribute("w")) double.TryParse(uv.GetAttribute("w"), out W);
-        if (uv.HasAttribute("h")) double.TryParse(uv.GetAttribute("h"), out H);
-        if (uv.HasAttribute("blockw")) int.TryParse(uv.GetAttribute("blockw"), out Blockw);
-        if (uv.HasAttribute("blockh")) int.TryParse(uv.GetAttribute("blockh"), out Blockh);
-
-        if (uv.HasAttribute("globaluv")) bool.TryParse(uv.GetAttribute("globaluv"), out Globaluv);
-      }
-    }
-
     public override void Process()
     {
       var data = new List<object>();
@@ -103,6 +28,7 @@ namespace BCM.Commands
           return;
 
         case 1:
+        case 2:
           switch (Params[0])
           {
             case "overlays":
@@ -203,7 +129,7 @@ namespace BCM.Commands
     {
       var resources = new Dictionary<string, List<string>>();
 
-      var resourcesAll = Resources.LoadAll("");
+      var resourcesAll = Resources.LoadAll(Params.Count == 2 ? Params[1] : "");
       count = resourcesAll.Length;
       foreach (var resource in resourcesAll)
       {

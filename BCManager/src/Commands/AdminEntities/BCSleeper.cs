@@ -26,6 +26,7 @@ namespace BCM.Commands
         case "chunk":
           {
             if (!GetChunkKey(world, out var chunkKey)) return;
+
             ListVolumes(world, chunkKey);
             return;
           }
@@ -33,6 +34,7 @@ namespace BCM.Commands
         case "clear":
           {
             if (!GetChunkKey(world, out var chunkKey)) return;
+
             ClearChunkVolume(world, chunkKey);
             return;
           }
@@ -45,14 +47,19 @@ namespace BCM.Commands
 
         case "volume":
           {
-            GetWorldVolume(world);
+            if (Params.Count != 2)
+            {
+              SendOutput(GetHelp());
 
+              return;
+            }
+
+            GetWorldVolume(world);
             return;
           }
 
         default:
           SendOutput(GetHelp());
-
           return;
       }
     }
@@ -83,13 +90,8 @@ namespace BCM.Commands
       }
     }
 
-    private void GetWorldVolume(World world)
+    private static void GetWorldVolume(World world)
     {
-      if (Params.Count != 2)
-      {
-        SendOutput(GetHelp());
-        return;
-      }
       var sleeperVolumes = typeof(World).GetField(_volumesFunction, BindingFlags.NonPublic | BindingFlags.Instance);
       if (sleeperVolumes != null)
       {

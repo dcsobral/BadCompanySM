@@ -60,11 +60,10 @@ namespace BCM.Commands
 
     private int SpawnChunkObserver(ICollection<ChunkManager.ChunkObserver> observedEntities, World world)
     {
-      if (Params.Count > 4 && int.TryParse(Params[1], out var x) && int.TryParse(Params[2], out var y) &&
-          int.TryParse(Params[3], out var z) && int.TryParse(Params[4], out var viewDim))
-        return world.m_ChunkManager.AddChunkObserver(new Vector3(x, y, z), false, viewDim, -1)?.id ?? -1;
+      if (Params.Count > 3 && int.TryParse(Params[1], out var x) && int.TryParse(Params[2], out var z) && int.TryParse(Params[3], out var viewDim))
+        return world.m_ChunkManager.AddChunkObserver(new Vector3(x, 0, z), false, viewDim, -1)?.id ?? -1;
 
-      SendOutput("Unable to parse x y z for spawn");
+      SendOutput("Unable to parse x or z for spawn");
       SendOutput(GetHelp());
 
       return -1;
@@ -106,7 +105,7 @@ namespace BCM.Commands
 
     private void DoMove(IEnumerable<ChunkManager.ChunkObserver> observedEntities, World world)
     {
-      if (Params.Count <= 4 || !int.TryParse(Params[1], out var id))
+      if (Params.Count <= 3 || !int.TryParse(Params[1], out var id))
       {
         SendOutput("Incorrect params count for move");
         SendOutput(GetHelp());
@@ -114,9 +113,9 @@ namespace BCM.Commands
         return;
       }
 
-      if (!int.TryParse(Params[2], out var x) || !int.TryParse(Params[3], out var y) || !int.TryParse(Params[4], out var z))
+      if (!int.TryParse(Params[2], out var x) || !int.TryParse(Params[3], out var z))
       {
-        SendOutput("Unable to parse x y z for move");
+        SendOutput("Unable to parse x or z for move");
         SendOutput(GetHelp());
 
         return;
@@ -128,8 +127,8 @@ namespace BCM.Commands
 
         if (IsPlayer(oe)) return;
 
-        oe.SetPosition(new Vector3(x, y, z));
-        SendOutput($"Moved chunk observer {oe.id} to {x} {y} {z}");
+        oe.SetPosition(new Vector3(x, 0, z));
+        SendOutput($"Moved chunk observer {oe.id} to {x} {z}");
         return;
       }
 
@@ -228,8 +227,8 @@ namespace BCM.Commands
       foreach (var oe in observedEntities)
       {
         SendOutput(oe.entityIdToSendChunksTo > 0
-          ? $"id:{oe.id}, pos:{Math.Round(oe.position.x, 0)} {Math.Round(oe.position.y, 0)} {Math.Round(oe.position.z, 0)}, dim:{oe.viewDim}, chunks:{oe.chunksLoaded.Count}/{oe.chunksLoaded.Count + oe.chunksToLoad.list.Count}, entity:{oe.entityIdToSendChunksTo}"
-          : $"id:{oe.id}, pos:{Math.Round(oe.position.x, 0)} {Math.Round(oe.position.y, 0)} {Math.Round(oe.position.z, 0)}, dim:{oe.viewDim}, chunks:{oe.chunksToLoad.list.Count}, entity:{oe.entityIdToSendChunksTo}");
+          ? $"id:{oe.id}, pos:{Math.Round(oe.position.x, 0)} {Math.Round(oe.position.z, 0)}, dim:{oe.viewDim}, chunks:{oe.chunksLoaded.Count}/{oe.chunksLoaded.Count + oe.chunksToLoad.list.Count}, entity:{oe.entityIdToSendChunksTo}"
+          : $"id:{oe.id}, pos:{Math.Round(oe.position.x, 0)} {Math.Round(oe.position.z, 0)}, dim:{oe.viewDim}, chunks:{oe.chunksToLoad.list.Count}, entity:{oe.entityIdToSendChunksTo}");
       }
     }
   }

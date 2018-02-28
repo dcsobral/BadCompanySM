@@ -2,21 +2,14 @@ using BCM.PersistentData;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
   public class BCPlayerFiles : BCCommandAbstract
   {
-    public class BCMPlayerDataFile
-    {
-      public string Name;
-      public string SteamId;
-      public bool IsOnline;
-      public string LastOnline;
-      public string LastWrite;
-      public string LastLogPos;
-    }
-
+    [CanBeNull]
     private static FileSystemInfo[] GetFiles(string path)
     {
       var root = new DirectoryInfo(path);

@@ -31,26 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\7dtd-binaries\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\7dtd-binaries\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
-    <Reference Include="LitJson">
-      <HintPath>..\7dtd-binaries\LitJson.dll</HintPath>
-    </Reference>
-    <Reference Include="LogLibrary">
-      <HintPath>..\7dtd-binaries\LogLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine">
-      <HintPath>..\7dtd-binaries\UnityEngine.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Config\Commands.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -85,6 +65,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Description\BCTime.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCWorldBlocksRPC.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Help\BCPrefab.txt">
@@ -123,6 +106,9 @@
     <Content Include="Config\Commands\en\Help\BCTime.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Config\Commands\en\Help\BCWorldBlocksRPC.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\Commands\en\Help\BCWorldBlocks.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -140,12 +126,49 @@
     <Compile Include="src\API.cs" />
     <Compile Include="src\Commands\AdminEntities\BCGiveItemToPlayer.cs" />
     <Compile Include="src\Commands\AdminEntities\BCHordeSpawners.cs" />
+    <Compile Include="src\Commands\WorldEditing\BCWorldBlocksRPC.cs" />
+    <Compile Include="src\Models\BCMBuffEntity.cs" />
+    <Compile Include="src\Models\BCMBuffInfo.cs" />
     <Compile Include="src\Commands\AdminEntities\BCSleeper.cs" />
     <Compile Include="src\Commands\AdminEntities\BCTeleport.cs" />
+    <Compile Include="src\Models\BCMBasicLot.cs" />
+    <Compile Include="src\Models\BCMHubCell.cs" />
+    <Compile Include="src\Models\BCMLot.cs" />
+    <Compile Include="src\Models\BCMLotType.cs" />
+    <Compile Include="src\Models\BCMMesh.cs" />
+    <Compile Include="src\Models\BCMMeshData.cs" />
+    <Compile Include="src\Models\BCMMeshDataShort.cs" />
+    <Compile Include="src\Models\BCMMeshShort.cs" />
+    <Compile Include="src\Models\BCMTexture.cs" />
+    <Compile Include="src\Models\BCMModInfo.cs" />
     <Compile Include="src\Commands\LiveData\BCGetSpawn.cs" />
     <Compile Include="src\Commands\LiveData\BCAdmins.cs" />
     <Compile Include="src\Commands\LiveData\BCEvents.cs" />
+    <Compile Include="src\Models\BCMAdmin.cs" />
+    <Compile Include="src\Models\BCMAdmins.cs" />
+    <Compile Include="src\Models\BCMBan.cs" />
+    <Compile Include="src\Models\BCMChunkInfo.cs" />
+    <Compile Include="src\Models\BCMPermission.cs" />
+    <Compile Include="src\Models\BCMWhitelist.cs" />
+    <Compile Include="src\Models\BCMPlayerDataFile.cs" />
     <Compile Include="src\Commands\Utility\BCChunkObserver.cs" />
+    <Compile Include="src\Models\BCMTask.cs" />
+    <Compile Include="src\Models\BCMTaskStatus.cs" />
+    <Compile Include="src\Models\BCMBlockValue.cs" />
+    <Compile Include="src\Models\BCMTileEntityCampfire.cs" />
+    <Compile Include="src\Models\BCMTileEntityForge.cs" />
+    <Compile Include="src\Models\BCMTileEntityGoreBlock.cs" />
+    <Compile Include="src\Models\BCMTileEntityLootContainer.cs" />
+    <Compile Include="src\Models\BCMTileEntityPowered.cs" />
+    <Compile Include="src\Models\BCMTileEntityPoweredRangeTrap.cs" />
+    <Compile Include="src\Models\BCMTileEntityPoweredTrigger.cs" />
+    <Compile Include="src\Models\BCMTileEntityPowerSource.cs" />
+    <Compile Include="src\Models\BCMTileEntitySecureDoor.cs" />
+    <Compile Include="src\Models\BCMTileEntitySecureLootContainer.cs" />
+    <Compile Include="src\Models\BCMTileEntitySign.cs" />
+    <Compile Include="src\Models\BCMTileEntityTrader.cs" />
+    <Compile Include="src\Models\BCMTileEntityVendingMachine.cs" />
+    <Compile Include="src\Models\BCMTileEntityWorkstation.cs" />
     <Compile Include="src\Commands\WorldEditing\BCPrefab.cs" />
     <Compile Include="src\Models\BCMExpressionData.cs" />
     <Compile Include="src\Models\BCMSlot.cs" />
@@ -496,6 +519,25 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>C:\Games\SteamLibrary\SteamApps\common\7 Days to Die Dedicated Server - Bad Company\7DaysToDieServer_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>C:\Games\SteamLibrary\SteamApps\common\7 Days to Die Dedicated Server - Bad Company\7DaysToDieServer_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="LitJson">
+      <HintPath>C:\Games\SteamLibrary\SteamApps\common\7 Days to Die Dedicated Server - Bad Company\7DaysToDieServer_Data\Managed\LitJson.dll</HintPath>
+    </Reference>
+    <Reference Include="LogLibrary">
+      <HintPath>C:\Games\SteamLibrary\SteamApps\common\7 Days to Die Dedicated Server - Bad Company\7DaysToDieServer_Data\Managed\LogLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>C:\Games\SteamLibrary\SteamApps\common\7 Days to Die Dedicated Server - Bad Company\7DaysToDieServer_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>rmdir "$(ProjectDir)Mods\BCManager" /s /q
@@ -516,6 +558,8 @@ copy "$(ProjectDir)$(OutDir)Config\Events\Motd.xml" "$(ProjectDir)Mods\BCManager
 copy "$(ProjectDir)$(OutDir)Config\Events\SpawnMutator.xml" "$(ProjectDir)Mods\BCManager\DefaultConfig\Events\SpawnMutator.xml"
 copy "$(ProjectDir)$(OutDir)Config\System.xml" "$(ProjectDir)Mods\BCManager\DefaultConfig\System.xml"
 copy "$(ProjectDir)$(OutDir)Config\Readme.md" "$(ProjectDir)Mods\BCManager\Config\Readme.md"
+
+"C:\Program Files\Mono\bin\pdb2mdb.bat" "$(TargetPath)"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -9,172 +9,118 @@ namespace BCM.Commands
 
     public override void Process()
     {
-      if (Params.Count == 0)
+      var world = GameManager.Instance.World;
+      if (world == null) return;
+
+      //todo add a 1 param option for 'bc-reset here' to reset chunk player is in
+      //Resets the chunk to the original state it was created in
+      if (Params.Count != 2)
       {
+        SendOutput("Incorrect Params");
         SendOutput(GetHelp());
 
         return;
       }
 
-      var world = GameManager.Instance.World;
-      if (world == null) return;
-
-      switch (Params[0])
+      if (!int.TryParse(Params[0], out var cx) || !int.TryParse(Params[1], out var cz))
       {
-        //case "region":
-        //  {
-        //    var chunkCache = world.ChunkCache;
-        //    if (!(chunkCache.ChunkProvider is ChunkProviderGenerateWorld chunkProvider))
-        //    {
-        //      SendOutput("Unable to load chunk provider");
+        SendOutput("Unable to parse cx or cz as numbers");
 
-        //      return;
-        //    }
+        return;
+      }
+      var chunkKey = WorldChunkCache.MakeChunkKey(cx, cz);
 
-        //    var field = typeof(ChunkProviderGenerateWorld).GetField("m_regionFileManager", BindingFlags.NonPublic | BindingFlags.Instance);
-        //    var rfm = (RegionFileManager)field?.GetValue(chunkProvider);
-        //    if (rfm == null)
-        //    {
-        //      SendOutput("Region Manager is null");
+      //todo: make unloaded chunk option
+      //todo: deferred load
+      var chunkCache = world.ChunkCache;
+      if (!(chunkCache.ChunkProvider is ChunkProviderGenerateWorld chunkProvider))
+      {
+        SendOutput("Unable to load chunk provider");
 
-        //      return;
-        //    }
+        return;
+      }
+      //todo: deferred load
+      var chunkSync = chunkCache.GetChunkSync(chunkKey);
+      if (chunkSync == null)
+      {
+        SendOutput("Chunk not loaded");
 
-        //    if (!int.TryParse(Params[1], out var cx) || !int.TryParse(Params[2], out var cz))
-        //    {
-        //      SendOutput("Unable to parse cx or cz as numbers");
+        return;
+      }
 
-        //      return;
-        //    }
+      //create reset chunk
+      var chunk = MemoryPools.PoolChunks.AllocSync(true);
+      if (chunk == null)
+      {
+        SendOutput("Couldn't allocate chunk from memory pool");
 
-        //    var chunkKey = WorldChunkCache.MakeChunkKey(cx, cz);
-        //    //do stuff
-        //    rfm.RemoveChunkSync(chunkKey);
+        return;
+      }
 
-        //    break;
-        //  }
-        case "chunk":
-          {
-            //CHUNK - Resets the chunk to the original state it was created in
-            if (Params.Count != 3)
-            {
-              SendOutput("Incorrect Params");
-              SendOutput(GetHelp());
+      chunk.X = cx;
+      chunk.Z = cz;
 
-              return;
-            }
+      if (!(chunkProvider.GetTerrainGenerator() is TerrainGeneratorWithBiomeResource terrainGenerator))
+      {
+        SendOutput("Couldn't load terrain generator");
 
-            if (!int.TryParse(Params[1], out var cx) || !int.TryParse(Params[2], out var cz))
-            {
-              SendOutput("Unable to parse cx or cz as numbers");
+        return;
+      }
 
-              return;
-            }
-            var chunkKey = WorldChunkCache.MakeChunkKey(cx, cz);
+      var random = Utils.RandomFromSeedOnPos(cx, cz, world.Seed);
+      terrainGenerator.GenerateTerrain(world, chunk, random);
+      chunk.NeedsDecoration = true;
+      chunk.NeedsLightCalculation = true;
+      DoPrefabDecorations(world, chunkProvider, chunk, random);
+      DoEntityDecoration(world, chunkProvider, chunk, random);
+      DoSpawnerDecorations(world, chunkProvider, chunk, random);
 
-            //todo: make unloaded chunk option
-            //todo: deferred load
-            var chunkCache = world.ChunkCache;
-            if (!(chunkCache.ChunkProvider is ChunkProviderGenerateWorld chunkProvider))
-            {
-              SendOutput("Unable to load chunk provider");
+      //UPDATE CHUNK
+      var syncRoot = chunkCache.GetSyncRoot();
+      lock (syncRoot)
+      {
+        //todo: instead of remove and add, generate the chunk then use regular setblockrpc calls to update chunk blocks
+        //remove old chunk
+        if (chunkCache.ContainsChunkSync(chunkKey))
+        {
+          chunkCache.RemoveChunkSync(chunkKey);
+        }
 
-              return;
-            }
-            //todo: deferred load
-            var chunkSync = chunkCache.GetChunkSync(chunkKey);
-            if (chunkSync == null)
-            {
-              SendOutput("Chunk not loaded");
+        if (chunkCache.ContainsChunkSync(chunk.Key))
+        {
+          SendOutput("Reset chunk still exists in chunk cache");
 
-              return;
-            }
+          return;
+        }
 
-            //create reset chunk
-            var chunk = MemoryPools.PoolChunks.AllocSync(true);
-            if (chunk == null)
-            {
-              SendOutput("Couldn't allocate chunk from memory pool");
+        if (!chunkCache.AddChunkSync(chunk))
+        {
+          MemoryPools.PoolChunks.FreeSync(chunk);
+          SendOutput("Unable to add new chunk to cache");
 
-              return;
-            }
+          return;
+        }
+      }
+      var decorateWithNeigbours = typeof(ChunkProviderGenerateWorld).GetMethod(_decorateFunction, BindingFlags.NonPublic | BindingFlags.Instance);
+      if (decorateWithNeigbours == null)
+      {
+        SendOutput("Couldn't access method for DecorateWithNeigbours");
 
-            chunk.X = cx;
-            chunk.Z = cz;
+        return;
+      }
+      decorateWithNeigbours.Invoke(chunkProvider, new object[] { chunk });
 
-            if (!(chunkProvider.GetTerrainGenerator() is TerrainGeneratorWithBiomeResource terrainGenerator))
-            {
-              SendOutput("Couldn't load terrain generator");
+      chunk.InProgressRegeneration = false;
+      chunk.NeedsCopying = true;
+      chunk.isModified = true;
 
-              return;
-            }
+      SendOutput($"Chunk reset @ {cx},{cz}");
+      Log.Out($"{Config.ModPrefix} Chunk reset @ {cx},{cz}");
 
-            var random = Utils.RandomFromSeedOnPos(cx, cz, world.Seed);
-            terrainGenerator.GenerateTerrain(world, chunk, random);
-            chunk.NeedsDecoration = true;
-            chunk.NeedsLightCalculation = true;
-            DoPrefabDecorations(world, chunkProvider, chunk, random);
-            DeEntityDecoration(world, chunkProvider, chunk, random);
-            DoSpawnerDecorations(world, chunkProvider, chunk, random);
-
-            //UPDATE CHUNK
-            var syncRoot = chunkCache.GetSyncRoot();
-            lock (syncRoot)
-            {
-              //remove old chunk
-              if (chunkCache.ContainsChunkSync(chunkKey))
-              {
-                chunkCache.RemoveChunkSync(chunkKey);
-              }
-
-              if (chunkCache.ContainsChunkSync(chunk.Key))
-              {
-                SendOutput("Reset chunk still exists in chunk cache");
-
-                return;
-              }
-
-              if (!chunkCache.AddChunkSync(chunk))
-              {
-                MemoryPools.PoolChunks.FreeSync(chunk);
-                SendOutput("Unable to add new chunk to cache");
-
-                return;
-              }
-            }
-            var decorateWithNeigbours = typeof(ChunkProviderGenerateWorld).GetMethod(_decorateFunction, BindingFlags.NonPublic | BindingFlags.Instance);
-            if (decorateWithNeigbours == null)
-            {
-              SendOutput("Couldn't access method for DecorateWithNeigbours");
-
-              return;
-            }
-            decorateWithNeigbours.Invoke(chunkProvider, new object[] { chunk });
-
-            chunk.InProgressRegeneration = false;
-            chunk.NeedsCopying = true;
-            chunk.isModified = true;
-
-            SendOutput($"Chunk reset @ {cx},{cz}");
-            Log.Out($"{Config.ModPrefix} Chunk reset @ {cx},{cz}");
-
-            //RELOAD CHUNKS
-            if (!(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
-            {
-              BCChunks.ReloadForClients(new Dictionary<long, Chunk> { { chunkKey, chunk } });
-            }
-            break;
-          }
-
-        //case "player":
-        //  {
-        //    //resets the player by kicking them if online and then backing up player files before deleting
-        //    break;
-        //  }
-
-        default:
-          SendOutput(GetHelp());
-          break;
+      //RELOAD CHUNKS
+      if (!(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
+      {
+        BCChunks.ReloadForClients(new Dictionary<long, Chunk> { { chunkKey, chunk } });
       }
     }
 
@@ -190,7 +136,7 @@ namespace BCM.Commands
       }
     }
 
-    private static void DeEntityDecoration(World world, ChunkProviderGenerateWorld chunkProvider, Chunk chunk, System.Random random)
+    private static void DoEntityDecoration(World world, ChunkProviderGenerateWorld chunkProvider, Chunk chunk, System.Random random)
     {
       if (chunkProvider.GetDynamicEntityDecorator() != null)
       {

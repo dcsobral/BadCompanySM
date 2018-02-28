@@ -5,7 +5,7 @@
             1. {command} <subcommand>
       Notes:
             list - provides chunk observer info, such as id, pos, view dist, chunk count, and entityid
-            spawn - create a new chunk observer at location to get chunks to load
+            spawn <x> <z> <dim> - creates an observer at <x> <z> world co-ords with a chunk range <dim> (0-13) create a new chunk observer at location to get chunks to load
             remove - despawns the observer and unloads any unobserved chunks
-            move - moves the observer to a new location, causing loaded and unloaded chunks to adjust
+            move <x> <z> - moves the observer to a new location, causing loaded and unloaded chunks to adjust
             reload - reloads the given chunk, or volume of chunks. <x> <z> | <x> <z> <x2> <z2> as params

@@ -17,11 +17,19 @@ namespace BCM.Commands
       {
         if (clientInfo == null) return;
 
-        clientInfo.SendPackage(new NetPackageConsoleCmdClient("debuff " + Params[1], true));
+        if (MultiBuffClass.s_classes.ContainsKey(Params[1]))
+        {
+          clientInfo.SendPackage(new NetPackageConsoleCmdClient("debuff " + Params[1], true));
+          SendOutput($"Buff {Params[1]} removed from player {clientInfo.playerName}");
+        }
+        else
+        {
+          SendOutput($"Unable to find buff {Params[1]}");
+        }
       }
       else if (count > 1)
       {
-        SendOutput("Multiple matches found: " + count);
+        SendOutput($"{count} matches found, please refine your search text.");
       }
       else
       {

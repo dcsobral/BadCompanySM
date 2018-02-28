@@ -2,6 +2,11 @@
       Aliases: {commands}
       Default Options: {defaultoptions}
       Usage:
-            1. {command} <x> <z>
+            1. {command} <x1> <z1>
+            2. {command} <x1> <z1> <r>
+            3. {command} <x1> <z1> <x2> <z2>
       Notes:
             Visits the region given and reveals the map
+						1. Visits the given region
+						2. Visits the region(s) where <x1> <z1> is the center region and <r> is a radius
+						3. Visits the region(s) between <x1> <z1> and <x2> <z2> inclusive

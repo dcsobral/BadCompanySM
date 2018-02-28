@@ -21,16 +21,24 @@ namespace BCM.Commands
 
           return;
         }
-        //todo: check buff is valid
-        clientInfo.SendPackage(new NetPackageConsoleCmdClient("buff " + Params[1], true));
+
+        if (MultiBuffClass.s_classes.ContainsKey(Params[1]))
+        {
+          clientInfo.SendPackage(new NetPackageConsoleCmdClient("buff " + Params[1], true));
+          SendOutput($"Buff {Params[1]} given to player {clientInfo.playerName}");
+        }
+        else
+        {
+          SendOutput($"Unable to find buff {Params[1]}");
+        }
       }
       else if (count > 1)
       {
-        SendOutput("Multiple matches found: " + count);
+        SendOutput($"{count} matches found, please refine your search text.");
       }
       else
       {
-        SendOutput("Playername or entity ID not found.");
+        SendOutput("Player not found.");
       }
     }
   }

@@ -1,1 +1,1 @@
-﻿Visit Region - Visits the region given and reveals the map
+﻿Visit Region - Visits the region(s) given and reveals the map

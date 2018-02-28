@@ -138,7 +138,7 @@ namespace BCM.Commands
       }
     }
 
-    private void ProcessSynapseState(Synapse synapse)
+    private static void ProcessSynapseState(Synapse synapse)
     {
       if (synapse == null)
       {

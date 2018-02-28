@@ -4,6 +4,30 @@ namespace BCM.Commands
 {
   public class BCTeleport : BCCommandAbstract
   {
+    public override void Process()
+    {
+      if (Params.Count == 0)
+      {
+        SendOutput(GetHelp());
+
+        return;
+      }
+
+      switch (Params[0])
+      {
+        case "entity":
+          {
+            TeleportEntity(Params[1]);
+          }
+          break;
+
+        default:
+          TeleportEntity(Params[0]);
+
+          return;
+      }
+    }
+
     //todo: add teleport in facing direction x meters
     private static bool GetPos(out Vector3 position)
     {
@@ -142,30 +166,6 @@ namespace BCM.Commands
       ci = ConsoleHelper.ParseParamIdOrName(eid);
 
       return ci != null;
-    }
-
-    public override void Process()
-    {
-      if (Params.Count == 0)
-      {
-        SendOutput(GetHelp());
-
-        return;
-      }
-
-      switch (Params[0])
-      {
-        case "entity":
-          {
-            TeleportEntity(Params[1]);
-          }
-          break;
-
-        default:
-          TeleportEntity(Params[0]);
-
-          return;
-      }
     }
 
     private static void TeleportEntity(string param)
