@@ -61,22 +61,23 @@ namespace BCM.Commands
           {
             SendOutput($"Invalid entity, entity not found: {entityId}");
           }
-
           return;
+
         case EntityPlayer _:
           if (!Options.ContainsKey("all"))
           {
             SendOutput("You can't remove a player!");
           }
-
           return;
+
         case EntityMinibike _:
           if (!Options.ContainsKey("minibike"))
           {
             SendOutput("Minibike not removed, use /minibike to remove minibikes");
-          }
 
-          return;
+            return;
+          }
+          break;
       }
 
       world.RemoveEntity(entityId, EnumRemoveEntityReason.Despawned);

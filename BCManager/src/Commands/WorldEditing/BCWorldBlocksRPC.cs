@@ -85,6 +85,7 @@ namespace BCM.Commands
         case "paintface":
           SetPaintFace(world, position);
           break;
+        case "strippaint":
         case "paintstrip":
           RemovePaint(world, position);
           break;
@@ -93,6 +94,15 @@ namespace BCM.Commands
           break;
         case "rotate":
           SetRotation(world, position);
+          break;
+        case "meta1":
+          SetMeta(1, world, position);
+          break;
+        case "meta2":
+          SetMeta(2, world, position);
+          break;
+        case "meta3":
+          SetMeta(3, world, position);
           break;
         default:
           SendOutput(GetHelp());
@@ -108,10 +118,10 @@ namespace BCM.Commands
         SendOutput($"Using density {density}");
       }
 
-      var textureFull = 0L;
+      byte texture = 0;
       if (Options.ContainsKey("t"))
       {
-        if (!byte.TryParse(Options["t"], out var texture))
+        if (!byte.TryParse(Options["t"], out texture))
         {
           SendOutput("Unable to parse texture index");
 
@@ -125,68 +135,58 @@ namespace BCM.Commands
           return;
         }
 
-        var num = 0L;
-        for (var face = 0; face < 6; face++)
-        {
-          var num2 = face * 8;
-          num &= ~(255L << num2);
-          num |= (long)(texture & 255) << num2;
-        }
-        textureFull = num;
+        SendOutput($"Using texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}'");
       }
 
-      var blockPos = new Vector3i(pos.x, pos.y, pos.z);
-      var bvCurrent = world.GetBlock(blockPos);
-
       if (Options.ContainsKey("delmulti")) return;
+
+      var bvCurrent = world.GetBlock(pos);
 
       //REMOVE PARENT OF MULTIDIM
       if (bvCurrent.Block.isMultiBlock && bvCurrent.ischild)
       {
-        var parentPos = bvCurrent.Block.multiBlockPos.GetParentPos(blockPos, bvCurrent);
+        var parentPos = bvCurrent.Block.multiBlockPos.GetParentPos(pos, bvCurrent);
         var parent = world.GetBlock(parentPos);
         if (parent.ischild || parent.type != bvCurrent.type) return;
 
         world.ChunkClusters[0].SetBlock(parentPos, BlockValue.Air, false, false);
-        //world.SetBlockRPC(parentPos, BlockValue.Air);
       }
       if (Options.ContainsKey("delmulti")) return;
 
       //REMOVE LCB's
       if (bvCurrent.Block.IndexName == "lpblock")
       {
-        GameManager.Instance.persistentPlayers.RemoveLandProtectionBlock(new Vector3i(blockPos.x, blockPos.y, blockPos.z));
+        GameManager.Instance.persistentPlayers.RemoveLandProtectionBlock(pos);
       }
 
-      var chunkSync = world.GetChunkFromWorldPos(blockPos.x, blockPos.y, blockPos.z) as Chunk;
+      var chunkSync = world.GetChunkFromWorldPos(pos.x, pos.y, pos.z) as Chunk;
 
       if (targetbv.Equals(BlockValue.Air))
       {
         density = MarchingCubes.DensityAir;
 
-        if (world.GetTerrainHeight(blockPos.x, blockPos.z) > blockPos.y)
+        if (world.GetTerrainHeight(pos.x, pos.z) > pos.y)
         {
-          chunkSync?.SetTerrainHeight(blockPos.x & 15, blockPos.z & 15, (byte)blockPos.y);
+          chunkSync?.SetTerrainHeight(pos.x & 15, pos.z & 15, (byte)pos.y);
         }
       }
       else if (targetbv.Block.shape.IsTerrain())
       {
         density = MarchingCubes.DensityTerrain;
 
-        if (world.GetTerrainHeight(blockPos.x, blockPos.z) < blockPos.y)
+        if (world.GetTerrainHeight(pos.x, pos.z) < pos.y)
         {
-          chunkSync?.SetTerrainHeight(blockPos.x & 15, blockPos.z & 15, (byte)blockPos.y);
+          chunkSync?.SetTerrainHeight(pos.x & 15, pos.z & 15, (byte)pos.y);
         }
       }
       else
       {
         //SET TEXTURE
-        world.ChunkClusters[0].SetTextureFull(blockPos, textureFull);
+        GameManager.Instance.SetBlockTextureServer(pos, BlockFace.None, texture, -1);
       }
 
       //SET BLOCK
-      //world.ChunkClusters[0].SetBlock(p5, true, bvNew, true, density, false, false);
-      world.SetBlockRPC(blockPos, targetbv, density);
+      world.SetBlockRPC(pos, targetbv, density);
     }
 
     private static void ScanBlock(World world, Vector3i pos)
@@ -239,11 +239,29 @@ namespace BCM.Commands
       }
 
       var blockValue = world.GetBlock(pos);
-      if (blockValue.Equals(BlockValue.Air) || blockValue.ischild) return;
+      if (blockValue.Equals(BlockValue.Air))
+      {
+        SendOutput($"Target block is air @ {pos}");
+
+        return;
+      }
+      if (blockValue.ischild)
+      {
+        SendOutput($"Target block is a child block @ {pos} - Parent@ {blockValue.parentx},{blockValue.parenty},{blockValue.parentz}");
+
+        return;
+      }
+
+      var d = world.GetDensity(0, pos);
+      if (d == density)
+      {
+        SendOutput($"No change in density @ {pos}");
+
+        return;
+      }
 
       world.SetBlockRPC(pos, blockValue, density);
-
-      SendOutput($"Setting density on block '{density}' @ {pos}");
+      SendOutput($"Changing density on block from '{d}' to '{density}' @ {pos}");
     }
 
     private static void SetRotation(World world, Vector3i pos)
@@ -260,36 +278,77 @@ namespace BCM.Commands
       }
 
       var blockValue = world.GetBlock(pos);
-      if (blockValue.Equals(BlockValue.Air) || blockValue.ischild || !blockValue.Block.shape.IsRotatable) return;
+      if (blockValue.Equals(BlockValue.Air))
+      {
+        SendOutput($"Target block is air @ {pos}");
 
+        return;
+      }
+      if (blockValue.ischild)
+      {
+        SendOutput($"Target child block can't be rotated @ {pos} - Parent@ {blockValue.parentx},{blockValue.parenty},{blockValue.parentz}");
+
+        return;
+      }
+      if (!blockValue.Block.shape.IsRotatable)
+      {
+        SendOutput($"Target block can't be rotated @ {pos}");
+
+        return;
+      }
+
+      var r = blockValue.rotation;
       blockValue.rotation = rotation;
       world.SetBlockRPC(pos, blockValue);
 
-      SendOutput($"Setting rotation on block @ {pos}");
+      SendOutput($"Changing rotation on block from '{r}' to '{rotation}' @ {pos}");
     }
 
     private static void DowngradeBlock(World world, Vector3i pos)
     {
       var blockValue = world.GetBlock(pos);
       var downgradeBlockValue = blockValue.Block.DowngradeBlock;
-      if (downgradeBlockValue.Equals(BlockValue.Air) || blockValue.ischild) return;
+      if (downgradeBlockValue.Equals(BlockValue.Air))
+      {
+        SendOutput($"Target block has no downgrade @ {pos}");
+
+        return;
+      }
+      if (blockValue.ischild)
+      {
+        SendOutput($"Can't downgrade a child block @ {pos} - Parent@ {blockValue.parentx},{blockValue.parenty},{blockValue.parentz}");
+
+        return;
+      }
+
 
       downgradeBlockValue.rotation = blockValue.rotation;
       world.SetBlockRPC(pos, downgradeBlockValue);
 
-      SendOutput($"Downgrading block @ {pos}");
+      SendOutput($"Downgrading block from '{blockValue.Block.GetBlockName()}' to '{downgradeBlockValue.Block.GetBlockName()}' @ {pos}");
     }
 
     private static void UpgradeBlock(World world, Vector3i pos)
     {
       var blockValue = world.GetBlock(pos);
       var upgradeBlockValue = blockValue.Block.UpgradeBlock;
-      if (upgradeBlockValue.Equals(BlockValue.Air) || blockValue.ischild) return;
+      if (upgradeBlockValue.Equals(BlockValue.Air))
+      {
+        SendOutput($"Target block has no upgrade @ {pos}");
+
+        return;
+      }
+      if (blockValue.ischild)
+      {
+        SendOutput($"Can't upgrade a child block @ {pos} - Parent@ {blockValue.parentx},{blockValue.parenty},{blockValue.parentz}");
+
+        return;
+      }
 
       upgradeBlockValue.rotation = blockValue.rotation;
       world.SetBlockRPC(pos, upgradeBlockValue);
 
-      SendOutput($"Upgrading block @ {pos}");
+      SendOutput($"Upgrading block from '{blockValue.Block.GetBlockName()}' to '{upgradeBlockValue.Block.GetBlockName()}' @ {pos}");
     }
 
     private static void DamageBlock(World world, Vector3i pos)
@@ -337,24 +396,33 @@ namespace BCM.Commands
       if (blockValue.Equals(BlockValue.Air)) return;
 
       var max = blockValue.Block.blockMaterial.MaxDamage;
-      var damage = (damageMax != 0 ? UnityEngine.Random.Range(damageMin, damageMax) : damageMin) + blockValue.damage;
+      var impact = damageMax != 0 ? UnityEngine.Random.Range(damageMin, damageMax) : damageMin;
+      var damage = impact + blockValue.damage;
       if (Options.ContainsKey("nobreak"))
       {
         blockValue.damage = Math.Min(damage, max - 1);
       }
       else if (Options.ContainsKey("overkill"))
       {
-        //needs to downgrade if overflow damage, then apply remaining damage until all used or downgraded to air
-        var d = damage;
-        while (d > 0 || blockValue.type != 0)
+        if (damage >= max)
         {
-          var downgrade = blockValue.Block.DowngradeBlock;
-          downgrade.rotation = blockValue.rotation;
-          blockValue = downgrade;
-          blockValue.damage = d;
-          d = d - max;
+          var downgradeBlock = blockValue.Block.DowngradeBlock;
+          while (damage >= max)
+          {
+            downgradeBlock = blockValue.Block.DowngradeBlock;
+            damage -= max;
+            max = downgradeBlock.Block.blockMaterial.MaxDamage;
+            downgradeBlock.rotation = blockValue.rotation;
+            blockValue = downgradeBlock;
+          }
+          blockValue.damage = damage;
+
+          SendOutput($"Damaging block for {-impact} caused downgrade to '{downgradeBlock.Block.GetBlockName()}' @ {pos}");
         }
-        blockValue.damage = damageMin;
+        else
+        {
+          blockValue.damage = damage;
+        }
       }
       else
       {
@@ -362,6 +430,7 @@ namespace BCM.Commands
         if (damage >= max)
         {
           var downgrade = blockValue.Block.DowngradeBlock;
+          SendOutput($"Damaging block for {-impact} caused downgrade to '{downgrade.Block.GetBlockName()}' @ {pos}");
           downgrade.rotation = blockValue.rotation;
           blockValue = downgrade;
         }
@@ -372,22 +441,36 @@ namespace BCM.Commands
       }
 
       world.SetBlockRPC(pos, blockValue);
-
-      SendOutput($"Damaging block @ {pos}");
+      if (!blockValue.Equals(BlockValue.Air))
+      {
+        SendOutput($"Damaging block for '{-impact}' leaving {blockValue.Block.blockMaterial.MaxDamage - blockValue.damage}/{blockValue.Block.blockMaterial.MaxDamage} @ {pos}");
+      }
     }
 
     private static void RepairBlock(World world, Vector3i pos)
     {
       var blockValue = world.GetBlock(pos);
-      if (blockValue.Equals(BlockValue.Air)) return;
+      if (blockValue.Equals(BlockValue.Air))
+      {
+        SendOutput($"Target block is air @ {pos}");
+
+        return;
+      }
+
+      var d = blockValue.damage;
+      if (d > 0)
+      {
+        SendOutput($"Target block not damaged @ {pos}");
+
+        return;
+      }
 
       blockValue.damage = 0;
       world.SetBlockRPC(pos, blockValue);
 
-      SendOutput($"Repairing block @ {pos}");
+      SendOutput($"Repairing block for '{d}' damage @ {pos}");
     }
 
-    //GameManager.Instance.SetBlockTextureServer(_blockPos, BlockFace.None, 0, _entityIdThatDamaged);
     private static void SetPaintFace(World world, Vector3i pos)
     {
       byte texture = 0;
@@ -424,19 +507,29 @@ namespace BCM.Commands
       }
 
       var blockValue = world.GetBlock(pos);
-      if (blockValue.Equals(BlockValue.Air)) return;
+      if (blockValue.Equals(BlockValue.Air))
+      {
+        SendOutput($"Target block is air @ {pos}");
 
-      world.ChunkClusters[0].SetBlockFaceTexture(pos, (BlockFace)setFace, texture);
+        return;
+      }
+      if (blockValue.Block.shape.IsTerrain())
+      {
+        SendOutput($"Target block is terrain @ {pos}");
 
+        return;
+      }
+
+      GameManager.Instance.SetBlockTextureServer(pos, (BlockFace)setFace, texture, -1);
       SendOutput($"Painting block on face '{((BlockFace)setFace).ToString()}' with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {pos}");
     }
 
     private static void SetPaint(World world, Vector3i pos)
     {
-      var texture = 0;
+      byte texture = 0;
       if (Options.ContainsKey("t"))
       {
-        if (!int.TryParse(Options["t"], out texture))
+        if (!byte.TryParse(Options["t"], out texture))
         {
           SendOutput("Unable to parse texture value");
 
@@ -450,31 +543,89 @@ namespace BCM.Commands
         }
       }
 
-      var num = 0L;
-      for (var face = 0; face < 6; face++)
-      {
-        var num2 = face * 8;
-        num &= ~(255L << num2);
-        num |= (long)(texture & 255) << num2;
-      }
-      var textureFull = num;
-
       var blockValue = world.GetBlock(pos);
-      if (blockValue.Block.shape.IsTerrain() || blockValue.Equals(BlockValue.Air)) return;
+      if (blockValue.Equals(BlockValue.Air))
+      {
+        SendOutput($"Target block is air @ {pos}");
 
-      world.ChunkClusters[0].SetTextureFull(pos, textureFull);
+        return;
+      }
+      if (blockValue.Block.shape.IsTerrain())
+      {
+        SendOutput($"Target block is terrain @ {pos}");
 
+        return;
+      }
+
+      GameManager.Instance.SetBlockTextureServer(pos, BlockFace.None, texture, -1);
       SendOutput($"Painting block with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {pos}");
     }
 
     private static void RemovePaint(World world, Vector3i pos)
     {
       var blockValue = world.GetBlock(pos);
-      if (blockValue.Block.shape.IsTerrain() || blockValue.Equals(BlockValue.Air)) return;
+      if (blockValue.Equals(BlockValue.Air))
+      {
+        SendOutput($"Target block is air @ {pos}");
 
-      world.ChunkClusters[0].SetTextureFull(pos, 0L);
+        return;
+      }
+      if (blockValue.Block.shape.IsTerrain())
+      {
+        SendOutput($"Target block is terrain @ {pos}");
 
+        return;
+      }
+
+      GameManager.Instance.SetBlockTextureServer(pos, BlockFace.None, 0, -1);
       SendOutput($"Paint removed from block @ {pos}");
+    }
+
+    private static void SetMeta(int metaIdx, World world, Vector3i pos)
+    {
+      byte meta = 0;
+      if (Options.ContainsKey("meta"))
+      {
+        if (!byte.TryParse(Options["meta"], out meta))
+        {
+          SendOutput($"Unable to parse meta '{Options["meta"]}'");
+
+          return;
+        }
+      }
+
+      var blockValue = world.GetBlock(pos);
+      if (blockValue.Equals(BlockValue.Air))
+      {
+        SendOutput($"Target block is air @ {pos}");
+
+        return;
+      }
+      if (blockValue.ischild)
+      {
+        SendOutput($"Target child block can't be set @ {pos} - Parent@ {blockValue.parentx},{blockValue.parenty},{blockValue.parentz}");
+
+        return;
+      }
+
+      var m = blockValue.meta;
+      switch (metaIdx)
+      {
+        case 1:
+          blockValue.meta = meta;
+          break;
+        case 2:
+          blockValue.meta2 = meta;
+          break;
+        case 3:
+          blockValue.meta3 = meta;
+          break;
+        default:
+          return;
+      }
+      world.SetBlockRPC(pos, blockValue);
+
+      SendOutput($"Changing meta{metaIdx} on block from '{m}' to '{meta}' @ {pos}");
     }
   }
 }

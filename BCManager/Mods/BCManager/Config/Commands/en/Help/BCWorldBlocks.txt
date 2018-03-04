@@ -39,5 +39,7 @@
                 /d=# - the density to use, from -127 to 128. Invalid density wont be applied
             rotate - rotates blocks in the area
                 /rot=# - sets the value for the rotation to apply
-
+            meta1/meta2/meta3 - sets the meta1/meta3/meta3 for blocks in the area
+                /meta=# - sets the value for the block in the area
+								- common block meta1 values: Doors - 0=closed, 1=open - Lights - 0=off, 2=on
 

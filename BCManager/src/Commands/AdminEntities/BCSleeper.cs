@@ -7,8 +7,9 @@ namespace BCM.Commands
 {
   public class BCSleeper : BCCommandAbstract
   {
+    //todo: change to more generic method so updates wont alwaysa require an update
     private const string _volumesFunction = "LW";
-
+    //todo: add multi chunk option, remove all chunks for volume etc
     public override void Process()
     {
       if (Params.Count == 0)

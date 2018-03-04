@@ -13,6 +13,14 @@ namespace BCM.Commands
       switch (Params.Count)
       {
         case 0:
+          SendOutput(GetHelp());
+          break;
+
+        case 1:
+          if (Params[0] != "list")
+          {
+            SendOutput(GetHelp());
+          }
           var data = new List<object>();
 
           for (var i = entities.list.Count - 1; i >= 0; i--)
@@ -45,6 +53,7 @@ namespace BCM.Commands
 
           SendJson(data);
           break;
+
         case 2:
           if (Options.ContainsKey("type"))
           {

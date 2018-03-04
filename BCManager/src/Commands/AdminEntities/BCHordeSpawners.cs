@@ -1,24 +1,24 @@
+using System.Collections.Generic;
+
 namespace BCM.Commands
 {
   public class BCHordeSpawners : BCCommandAbstract
   {
     public override void Process()
     {
+      var data = new Dictionary<string, object>();
       lock (EntitySpawner.SpawnQueue)
       {
-        SendOutput("Spawn Queue:" + EntitySpawner.SpawnQueue.Count);
-        SendJson(EntitySpawner.SpawnQueue);
+        data.Add("QueueCount", EntitySpawner.SpawnQueue.Count);
+        data.Add("Queue", EntitySpawner.SpawnQueue);
       }
 
       lock (EntitySpawner.HordeSpawners)
       {
-        SendOutput("Horde Spawners");
-        SendJson(EntitySpawner.HordeSpawners);
-        //foreach (KeyValuePair<int, HordeSpawner> hs in EntitySpawner.hordeSpawners)
-        //{
-        //  SendOutput("Spawner For " + hs.Key + ":" + hs.Value.spawns.Count);
-        //}
+        data.Add("HordeSpawners", EntitySpawner.HordeSpawners);
       }
+
+      SendJson(data);
 
       //todo: option to nuke spawn queue
       //todo: option to disable all active hordespawners

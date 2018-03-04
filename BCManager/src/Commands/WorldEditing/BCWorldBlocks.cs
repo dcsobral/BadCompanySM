@@ -232,6 +232,15 @@ namespace BCM.Commands
         case "rotate":
           SetRotation(p3, size, modifiedChunks);
           break;
+        case "meta1":
+          SetMeta(1, p3, size, modifiedChunks);
+          break;
+        case "meta2":
+          SetMeta(2, p3, size, modifiedChunks);
+          break;
+        case "meta3":
+          SetMeta(3, p3, size, modifiedChunks);
+          break;
         default:
           SendOutput(GetHelp());
           break;
@@ -268,6 +277,53 @@ namespace BCM.Commands
       }
 
       SendOutput($"Setting density on {counter} blocks '{density}' @ {p3} to {p3 + size}");
+      SendOutput("Use bc-wblock /undo to revert the changes");
+      Reload(modifiedChunks);
+    }
+
+    private static void SetMeta(int metaIdx, Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    {
+      if (!byte.TryParse(Options["meta"], out var meta))
+      {
+        SendOutput($"Unable to parse meta '{Options["meta"]}'");
+
+        return;
+      }
+
+      const int clrIdx = 0;
+      var counter = 0;
+      for (var j = 0; j < size.y; j++)
+      {
+        for (var i = 0; i < size.x; i++)
+        {
+          for (var k = 0; k < size.z; k++)
+          {
+            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
+            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+            if (blockValue.Equals(BlockValue.Air) || blockValue.ischild) continue;
+
+            switch (metaIdx)
+            {
+              case 1:
+                blockValue.meta = meta;
+                break;
+              case 2:
+                blockValue.meta2 = meta;
+                break;
+              case 3:
+                blockValue.meta3 = meta;
+                break;
+              default:
+                return;
+            }
+
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, blockValue, false, false);
+            counter++;
+          }
+        }
+      }
+
+      SendOutput($"Setting meta{metaIdx} on '{counter}' blocks @ {p3} to {p3 + size}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
@@ -424,26 +480,24 @@ namespace BCM.Commands
             }
             else if (Options.ContainsKey("overkill"))
             {
-              //needs to downgrade if overflow damage, then apply remaining damage until all used or downgraded to air
-              var d = damage;
-              while (d > 0 || blockValue.type != 0)
+              while (damage >= max)
               {
-                var downgrade = blockValue.Block.DowngradeBlock;
-                downgrade.rotation = blockValue.rotation;
-                blockValue = downgrade;
-                blockValue.damage = d;
-                d = d - max;
+                var downgradeBlock = blockValue.Block.DowngradeBlock;
+                damage -= max;
+                max = downgradeBlock.Block.blockMaterial.MaxDamage;
+                downgradeBlock.rotation = blockValue.rotation;
+                blockValue = downgradeBlock;
               }
-              blockValue.damage = damageMin;
+              blockValue.damage = damage;
             }
             else
             {
               //needs to downgrade if damage > max, no overflow damage
               if (damage >= max)
               {
-                var downgrade = blockValue.Block.DowngradeBlock;
-                downgrade.rotation = blockValue.rotation;
-                blockValue = downgrade;
+                var downgradeBlock = blockValue.Block.DowngradeBlock;
+                downgradeBlock.rotation = blockValue.rotation;
+                blockValue = downgradeBlock;
               }
               else
               {

@@ -9,13 +9,13 @@
   <!-- The 'beats' attribute if preset indicates how many beats should pass for each execution of the Fire method -->
 
   <!-- Reactive Synapses -->
-  <Synapse name="spawnmutator" enabled="true" options="EntityEnemy,EntityNPC,EntityItem" config="SpawnMutator"/>
-  <Synapse name="deadisdead" enabled="true" options='{ "global": false }'/>
-  <Synapse name="logcache" enabled="true"/>
+  <Synapse name="spawnmutator" enabled="false" options="EntityEnemy,EntityNPC,EntityItem" config="SpawnMutator"/>
+  <Synapse name="deadisdead" enabled="false" options='{ "global": false }'/>
+  <Synapse name="logcache" enabled="false"/>
 
   <!-- Heartbeat Synapses -->
-  <Synapse name="tracker" enabled="true" beats="15"/>
-  <Synapse name="pingkicker" enabled="true" beats="5" options='{ "threshhold": 300, "count": 12 }'/>
+  <Synapse name="tracker" enabled="false" beats="15"/>
+  <Synapse name="pingkicker" enabled="false" beats="5" options='{ "threshhold": 300, "count": 12 }'/>
 
   <!--
   <Synapse name="saveworld" enabled="false" beats="600"/>

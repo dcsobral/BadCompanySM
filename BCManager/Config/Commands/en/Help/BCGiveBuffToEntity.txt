@@ -3,11 +3,12 @@
       Default Options: {defaultoptions}
       Usage:
             1. {command}
-            2. {command} <entityid>
+            2. {command} list
             3. {command} <entityid> <buffid>
             4. {command} <EntityClass> <buffid> /type
       Notes:
             Command by itself will display all entities and what buffs they have, or provide an entity id to view just that entity
+						bc-geb list - will display all entities and the buffs they currently have
             <entity> <buffid> - will add the specified buff to the entity
             <EntityClass> <buffid> /type - will add the specified buff to all entities of the specified entity class
             Use bc-help to get a list of common /options

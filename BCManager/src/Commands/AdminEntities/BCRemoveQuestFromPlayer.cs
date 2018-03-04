@@ -16,7 +16,7 @@ namespace BCM.Commands
       {
         if (clientInfo == null) return;
 
-        if (QuestClass.s_Quests.ContainsKey(Params[1]))
+        if (QuestClass.s_Quests.ContainsKey(Params[1].ToLower()))
         {
           clientInfo.SendPackage(new NetPackageConsoleCmdClient($"removequest {Params[1]}", true));
           SendOutput($"Quest {Params[1]} removed from player {clientInfo.playerName}");
