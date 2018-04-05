@@ -33,4 +33,4 @@
                 /rot=# - sets the value for the block at given location
             meta1/meta2/meta3 - sets the meta1/meta3/meta3 for blocks at given location
                 /meta=# - sets the value for the block at given location
-								- common block meta1 values: Doors - 0=closed, 1=open - Lights - 0=off, 2=on
+                - common block meta1 values: Doors - 0=closed, 1=open - Lights - 0=off, 2=on
