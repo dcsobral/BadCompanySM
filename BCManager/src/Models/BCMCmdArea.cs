@@ -9,6 +9,7 @@ namespace BCM.Models
 
     public bool HasPos;
     public BCMVector3 Position;
+    public BCMVector3 MaxPos => new BCMVector3(Position.x + Size.x - 1, Position.y + Size.y - 1, Position.z + Size.z - 1);
 
     public bool HasSize;
     public BCMVector3 Size;
@@ -32,10 +33,10 @@ namespace BCM.Models
     {
       if (!HasPos) return false;
 
-      var size = HasSize ? Size : new BCMVector3(0, 0, 0);
-      return (Position.x <= pos.x && pos.x <= Position.x + size.x) &&
-             (Position.y <= pos.y && pos.y <= Position.y + size.y) &&
-             (Position.z <= pos.z && pos.z <= Position.z + size.z);
+      var size = HasSize ? Size : new BCMVector3(1, 1, 1);
+      return (Position.x <= pos.x && pos.x < Position.x + size.x) &&
+             (Position.y <= pos.y && pos.y < Position.y + size.y) &&
+             (Position.z <= pos.z && pos.z < Position.z + size.z);
     }
   }
 }

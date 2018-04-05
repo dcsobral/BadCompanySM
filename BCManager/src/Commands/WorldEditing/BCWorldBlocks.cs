@@ -25,7 +25,7 @@ namespace BCM.Commands
 
       var areaCache = new Prefab();
       var userId = 0; // id will be 0 for web console issued commands
-      areaCache.CopyFromWorld(GameManager.Instance.World, p0, new Vector3i(p0.x + size.x, p0.y + size.y, p0.z + size.z));
+      areaCache.CopyFromWorld(GameManager.Instance.World, p0, new Vector3i(p0.x + size.x - 1, p0.y + size.y - 1, p0.z + size.z - 1));
       areaCache.bCopyAirBlocks = true;
 
       if (sender != null)

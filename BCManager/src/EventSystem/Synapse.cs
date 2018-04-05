@@ -34,6 +34,9 @@ namespace BCM
           _neurons.Add(new LogCache(this));
           break;
 
+        case "fly_clip_tracker":
+          _neurons.Add(new FlyClipTracker(this));
+          break;
         case "tracker":
           _neurons.Add(new PositionTracker(this));
           break;

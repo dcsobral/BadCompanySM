@@ -144,6 +144,15 @@ namespace BCM
             filteredEntities.Add(e.Key, e.Value);
           }
         }
+        else if (options.ContainsKey("ecname"))
+        {
+          var entityClass = EntityClass.list[e.Value.entityClass];
+          if (entityClass == null) continue;
+
+          if (options["ecname"] != entityClass.entityClassName) continue;
+
+          filteredEntities.Add(e.Key, e.Value);
+        }
         else
         {
           if (!(e.Value is EntityEnemy) && !(e.Value is EntityAnimal)) continue;
@@ -345,15 +354,13 @@ namespace BCM
           }
           hasLoc = true;
 
-          command.Position = new BCMVector3((int)entity.position.x, (int)entity.position.y, (int)entity.position.z);
-          command.HasPos = true;
           command.Position = new BCMVector3(Math.Min(loc.x, (int)entity.position.x), Math.Min(loc.y, (int)entity.position.y), Math.Min(loc.z, (int)entity.position.z));
           command.HasPos = true;
 
           command.Size = new BCMVector3(
-            Math.Min(Math.Abs(loc.x - (int) entity.position.x), 1),
-            Math.Min(Math.Abs(loc.y - (int) entity.position.y), 1),
-            Math.Min(Math.Abs(loc.z - (int) entity.position.z), 1)
+            Math.Abs(loc.x - Utils.Fastfloor(entity.position.x)) + 1,
+            Math.Abs(loc.y - Utils.Fastfloor(entity.position.y)) + 1,
+            Math.Abs(loc.z - Utils.Fastfloor(entity.position.z)) + 1
           );
           command.HasSize = true;
         }
@@ -561,7 +568,7 @@ namespace BCM
         location += $"Pos {command.Position.x} {command.Position.y} {command.Position.z} ";
         if (command.HasSize)
         {
-          location += $"to {command.Position.x + command.Size.x} {command.Position.y + command.Size.y} {command.Position.z + command.Size.z} ";
+          location += $"to {command.Position.x + command.Size.x - 1} {command.Position.y + command.Size.y - 1} {command.Position.z + command.Size.z - 1} ";
         }
       }
       if (command.HasChunkPos)
@@ -614,7 +621,7 @@ namespace BCM
 
       var areaCache = new Prefab();
       var userId = 0; // id will be 0 for web console issued commands
-      areaCache.CopyFromWorld(world, p0, new Vector3i(p0.x + size.x, p0.y + size.y, p0.z + size.z));
+      areaCache.CopyFromWorld(world, p0, new Vector3i(p0.x + size.x - 1, p0.y + size.y - 1, p0.z + size.z - 1));
       areaCache.bCopyAirBlocks = true;
 
       if (sender != null)

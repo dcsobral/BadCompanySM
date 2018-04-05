@@ -11,4 +11,5 @@
             Removes the selected entities from the game by unloading them (will not work on players)
             /type=EntityZombie - removes all zombies that match the class exactly
             /istype=EntityEnemy - removes all entities that are enemies (derived from filter class)
+						/ecname=NameFromXml - removes all entities with the same class name (i.e. zombieScreamer)
             /all - removes all entities including FallingBlocks and DroppedItems

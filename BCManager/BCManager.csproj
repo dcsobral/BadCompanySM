@@ -127,6 +127,7 @@
     <Compile Include="src\Commands\AdminEntities\BCGiveItemToPlayer.cs" />
     <Compile Include="src\Commands\AdminEntities\BCHordeSpawners.cs" />
     <Compile Include="src\Commands\WorldEditing\BCWorldBlocksRPC.cs" />
+    <Compile Include="src\EventSystem\Neurons\FlyClipTracker.cs" />
     <Compile Include="src\Models\BCMBuffEntity.cs" />
     <Compile Include="src\Models\BCMBuffInfo.cs" />
     <Compile Include="src\Commands\AdminEntities\BCSleeper.cs" />

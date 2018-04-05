@@ -22,8 +22,9 @@ namespace BCM.Neurons
         var steamId = ConnectionManager.Instance.GetClientInfoForEntityId(player.entityId)?.playerId;
         if (string.IsNullOrEmpty(steamId)) continue;
 
-        var r = (int)Math.Floor(player.rotation.y);
-        PersistentContainer.Instance.PlayerLogs[steamId, true]?.LogPosition(player.position, r < 0 ? 360 + r : r);
+        //track the rotation in the range 0-359 only
+        PersistentContainer.Instance.PlayerLogs[steamId, true]
+          ?.LogPosition(player.position, (int)Math.Floor(player.rotation.y) % 360);
       }
     }
 

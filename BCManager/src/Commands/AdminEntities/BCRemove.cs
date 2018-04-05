@@ -10,7 +10,7 @@ namespace BCM.Commands
       var world = GameManager.Instance.World;
       if (world == null) return;
 
-      if (Options.ContainsKey("all") || Options.ContainsKey("istype") || Options.ContainsKey("type") || Options.ContainsKey("minibike"))
+      if (Options.ContainsKey("all") || Options.ContainsKey("istype") || Options.ContainsKey("type") || Options.ContainsKey("minibike") || Options.ContainsKey("ecname"))
       {
         var count = new Dictionary<string, int>();
 
@@ -79,11 +79,11 @@ namespace BCM.Commands
           }
           break;
       }
+      var entityClass = EntityClass.list[e.entityClass];
 
       world.RemoveEntity(entityId, EnumRemoveEntityReason.Despawned);
 
-      var entityClass = EntityClass.list[e.entityClass];
-      if (Options.ContainsKey("all") || Options.ContainsKey("istype") || Options.ContainsKey("type") || Options.ContainsKey("minibike"))
+      if (Options.ContainsKey("all") || Options.ContainsKey("istype") || Options.ContainsKey("type") || Options.ContainsKey("minibike") || Options.ContainsKey("ecname"))
       {
         if (count == null) return;
 

@@ -14,6 +14,7 @@
   <Synapse name="logcache" enabled="false"/>
 
   <!-- Heartbeat Synapses -->
+  <Synapse name="fly_clip_tracker" enabled="false" beats="1"/> <!-- todo: partially implemented (reports to chat) -->
   <Synapse name="tracker" enabled="false" beats="15"/>
   <Synapse name="pingkicker" enabled="false" beats="5" options='{ "threshhold": 300, "count": 12 }'/>
 
