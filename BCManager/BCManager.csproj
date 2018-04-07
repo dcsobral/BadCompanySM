@@ -37,6 +37,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\Commands\en\Description\BCTask.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Description\BCUndo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\Commands\en\Description\BCPrefab.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -103,6 +109,12 @@
     <Content Include="Config\Commands\en\Help\BCSleeper.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Config\Commands\en\Help\BCTask.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCUndo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\Commands\en\Help\BCTime.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -126,84 +138,109 @@
     <Compile Include="src\API.cs" />
     <Compile Include="src\Commands\AdminEntities\BCGiveItemToPlayer.cs" />
     <Compile Include="src\Commands\AdminEntities\BCHordeSpawners.cs" />
+    <Compile Include="src\Models\Simple\BCMSleeperVolumeDetialed.cs" />
+    <Compile Include="src\Models\Simple\BCMSpawnPoint.cs" />
+    <Compile Include="src\Models\Simple\BCMEffect.cs" />
+    <Compile Include="src\Models\Simple\BCMLockedItem.cs" />
+    <Compile Include="src\Models\Simple\BCMModifier.cs" />
+    <Compile Include="src\Models\Simple\BCMRequirement.cs" />
+    <Compile Include="src\Models\Simple\BCMBiomeSpawnRule.cs" />
+    <Compile Include="src\Models\Simple\BCMCellRule.cs" />
+    <Compile Include="src\Models\Simple\BCMHubLayout.cs" />
+    <Compile Include="src\Models\Simple\BCMHubRule.cs" />
+    <Compile Include="src\Models\Simple\BCMLotInfo.cs" />
+    <Compile Include="src\Models\Simple\BCMPrefabInfo.cs" />
+    <Compile Include="src\Models\Simple\BCMPrefabSpawnRule.cs" />
+    <Compile Include="src\Models\Simple\BCMStreetGenerationData.cs" />
+    <Compile Include="src\Models\Simple\BCMStreetInfo.cs" />
+    <Compile Include="src\Models\Simple\BCMWildernessRule.cs" />
+    <Compile Include="src\Models\Simple\BCMFilterData.cs" />
+    <Compile Include="src\Models\Simple\BCMPrefabSleeperVolume.cs" />
+    <Compile Include="src\Models\Simple\BCMRuleset.cs" />
+    <Compile Include="src\Models\Vectors\BCMVector2d.cs" />
+    <Compile Include="src\Models\Simple\BCMIngredient.cs" />
+    <Compile Include="src\Models\GameObjects\BCMTime.cs" />
+    <Compile Include="src\Commands\WorldEditing\BCImport.cs" />
+    <Compile Include="src\Commands\WorldEditing\BCUndo.cs" />
     <Compile Include="src\Commands\WorldEditing\BCWorldBlocksRPC.cs" />
     <Compile Include="src\EventSystem\Neurons\FlyClipTracker.cs" />
-    <Compile Include="src\Models\BCMBuffEntity.cs" />
-    <Compile Include="src\Models\BCMBuffInfo.cs" />
+    <Compile Include="src\Models\Simple\BCMPrefabCache.cs" />
+    <Compile Include="src\Models\Simple\BCMBuffEntity.cs" />
+    <Compile Include="src\Models\Simple\BCMBuffInfo.cs" />
     <Compile Include="src\Commands\AdminEntities\BCSleeper.cs" />
     <Compile Include="src\Commands\AdminEntities\BCTeleport.cs" />
-    <Compile Include="src\Models\BCMBasicLot.cs" />
-    <Compile Include="src\Models\BCMHubCell.cs" />
-    <Compile Include="src\Models\BCMLot.cs" />
-    <Compile Include="src\Models\BCMLotType.cs" />
-    <Compile Include="src\Models\BCMMesh.cs" />
-    <Compile Include="src\Models\BCMMeshData.cs" />
-    <Compile Include="src\Models\BCMMeshDataShort.cs" />
-    <Compile Include="src\Models\BCMMeshShort.cs" />
-    <Compile Include="src\Models\BCMTexture.cs" />
-    <Compile Include="src\Models\BCMModInfo.cs" />
+    <Compile Include="src\Models\Simple\BCMBasicLot.cs" />
+    <Compile Include="src\Models\Simple\BCMHubCell.cs" />
+    <Compile Include="src\Models\Simple\BCMLot.cs" />
+    <Compile Include="src\Models\Enum\BCMLotType.cs" />
+    <Compile Include="src\Models\Simple\BCMMesh.cs" />
+    <Compile Include="src\Models\Simple\BCMMeshData.cs" />
+    <Compile Include="src\Models\Simple\BCMMeshDataShort.cs" />
+    <Compile Include="src\Models\Simple\BCMMeshShort.cs" />
+    <Compile Include="src\Models\Simple\BCMTexture.cs" />
+    <Compile Include="src\Models\Simple\BCMModInfo.cs" />
     <Compile Include="src\Commands\LiveData\BCGetSpawn.cs" />
     <Compile Include="src\Commands\LiveData\BCAdmins.cs" />
     <Compile Include="src\Commands\LiveData\BCEvents.cs" />
-    <Compile Include="src\Models\BCMAdmin.cs" />
-    <Compile Include="src\Models\BCMAdmins.cs" />
-    <Compile Include="src\Models\BCMBan.cs" />
-    <Compile Include="src\Models\BCMChunkInfo.cs" />
-    <Compile Include="src\Models\BCMPermission.cs" />
-    <Compile Include="src\Models\BCMWhitelist.cs" />
-    <Compile Include="src\Models\BCMPlayerDataFile.cs" />
+    <Compile Include="src\Models\Simple\BCMAdmin.cs" />
+    <Compile Include="src\Models\Simple\BCMAdmins.cs" />
+    <Compile Include="src\Models\Simple\BCMBan.cs" />
+    <Compile Include="src\Models\Simple\BCMChunkInfo.cs" />
+    <Compile Include="src\Models\Simple\BCMPermission.cs" />
+    <Compile Include="src\Models\Simple\BCMWhitelist.cs" />
+    <Compile Include="src\Models\Simple\BCMPlayerDataFile.cs" />
     <Compile Include="src\Commands\Utility\BCChunkObserver.cs" />
-    <Compile Include="src\Models\BCMTask.cs" />
-    <Compile Include="src\Models\BCMTaskStatus.cs" />
-    <Compile Include="src\Models\BCMBlockValue.cs" />
-    <Compile Include="src\Models\BCMTileEntityCampfire.cs" />
-    <Compile Include="src\Models\BCMTileEntityForge.cs" />
-    <Compile Include="src\Models\BCMTileEntityGoreBlock.cs" />
-    <Compile Include="src\Models\BCMTileEntityLootContainer.cs" />
-    <Compile Include="src\Models\BCMTileEntityPowered.cs" />
-    <Compile Include="src\Models\BCMTileEntityPoweredRangeTrap.cs" />
-    <Compile Include="src\Models\BCMTileEntityPoweredTrigger.cs" />
-    <Compile Include="src\Models\BCMTileEntityPowerSource.cs" />
-    <Compile Include="src\Models\BCMTileEntitySecureDoor.cs" />
-    <Compile Include="src\Models\BCMTileEntitySecureLootContainer.cs" />
-    <Compile Include="src\Models\BCMTileEntitySign.cs" />
-    <Compile Include="src\Models\BCMTileEntityTrader.cs" />
-    <Compile Include="src\Models\BCMTileEntityVendingMachine.cs" />
-    <Compile Include="src\Models\BCMTileEntityWorkstation.cs" />
+    <Compile Include="src\Models\Utils\BCMTask.cs" />
+    <Compile Include="src\Models\Enum\BCMTaskStatus.cs" />
+    <Compile Include="src\Models\Simple\BCMBlockValue.cs" />
+    <Compile Include="src\Models\ToDo\BCMTileEntityCampfire.cs" />
+    <Compile Include="src\Models\ToDo\BCMTileEntityForge.cs" />
+    <Compile Include="src\Models\Simple\BCMTileEntityGoreBlock.cs" />
+    <Compile Include="src\Models\Simple\BCMTileEntityLootContainer.cs" />
+    <Compile Include="src\Models\ToDo\BCMTileEntityPowered.cs" />
+    <Compile Include="src\Models\ToDo\BCMTileEntityPoweredRangeTrap.cs" />
+    <Compile Include="src\Models\ToDo\BCMTileEntityPoweredTrigger.cs" />
+    <Compile Include="src\Models\ToDo\BCMTileEntityPowerSource.cs" />
+    <Compile Include="src\Models\Simple\BCMTileEntitySecureDoor.cs" />
+    <Compile Include="src\Models\Simple\BCMTileEntitySecureLootContainer.cs" />
+    <Compile Include="src\Models\Simple\BCMTileEntitySign.cs" />
+    <Compile Include="src\Models\Simple\BCMTileEntityTrader.cs" />
+    <Compile Include="src\Models\Simple\BCMTileEntityVendingMachine.cs" />
+    <Compile Include="src\Models\ToDo\BCMTileEntityWorkstation.cs" />
     <Compile Include="src\Commands\WorldEditing\BCPrefab.cs" />
-    <Compile Include="src\Models\BCMExpressionData.cs" />
-    <Compile Include="src\Models\BCMSlot.cs" />
-    <Compile Include="src\Models\BCMBiomeBlockDecoration.cs" />
-    <Compile Include="src\Models\BCMBiomeLayer.cs" />
-    <Compile Include="src\Models\BCMBiomePrefabDecoration.cs" />
-    <Compile Include="src\Models\BCMSubBiome.cs" />
-    <Compile Include="src\Models\BCMBiomeSpawnGroup.cs" />
-    <Compile Include="src\Models\BCMBuffModifier.cs" />
-    <Compile Include="src\Models\BCMBuffCondition.cs" />
-    <Compile Include="src\Models\BCMWaypoint.cs" />
-    <Compile Include="src\Models\BCMGroupSpawn.cs" />
-    <Compile Include="src\Models\BCMLootBuffAction.cs" />
-    <Compile Include="src\Models\BCMLootGroupTemplate.cs" />
-    <Compile Include="src\Models\BCMLootEntry.cs" />
-    <Compile Include="src\Models\BCMDynamicProp.cs" />
-    <Compile Include="src\Models\BCMExplosionData.cs" />
-    <Compile Include="src\Models\BCMParts.cs" />
-    <Compile Include="src\Models\BCMAttachment.cs" />
-    <Compile Include="src\Models\BCMCmdArea.cs" />
-    <Compile Include="src\Models\BCMQuestAction.cs" />
-    <Compile Include="src\Models\BCMQuestReward.cs" />
-    <Compile Include="src\Models\BCMQuestRequirement.cs" />
-    <Compile Include="src\Models\BCMQuestObjective.cs" />
-    <Compile Include="src\Models\BCMSleeperVolume.cs" />
+    <Compile Include="src\Models\Simple\BCMExpressionData.cs" />
+    <Compile Include="src\Models\Simple\BCMSlot.cs" />
+    <Compile Include="src\Models\Simple\BCMBiomeBlockDecoration.cs" />
+    <Compile Include="src\Models\Simple\BCMBiomeLayer.cs" />
+    <Compile Include="src\Models\Simple\BCMBiomePrefabDecoration.cs" />
+    <Compile Include="src\Models\Simple\BCMSubBiome.cs" />
+    <Compile Include="src\Models\Simple\BCMBiomeSpawnGroup.cs" />
+    <Compile Include="src\Models\Simple\BCMBuffModifier.cs" />
+    <Compile Include="src\Models\Simple\BCMBuffCondition.cs" />
+    <Compile Include="src\Models\Simple\BCMWaypoint.cs" />
+    <Compile Include="src\Models\Simple\BCMGroupSpawn.cs" />
+    <Compile Include="src\Models\Simple\BCMLootBuffAction.cs" />
+    <Compile Include="src\Models\Simple\BCMLootGroupTemplate.cs" />
+    <Compile Include="src\Models\Simple\BCMLootEntry.cs" />
+    <Compile Include="src\Models\Simple\BCMDynamicProp.cs" />
+    <Compile Include="src\Models\Simple\BCMExplosionData.cs" />
+    <Compile Include="src\Models\Simple\BCMParts.cs" />
+    <Compile Include="src\Models\Simple\BCMAttachment.cs" />
+    <Compile Include="src\Models\Utils\BCMCmdArea.cs" />
+    <Compile Include="src\Models\Simple\BCMQuestAction.cs" />
+    <Compile Include="src\Models\Simple\BCMQuestReward.cs" />
+    <Compile Include="src\Models\Simple\BCMQuestRequirement.cs" />
+    <Compile Include="src\Models\Simple\BCMQuestObjective.cs" />
+    <Compile Include="src\Models\Simple\BCMSleeperVolume.cs" />
     <Compile Include="src\Commands\Utility\BCTask.cs" />
-    <Compile Include="src\Models\BCMItemStack.cs" />
-    <Compile Include="src\Models\BCMSpawnerClass.cs" />
-    <Compile Include="src\Models\ReloadMode.cs" />
-    <Compile Include="src\Models\CmdParams.cs" />
-    <Compile Include="src\Models\BCMVector2.cs" />
-    <Compile Include="src\Models\BCMVector4.cs" />
-    <Compile Include="src\Models\BCMVector3.cs" />
-    <Compile Include="src\Models\BCMTileEntity.cs" />
+    <Compile Include="src\Models\Simple\BCMItemStack.cs" />
+    <Compile Include="src\Models\Simple\BCMSpawnerClass.cs" />
+    <Compile Include="src\Models\Enum\ReloadMode.cs" />
+    <Compile Include="src\Models\Utils\CmdParams.cs" />
+    <Compile Include="src\Models\Vectors\BCMVector2.cs" />
+    <Compile Include="src\Models\Vectors\BCMVector4.cs" />
+    <Compile Include="src\Models\Vectors\BCMVector3.cs" />
+    <Compile Include="src\Models\Simple\BCMTileEntity.cs" />
     <Compile Include="src\Commands\WorldEditing\BCTileEntity.cs" />
     <Compile Include="src\Commands\AdminEntities\BCSpawn.cs" />
     <Compile Include="src\Commands\AdminEntities\BCGiveBuffToEntity.cs" />
@@ -217,7 +254,6 @@
     <Compile Include="src\Commands\LiveData\BCLocation.cs" />
     <Compile Include="src\Commands\WorldEditing\BCWorldBlocks.cs" />
     <Compile Include="src\Commands\WorldEditing\BCExport.cs" />
-    <Compile Include="src\Commands\WorldEditing\BCImport.cs" />
     <Compile Include="src\Commands\BCCommandAbstract.cs" />
     <Compile Include="src\Commands\GameObjects\BCGameObjects.cs" />
     <Compile Include="src\Commands\LiveData\BCActiveChunks.cs" />
@@ -233,37 +269,35 @@
     <Compile Include="src\Commands\LiveData\LiveDataAlias\BCPlayersPosition.cs" />
     <Compile Include="src\Commands\LiveData\LiveDataAlias\BCPlayersId.cs" />
     <Compile Include="src\Commands\Utility\BCHelp.cs" />
-    <Compile Include="src\Commands\Utility\BCBroadcastAPI.cs" />
     <Compile Include="src\Commands\Utility\BCSettings.cs" />
     <Compile Include="src\Commands\Utility\BCTest.cs" />
     <Compile Include="src\Commands\LiveData\BCEntities.cs" />
     <Compile Include="src\Commands\Utility\BCMemTrash.cs" />
     <Compile Include="src\Functions\BCExtensions.cs" />
-    <Compile Include="src\Models\BCMSpawner.cs" />
-    <Compile Include="src\Models\BCMSkill.cs" />
-    <Compile Include="src\Models\BCMRWG.cs" />
-    <Compile Include="src\Models\BCMRecipe.cs" />
-    <Compile Include="src\Models\BCMQuest.cs" />
-    <Compile Include="src\Models\BCMPrefab.cs" />
-    <Compile Include="src\Models\BCMMaterial.cs" />
-    <Compile Include="src\Models\BCMLootQualityTemplate.cs" />
-    <Compile Include="src\Models\BCMLootProbabilityTemplate.cs" />
-    <Compile Include="src\Models\BCMLootGroup.cs" />
-    <Compile Include="src\Models\BCMLootContainer.cs" />
-    <Compile Include="src\Models\BCMEntityGroup.cs" />
-    <Compile Include="src\Models\BCMEntityClass.cs" />
-    <Compile Include="src\Models\BCMBuff.cs" />
-    <Compile Include="src\Models\BCMBiomeSpawn.cs" />
-    <Compile Include="src\Models\BCMBiome.cs" />
-    <Compile Include="src\Models\BCMGameObject.cs" />
-    <Compile Include="src\Models\BCMArchetype.cs" />
-    <Compile Include="src\Models\BCMCommand.cs" />
+    <Compile Include="src\Models\GameObjects\BCMSpawner.cs" />
+    <Compile Include="src\Models\GameObjects\BCMSkill.cs" />
+    <Compile Include="src\Models\GameObjects\BCMRWG.cs" />
+    <Compile Include="src\Models\GameObjects\BCMRecipe.cs" />
+    <Compile Include="src\Models\GameObjects\BCMQuest.cs" />
+    <Compile Include="src\Models\GameObjects\BCMPrefab.cs" />
+    <Compile Include="src\Models\GameObjects\BCMMaterial.cs" />
+    <Compile Include="src\Models\GameObjects\BCMLootQualityTemplate.cs" />
+    <Compile Include="src\Models\GameObjects\BCMLootProbabilityTemplate.cs" />
+    <Compile Include="src\Models\GameObjects\BCMLootGroup.cs" />
+    <Compile Include="src\Models\GameObjects\BCMLootContainer.cs" />
+    <Compile Include="src\Models\GameObjects\BCMEntityGroup.cs" />
+    <Compile Include="src\Models\GameObjects\BCMEntityClass.cs" />
+    <Compile Include="src\Models\GameObjects\BCMBuff.cs" />
+    <Compile Include="src\Models\GameObjects\BCMBiomeSpawn.cs" />
+    <Compile Include="src\Models\GameObjects\BCMBiome.cs" />
+    <Compile Include="src\Models\GameObjects\BCMGameObject.cs" />
+    <Compile Include="src\Models\GameObjects\BCMArchetype.cs" />
+    <Compile Include="src\Models\Utils\BCMCommand.cs" />
     <Compile Include="src\Config\Config.cs" />
     <Compile Include="src\DataManager.cs" />
     <Compile Include="src\EventSystem\Neurons\LogCache.cs" />
     <Compile Include="src\EventSystem\Models\HordeSpawner.cs" />
     <Compile Include="src\EventSystem\Models\Spawn.cs" />
-    <Compile Include="src\EventSystem\Neurons\BroadcastAPI.cs" />
     <Compile Include="src\EventSystem\Neurons\MapExplorer.cs" />
     <Compile Include="src\EventSystem\Neurons\Motd.cs" />
     <Compile Include="src\EventSystem\Neurons\DeathWatch.cs" />
@@ -281,9 +315,9 @@
     <Compile Include="src\Functions\BCUtils.cs" />
     <Compile Include="src\Functions\PlayerDataReader.cs" />
     <Compile Include="src\Models\BCMAbstract.cs" />
-    <Compile Include="src\Models\BCMItemClass.cs" />
-    <Compile Include="src\Models\BCMEntity.cs" />
-    <Compile Include="src\Models\BCMPlayer.cs" />
+    <Compile Include="src\Models\GameObjects\BCMItemClass.cs" />
+    <Compile Include="src\Models\GameObjects\BCMEntity.cs" />
+    <Compile Include="src\Models\GameObjects\BCMPlayer.cs" />
     <Compile Include="src\EventSystem\NeuronAbstract.cs" />
     <Compile Include="src\EventSystem\Neurons\BagMonitor.cs" />
     <Compile Include="src\EventSystem\Neurons\EquipmentMonitor.cs" />
@@ -330,12 +364,6 @@
     <Content Include="Config\Commands\en\Description\BCAssets.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Config\Commands\en\Description\BCBlocks.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Config\Commands\en\Description\BCBroadcastAPI.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Config\Commands\en\Description\BCEntities.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -364,9 +392,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Description\BCImport.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Config\Commands\en\Description\BCItems.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Description\BCMemTrash.txt">
@@ -429,9 +454,6 @@
     <Content Include="Config\Commands\en\Help\BCAdmins.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Config\Commands\en\Help\BCBroadcastAPI.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Config\Commands\en\Help\BCGetSpawn.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -451,12 +473,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Help\BCAssets.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Config\Commands\en\Help\BCItems.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Config\Commands\en\Help\BCBlocks.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Help\BCEntities.txt">
