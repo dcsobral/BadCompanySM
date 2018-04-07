@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCAdmins : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
       if (Options.ContainsKey("gg"))
       {
@@ -22,8 +24,8 @@ namespace BCM.Commands
         SendJson(GenerateData(new BCMAdmins()));
       }
     }
-    
-    public object GenerateData(BCMAdmins adminData)
+
+    private static object GenerateData(BCMAdmins adminData)
     {
       var data = new Dictionary<string, object>();
       if (Options.ContainsKey("admins") || !(Options.ContainsKey("bans") || Options.ContainsKey("whitelist") || Options.ContainsKey("permissions")))
@@ -74,22 +76,6 @@ namespace BCM.Commands
       return sortedList;
     }
 
-    private readonly string[] _filterPrefs =
-    {
-      //"telnet",
-      "adminfilename",
-      "controlpanel",
-      "password",
-      "savegamefolder",
-      "options",
-      "last"
-    };
-
-    private bool IsViewablePref(EnumGamePrefs pref)
-    {
-      return _filterPrefs.All(value => !pref.ToString().ToLower().Contains(value));
-    }
-
     private SortedList<string, object> GetGameStats()
     {
       var sortedList = new SortedList<string, object>();
@@ -125,14 +111,24 @@ namespace BCM.Commands
       return sortedList;
     }
 
+    private readonly string[] _filterPrefs =
+    {
+      //"telnet",
+      "adminfilename",
+      "controlpanel",
+      "password",
+      "savegamefolder",
+      "options",
+      "last"
+    };
+
     private readonly string[] _filterStats =
     {
       "last"
     };
 
-    private bool IsViewableStat(EnumGameStats stat)
-    {
-      return _filterStats.All(value => !stat.ToString().ToLower().Contains(value));
-    }
+    private bool IsViewablePref(EnumGamePrefs pref) => _filterPrefs.All(value => !pref.ToString().ToLower().Contains(value));
+
+    private bool IsViewableStat(EnumGameStats stat) => _filterStats.All(value => !stat.ToString().ToLower().Contains(value));
   }
 }

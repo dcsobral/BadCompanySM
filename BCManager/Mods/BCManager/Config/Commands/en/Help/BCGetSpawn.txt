@@ -1,9 +1,9 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command}
-      Notes:
-            Gets a valid spawn point at the given x,z. Also loads the chunk.
-            /ph - point height only
-            /ch - terrain heights for the entire chunk (array of 256 ints)
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command}
+    Notes:
+      Gets a valid spawn point at the given x,z. Also loads the chunk.
+      /ph - point height only
+      /ch - terrain heights for the entire chunk (array of 256 ints)

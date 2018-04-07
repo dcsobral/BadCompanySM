@@ -1,18 +1,14 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCGiveItemToPlayer : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
-      var world = GameManager.Instance.World;
-      if (world == null)
-      {
-        SendOutput("World not initialized");
-
-        return;
-      }
+      if (!BCUtils.CheckWorld(out var world)) return;
 
       if (Params.Count != 2)
       {

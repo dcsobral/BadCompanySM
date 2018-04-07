@@ -1,12 +1,16 @@
 using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCSpawn : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
+      if (!BCUtils.CheckWorld(out var world)) return;
+
       if (Params.Count == 0)
       {
         SendOutput(GetHelp());
@@ -18,7 +22,7 @@ namespace BCM.Commands
       {
         case "horde":
           {
-            if (!GetPos(out var position)) return;
+            if (!GetPos(world, out var position)) return;
             if (!GetGroup(out var groupName)) return;
             if (!GetCount(out var count)) return;
             if (!GetMinMax(out var min, out var max)) return;
@@ -66,7 +70,7 @@ namespace BCM.Commands
 
               return;
             }
-            if (!GetPos(out var position)) return;
+            if (!GetPos(world, out var position)) return;
             if (!GetMinMax(out var min, out var max)) return;
             if (!GetSpawnPos(position, out var targetPos)) return;
 
@@ -82,7 +86,8 @@ namespace BCM.Commands
               return;
             }
 
-            var spawn = new Spawn
+
+            EntitySpawner.SpawnQueue.Enqueue(new Spawn
             {
               EntityClassId = classId,
               SpawnerId = spawnerId,
@@ -90,9 +95,7 @@ namespace BCM.Commands
               TargetPos = position,
               MinRange = min,
               MaxRange = max
-            };
-
-            EntitySpawner.SpawnQueue.Enqueue(spawn);
+            });
 
             SendOutput($"Spawning entity {Params[1]} around {position.x} {position.y} {position.z}");
             if (targetPos != position)
@@ -105,7 +108,7 @@ namespace BCM.Commands
 
         case "item":
           {
-            if (!GetPos(out var position)) return;
+            if (!GetPos(world, out var position)) return;
             if (!GetItemValue(out var item)) return;
             if (!GetCount(out var count, 1)) return;
             if (!GetMinMax(out var min, out var max, "qual")) return;
@@ -152,7 +155,7 @@ namespace BCM.Commands
       }
     }
 
-    private static bool GetPos(out Vector3 position)
+    private static bool GetPos(World world, out Vector3 position)
     {
       position = new Vector3(0, 0, 0);
 
@@ -193,7 +196,7 @@ namespace BCM.Commands
               return false;
             }
 
-            var p = GameManager.Instance.World?.Players.dict[ci.entityId]?.position;
+            var p = world.Players.dict[ci.entityId]?.position;
             if (p == null)
             {
               SendOutput("Unable to get player position from client entity");
@@ -257,7 +260,7 @@ namespace BCM.Commands
               return false;
             }
 
-            var p = GameManager.Instance.World?.Players.dict[ci.entityId]?.position;
+            var p = world.Players.dict[ci.entityId]?.position;
             if (p == null)
             {
               SendOutput("Unable to get player position from client entity");

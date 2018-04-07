@@ -1,4 +1,5 @@
-﻿using BCM.PersistentData;
+﻿using System;
+using BCM.PersistentData;
 using System.Collections.Generic;
 using static System.Boolean;
 using static System.Int32;
@@ -125,7 +126,7 @@ namespace BCM.Neurons
       {
         TryParse(settings["speedmax"], out speedmax);
       }
-      if (speedmin == 0f)
+      if (Math.Abs(speedmin) < .01)
       {
         speedmin = 1f;
       }

@@ -5,13 +5,13 @@ namespace BCM.Neurons
 {
   public class FlyClipTracker : NeuronAbstract
   {
-    public static readonly List<List<Vector3i>> jitter = new List<List<Vector3i>>();
-    public static List<Vector2i> FlyList = new List<Vector2i>();
+    private static readonly List<List<Vector3i>> jitter = new List<List<Vector3i>>();
+    //private static List<Vector2i> FlyList = new List<Vector2i>();
 
     private static int jitterRadius = 2;
     private static int flyRadius = 2;
-    private static int yoffset = 2;
-    private static int history = 5;
+    //private static int yoffset = 2;
+    //private static int history = 5;
 
     public override void Fire(int b)
     {

@@ -1,101 +1,32 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
+using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  //todo: use Chunk.RecalcHeightAt(int _x, int _yMaxStart, int _z)
+  //todo: allow /y=-1 too be used to offset the insert when using player locs to allow sub areas to be accessed without underground clipping
+  //      /y=terrain to set the bottom y co-ord to the lowest non terrain block -1
+  //todo: apply a custom placeholder mapping to a block value in the area
+  //todo: refactor to use CmdArea and tasks
+
+  [UsedImplicitly]
   public class BCWorldBlocks : BCCommandAbstract
   {
-    private const string UndoDir = "Data/Prefabs/BCMUndoCache";
-
-    private class PrefabCache
+    protected override void Process()
     {
-      public string Filename;
-      public Vector3i Pos;
-    }
-    private readonly Dictionary<int, List<PrefabCache>> _undoCache = new Dictionary<int, List<PrefabCache>>();
+      if (!BCUtils.CheckWorld(out var world)) return;
 
-    private void CreateUndo(EntityPlayer sender, Vector3i p0, Vector3i size)
-    {
-      var steamId = "_server";
-      if (SenderInfo.RemoteClientInfo != null)
+      if (Options.ContainsKey("undo"))
       {
-        steamId = SenderInfo.RemoteClientInfo.ownerId;
-      }
-
-      var areaCache = new Prefab();
-      var userId = 0; // id will be 0 for web console issued commands
-      areaCache.CopyFromWorld(GameManager.Instance.World, p0, new Vector3i(p0.x + size.x - 1, p0.y + size.y - 1, p0.z + size.z - 1));
-      areaCache.bCopyAirBlocks = true;
-
-      if (sender != null)
-      {
-        userId = sender.entityId;
-      }
-      Directory.CreateDirectory(Utils.GetGameDir(UndoDir));
-      var filename = $"{steamId}.{p0.x}.{p0.y}.{p0.z}.{DateTime.UtcNow.ToFileTime()}";
-      areaCache.Save(Utils.GetGameDir(UndoDir), filename);
-
-      if (_undoCache.ContainsKey(userId))
-      {
-        _undoCache[userId].Add(new PrefabCache { Filename = filename, Pos = p0 });
-      }
-      else
-      {
-        _undoCache.Add(userId, new List<PrefabCache> { new PrefabCache { Filename = filename, Pos = p0 } });
-      }
-    }
-
-    private void UndoInsert(EntityPlayer sender)
-    {
-      var userId = 0;
-      if (sender != null)
-      {
-        userId = sender.entityId;
-      }
-      if (!_undoCache.ContainsKey(userId)) return;
-
-      if (_undoCache[userId].Count <= 0) return;
-
-      var pCache = _undoCache[userId][_undoCache[userId].Count - 1];
-      if (pCache != null)
-      {
-        var p = new Prefab();
-        p.Load(Utils.GetGameDir(UndoDir), pCache.Filename);
-        BCImport.InsertPrefab(p, pCache.Pos.x, pCache.Pos.y, pCache.Pos.z, pCache.Pos);
-
-        var cacheFile = Utils.GetGameDir($"{UndoDir}{pCache.Filename}");
-        if (Utils.FileExists($"{cacheFile}.tts"))
-        {
-          Utils.FileDelete($"{cacheFile}.tts");
-        }
-        if (Utils.FileExists($"{cacheFile}.xml"))
-        {
-          Utils.FileDelete($"{cacheFile}.xml");
-        }
-      }
-      _undoCache[userId].RemoveAt(_undoCache[userId].Count - 1);
-    }
-
-    public override void Process()
-    {
-      //todo: use Chunk.RecalcHeightAt(int _x, int _yMaxStart, int _z)
-      //todo: allow /y=-1 too be used to offset the insert when using player locs to allow sub areas to be accessed without underground clipping
-      //      /y=terrain to set the bottom y co-ord to the lowest non terrain block -1
-      //todo: apply a custom placeholder mapping to a block value in the area
-
-      //todo: refactor to use CmdArea and tasks
-
-      var world = GameManager.Instance.World;
-      if (world == null)
-      {
-        SendOutput("World not loaded");
+        SendOutput("Please use the bc-undo command to undo changes");
 
         return;
       }
 
-      var p1 = new Vector3i(int.MinValue, 0, int.MinValue);
-      var p2 = new Vector3i(int.MinValue, 0, int.MinValue);
+      var pos1 = new Vector3i(int.MinValue, 0, int.MinValue);
+      var pos2 = new Vector3i(int.MinValue, 0, int.MinValue);
       string blockname;
       string blockname2 = null;
 
@@ -108,7 +39,7 @@ namespace BCM.Commands
         sender = world.Entities.dict[SenderInfo.RemoteClientInfo.entityId] as EntityPlayer;
         if (sender != null)
         {
-          p2 = new Vector3i((int)Math.Floor(sender.serverPos.x / 32f), (int)Math.Floor(sender.serverPos.y / 32f), (int)Math.Floor(sender.serverPos.z / 32f));
+          pos2 = new Vector3i((int)Math.Floor(sender.serverPos.x / 32f), (int)Math.Floor(sender.serverPos.y / 32f), (int)Math.Floor(sender.serverPos.z / 32f));
         }
         else
         {
@@ -118,21 +49,14 @@ namespace BCM.Commands
         }
       }
 
-      if (Options.ContainsKey("undo"))
-      {
-        UndoInsert(sender);
-
-        return;
-      }
-
       switch (Params.Count)
       {
         case 2:
         case 3:
           if (steamId != null)
           {
-            p1 = BCLocation.GetPos(steamId);
-            if (p1.x == int.MinValue)
+            pos1 = BCLocation.GetPos(steamId);
+            if (pos1.x == int.MinValue)
             {
               SendOutput("No location stored. Use bc-loc to store a location.");
 
@@ -155,7 +79,7 @@ namespace BCM.Commands
         case 8:
         case 9:
           //parse params
-          if (!int.TryParse(Params[1], out p1.x) || !int.TryParse(Params[2], out p1.y) || !int.TryParse(Params[3], out p1.z) || !int.TryParse(Params[4], out p2.x) || !int.TryParse(Params[5], out p2.y) || !int.TryParse(Params[6], out p2.z))
+          if (!int.TryParse(Params[1], out pos1.x) || !int.TryParse(Params[2], out pos1.y) || !int.TryParse(Params[3], out pos1.z) || !int.TryParse(Params[4], out pos2.x) || !int.TryParse(Params[5], out pos2.y) || !int.TryParse(Params[6], out pos2.z))
           {
             SendOutput("Error: unable to parse coordinates");
 
@@ -174,72 +98,87 @@ namespace BCM.Commands
           return;
       }
 
-      var size = new Vector3i(Math.Abs(p1.x - p2.x) + 1, Math.Abs(p1.y - p2.y) + 1, Math.Abs(p1.z - p2.z) + 1);
+      var size = BCUtils.GetSize(pos1, pos2);
 
-      var p3 = new Vector3i(
-        p1.x < p2.x ? p1.x : p2.x,
-        p1.y < p2.y ? p1.y : p2.y,
-        p1.z < p2.z ? p1.z : p2.z
+      var position = new Vector3i(
+        pos1.x < pos2.x ? pos1.x : pos2.x,
+        pos1.y < pos2.y ? pos1.y : pos2.y,
+        pos1.z < pos2.z ? pos1.z : pos2.z
       );
 
       //**************** GET BLOCKVALUE
       var bvNew = int.TryParse(blockname, out var blockId) ? Block.GetBlockValue(blockId) : Block.GetBlockValue(blockname);
 
-      var modifiedChunks = GetAffectedChunks(p3, size);
+      var modifiedChunks = BCUtils.GetAffectedChunks(new BCMCmdArea("Blocks")
+      {
+        Position = new BCMVector3(position),
+        Size = new BCMVector3(size),
+        HasPos = true,
+        HasSize = true,
+
+        ChunkBounds = new BCMVector4
+        {
+          x = World.toChunkXZ(position.x),
+          y = World.toChunkXZ(position.z),
+          z = World.toChunkXZ(position.x + size.x - 1),
+          w = World.toChunkXZ(position.z + size.z - 1)
+        },
+        HasChunkPos = true
+      }, world);
 
       //CREATE UNDO
       //create backup of area blocks will insert to
       if (!Options.ContainsKey("noundo"))
       {
-        CreateUndo(sender, p3, size);
+        BCUtils.CreateUndo(sender, position, size);
       }
 
       switch (Params[0])
       {
         case "scan":
-          ScanBlocks(p3, size, bvNew, blockname);
+          ScanBlocks(position, size, bvNew, blockname);
           break;
         case "fill":
-          FillBlocks(p3, size, bvNew, blockname, modifiedChunks);
+          FillBlocks(position, size, bvNew, blockname, modifiedChunks);
           break;
         case "swap":
-          SwapBlocks(p3, size, bvNew, blockname2, modifiedChunks);
+          SwapBlocks(position, size, bvNew, blockname2, modifiedChunks);
           break;
         case "repair":
-          RepairBlocks(p3, size, modifiedChunks);
+          RepairBlocks(position, size, modifiedChunks);
           break;
         case "damage":
-          DamageBlocks(p3, size, modifiedChunks);
+          DamageBlocks(position, size, modifiedChunks);
           break;
         case "upgrade":
-          UpgradeBlocks(p3, size, modifiedChunks);
+          UpgradeBlocks(position, size, modifiedChunks);
           break;
         case "downgrade":
-          DowngradeBlocks(p3, size, modifiedChunks);
+          DowngradeBlocks(position, size, modifiedChunks);
           break;
         case "paint":
-          SetPaint(p3, size, modifiedChunks);
+          SetPaint(position, size, modifiedChunks);
           break;
         case "paintface":
-          SetPaintFace(p3, size, modifiedChunks);
+          SetPaintFace(position, size, modifiedChunks);
           break;
         case "paintstrip":
-          RemovePaint(p3, size, modifiedChunks);
+          RemovePaint(position, size, modifiedChunks);
           break;
         case "density":
-          SetDensity(p3, size, modifiedChunks);
+          SetDensity(position, size, modifiedChunks);
           break;
         case "rotate":
-          SetRotation(p3, size, modifiedChunks);
+          SetRotation(position, size, modifiedChunks);
           break;
         case "meta1":
-          SetMeta(1, p3, size, modifiedChunks);
+          SetMeta(1, position, size, modifiedChunks);
           break;
         case "meta2":
-          SetMeta(2, p3, size, modifiedChunks);
+          SetMeta(2, position, size, modifiedChunks);
           break;
         case "meta3":
-          SetMeta(3, p3, size, modifiedChunks);
+          SetMeta(3, position, size, modifiedChunks);
           break;
         default:
           SendOutput(GetHelp());
@@ -247,7 +186,7 @@ namespace BCM.Commands
       }
     }
 
-    private static void SetDensity(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    private static void SetDensity(Vector3i position, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
     {
       sbyte density = 1;
       if (Options.ContainsKey("d"))
@@ -266,22 +205,22 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
-            if (blockValue.Equals(BlockValue.Air) || blockValue.ischild) continue;
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
+            if (worldBlock.Equals(BlockValue.Air) || worldBlock.ischild) continue;
 
-            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, false, blockValue, true, density, false, false);
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(worldPos, false, worldBlock, true, density, false, false);
             counter++;
           }
         }
       }
 
-      SendOutput($"Setting density on {counter} blocks '{density}' @ {p3} to {p3 + size}");
+      SendOutput($"Setting density on {counter} blocks '{density}' @ {position} to {BCUtils.GetMaxPos(position, size)}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
 
-    private static void SetMeta(int metaIdx, Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    private static void SetMeta(int metaIdx, Vector3i position, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
     {
       if (!byte.TryParse(Options["meta"], out var meta))
       {
@@ -298,37 +237,37 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
-            if (blockValue.Equals(BlockValue.Air) || blockValue.ischild) continue;
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
+            if (worldBlock.Equals(BlockValue.Air) || worldBlock.ischild) continue;
 
             switch (metaIdx)
             {
               case 1:
-                blockValue.meta = meta;
+                worldBlock.meta = meta;
                 break;
               case 2:
-                blockValue.meta2 = meta;
+                worldBlock.meta2 = meta;
                 break;
               case 3:
-                blockValue.meta3 = meta;
+                worldBlock.meta3 = meta;
                 break;
               default:
                 return;
             }
 
-            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, blockValue, false, false);
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(worldPos, worldBlock, false, false);
             counter++;
           }
         }
       }
 
-      SendOutput($"Setting meta{metaIdx} on '{counter}' blocks @ {p3} to {p3 + size}");
+      SendOutput($"Setting meta{metaIdx} on '{counter}' blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
 
-    private static void SetRotation(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    private static void SetRotation(Vector3i position, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
     {
       byte rotation = 0;
       if (Options.ContainsKey("rot"))
@@ -349,23 +288,23 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
-            if (blockValue.Equals(BlockValue.Air) || blockValue.ischild || !blockValue.Block.shape.IsRotatable) continue;
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
+            if (worldBlock.Equals(BlockValue.Air) || worldBlock.ischild || !worldBlock.Block.shape.IsRotatable) continue;
 
-            blockValue.rotation = rotation;
-            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, blockValue, false, false);
+            worldBlock.rotation = rotation;
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(worldPos, worldBlock, false, false);
             counter++;
           }
         }
       }
 
-      SendOutput($"Setting rotation on '{counter}' blocks @ {p3} to {p3 + size}");
+      SendOutput($"Setting rotation on '{counter}' blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
 
-    private static void DowngradeBlocks(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    private static void DowngradeBlocks(Vector3i position, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
     {
       const int clrIdx = 0;
       var counter = 0;
@@ -375,24 +314,24 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
-            var downgradeBlockValue = blockValue.Block.DowngradeBlock;
-            if (downgradeBlockValue.Equals(BlockValue.Air) || blockValue.ischild) continue;
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
+            var downgradeBlockValue = worldBlock.Block.DowngradeBlock;
+            if (downgradeBlockValue.Equals(BlockValue.Air) || worldBlock.ischild) continue;
 
-            downgradeBlockValue.rotation = blockValue.rotation;
-            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, downgradeBlockValue, false, false);
+            downgradeBlockValue.rotation = worldBlock.rotation;
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(worldPos, downgradeBlockValue, false, false);
             counter++;
           }
         }
       }
 
-      SendOutput($"Downgrading {counter} blocks @ {p3} to {p3 + size}");
+      SendOutput($"Downgrading {counter} blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
 
-    private static void UpgradeBlocks(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    private static void UpgradeBlocks(Vector3i position, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
     {
       const int clrIdx = 0;
       var counter = 0;
@@ -402,24 +341,24 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
-            var upgradeBlockValue = blockValue.Block.UpgradeBlock;
-            if (upgradeBlockValue.Equals(BlockValue.Air) || blockValue.ischild) continue;
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
+            var upgradeBlockValue = worldBlock.Block.UpgradeBlock;
+            if (upgradeBlockValue.Equals(BlockValue.Air) || worldBlock.ischild) continue;
 
-            upgradeBlockValue.rotation = blockValue.rotation;
-            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, upgradeBlockValue, false, false);
+            upgradeBlockValue.rotation = worldBlock.rotation;
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(worldPos, upgradeBlockValue, false, false);
             counter++;
           }
         }
       }
 
-      SendOutput($"Upgrading {counter} blocks @ {p3} to {p3 + size}");
+      SendOutput($"Upgrading {counter} blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
 
-    private static void DamageBlocks(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    private static void DamageBlocks(Vector3i position, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
     {
       var damageMin = 0;
       var damageMax = 0;
@@ -468,55 +407,55 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
-            if (blockValue.Equals(BlockValue.Air)) continue;
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
+            if (worldBlock.Equals(BlockValue.Air)) continue;
 
-            var max = blockValue.Block.blockMaterial.MaxDamage;
-            var damage = (damageMax != 0 ? UnityEngine.Random.Range(damageMin, damageMax) : damageMin) + blockValue.damage;
+            var max = worldBlock.Block.blockMaterial.MaxDamage;
+            var damage = (damageMax != 0 ? UnityEngine.Random.Range(damageMin, damageMax) : damageMin) + worldBlock.damage;
             if (Options.ContainsKey("nobreak"))
             {
-              blockValue.damage = Math.Min(damage, max - 1);
+              worldBlock.damage = Math.Min(damage, max - 1);
             }
             else if (Options.ContainsKey("overkill"))
             {
               while (damage >= max)
               {
-                var downgradeBlock = blockValue.Block.DowngradeBlock;
+                var downgradeBlock = worldBlock.Block.DowngradeBlock;
                 damage -= max;
                 max = downgradeBlock.Block.blockMaterial.MaxDamage;
-                downgradeBlock.rotation = blockValue.rotation;
-                blockValue = downgradeBlock;
+                downgradeBlock.rotation = worldBlock.rotation;
+                worldBlock = downgradeBlock;
               }
-              blockValue.damage = damage;
+              worldBlock.damage = damage;
             }
             else
             {
               //needs to downgrade if damage > max, no overflow damage
               if (damage >= max)
               {
-                var downgradeBlock = blockValue.Block.DowngradeBlock;
-                downgradeBlock.rotation = blockValue.rotation;
-                blockValue = downgradeBlock;
+                var downgradeBlock = worldBlock.Block.DowngradeBlock;
+                downgradeBlock.rotation = worldBlock.rotation;
+                worldBlock = downgradeBlock;
               }
               else
               {
-                blockValue.damage = damage;
+                worldBlock.damage = damage;
               }
             }
 
-            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, blockValue, false, false);
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(worldPos, worldBlock, false, false);
             counter++;
           }
         }
       }
 
-      SendOutput($"Damaging {counter} blocks @ {p3} to {p3 + size}");
+      SendOutput($"Damaging {counter} blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
 
-    private static void RepairBlocks(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    private static void RepairBlocks(Vector3i position, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
     {
       const int clrIdx = 0;
       var counter = 0;
@@ -526,23 +465,23 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
-            if (blockValue.Equals(BlockValue.Air)) continue;
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
+            if (worldBlock.Equals(BlockValue.Air)) continue;
 
-            blockValue.damage = 0;
-            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(p5, blockValue, false, false);
+            worldBlock.damage = 0;
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(worldPos, worldBlock, false, false);
             counter++;
           }
         }
       }
 
-      SendOutput($"Repairing {counter} blocks @ {p3} to {p3 + size}");
+      SendOutput($"Repairing {counter} blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
 
-    private static void SetPaintFace(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    private static void SetPaintFace(Vector3i position, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
     {
       byte texture = 0;
       if (Options.ContainsKey("t"))
@@ -585,22 +524,22 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
-            if (blockValue.Equals(BlockValue.Air)) continue;
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
+            if (worldBlock.Equals(BlockValue.Air)) continue;
 
-            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlockFaceTexture(p5, (BlockFace)setFace, texture);
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlockFaceTexture(worldPos, (BlockFace)setFace, texture);
             counter++;
           }
         }
       }
 
-      SendOutput($"Painting {counter} blocks on face '{((BlockFace)setFace).ToString()}' with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {p3} to {p3 + size}");
+      SendOutput($"Painting {counter} blocks on face '{((BlockFace)setFace).ToString()}' with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {position} to {BCUtils.GetMaxPos(position, size)}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
 
-    private static void SetPaint(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    private static void SetPaint(Vector3i position, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
     {
       var texture = 0;
       if (Options.ContainsKey("t"))
@@ -636,22 +575,22 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
-            if (blockValue.Block.shape.IsTerrain() || blockValue.Equals(BlockValue.Air)) continue;
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
+            if (worldBlock.Block.shape.IsTerrain() || worldBlock.Equals(BlockValue.Air)) continue;
 
-            GameManager.Instance.World.ChunkClusters[clrIdx].SetTextureFull(p5, textureFull);
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetTextureFull(worldPos, textureFull);
             counter++;
           }
         }
       }
 
-      SendOutput($"Painting {counter} blocks with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {p3} to {p3 + size}");
+      SendOutput($"Painting {counter} blocks with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {position} to {BCUtils.GetMaxPos(position, size)}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
 
-    private static void RemovePaint(Vector3i p3, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
+    private static void RemovePaint(Vector3i position, Vector3i size, Dictionary<long, Chunk> modifiedChunks)
     {
       const int clrIdx = 0;
       var counter = 0;
@@ -661,22 +600,22 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
-            if (blockValue.Block.shape.IsTerrain() || blockValue.Equals(BlockValue.Air)) continue;
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
+            if (worldBlock.Block.shape.IsTerrain() || worldBlock.Equals(BlockValue.Air)) continue;
 
-            GameManager.Instance.World.ChunkClusters[clrIdx].SetTextureFull(p5, 0L);
+            GameManager.Instance.World.ChunkClusters[clrIdx].SetTextureFull(worldPos, 0L);
             counter++;
           }
         }
       }
 
-      SendOutput($"Paint removed from {counter} blocks @ {p3} to {p3 + size}");
+      SendOutput($"Paint removed from {counter} blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
 
-    private static void SwapBlocks(Vector3i p3, Vector3i size, BlockValue newbv, string blockname, Dictionary<long, Chunk> modifiedChunks)
+    private static void SwapBlocks(Vector3i position, Vector3i size, BlockValue newbv, string blockname, Dictionary<long, Chunk> modifiedChunks)
     {
       var targetbv = int.TryParse(blockname, out var blockId) ? Block.GetBlockValue(blockId) : Block.GetBlockValue(blockname);
 
@@ -752,22 +691,22 @@ namespace BCM.Commands
               textureFull = num;
             }
 
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            if (world.GetBlock(p5).Block.GetBlockName() != block1.GetBlockName()) continue;
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            if (world.GetBlock(worldPos).Block.GetBlockName() != block1.GetBlockName()) continue;
 
-            world.ChunkClusters[clrIdx].SetBlock(p5, true, newbv, false, density, false, false);
-            world.ChunkClusters[clrIdx].SetTextureFull(p5, textureFull);
+            world.ChunkClusters[clrIdx].SetBlock(worldPos, true, newbv, false, density, false, false);
+            world.ChunkClusters[clrIdx].SetTextureFull(worldPos, textureFull);
             counter++;
           }
         }
       }
 
-      SendOutput($"Replaced {counter} '{block1.GetBlockName()}' blocks with '{block2.GetBlockName()}' @ {p3} to {p3 + size}");
+      SendOutput($"Replaced {counter} '{block1.GetBlockName()}' blocks with '{block2.GetBlockName()}' @ {position} to {BCUtils.GetMaxPos(position, size)}");
       SendOutput("Use bc-wblock /undo to revert the changes");
       Reload(modifiedChunks);
     }
 
-    private static void FillBlocks(Vector3i p3, Vector3i size, BlockValue bv, string search, Dictionary<long, Chunk> modifiedChunks)
+    private static void FillBlocks(Vector3i position, Vector3i size, BlockValue bv, string search, Dictionary<long, Chunk> modifiedChunks)
     {
       const int clrIdx = 0;
 
@@ -778,44 +717,22 @@ namespace BCM.Commands
         return;
       }
 
-      SetBlocks(clrIdx, p3, size, bv, search == "*");
+      SetBlocks(clrIdx, position, size, bv, search == "*");
 
       if (Options.ContainsKey("delmulti"))
       {
-        SendOutput($"Removed multidim blocks @ {p3} to {p3 + size}");
+        SendOutput($"Removed multidim blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
       }
       else
       {
-        SendOutput($"Inserting block '{Block.list[bv.type].GetBlockName()}' @ {p3} to {p3 + size}");
+        SendOutput($"Inserting block '{Block.list[bv.type].GetBlockName()}' @ {position} to {BCUtils.GetMaxPos(position, size)}");
         SendOutput("Use bc-wblock /undo to revert the changes");
       }
 
       Reload(modifiedChunks);
     }
 
-    //private static void LightBlocks(Vector3i p3, Vector3i size, bool isOn, Dictionary<long, Chunk> modifiedChunks)
-    //{
-    //  const int clrIdx = 0;
-    //  for (var j = 0; j < size.y; j++)
-    //  {
-    //    for (var i = 0; i < size.x; i++)
-    //    {
-    //      for (var k = 0; k < size.z; k++)
-    //      {
-    //        var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-    //        var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
-    //        if (blockValue.Block is BlockLight)
-    //        {
-    //          blockValue.meta = (byte)((blockValue.meta & -3) | (!isOn ? 0 : 2));
-    //        }
-    //      }
-    //    }
-    //  }
-
-    //  Reload(modifiedChunks);
-    //}
-
-    private static void SetBlocks(int clrIdx, Vector3i p0, Vector3i size, BlockValue bvNew, bool searchAll)
+    private static void SetBlocks(int clrIdx, Vector3i position, Vector3i size, BlockValue bvNew, bool searchAll)
     {
       var world = GameManager.Instance.World;
       var chunkCluster = world.ChunkClusters[clrIdx];
@@ -862,63 +779,63 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(p0.x + i, p0.y + j, p0.z + k);
-            var bvCurrent = world.GetBlock(p5);
+            var worldPos = new Vector3i(position.x + i, position.y + j, position.z + k);
+            var worldBlock = world.GetBlock(worldPos);
 
-            if (Options.ContainsKey("delmulti") && (!searchAll || bvNew.type != bvCurrent.type)) continue;
+            if (Options.ContainsKey("delmulti") && (!searchAll || bvNew.type != worldBlock.type)) continue;
 
             //REMOVE PARENT OF MULTIDIM
-            if (bvCurrent.Block.isMultiBlock && bvCurrent.ischild)
+            if (worldBlock.Block.isMultiBlock && worldBlock.ischild)
             {
-              var parentPos = bvCurrent.Block.multiBlockPos.GetParentPos(p5, bvCurrent);
+              var parentPos = worldBlock.Block.multiBlockPos.GetParentPos(worldPos, worldBlock);
               var parent = chunkCluster.GetBlock(parentPos);
-              if (parent.ischild || parent.type != bvCurrent.type) continue;
+              if (parent.ischild || parent.type != worldBlock.type) continue;
 
               chunkCluster.SetBlock(parentPos, BlockValue.Air, false, false);
             }
             if (Options.ContainsKey("delmulti")) continue;
 
             //REMOVE LCB's
-            if (bvCurrent.Block.IndexName == "lpblock")
+            if (worldBlock.Block.IndexName == "lpblock")
             {
-              GameManager.Instance.persistentPlayers.RemoveLandProtectionBlock(new Vector3i(p5.x, p5.y, p5.z));
+              GameManager.Instance.persistentPlayers.RemoveLandProtectionBlock(new Vector3i(worldPos.x, worldPos.y, worldPos.z));
             }
 
             //todo: move to a chunk request and then process all blocks on that chunk
-            var chunkSync = world.GetChunkFromWorldPos(p5.x, p5.y, p5.z) as Chunk;
+            var chunkSync = world.GetChunkFromWorldPos(worldPos.x, worldPos.y, worldPos.z) as Chunk;
 
             if (bvNew.Equals(BlockValue.Air))
             {
               density = MarchingCubes.DensityAir;
 
-              if (world.GetTerrainHeight(p5.x, p5.z) > p5.y)
+              if (world.GetTerrainHeight(worldPos.x, worldPos.z) > worldPos.y)
               {
-                chunkSync?.SetTerrainHeight(p5.x & 15, p5.z & 15, (byte)p5.y);
+                chunkSync?.SetTerrainHeight(worldPos.x & 15, worldPos.z & 15, (byte)worldPos.y);
               }
             }
             else if (bvNew.Block.shape.IsTerrain())
             {
               density = MarchingCubes.DensityTerrain;
 
-              if (world.GetTerrainHeight(p5.x, p5.z) < p5.y)
+              if (world.GetTerrainHeight(worldPos.x, worldPos.z) < worldPos.y)
               {
-                chunkSync?.SetTerrainHeight(p5.x & 15, p5.z & 15, (byte)p5.y);
+                chunkSync?.SetTerrainHeight(worldPos.x & 15, worldPos.z & 15, (byte)worldPos.y);
               }
             }
             else
             {
               //SET TEXTURE
-              world.ChunkClusters[clrIdx].SetTextureFull(p5, textureFull);
+              world.ChunkClusters[clrIdx].SetTextureFull(worldPos, textureFull);
             }
 
             //SET BLOCK
-            world.ChunkClusters[clrIdx].SetBlock(p5, true, bvNew, true, density, false, false);
+            world.ChunkClusters[clrIdx].SetBlock(worldPos, true, bvNew, true, density, false, false);
           }
         }
       }
     }
 
-    private static void ScanBlocks(Vector3i p3, Vector3i size, BlockValue bv, string search)
+    private static void ScanBlocks(Vector3i position, Vector3i size, BlockValue bv, string search)
     {
       var block1 = Block.list[bv.type];
       if (block1 == null && search != "*")
@@ -936,11 +853,12 @@ namespace BCM.Commands
         {
           for (var k = 0; k < size.z; k++)
           {
-            var p5 = new Vector3i(i + p3.x, j + p3.y, k + p3.z);
-            var blockValue = GameManager.Instance.World.GetBlock(clrIdx, p5);
+            var worldPos = new Vector3i(i + position.x, j + position.y, k + position.z);
+            var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
+            if (worldBlock.ischild) return;
             //var d = GameManager.Instance.World.GetDensity(_clrIdx, p5);
             //var t = GameManager.Instance.World.GetTexture(i + p3.x, j + p3.y, k + p3.z);
-            var name = ItemClass.list[blockValue.type]?.Name;
+            var name = ItemClass.list[worldBlock.type]?.Name;
             if (string.IsNullOrEmpty(name))
             {
               name = "air";
@@ -948,13 +866,13 @@ namespace BCM.Commands
 
             if (search == "*")
             {
-              SetStats(name, blockValue, stats);
+              SetStats(name, worldBlock, stats);
             }
             else
             {
               if (name != bv.Block.GetBlockName()) continue;
 
-              SetStats(name, blockValue, stats);
+              SetStats(name, worldBlock, stats);
             }
           }
         }
@@ -981,31 +899,6 @@ namespace BCM.Commands
       {
         BCChunks.ReloadForClients(modifiedChunks);
       }
-    }
-
-    private static Dictionary<long, Chunk> GetAffectedChunks(Vector3i p3, Vector3i size)
-    {
-      //GET AFFECTED CHUNKS
-      var modifiedChunks = new Dictionary<long, Chunk>();
-      for (var cx = -1; cx <= size.x + 16; cx = cx + 16)
-      {
-        for (var cz = -1; cz <= size.z + 16; cz = cz + 16)
-        {
-          if (!(GameManager.Instance.World.GetChunkFromWorldPos(p3.x + cx, p3.y, p3.z + cz) is Chunk chunk))
-          {
-            //todo: output chunk co-ords instead of world pos? Only needed in force sync mode
-            SendOutput($"Unable to load chunk for insert @ {p3.x + cx},{p3.z + cz}");
-          }
-          else
-          {
-            if (modifiedChunks.ContainsKey(chunk.Key)) continue;
-
-            modifiedChunks.Add(chunk.Key, chunk);
-          }
-        }
-      }
-
-      return modifiedChunks;
     }
   }
 }

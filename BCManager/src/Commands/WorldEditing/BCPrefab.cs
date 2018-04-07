@@ -7,32 +7,27 @@ using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCPrefab : BCCommandAbstract
   {
-    private static readonly char _s = Path.DirectorySeparatorChar;
-    private static readonly string prefabDir = Utils.GetGameDir($"Data{_s}Prefabs{_s}");
-
     //todo: add a layer filter for block stat commands so that a slice can be loaded with /y=2 (all blocks on layer y=2) or /z=2,5 (all blocks with z between 2 and 5 inclusive)
     //      could use /x=1,2 /y=0 /z=1,2 to get blocks {"1,0,1", "1,0,2", "2,0,1", "2,0,2"]
 
-    private bool Init()
+    //todo: finish work in progress sub commands
+
+    private static readonly char _s = Path.DirectorySeparatorChar;
+    private static readonly string prefabDir = Utils.GetGameDir($"Data{_s}Prefabs{_s}");
+
+    protected override void Process()
     {
-      if (GameManager.Instance.World == null)
+      if (!BCUtils.CheckWorld()) return;
+
+      if (Params.Count < 2 && (Params.Count == 0 || Params[0] != "list"))
       {
-        SendOutput("World not initialized.");
+        SendOutput(GetHelp());
 
-        return false;
+        return;
       }
-
-      if (Params.Count >= 2 || Params.Count != 0 && Params[0] == "list") return true;
-
-      SendOutput(GetHelp());
-      return false;
-    }
-
-    public override void Process()
-    {
-      if (!Init()) return;
 
       switch (Params[0])
       {
@@ -895,7 +890,7 @@ namespace BCM.Commands
     {
       SendOutput("Work in Progress");
     }
-    
+
     private void SetBlock()
     {
       SendOutput("Work in Progress");

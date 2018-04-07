@@ -1,1 +1,0 @@
-﻿BroadcastAPI - Command for server managers to subscribe to data feeds from the server

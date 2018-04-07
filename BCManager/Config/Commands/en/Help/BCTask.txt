@@ -1,0 +1,7 @@
+﻿{description}
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command}
+    Notes:
+      Reports running subthread tasks that bcm is tracking

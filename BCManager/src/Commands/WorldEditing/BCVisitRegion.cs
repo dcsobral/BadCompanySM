@@ -1,9 +1,11 @@
 using System;
 using BCM.Models;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCVisitRegion : BCCommandAbstract
   {
     private MapVisitor _mapVisitor;
@@ -11,8 +13,10 @@ namespace BCM.Commands
     private int _hash;
     private static int completePercent;
 
-    public override void Process()
+    protected override void Process()
     {
+      if (!BCUtils.CheckWorld()) return;
+
       if (Options.ContainsKey("stop"))
       {
         if (_mapVisitor == null)
@@ -32,6 +36,13 @@ namespace BCM.Commands
       if (_mapVisitor != null && _mapVisitor.IsRunning())
       {
         SendOutput($"VisitRegion already running ({completePercent}%). You can stop it with \"bc-visitregion /stop\".");
+
+        return;
+      }
+
+      if (Params.Count < 2)
+      {
+        SendOutput("VisitRegion isn't running. Provide some co-ords to explore some regions");
 
         return;
       }

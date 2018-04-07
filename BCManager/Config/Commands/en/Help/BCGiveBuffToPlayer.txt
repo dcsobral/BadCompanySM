@@ -1,8 +1,8 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command} <partialname / entityid / steamid> <buffid>
-      Notes:
-            Use bc-help to get a list of common /options
-            Use bc-go buffs to get a list of buff ids
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command} <partialname / entityid / steamid> <buffid>
+    Notes:
+      Use bc-help to get a list of common /options
+      Use bc-go buffs to get a list of buff ids

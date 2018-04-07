@@ -1,9 +1,14 @@
+using JetBrains.Annotations;
+
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCRemoveBuffFromPlayer : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
+      if (!BCUtils.CheckWorld()) return;
+
       if (Params.Count != 2)
       {
         SendOutput("Invalid arguments");

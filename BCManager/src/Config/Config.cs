@@ -5,22 +5,23 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using BCM.Models;
+using JetBrains.Annotations;
 using static System.String;
 
 namespace BCM
 {
   public static class Config
   {
-    public static readonly Dictionary<string, BCMCommand> CommandDictionary = new Dictionary<string, BCMCommand>();
+    [NotNull] public static readonly Dictionary<string, BCMCommand> CommandDictionary = new Dictionary<string, BCMCommand>();
     public const string ModPrefix = "(BCM)";
-    private static readonly string ModDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
+    private static readonly string ModDir = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}{Path.DirectorySeparatorChar}";
     private const string CommandsFile = "Commands.xml";
     private const string SystemFile = "System.xml";
-    private static readonly string DefaultConfigPath = ModDir + "DefaultConfig" + Path.DirectorySeparatorChar;
-    public static readonly string ConfigPath = ModDir + "Config" + Path.DirectorySeparatorChar;
-    public static readonly string DefaultEventsPath = DefaultConfigPath + "Events" + Path.DirectorySeparatorChar;
-    public static readonly string EventsPath = ConfigPath + "Events" + Path.DirectorySeparatorChar;
-    public static string DefaultLocale = "en";
+    private static readonly string DefaultConfigPath = $"{ModDir}DefaultConfig{Path.DirectorySeparatorChar}";
+    private static readonly string ConfigPath = $"{ModDir}Config{Path.DirectorySeparatorChar}";
+    public static readonly string DefaultEventsPath = $"{DefaultConfigPath}Events{Path.DirectorySeparatorChar}";
+    public static readonly string EventsPath = $"{ConfigPath}Events{Path.DirectorySeparatorChar}";
+    private static string DefaultLocale = "en";
 
     //todo: implement filesystemwatcher so changes to the config are dynamically updated
     private static FileSystemWatcher _fsw;

@@ -1,9 +1,9 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command} <entityid> <buffid>
-      Notes:
-            Use bc-help to get a list of common /options
-            Use bc-buffs to get a list of buff ids
-            Use bc-geb <entityid> to get a list of buffs for an entity
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command} <entityid> <buffid>
+    Notes:
+      Use bc-help to get a list of common /options
+      Use bc-buffs to get a list of buff ids
+      Use bc-geb <entityid> to get a list of buffs for an entity

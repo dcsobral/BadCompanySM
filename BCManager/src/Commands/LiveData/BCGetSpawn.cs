@@ -1,11 +1,14 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCGetSpawn : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
+      if (!BCUtils.CheckWorld(out var world)) return;
 
       if (Params.Count != 2)
       {
@@ -20,21 +23,13 @@ namespace BCM.Commands
 
         return;
       }
+
       if (!int.TryParse(Params[1], out var z))
       {
         SendOutput("z was not a number");
 
         return;
       }
-
-      if (GameManager.Instance.World == null)
-      {
-        SendOutput("The world isn't loaded");
-
-        return;
-      }
-
-      var world = GameManager.Instance.World;
 
       var x2 = World.toChunkXZ(x);
       var z2 = World.toChunkXZ(z);

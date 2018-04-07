@@ -1,21 +1,21 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command} /r=# /o=x,y
-            2. {command} <filtertext> /r=# /o=x,y
-      Notes:
-            Use bc-help to get a list of common /options
-            <filtertext> - a string to compare against prefab names, works on partial matches. Leave out to get a full list in the area
-                           Example: bc-hcd /o=0,0 /r=1 trader - would find all trader PoIs in the 9 cells around the central cell 0,0
-            The first time an area is scanned after a server reboot it will need to load data from disk.
-            This is a much slower process compared to using the cache, so it can cause lag on the server while the data is loading.
-            Limit the area scanned when running on a server with players.
-      Options:
-            /o=<x,y> - sets the origin cell for the scan, 0,0 being the central hub, limit between -5 and 6 for a 10k world radius.
-                       You can scan further but if the file for those co-ords doesn't exist there will be no results for that cell.
-            /r=# - set the radius in cells from the origin, there is no limit but as with /o any areas scanned with no related file will have no results.
-            /full - returns more details. The default view only has prefab name and position, 
-                    full option has cell/hub/wilderness rules, townshiptypes, and full lot details such as instance id and rotation
-            /reset - clears the cached data. Subsequent calls for data will require reloading from disk.
-            /min - strips the field names from the json for the basic output option (i.e doesnt work with /full yet)
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command} /r=# /o=x,y
+      2. {command} <filtertext> /r=# /o=x,y
+    Notes:
+      Use bc-help to get a list of common /options
+      <filtertext> - a string to compare against prefab names, works on partial matches. Leave out to get a full list in the area
+        e.g. bc-hcd /o=0,0 /r=1 trader - would find all trader PoIs in the 9 cells around the central cell 0,0
+      The first time an area is scanned after a server reboot it will need to load data from disk.
+      This is a much slower process compared to using the cache, so it can cause lag on the server while the data is loading.
+      Limit the area scanned when running on a server with players.
+    Options:
+      /o=<x,y> - sets the origin cell for the scan, 0,0 being the central hub, limit between -5 and 6 for a 10k world radius.
+        You can scan further but if the file for those co-ords doesn't exist there will be no results for that cell.
+      /r=# - set the radius in cells from the origin, there is no limit but as with /o any areas scanned with no related file will have no results.
+      /full - returns more details. The default view only has prefab name and position, 
+        /full option has cell/hub/wilderness rules, townshiptypes, and full lot details such as instance id and rotation
+      /reset - clears the cached data. Subsequent calls for data will require reloading from disk.
+      /min - strips the field names from the json for the basic output option (i.e doesnt work with /full yet)

@@ -1,45 +1,15 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCWorldBlocksRPC : BCCommandAbstract
   {
-    private bool ProcessParams(out Vector3i position, out string blockname1)
+    protected override void Process()
     {
-      position = new Vector3i();
-      blockname1 = null;
-
-      if (Params.Count == 4 || Params.Count == 5)
-      {
-        if (!int.TryParse(Params[1], out position.x) || !int.TryParse(Params[2], out position.y) ||
-            !int.TryParse(Params[3], out position.z))
-        {
-          SendOutput("Unable to parse coordinates");
-
-          return false;
-        }
-        blockname1 = Params.Count == 5 ? Params[4] : "*";
-      }
-      else
-      {
-        SendOutput(GetHelp());
-
-        return false;
-      }
-
-      return true;
-    }
-
-    public override void Process()
-    {
-      var world = GameManager.Instance.World;
-      if (world == null)
-      {
-        SendOutput("World not loaded");
-
-        return;
-      }
+      if (!BCUtils.CheckWorld(out var world)) return;
 
       if (!ProcessParams(out var position, out var blockname1)) return;
 
@@ -108,6 +78,32 @@ namespace BCM.Commands
           SendOutput(GetHelp());
           break;
       }
+    }
+
+    private bool ProcessParams(out Vector3i position, out string blockname1)
+    {
+      position = new Vector3i();
+      blockname1 = null;
+
+      if (Params.Count == 4 || Params.Count == 5)
+      {
+        if (!int.TryParse(Params[1], out position.x) || !int.TryParse(Params[2], out position.y) ||
+            !int.TryParse(Params[3], out position.z))
+        {
+          SendOutput("Unable to parse coordinates");
+
+          return false;
+        }
+        blockname1 = Params.Count == 5 ? Params[4] : "*";
+      }
+      else
+      {
+        SendOutput(GetHelp());
+
+        return false;
+      }
+
+      return true;
     }
 
     private static void SetBlock(World world, Vector3i pos, BlockValue targetbv)
@@ -227,7 +223,7 @@ namespace BCM.Commands
       SetBlock(world, pos, targetbv);
     }
 
-    private static void SetDensity(World world, Vector3i pos)
+    private static void SetDensity(WorldBase world, Vector3i pos)
     {
       sbyte density = 1;
       if (Options.ContainsKey("d"))
@@ -264,7 +260,7 @@ namespace BCM.Commands
       SendOutput($"Changing density on block from '{d}' to '{density}' @ {pos}");
     }
 
-    private static void SetRotation(World world, Vector3i pos)
+    private static void SetRotation(WorldBase world, Vector3i pos)
     {
       byte rotation = 0;
       if (Options.ContainsKey("rot"))
@@ -304,7 +300,7 @@ namespace BCM.Commands
       SendOutput($"Changing rotation on block from '{r}' to '{rotation}' @ {pos}");
     }
 
-    private static void DowngradeBlock(World world, Vector3i pos)
+    private static void DowngradeBlock(WorldBase world, Vector3i pos)
     {
       var blockValue = world.GetBlock(pos);
       var downgradeBlockValue = blockValue.Block.DowngradeBlock;
@@ -328,7 +324,7 @@ namespace BCM.Commands
       SendOutput($"Downgrading block from '{blockValue.Block.GetBlockName()}' to '{downgradeBlockValue.Block.GetBlockName()}' @ {pos}");
     }
 
-    private static void UpgradeBlock(World world, Vector3i pos)
+    private static void UpgradeBlock(WorldBase world, Vector3i pos)
     {
       var blockValue = world.GetBlock(pos);
       var upgradeBlockValue = blockValue.Block.UpgradeBlock;
@@ -351,7 +347,7 @@ namespace BCM.Commands
       SendOutput($"Upgrading block from '{blockValue.Block.GetBlockName()}' to '{upgradeBlockValue.Block.GetBlockName()}' @ {pos}");
     }
 
-    private static void DamageBlock(World world, Vector3i pos)
+    private static void DamageBlock(WorldBase world, Vector3i pos)
     {
       var damageMin = 0;
       var damageMax = 0;
@@ -447,7 +443,7 @@ namespace BCM.Commands
       }
     }
 
-    private static void RepairBlock(World world, Vector3i pos)
+    private static void RepairBlock(WorldBase world, Vector3i pos)
     {
       var blockValue = world.GetBlock(pos);
       if (blockValue.Equals(BlockValue.Air))
@@ -471,7 +467,7 @@ namespace BCM.Commands
       SendOutput($"Repairing block for '{d}' damage @ {pos}");
     }
 
-    private static void SetPaintFace(World world, Vector3i pos)
+    private static void SetPaintFace(WorldBase world, Vector3i pos)
     {
       byte texture = 0;
       if (Options.ContainsKey("t"))
@@ -524,7 +520,7 @@ namespace BCM.Commands
       SendOutput($"Painting block on face '{((BlockFace)setFace).ToString()}' with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {pos}");
     }
 
-    private static void SetPaint(World world, Vector3i pos)
+    private static void SetPaint(WorldBase world, Vector3i pos)
     {
       byte texture = 0;
       if (Options.ContainsKey("t"))
@@ -561,7 +557,7 @@ namespace BCM.Commands
       SendOutput($"Painting block with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {pos}");
     }
 
-    private static void RemovePaint(World world, Vector3i pos)
+    private static void RemovePaint(WorldBase world, Vector3i pos)
     {
       var blockValue = world.GetBlock(pos);
       if (blockValue.Equals(BlockValue.Air))
@@ -581,7 +577,7 @@ namespace BCM.Commands
       SendOutput($"Paint removed from block @ {pos}");
     }
 
-    private static void SetMeta(int metaIdx, World world, Vector3i pos)
+    private static void SetMeta(int metaIdx, WorldBase world, Vector3i pos)
     {
       byte meta = 0;
       if (Options.ContainsKey("meta"))

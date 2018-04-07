@@ -106,7 +106,7 @@ namespace BCM.Neurons
       {
         ProcessEntityItem(item);
 
-        return;
+        //return;
       }
       //if (hasFallingBlock && entity is EntityFallingBlock block)
       //{

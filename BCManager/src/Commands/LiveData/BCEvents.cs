@@ -1,19 +1,16 @@
 using System.Linq;
 using BCM.Neurons;
 using BCM.PersistentData;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCEvents : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
-      if (GameManager.Instance.World == null)
-      {
-        SendOutput("The world isn't loaded");
-
-        return;
-      }
+      if (!BCUtils.CheckWorld()) return;
 
       if (Params.Count == 0)
       {
@@ -165,7 +162,7 @@ namespace BCM.Commands
       SendOutput($"Synapse {synapse.Name} is {(synapse.IsEnabled ? "Enabled" : "Disabled")}");
     }
 
-    public void ConfigLogCache()
+    private static void ConfigLogCache()
     {
       if (Params.Count > 1)
       {
@@ -233,17 +230,17 @@ namespace BCM.Commands
       SendOutput("list,config");
     }
 
-    public void ConfigSpawnMutator()
+    private static void ConfigSpawnMutator()
     {
       SendOutput("Under Development");
     }
 
-    public void ConfigSpawnManager()
+    private static void ConfigSpawnManager()
     {
       SendOutput("Under Development");
     }
 
-    public void ConfigDeadIsDead()
+    private static void ConfigDeadIsDead()
     {
       if (Params.Count > 1)
       {
@@ -360,7 +357,7 @@ namespace BCM.Commands
       SendOutput("on,off,global,config,restore,delete,backup");
     }
 
-    public void ConfigTracker()
+    private static void ConfigTracker()
     {
       if (Params.Count > 1)
       {
@@ -423,7 +420,7 @@ namespace BCM.Commands
       SendOutput("view");
     }
 
-    public void ConfigPingKicker()
+    private static void ConfigPingKicker()
     {
       if (Params.Count > 1)
       {

@@ -1,7 +1,0 @@
-﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command}
-      Notes:
-            Command for server managers to subscribe to data feeds from the server

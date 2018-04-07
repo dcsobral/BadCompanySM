@@ -1,14 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCGiveBuffToEntity : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
-      var entities = GameManager.Instance.World.Entities;
+      if (!BCUtils.CheckWorld(out var world)) return;
 
       switch (Params.Count)
       {
@@ -17,38 +19,36 @@ namespace BCM.Commands
           break;
 
         case 1:
-          if (Params[0] != "list")
-          {
-            SendOutput(GetHelp());
-          }
           var data = new List<object>();
 
-          for (var i = entities.list.Count - 1; i >= 0; i--)
+          if (Params[0] != "list")
           {
-            var entity = entities.list[i] as EntityAlive;
-            if (entity == null) continue;
-
-            var e = new BCMBuffEntity
+            if (!int.TryParse(Params[0], out var entityId))
             {
-              EntityId = entity.entityId,
-              Name = entity.name,
-              Buffs = new List<BCMBuffInfo>()
-            };
+              SendOutput($"Couldn't parse param '{Params[0]}' for entityId");
 
-            foreach (var current in entity.Stats.Buffs)
-            {
-              var buff = (MultiBuff) current;
-              if (buff == null) continue;
-
-              e.Buffs.Add(new BCMBuffInfo
-              {
-                Name = buff.Name,
-                Id = buff.MultiBuffClass.Id,
-                Duration = $"{buff.MultiBuffClass.FDuration * buff.Timer.TimeFraction:0}/{buff.MultiBuffClass.FDuration}(s)",
-                Percent = $"{buff.Timer.TimeFraction * 100:0.0}%"
-              });
+              return;
             }
-            data.Add(e);
+
+            var entity = world.Entities.dict[entityId] as EntityAlive;
+            if (entity == null)
+            {
+              SendOutput($"Unable to find entity by id {Params[0]}");
+
+              return;
+            }
+
+            GetEntityBuffs(data, entity);
+          }
+          else
+          {
+            for (var i = world.Entities.list.Count - 1; i >= 0; i--)
+            {
+              var entity = world.Entities.list[i] as EntityAlive;
+              if (entity == null) continue;
+
+              GetEntityBuffs(data, entity);
+            }
           }
 
           SendJson(data);
@@ -72,7 +72,7 @@ namespace BCM.Commands
               }
 
               var count = 0;
-              foreach (var target in entities.list.OfType<EntityAlive>())
+              foreach (var target in world.Entities.list.OfType<EntityAlive>())
               {
                 if (target.GetType().ToString() != type) continue;
 
@@ -99,7 +99,7 @@ namespace BCM.Commands
               break;
             }
 
-            if (!entities.dict.ContainsKey(entityId))
+            if (!world.Entities.dict.ContainsKey(entityId))
             {
               SendOutput("Entity not found");
 
@@ -107,7 +107,7 @@ namespace BCM.Commands
             }
 
             var multiBuffClassAction = MultiBuffClassAction.NewAction(buffid);
-            var target = entities.dict[entityId] as EntityAlive;
+            var target = world.Entities.dict[entityId] as EntityAlive;
             if (multiBuffClassAction != null && target != null)
             {
               multiBuffClassAction.Execute(entityId, target, false, EnumBodyPartHit.None, null);
@@ -121,6 +121,30 @@ namespace BCM.Commands
           SendOutput(GetHelp());
           break;
       }
+    }
+
+    private static void GetEntityBuffs(ICollection<object> data, EntityAlive entity)
+    {
+      var name = "";
+      if (entity is EntityPlayer)
+      {
+        name = entity.EntityName;
+      }
+      else if (EntityClass.list.ContainsKey(entity.entityClass))
+      {
+        name = EntityClass.list[entity.entityClass].entityClassName;
+      }
+
+      var entityBuffs = new BCMBuffEntity(entity.entityId, name);
+
+      foreach (var current in entity.Stats.Buffs)
+      {
+        var buff = (MultiBuff)current;
+        if (buff == null) continue;
+
+        entityBuffs.Buffs.Add(new BCMBuffInfo(buff));
+      }
+      data.Add(entityBuffs);
     }
   }
 }

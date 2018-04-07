@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace BCM.Models
 {
@@ -15,44 +16,44 @@ namespace BCM.Models
     [NonSerialized]
     private List<string> _strFilter;
 
-    public Dictionary<string, string> Options
+    [NotNull]
+    protected Dictionary<string, string> Options
     {
       get => _options;
-      set => _options = value;
+      private set => _options = value;
     }
 
-    public Dictionary<string, object> Bin
+    protected Dictionary<string, object> Bin
     {
       get => _bin ?? (_bin = new Dictionary<string, object>());
       set => _bin = value;
     }
 
-    public string TypeStr
+    protected string TypeStr
     {
       get => _typeStr;
-      set => _typeStr = value;
+      private set => _typeStr = value;
     }
 
-
-    public List<string> StrFilter
+    [NotNull]
+    protected List<string> StrFilter
     {
       get => _strFilter ?? (_strFilter = new List<string>());
-      set => _strFilter = value;
+      private set => _strFilter = value;
     }
 
-
-    public BCMAbstract(object obj, string typeStr, Dictionary<string, string> options, List<string> filters)
+    protected BCMAbstract(object obj, string typeStr, [NotNull] Dictionary<string, string> options, [CanBeNull] List<string> filters)
     {
       TypeStr = typeStr;
       Options = options;
-      StrFilter = filters;
+      StrFilter = filters ?? new List<string>();
       // ReSharper disable once VirtualMemberCallInConstructor
       GetData(obj);
     }
 
     public Dictionary<string, object> Data() => Bin;
 
-    public virtual void GetData(object obj)
+    protected virtual void GetData(object obj)
     {
       //Use the GetData override method in the derived class to populate the Bin property
     }
@@ -74,6 +75,6 @@ namespace BCM.Models
       return o;
     }
 
-    private string OptionValue(string key) => Options.ContainsKey(key) ? Options[key] : string.Empty;
+    //private string OptionValue(string key) => Options.ContainsKey(key) ? Options[key] : string.Empty;
   }
 }

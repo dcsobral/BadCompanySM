@@ -1,10 +1,13 @@
+using JetBrains.Annotations;
+
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCTest : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
-      SendOutput("test");
+      SendOutput("Warning: This is not a warning!");
     }
   }
 }

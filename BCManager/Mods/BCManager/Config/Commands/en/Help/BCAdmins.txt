@@ -1,8 +1,17 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command}
-      Notes:
-            Use bc-help to get a list of common /options
-            Provides information on admins, bans, whitelist, and other admin details
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command}
+    Notes:
+      Use bc-help to get a list of common /options
+      Provides information on admins, bans, whitelist, and other admin details
+
+      /options:
+        (default will show admins, bans, whitelist, permissions)
+        /gg - game prefs
+        /ggs - game stats
+        /admins - server admins
+        /bans - banned players
+        /whitelist - whitelisted players
+        /permissions - web command permissions

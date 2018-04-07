@@ -77,10 +77,6 @@ namespace BCM
         //  _neurons.Add(new TrashCollector());
         //  break;
 
-        case "broadcastapi":
-          _neurons.Add(new BroadcastAPI(this));
-          break;
-
         case "motd":
           _neurons.Add(new Motd(this));
           break;

@@ -1,13 +1,10 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command}
-            1. {command} <x> <y> <z>
-      Notes:
-            Gets your current position, reports and stores it in cache for use in other commands such as bc-export and bc-wblocks
-            1. Stores and reports your current player position
-            2. Stores and reports the given coordinates
-            /h - reports your height compared to ground level
-            /c - reports your chunkXZ and blockXZ within that chunk
-            /r - reports your regionXZ
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command}
+      2. {command} <x> <y> <z>
+    Notes:
+      Gets your current position, reports and stores it in cache for use in other commands such as bc-export and bc-wblocks
+      1. Stores and reports your current player position
+      2. Stores and reports the given coordinates

@@ -1,7 +1,7 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command}
-      Notes:
-            Runs Garbage Collection to try and free up Memory on the server
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command}
+    Notes:
+      Runs Garbage Collection to try and free up Memory on the server

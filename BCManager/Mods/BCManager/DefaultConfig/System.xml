@@ -39,6 +39,5 @@
   <Synapse name="questmonitor" enabled="false" beats="15"/>
   
   <Synapse name="mapexplorer" enabled="false" beats="5"/>
-  <Synapse name="broadcastapi" enabled="false" beats="5"/>
   -->
 </System>

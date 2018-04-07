@@ -2,14 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCTask : BCCommandAbstract
   {
     private static readonly Dictionary<string, BCMTask> Tasks = new Dictionary<string, BCMTask>();
 
-    public override void Process()
+    //todo: format the output as proper json
+
+    protected override void Process()
     {
       if (Tasks.Count == 0)
       {

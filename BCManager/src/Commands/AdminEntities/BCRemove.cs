@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCRemove : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
-      var world = GameManager.Instance.World;
-      if (world == null) return;
+      if (!BCUtils.CheckWorld(out var world)) return;
 
       if (Options.ContainsKey("all") || Options.ContainsKey("istype") || Options.ContainsKey("type") || Options.ContainsKey("minibike") || Options.ContainsKey("ecname"))
       {
@@ -16,7 +17,7 @@ namespace BCM.Commands
 
         foreach (var key in BCUtils.FilterEntities(world.Entities.dict, Options).Keys)
         {
-          RemoveEntity(key, count);
+          RemoveEntity(world, key, count);
         }
 
         SendJson(count);
@@ -30,7 +31,7 @@ namespace BCM.Commands
           return;
         }
 
-        RemoveEntity(entityId);
+        RemoveEntity(world, entityId);
       }
       else
       {
@@ -38,11 +39,8 @@ namespace BCM.Commands
       }
     }
 
-    private static void RemoveEntity(int entityId, IDictionary<string, int> count = null)
+    private static void RemoveEntity(World world, int entityId, IDictionary<string, int> count = null)
     {
-      var world = GameManager.Instance.World;
-      if (world == null) return;
-
       if (!world.Entities.dict.ContainsKey(entityId))
       {
         if (!Options.ContainsKey("all"))

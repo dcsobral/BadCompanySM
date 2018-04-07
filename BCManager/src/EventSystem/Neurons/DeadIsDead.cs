@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BCM.PersistentData;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace BCM.Neurons
@@ -13,11 +14,11 @@ namespace BCM.Neurons
     private readonly string _dir = $"{GameUtils.GetPlayerDataDir()}{_s}";
 
     public bool GlobalMode;
-    public List<string> DiDModePlayers = new List<string>();
+    public readonly List<string> DiDModePlayers = new List<string>();
 
     private struct DiDConfig
     {
-      public bool global;
+      [UsedImplicitly] public bool global;
     }
 
     public DeadIsDead(Synapse s) : base (s)

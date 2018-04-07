@@ -4,6 +4,7 @@ using System.Reflection;
 using LitJson;
 using System.Linq;
 using BCM.Models;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace BCM.Commands
@@ -11,11 +12,8 @@ namespace BCM.Commands
   public class BCCommandAbstract : ConsoleCmdAbstract
   {
     public static CommandSenderInfo SenderInfo;
-    public static List<string> Params = new List<string>();
-    public static Dictionary<string, string> Options = new Dictionary<string, string>();
-
-    [Obsolete]
-    public string Sep = "";
+    [NotNull] public static List<string> Params = new List<string>();
+    [NotNull] protected static Dictionary<string, string> Options = new Dictionary<string, string>();
 
     public override string GetDescription() => Config.GetDescription(GetType().Name);
 
@@ -42,25 +40,22 @@ namespace BCM.Commands
       }
     }
 
-    public virtual void Process(Dictionary<string, string> o, List<string> p)
+    public void Process(Dictionary<string, string> o, List<string> p)
     {
       Options = o;
       Params = p;
       Process();
     }
 
-    public virtual void Process()
+    protected virtual void Process()
     {
       // function to override in extention commands instead of Execute
       // this allows param parsing and exception handling to be done in this class
     }
 
-    public virtual void ProcessSwitch(World world, BCMCmdArea command, out ReloadMode reload)
-    {
-      reload = ReloadMode.None;
-    }
+    public virtual void ProcessSwitch(World world, BCMCmdArea command, out ReloadMode reload) => reload = ReloadMode.None;
 
-    private void ParseParams(List<string> _params)
+    private void ParseParams(IEnumerable<string> _params)
     {
       foreach (var param in _params)
       {
@@ -82,6 +77,7 @@ namespace BCM.Commands
         }
       }
 
+      //todo: make a list with tolowered and trimed text and already split and store as static var
       var defaultoptions = Config.GetDefaultOptions(GetType().Name);
       foreach (var _default in defaultoptions.Split(','))
       {
@@ -100,12 +96,9 @@ namespace BCM.Commands
       }
     }
 
-    public static void SendJsonError(string err)
-    {
-      SendJson(new { error = err });
-    }
+    protected static void SendJsonError(string err) => SendJson(new { error = err });
 
-    public static void SendJson(object data)
+    protected static void SendJson(object data)
     {
       var writer = new JsonWriter();
       if (Options.ContainsKey("pp") && !Options.ContainsKey("1l"))
@@ -114,7 +107,7 @@ namespace BCM.Commands
         writer.PrettyPrint = true;
       }
 
-      JsonMapper.RegisterExporter<float>((o, w) => w.Write(System.Convert.ToDouble(o)));
+      JsonMapper.RegisterExporter<float>((o, w) => w.Write(Convert.ToDouble(o)));
 
       var f = Options.ContainsKey("strpos") ? "S" : Options.ContainsKey("worldpos") ? "W" : Options.ContainsKey("csvpos") ? "C" : "V";
       JsonMapper.RegisterExporter<Vector3>((v, w) => BCUtils.WriteVector3(v, w, f));
@@ -190,15 +183,15 @@ namespace BCM.Commands
       }
 
       //todo: async web output, or store result for viewing with bc-tasks command
-      Log.Out($"BCM:{output}");
+      Log.Out($"{Config.ModPrefix}{output}");
     }
 
-    public static List<string> GetFilters(string type)
+    protected static List<string> GetFilters(string type)
     {
       if (!Options.ContainsKey("filter")) return new List<string>();
 
       var filter = new List<string>();
-      var filters = Options["filter"].ToLower().Split(',').ToList();
+      var filters = Options["filter"].ToLower().Split(',');
       foreach (var cur in filters)
       {
         var str = int.TryParse(cur, out var intFilter) ? GetFilter(intFilter, type) : cur;
@@ -216,7 +209,7 @@ namespace BCM.Commands
       return filter;
     }
 
-    public static void SendObject(BCMAbstract gameobj)
+    protected static void SendObject(BCMAbstract gameobj)
     {
       if (Options.ContainsKey("min"))
       {

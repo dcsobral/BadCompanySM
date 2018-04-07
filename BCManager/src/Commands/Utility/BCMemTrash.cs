@@ -1,10 +1,12 @@
 using System;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCMemTrash : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
       GC.Collect();
       GC.WaitForPendingFinalizers();

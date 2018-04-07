@@ -1,6 +1,7 @@
 ﻿using BCM.Models;
 using System;
 using System.Runtime.Serialization;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace BCM.PersistentData
@@ -8,7 +9,7 @@ namespace BCM.PersistentData
   [Serializable]
   public class Player
   {
-    private readonly string _steamId;
+    [UsedImplicitly] private readonly string _steamId;
 
     //PRIVATE PROPERTIES
     private string _name;

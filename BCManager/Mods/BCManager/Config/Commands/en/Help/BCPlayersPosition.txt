@@ -1,9 +1,18 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command}
-            2. {command} <partialname / entityid / steamid>
-      Notes:
-            Use bc-help to get a list of common /options
-            This is an alias command for bc-lp
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command}
+      2. {command} <partialname / entityid / steamid>
+    Notes:
+      Use bc-help to get a list of common /options
+      This is an alias command for bc-lp
+
+      Filter options:
+      /n - player name
+      /e - player entity id
+      /r - player rotation
+      /u - player underground distance (distance from highest solid block)
+      /g - player onGound stat
+
+      'bc-pos /n' would present a list of players names and locations values

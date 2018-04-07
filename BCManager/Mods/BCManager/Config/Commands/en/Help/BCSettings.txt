@@ -1,7 +1,7 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command} <a.b.c.d> <value>
-      Notes:
-            Command set and clear values from the settings persistent cache
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command} <a.b.c.d> <value>
+    Notes:
+      Command set and clear values from the settings persistent cache

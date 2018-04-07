@@ -1,13 +1,12 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command}
-            2. {command} /t
-            3. {command} /s
-      Notes:
-            Use bc-help to get a list of common /options
-            Provides server time, ticks, fps, clients, entities
-            /t - Returns only the time section of the output as an json object
-            /s - Returns only the time section of the output as an json csv array
-
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command}
+      2. {command} /t
+      3. {command} /s
+    Notes:
+      Use bc-help to get a list of common /options
+      Provides server time, ticks, fps, clients, entities
+      /t - Returns only the time section of the output as an json object
+      /s - Returns only the time section of the output as an json csv array

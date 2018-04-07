@@ -1,55 +1,56 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace BCM
 {
   public class PlayerDataReader
   {
     #region Properties
-    public HashSet<string> alreadyCraftedList = new HashSet<string>();
-    public ItemStack[] bag = new ItemStack[0];
-    public bool bCrouchedLocked;
-    public bool bDead;
-    public bool bLoaded;
-    public CraftingData craftingData = new CraftingData();
-    public float currentLife = 0f;
-    public int deaths;
-    public int deathUpdateTime;
-    public float distanceWalked = 0f;
-    public LiveStats drink = new LiveStats(0, 0);
-    public Vector3i droppedBackpackPosition = Vector3i.zero;
-    public EntityCreationData ecd = new EntityCreationData();
-    public Equipment equipment = new Equipment();
-    public uint experience;
-    public Equipment favoriteEquipment = new Equipment();
-    public List<string> favoriteRecipeList = new List<string>();
-    public LiveStats food = new LiveStats(0, 0);
-    public int id;
-    public ItemStack[] inventory = new ItemStack[0];
-    public SpawnPosition lastSpawnPosition = SpawnPosition.Undef;
-    public int level;
-    public float longestLife = 0f;
-    public Vector3i markerPosition = new Vector3i();
-    public PlayerJournal playerJournal = new PlayerJournal();
-    public int playerKills;
-    public QuestJournal questJournal = new QuestJournal();
-    public ulong rentalEndTime = 0uL;
-    public Vector3i rentedVMPosition = Vector3i.zero;
-    public int score;
-    public int selectedInventorySlot;
-    public long selectedSpawnPointKey;
-    public int skillPoints;
-    public List<Vector3i> spawnPoints = new List<Vector3i>();
-    public uint totalItemsCrafted = 0u;
-    public List<int> trackedFriendEntityIds = new List<int>();
-    public List<string> unlockedRecipeList = new List<string>();
-    public WaypointCollection waypoints = new WaypointCollection();
-    public int zombieKills;
-    public ulong gameStageLifetimeTicks;
+    [UsedImplicitly] public HashSet<string> alreadyCraftedList = new HashSet<string>();
+    [UsedImplicitly] public ItemStack[] bag = new ItemStack[0];
+    [UsedImplicitly] public bool bCrouchedLocked;
+    [UsedImplicitly] public bool bDead;
+    [UsedImplicitly] public bool bLoaded;
+    [UsedImplicitly] public CraftingData craftingData = new CraftingData();
+    [UsedImplicitly] public float currentLife;
+    [UsedImplicitly] public int deaths;
+    [UsedImplicitly] public int deathUpdateTime;
+    [UsedImplicitly] public float distanceWalked;
+    [UsedImplicitly] public LiveStats drink = new LiveStats(0, 0);
+    [UsedImplicitly] public Vector3i droppedBackpackPosition = Vector3i.zero;
+    [UsedImplicitly] public EntityCreationData ecd = new EntityCreationData();
+    [UsedImplicitly] public Equipment equipment = new Equipment();
+    [UsedImplicitly] public uint experience;
+    [UsedImplicitly] public Equipment favoriteEquipment = new Equipment();
+    [UsedImplicitly] public List<string> favoriteRecipeList = new List<string>();
+    [UsedImplicitly] public LiveStats food = new LiveStats(0, 0);
+    [UsedImplicitly] public int id;
+    [UsedImplicitly] public ItemStack[] inventory = new ItemStack[0];
+    [UsedImplicitly] public SpawnPosition lastSpawnPosition = SpawnPosition.Undef;
+    [UsedImplicitly] public int level;
+    [UsedImplicitly] public float longestLife;
+    [UsedImplicitly] public Vector3i markerPosition;
+    [UsedImplicitly] public PlayerJournal playerJournal = new PlayerJournal();
+    [UsedImplicitly] public int playerKills;
+    [UsedImplicitly] public QuestJournal questJournal = new QuestJournal();
+    [UsedImplicitly] public ulong rentalEndTime;
+    [UsedImplicitly] public Vector3i rentedVMPosition = Vector3i.zero;
+    [UsedImplicitly] public int score;
+    [UsedImplicitly] public int selectedInventorySlot;
+    [UsedImplicitly] public long selectedSpawnPointKey;
+    [UsedImplicitly] public int skillPoints;
+    [UsedImplicitly] public List<Vector3i> spawnPoints = new List<Vector3i>();
+    [UsedImplicitly] public uint totalItemsCrafted;
+    [UsedImplicitly] public List<int> trackedFriendEntityIds = new List<int>();
+    [UsedImplicitly] public List<string> unlockedRecipeList = new List<string>();
+    [UsedImplicitly] public WaypointCollection waypoints = new WaypointCollection();
+    [UsedImplicitly] public int zombieKills;
+    [UsedImplicitly] public ulong gameStageLifetimeTicks;
 
-    public bool IsModdedSave;
-    public List<Skill> skills;
+    [UsedImplicitly] public bool IsModdedSave;
+    [UsedImplicitly] public List<Skill> skills;
     //public PlayerStealth stealth;
     #endregion
 
@@ -62,7 +63,7 @@ namespace BCM
       Init(steamid);
     }
 
-    public void  Init(string steamid)
+    public void Init(string steamid)
     {
       try
       {
@@ -330,7 +331,7 @@ namespace BCM
         var num4 = _br.ReadInt32();
         if (num4 > 0)
         {
-          var pdfstealth = new MemoryStream(_br.ReadBytes(num4));
+          //var pdfstealth = new MemoryStream(_br.ReadBytes(num4));
           //todo: custom loader
         }
       }

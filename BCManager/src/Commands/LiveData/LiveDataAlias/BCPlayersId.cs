@@ -1,10 +1,12 @@
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCPlayersId : BCPlayers
   {
-    public override void Process()
+    protected override void Process()
     {
       if (Options.ContainsKey("filter"))
       {
@@ -19,6 +21,11 @@ namespace BCM.Commands
       if (Options.ContainsKey("n"))
       {
         filters += "," + BCMPlayer.StrFilters.Name;
+      }
+
+      if (Options.ContainsKey("s"))
+      {
+        filters += "," + BCMPlayer.StrFilters.SteamId;
       }
 
       Options.Add("filter", filters);

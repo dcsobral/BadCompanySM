@@ -1,36 +1,36 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command} <subcommand> <x> <y> <z> <block1>
-      Notes:
-            Use bc-help to get a list of common /options
-            <x> <y> <z> - block position single block
-            <block1> is the name or id of the block to use if fill etc.
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command} <subcommand> <x> <y> <z> <block1>
+    Notes:
+      Use bc-help to get a list of common /options
+      <x> <y> <z> - block position single block
+      <block1> is the name or id of the block to use if fill etc.
 
-            Sub Commands:
-            scan - gives stats on block at given location
-            fill - the block specified is rendered into the block at given location
-                /d=# - the density to use, from -127 to 128. Invalid density wont be applied
-                /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
-                /delmulti - removes multidim block at given location
-            repair - removes all damage from block at given location
-            damage - causes damage to block at given location
-                /d=# | /d=#,# - set the damage to cause, or a randomised range
-                /nobreak - if the damage would otherwise break the block, instead it will be set to 1 health
-                /overkill - the damage given will overflow into downgrade blocks until all damage is allocated or the block becomes air
-            upgrade - sets the block to the next step in their upgrade path, if any
-            downgrade - sets the block to the next step in their downgrade path
-            paint - paints all sides of block at given location
-                /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
-            paintface - paints one side of block at given location
-                /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
-                /face=0-5 - 0=Top, 1=Bottom, 2=North, 3=West, 4=South, 5=East
-            paintstrip - removes all paint from block at given location
-            density - sets density on block at given location
-                /d=# - the density to use, from -127 to 128. Invalid density wont be applied
-            rotate - rotates block at given location
-                /rot=# - sets the value for the block at given location
-            meta1/meta2/meta3 - sets the meta1/meta3/meta3 for blocks at given location
-                /meta=# - sets the value for the block at given location
-                - common block meta1 values: Doors - 0=closed, 1=open - Lights - 0=off, 2=on
+      Sub Commands:
+      scan - gives stats on block at given location
+      fill - the block specified is rendered into the block at given location
+        /d=# - the density to use, from -127 to 128. Invalid density wont be applied
+        /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
+        /delmulti - removes multidim block at given location
+      repair - removes all damage from block at given location
+      damage - causes damage to block at given location
+        /d=# | /d=#,# - set the damage to cause, or a randomised range
+        /nobreak - if the damage would otherwise break the block, instead it will be set to 1 health
+        /overkill - the damage given will overflow into downgrade blocks until all damage is allocated or the block becomes air
+      upgrade - sets the block to the next step in their upgrade path, if any
+      downgrade - sets the block to the next step in their downgrade path
+      paint - paints all sides of block at given location
+        /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
+      paintface - paints one side of block at given location
+        /t=<textureid> - the texture to use, as per the indexes in the paint tool selector
+        /face=0-5 - 0=Top, 1=Bottom, 2=North, 3=West, 4=South, 5=East
+      paintstrip - removes all paint from block at given location
+      density - sets density on block at given location
+        /d=# - the density to use, from -127 to 128. Invalid density wont be applied
+      rotate - rotates block at given location
+        /rot=# - sets the value for the block at given location
+      meta1/meta2/meta3 - sets the meta1/meta3/meta3 for blocks at given location
+        /meta=# - sets the value for the block at given location
+        - common block meta1 values: Doors - 0=closed, 1=open - Lights - 0=off, 2=on

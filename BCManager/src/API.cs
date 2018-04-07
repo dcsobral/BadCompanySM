@@ -1,9 +1,11 @@
 ﻿using BCM.PersistentData;
 using System;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace BCM
 {
+  [UsedImplicitly]
   public class API : ModApiAbstract
   {
     private static readonly EntitySpawner EntitySpawner = new EntitySpawner();

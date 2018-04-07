@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCHelp : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
       if (Options.ContainsKey("sm"))
       {

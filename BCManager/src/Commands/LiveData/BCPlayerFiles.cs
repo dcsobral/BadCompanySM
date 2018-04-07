@@ -7,18 +7,10 @@ using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCPlayerFiles : BCCommandAbstract
   {
-    [CanBeNull]
-    private static FileSystemInfo[] GetFiles(string path)
-    {
-      var root = new DirectoryInfo(path);
-      if (!root.Exists) { return null; }
-      var files = root.GetFileSystemInfos();
-      return files;
-    }
-
-    public override void Process()
+    protected override void Process()
     {
       var players = new List<BCMPlayerDataFile>();
       var path = GameUtils.GetPlayerDataDir();
@@ -58,6 +50,13 @@ namespace BCM.Commands
       {
         SendJson(players);
       }
+    }
+
+    [CanBeNull]
+    private static FileSystemInfo[] GetFiles(string path)
+    {
+      var root = new DirectoryInfo(path);
+      return !root.Exists ? null : root.GetFileSystemInfos();
     }
   }
 }

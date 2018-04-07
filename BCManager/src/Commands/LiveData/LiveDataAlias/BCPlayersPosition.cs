@@ -1,10 +1,12 @@
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCPlayersPosition : BCPlayers
   {
-    public override void Process()
+    protected override void Process()
     {
       if (Options.ContainsKey("filter"))
       {
@@ -16,14 +18,26 @@ namespace BCM.Commands
 
       var filters = BCMPlayer.StrFilters.Position;
 
+      if (Options.ContainsKey("n"))
+      {
+        filters += "," + BCMPlayer.StrFilters.Name;
+      }
+
+      if (Options.ContainsKey("e"))
+      {
+        filters += "," + BCMPlayer.StrFilters.EntityId;
+      }
+
       if (Options.ContainsKey("r"))
       {
         filters += "," + BCMPlayer.StrFilters.Rotation;
       }
+
       if (Options.ContainsKey("u"))
       {
         filters += "," + BCMPlayer.StrFilters.Underground;
       }
+
       if (Options.ContainsKey("g"))
       {
         filters += "," + BCMPlayer.StrFilters.OnGround;

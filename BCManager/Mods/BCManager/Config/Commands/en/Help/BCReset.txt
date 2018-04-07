@@ -1,7 +1,7 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command}
-      Notes:
-            Use bc-help to get a list of common /options
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command}
+    Notes:
+      Use bc-help to get a list of common /options

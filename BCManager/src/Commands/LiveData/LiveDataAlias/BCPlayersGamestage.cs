@@ -1,10 +1,12 @@
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCPlayersGamestage : BCPlayers
   {
-    public override void Process()
+    protected override void Process()
     {
       if (Options.ContainsKey("filter"))
       {
@@ -14,7 +16,24 @@ namespace BCM.Commands
         return;
       }
 
-      Options.Add("filter", BCMPlayer.StrFilters.Gamestage);
+      var filters = BCMPlayer.StrFilters.Gamestage;
+
+      if (Options.ContainsKey("n"))
+      {
+        filters += "," + BCMPlayer.StrFilters.Name;
+      }
+
+      if (Options.ContainsKey("e"))
+      {
+        filters += "," + BCMPlayer.StrFilters.EntityId;
+      }
+
+      if (Options.ContainsKey("s"))
+      {
+        filters += "," + BCMPlayer.StrFilters.SteamId;
+      }
+
+      Options.Add("filter", filters);
       var cmd = new BCPlayers();
       cmd.Process(Options, Params);
     }

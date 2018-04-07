@@ -1,1 +1,8 @@
-﻿BCHelp - Provides a list of all active BCM commands, and info about common /options
+﻿{description}
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command} [/sm]
+    Notes:
+      Provides a list of all active BCM commands, and info about common /options
+      /sm will return all commands from vanilla and mods in json format

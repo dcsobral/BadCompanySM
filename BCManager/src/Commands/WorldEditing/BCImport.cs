@@ -1,58 +1,177 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
+using JetBrains.Annotations;
 using UnityEngine;
 using Random = System.Random;
 
 namespace BCM.Commands
 {
+  //todo: add feedback when undo is processed
+  //todo: if undo is out of range or only partially loaded, rollback and infom to get closer
+  //todo: add a redo feature
+  //todo: set owner if option set
+  //todo: remove loot container contents before inserting new prefab, optional flag
+  //todo: create chunk observer and spawn prefab once chunks are loaded?
+  //todo: use loc position for imports with /loc option
+
+  // todo: create a copy of the chunks in the bounded dimensions of the prefab size for an undo
+  //       should work better than a prefab copy undo as it will preserve block ownership and state?
+  // optional todo: option to carve terrain where prefab will spawn, maybe reapply decorations?
+  //                insert lot into cell data and regenerate chunk area from world/seed defaults
+
+  // optional todo: allow for partial names for prefab, provide list if more then one result, allow for partial + # from list to specify
+  // optional todo: refresh nearest prefab
+  // optional todo: store last x commands for each player, with linked undo data add a repeat option so that prefab inserts at a players location can be repeated at the same location even if player moves
+
+  [UsedImplicitly]
   public class BCImport : BCCommandAbstract
   {
-    private const string UndoDir = "Data/Prefabs/BCMUndoCache";
-
-    private class PrefabCache
+    protected override void Process()
     {
-      public string Filename;
-      public Vector3i Pos;
+      if (!BCUtils.CheckWorld(out var world)) return;
+
+      if (Options.ContainsKey("undo"))
+      {
+        SendOutput("Please use the bc-undo command to undo changes");
+
+        return;
+      }
+
+      EntityPlayer sender = null;
+      if (SenderInfo.RemoteClientInfo != null)
+      {
+        sender = world.Entities.dict[SenderInfo.RemoteClientInfo.entityId] as EntityPlayer;
+      }
+
+      if (Params.Count == 0) return;
+
+      var prefab = new Prefab();
+      if (!prefab.Load(Params[0])) return;
+
+      if (!GetRxyz(prefab, sender, out var r, out var x, out var y, out var z)) return;
+
+      var pos = Options.ContainsKey("nooffset") ? new Vector3i(x, y, z) : new Vector3i(x, y + prefab.yOffset, z);
+
+      if (Options.ContainsKey("air"))
+      {
+        prefab.bCopyAirBlocks = true;
+      }
+      if (Options.ContainsKey("noair"))
+      {
+        prefab.bCopyAirBlocks = false;
+      }
+
+      BlockTranslations(world, prefab, pos);
+
+      //CREATE UNDO
+      //create backup of area prefab will insert to
+      if (!Options.ContainsKey("noundo"))
+      {
+        BCUtils.CreateUndo(sender, pos, prefab.size);
+      }
+
+      // SPAWN PREFAB
+      Log.Out($"{Config.ModPrefix}Spawning prefab {prefab.filename} @ {pos}, size={prefab.size}, rot={r}");
+      SendOutput($"Spawning prefab {prefab.filename} @ {pos}, size={prefab.size}, rot={r}");
+      if (Options.ContainsKey("sblock") || Options.ContainsKey("editmode"))
+      {
+        SendOutput("* with Sleeper Blocks option set");
+      }
+      else
+      {
+        SendOutput("* with Sleeper Spawning option set");
+      }
+      if (Options.ContainsKey("tfill") || Options.ContainsKey("editmode"))
+      {
+        SendOutput("* with Terrain Filler option set");
+      }
+      if (Options.ContainsKey("notrans") || Options.ContainsKey("editmode"))
+      {
+        SendOutput("* with No Placeholder Translations option set");
+      }
+      SendOutput("use bc-undo to revert the changes");
+
+      InsertPrefab(world, prefab, pos);
     }
-    private readonly Dictionary<int, List<PrefabCache>> _undoCache = new Dictionary<int, List<PrefabCache>>();
 
-    private static bool GetXyz(Prefab prefab, Entity entity, ref int x, ref int y, ref int z)
+    public static void InsertPrefab(World world, Prefab prefab, Vector3i pos)
     {
-      //todo: use loc position for imports with /loc option
-      if (entity == null) return false;
+      if (prefab == null)
+      {
+        SendOutput("No Prefab loaded.");
 
-      var loc = new Vector3i((int)Math.Floor(entity.serverPos.x / 32f), (int)Math.Floor(entity.serverPos.y / 32f), (int)Math.Floor(entity.serverPos.z / 32f));
-
-      x = loc.x - prefab.size.x / 2;
-      y = loc.y;
-      z = loc.z - prefab.size.z / 2;
-      if (Options.ContainsKey("csw") || Options.ContainsKey("ne"))
-      {
-        x = loc.x;
-        z = loc.z;
-      }
-      else if (Options.ContainsKey("cse") || Options.ContainsKey("nw"))
-      {
-        x = loc.x - prefab.size.x;
-        z = loc.z;
-      }
-      else if (Options.ContainsKey("cnw") || Options.ContainsKey("se"))
-      {
-        x = loc.x;
-        z = loc.z - prefab.size.z;
-      }
-      else if (Options.ContainsKey("cne") || Options.ContainsKey("sw"))
-      {
-        x = loc.x - prefab.size.x;
-        z = loc.z - prefab.size.z;
+        return;
       }
 
-      return true;
+      //GET AFFECTED CHUNKS
+      var modifiedChunks = new Dictionary<long, Chunk>();
+      for (var cx = -1; cx <= prefab.size.x + 16; cx = cx + 16)
+      {
+        for (var cz = -1; cz <= prefab.size.z + 16; cz = cz + 16)
+        {
+          if (world.GetChunkFromWorldPos(pos.x + cx, 0, pos.z + cz) is Chunk chunk)
+          {
+            if (modifiedChunks.ContainsKey(chunk.Key)) continue;
+
+            modifiedChunks.Add(chunk.Key, chunk);
+          }
+          else
+          {
+            SendOutput($"Unable to load chunk for prefab @ {pos.x + cx},{pos.z + cz}");
+          }
+        }
+      }
+
+      //INSERT PREFAB
+      CopyIntoLocal(world, prefab, pos);
+
+      //RELOAD CHUNKS
+      if (!(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
+      {
+        BCChunks.ReloadForClients(modifiedChunks);
+      }
     }
 
-    private bool GetXyzRot(Prefab prefab, ref int r, ref int x, ref int y, ref int z)
+    private bool GetRxyz(Prefab prefab, Entity entity, out int r, out int x, out int y, out int z)
     {
+      r = 0;
+      x = 0;
+      y = 0;
+      z = 0;
+
+      if (entity == null && Params.Count < 4)
+      {
+        SendOutput("Command requires <name> <x> <y> <z> params if not sent by an online player");
+      }
+      else if (entity != null)
+      {
+        var loc = new Vector3i((int)Math.Floor(entity.serverPos.x / 32f), (int)Math.Floor(entity.serverPos.y / 32f), (int)Math.Floor(entity.serverPos.z / 32f));
+
+        x = loc.x - prefab.size.x / 2;
+        y = loc.y;
+        z = loc.z - prefab.size.z / 2;
+        if (Options.ContainsKey("csw") || Options.ContainsKey("ne"))
+        {
+          x = loc.x;
+          z = loc.z;
+        }
+        else if (Options.ContainsKey("cse") || Options.ContainsKey("nw"))
+        {
+          x = loc.x - prefab.size.x;
+          z = loc.z;
+        }
+        else if (Options.ContainsKey("cnw") || Options.ContainsKey("se"))
+        {
+          x = loc.x;
+          z = loc.z - prefab.size.z;
+        }
+        else if (Options.ContainsKey("cne") || Options.ContainsKey("sw"))
+        {
+          x = loc.x - prefab.size.x;
+          z = loc.z - prefab.size.z;
+        }
+      }
+
       if (Params.Count > 1)
       {
         switch (Params.Count)
@@ -100,34 +219,33 @@ namespace BCM.Commands
             }
 
             break;
-
         }
-
         // spin the prefab
         prefab.RotateY(false, r % 4);
       }
 
       //bounds
-      //todo: make overridable (prefab wont replace blocks outside bounds but will partial spawn)
       if (y < 0)
       {
         SendOutput($"Y position is too low by {y * -1} blocks");
+
+        return false;
       }
       if (y + prefab.size.y > 255)
       {
         SendOutput($"Y position is too high by {y + prefab.size.y - 255} blocks");
+
+        return false;
       }
 
       return true;
     }
 
-    private static void BlockTranslations(Prefab prefab, Vector3i pos)
+    private static void BlockTranslations(World world, Prefab prefab, Vector3i pos)
     {
-      // todo: custom block map via configs and select with /map=<mapname>, also a few options like wood->metal->concrete->steel upgrades (/upgrade=2 (steps))
-
       // ENTITIES
       var entities = new List<int>();
-      prefab.CopyEntitiesIntoWorld(GameManager.Instance.World, pos, entities, !(Options.ContainsKey("noent") || Options.ContainsKey("editmode")));
+      prefab.CopyEntitiesIntoWorld(world, pos, entities, !(Options.ContainsKey("noent") || Options.ContainsKey("editmode")));
 
       //BLOCK TRANSLATIONS
       if (Options.ContainsKey("notrans") || Options.ContainsKey("editmode")) return;
@@ -149,51 +267,6 @@ namespace BCM.Commands
             prefab.SetBlock(px, py, pz, bvr);
           }
         }
-      }
-    }
-
-    public static void InsertPrefab(Prefab prefab, int x, int y, int z, Vector3i pos)
-    {
-      var world = GameManager.Instance.World;
-      if (world == null) return;
-
-      if (prefab == null)
-      {
-        SendOutput("No Prefab loaded.");
-
-        return;
-      }
-
-      //GET AFFECTED CHUNKS
-      var modifiedChunks = new Dictionary<long, Chunk>();
-      for (var cx = -1; cx <= prefab.size.x + 16; cx = cx + 16)
-      {
-        for (var cz = -1; cz <= prefab.size.z + 16; cz = cz + 16)
-        {
-          if (world.GetChunkFromWorldPos(x + cx, y, z + cz) is Chunk chunk)
-          {
-            if (modifiedChunks.ContainsKey(chunk.Key)) continue;
-
-            modifiedChunks.Add(chunk.Key, chunk);
-          }
-          else
-          {
-            // todo: generate and observe chunks required
-            SendOutput($"Unable to load chunk for prefab @ {x + cx},{z + cz}");
-          }
-        }
-      }
-
-      //INSERT PREFAB
-      //todo: set owner
-
-      CopyIntoLocal(prefab, world, pos);
-      //prefab.CopyIntoLocal(world.ChunkCache, pos, true, true);
-
-      //RELOAD CHUNKS
-      if (!(Options.ContainsKey("noreload") || Options.ContainsKey("nr")))
-      {
-        BCChunks.ReloadForClients(modifiedChunks);
       }
     }
 
@@ -234,7 +307,7 @@ namespace BCM.Commands
       }
     }
 
-    private static void ProcessSleepers(Prefab prefab, World world, /*Chunk chunk, */Vector3i dest)
+    private static void ProcessSleepers(Prefab prefab, World world, Vector3i dest)
     {
       for (var index = 0; index < prefab.SleeperVolumesStart.Count; ++index)
       {
@@ -245,50 +318,30 @@ namespace BCM.Commands
         var volMax = volStart + volSize;
         var volStartDest = volStart + dest;
         var volMaxDest = volMax + dest;
-        //if (chunk != null)
-        //{
-        //  var chunkPosMin = chunk.GetWorldPos();
-        //  var chunkPosMax = chunkPosMin + new Vector3i(16, 256, 16);
-
-        //  if ((volStartDest.x >= chunkPosMax.x || volMaxDest.x <= chunkPosMin.x || volStartDest.y >= chunkPosMax.y || volMaxDest.y <= chunkPosMin.y ||
-        //    volStartDest.z >= chunkPosMax.z ? 1 : (volMaxDest.z <= chunkPosMin.z ? 1 : 0)) != 0) continue;
-
-        //  var volKey = world.FindSleeperVolume(volStartDest, volMaxDest);
-        //  if (volKey == -1)
-        //  {
-        //    var volume = SleeperVolume.Create(prefab.SleeperVolumesGroup[index], volStartDest, volMaxDest, dest, prefab.SleeperVolumeGameStageAdjust[index]);
-        //    volKey = world.AddSleeperVolume(volume);
-        //    AddSleeperSpawns(prefab, index, dest, volume, volStart, volMax);
-        //  }
-        //  chunk.GetSleeperVolumes().Add(volKey);
-        //}
-        //else
-        //{
-          var chunkXz1 = World.toChunkXZ(volStartDest.x);
-          var chunkXz2 = World.toChunkXZ(volMaxDest.x);
-          var chunkXz3 = World.toChunkXZ(volStartDest.z);
-          var chunkXz4 = World.toChunkXZ(volMaxDest.z);
-          var volume = SleeperVolume.Create(prefab.SleeperVolumesGroup[index], volStartDest, volMaxDest, dest, prefab.SleeperVolumeGameStageAdjust[index]);
-          var volKey = world.AddSleeperVolume(volume);
-          AddSleeperSpawns(prefab, index, dest, volume, volStart, volMax);
-          for (var chunkX = chunkXz1; chunkX <= chunkXz2; ++chunkX)
+        var chunkXz1 = World.toChunkXZ(volStartDest.x);
+        var chunkXz2 = World.toChunkXZ(volMaxDest.x);
+        var chunkXz3 = World.toChunkXZ(volStartDest.z);
+        var chunkXz4 = World.toChunkXZ(volMaxDest.z);
+        var volume = SleeperVolume.Create(prefab.SleeperVolumesGroup[index], volStartDest, volMaxDest, dest, prefab.SleeperVolumeGameStageAdjust[index]);
+        var volKey = world.AddSleeperVolume(volume);
+        AddSleeperSpawns(prefab, index, dest, volume, volStart, volMax);
+        for (var chunkX = chunkXz1; chunkX <= chunkXz2; ++chunkX)
+        {
+          for (var chunkZ = chunkXz3; chunkZ <= chunkXz4; ++chunkZ)
           {
-            for (var chunkZ = chunkXz3; chunkZ <= chunkXz4; ++chunkZ)
-            {
-              ((Chunk)world.GetChunkSync(chunkX, 0, chunkZ))?.GetSleeperVolumes().Add(volKey);
-            }
+            ((Chunk)world.GetChunkSync(chunkX, 0, chunkZ))?.GetSleeperVolumes().Add(volKey);
           }
-        //}
+        }
       }
     }
 
-    private static void CopyIntoLocal(Prefab prefab, World world, Vector3i dest)
+    private static void CopyIntoLocal(World world, Prefab prefab, Vector3i dest)
     {
       if (!Options.ContainsKey("sblocks"))
       {
         ProcessSleepers(prefab, world, dest);
       }
-      
+
       var chunkSync = world.ChunkCache.GetChunkSync(World.toChunkXZ(dest.x), World.toChunkXZ(dest.z));
 
       if (!Options.ContainsKey("refresh"))
@@ -306,7 +359,6 @@ namespace BCM.Commands
               chunkSync = world.ChunkCache.GetChunkSync(chunkX, chunkZ);
             }
 
-            //todo:
             if (chunkSync == null) continue;
 
             for (var y = 0; y < prefab.size.y; ++y)
@@ -340,7 +392,6 @@ namespace BCM.Commands
             chunkSync = world.ChunkCache.GetChunkSync(chunkX, chunkZ);
           }
 
-          //todo:
           if (chunkSync == null) continue;
 
           var terrainHeight = (int)chunkSync.GetTerrainHeight(blockX, blockZ);
@@ -409,8 +460,6 @@ namespace BCM.Commands
               }
             }
 
-            //SECURE DOORS/CHESTS
-
             //TRADER SPAWNS
 
             //SET OWNER
@@ -429,158 +478,6 @@ namespace BCM.Commands
           chunkSync.SetDecoAllowedAt(blockX, blockZ, EnumDecoAllowed.NoBigOnlySmall);
         }
       }
-    }
-
-    private void CreateUndo(EntityPlayer sender, Vector3i size, Vector3i p0)
-    {
-      var steamId = "_server";
-      if (SenderInfo.RemoteClientInfo != null)
-      {
-        steamId = SenderInfo.RemoteClientInfo.ownerId;
-      }
-
-      var areaCache = new Prefab();
-      var userId = 0; // id will be 0 for web console issued commands
-      areaCache.CopyFromWorld(GameManager.Instance.World, p0, new Vector3i(p0.x + size.x - 1, p0.y + size.y - 1, p0.z + size.z - 1));
-      areaCache.bCopyAirBlocks = true;
-
-      if (sender != null)
-      {
-        userId = sender.entityId;
-      }
-      Directory.CreateDirectory(Utils.GetGameDir(UndoDir));
-      var filename = $"{steamId}.{p0.x}.{p0.y}.{p0.z}.{DateTime.UtcNow.ToFileTime()}";
-      areaCache.Save(Utils.GetGameDir(UndoDir), filename);
-
-      if (_undoCache.ContainsKey(userId))
-      {
-        _undoCache[userId].Add(new PrefabCache { Filename = filename, Pos = p0 });
-      }
-      else
-      {
-        _undoCache.Add(userId, new List<PrefabCache> { new PrefabCache { Filename = filename, Pos = p0 } });
-      }
-    }
-
-    private void UndoInsert(EntityPlayer sender)
-    {
-      var userId = 0;
-      if (sender != null)
-      {
-        userId = sender.entityId;
-      }
-      if (!_undoCache.ContainsKey(userId)) return;
-
-      if (_undoCache[userId].Count <= 0) return;
-
-      var pCache = _undoCache[userId][_undoCache[userId].Count - 1];
-      if (pCache != null)
-      {
-        var p = new Prefab();
-        p.Load(Utils.GetGameDir(UndoDir), pCache.Filename);
-        InsertPrefab(p, pCache.Pos.x, pCache.Pos.y, pCache.Pos.z, pCache.Pos);
-
-        var cacheFile = Utils.GetGameDir($"{UndoDir}{pCache.Filename}");
-        if (Utils.FileExists($"{cacheFile}.tts"))
-        {
-          Utils.FileDelete($"{cacheFile}.tts");
-        }
-        if (Utils.FileExists($"{cacheFile}.xml"))
-        {
-          Utils.FileDelete($"{cacheFile}.xml");
-        }
-      }
-      _undoCache[userId].RemoveAt(_undoCache[userId].Count - 1);
-    }
-
-    public override void Process()
-    {
-      // todo: remove loot container contents before inserting new prefab, optional flag
-      // todo: add map visitor to load chunks if required
-
-      // optional todo: allow for partial names for prefab, provide list if more then one result, allow for partial + # from list to specify
-      // optional todo: refresh nearest prefab
-      // optional todo: store last x commands for each player, with linked undo data add a repeat option so that prefab inserts at a players location can be repeated at the same location even if player moves
-
-      EntityPlayer sender = null;
-      if (SenderInfo.RemoteClientInfo != null)
-      {
-        sender = GameManager.Instance.World.Entities.dict[SenderInfo.RemoteClientInfo.entityId] as EntityPlayer;
-      }
-
-      if (Options.ContainsKey("undo"))
-      {
-        UndoInsert(sender);
-
-        return;
-      }
-
-      if (Params.Count == 0) return;
-
-      var prefab = new Prefab();
-      if (!prefab.Load(Params[0])) return;
-
-      var rot = 0;
-      int x = 0, y = 0, z = 0;
-      if (!GetXyz(prefab, sender, ref x, ref y, ref z) && Params.Count < 5)
-      {
-        SendOutput("Command requires <name> <x> <y> <z> <rot> params if not sent by an online player");
-
-        return;
-      }
-
-      if (!GetXyzRot(prefab, ref rot, ref x, ref y, ref z)) return;
-
-      var pos = Options.ContainsKey("nooffset") ? new Vector3i(x, y, z) : new Vector3i(x, y + prefab.yOffset, z);
-
-      // todo: create an entity observer and spawn prefab once chunks are loaded?
-
-
-      if (Options.ContainsKey("air"))
-      {
-        prefab.bCopyAirBlocks = true;
-      }
-      if (Options.ContainsKey("noair"))
-      {
-        prefab.bCopyAirBlocks = false;
-      }
-
-      // todo: create a copy of the chunks in the bounded dimensions of the prefab size for an undo
-      //       should work better than a prefab copy undo as it will preserve block ownership and state?
-      // optional todo: option to carve terrain where prefab will spawn, maybe reapply decorations?
-      //                insert lot into cell data and regenerate chunk area from world/seed defaults
-
-      BlockTranslations(prefab, pos);
-
-      //CREATE UNDO
-      //create backup of area prefab will insert to
-      if (!Options.ContainsKey("noundo"))
-      {
-        CreateUndo(sender, prefab.size, pos);
-      }
-
-      // SPAWN PREFAB
-      Log.Out($"{Config.ModPrefix}Spawning prefab {prefab.filename} @ {pos}, size={prefab.size}");
-      SendOutput($"Spawning prefab {prefab.filename} @ {pos}, size={prefab.size}");
-      if (Options.ContainsKey("sblock") || Options.ContainsKey("editmode"))
-      {
-        SendOutput("* with Sleeper Blocks option set");
-      }
-      else
-      {
-        SendOutput("* with Sleeper Spawning option set");
-      }
-      if (Options.ContainsKey("tfill") || Options.ContainsKey("editmode"))
-      {
-        SendOutput("* with Terrain Filler option set");
-      }
-      if (Options.ContainsKey("notrans") || Options.ContainsKey("editmode"))
-      {
-        SendOutput("* with No Placeholder Translations option set");
-      }
-      SendOutput("use bc-import /undo to revert the changes");
-
-      InsertPrefab(prefab, x, y, z, pos);
     }
   }
 }

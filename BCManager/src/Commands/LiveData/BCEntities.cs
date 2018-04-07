@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using BCM.Models;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCEntities : BCCommandAbstract
   {
     private static void Filters() => SendJson(typeof(BCMEntity.StrFilters).GetFields()
@@ -13,15 +15,9 @@ namespace BCM.Commands
       .GroupBy(kvp => kvp.Value)
       .Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
 
-    public override void Process()
+    protected override void Process()
     {
-      var world = GameManager.Instance.World;
-      if (world == null)
-      {
-        SendOutput("The world isn't loaded");
-
-        return;
-      }
+      if (!BCUtils.CheckWorld(out var world)) return;
 
       if (Options.ContainsKey("filters"))
       {

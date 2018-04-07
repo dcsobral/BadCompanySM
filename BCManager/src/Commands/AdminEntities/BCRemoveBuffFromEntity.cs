@@ -1,9 +1,14 @@
+using JetBrains.Annotations;
+
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCRemoveBuffFromEntity : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
+      if (!BCUtils.CheckWorld(out var world)) return;
+
       if (Params.Count != 2)
       {
         SendOutput("Invalid arguments");
@@ -11,9 +16,6 @@ namespace BCM.Commands
 
         return;
       }
-
-      var _world = GameManager.Instance.World;
-      if (_world == null) return;
 
       if (!int.TryParse(Params[0], out var entityId))
       {
@@ -23,7 +25,7 @@ namespace BCM.Commands
       }
 
 
-      if (!(_world.GetEntity(entityId) is EntityAlive entityAlive))
+      if (!(world.GetEntity(entityId) is EntityAlive entityAlive))
       {
         SendOutput("Unable to find entity");
 

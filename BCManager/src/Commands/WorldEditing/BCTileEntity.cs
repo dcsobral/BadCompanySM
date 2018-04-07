@@ -1,20 +1,16 @@
 using System;
 using System.Collections.Generic;
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCTileEntity : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
-      var world = GameManager.Instance.World;
-      if (world == null)
-      {
-        SendOutput("World not initialized.");
-
-        return;
-      }
+      if (!BCUtils.CheckWorld(out var world)) return;
 
       var command = new BCMCmdArea(Params, Options, "TileEntity");
       if (!BCUtils.ProcessParams(command, 14))
@@ -188,7 +184,6 @@ namespace BCM.Commands
         }
       }
       SendOutput($"Set {text} on {count} secure blocks");
-
     }
 
     private static void AddLoot(BCMCmdArea command, World world)
@@ -577,8 +572,7 @@ namespace BCM.Commands
               case TileEntityType.None:
                 break;
               case TileEntityType.Loot:
-                var loot = (kvp.Value as TileEntityLootContainer);
-                if (loot != null)
+                if (kvp.Value is TileEntityLootContainer loot)
                 {
                   loot.SetEmpty();
                   loot.bWasTouched = false;
@@ -596,8 +590,7 @@ namespace BCM.Commands
               case TileEntityType.Campfire:
                 break;
               case TileEntityType.SecureLoot:
-                var secureLoot = (kvp.Value as TileEntitySecureLootContainer);
-                if (secureLoot != null)
+                if (kvp.Value is TileEntitySecureLootContainer secureLoot)
                 {
                   secureLoot.SetEmpty();
                   secureLoot.bWasTouched = false;
@@ -613,8 +606,7 @@ namespace BCM.Commands
               case TileEntityType.Sign:
                 break;
               case TileEntityType.GoreBlock:
-                var goreBlock = (kvp.Value as TileEntityGoreBlock);
-                if (goreBlock != null)
+                if (kvp.Value is TileEntityGoreBlock goreBlock)
                 {
                   goreBlock.SetEmpty();
                   goreBlock.bWasTouched = false;
@@ -845,11 +837,11 @@ namespace BCM.Commands
               case TileEntityType.Trader:
                 break;
               case TileEntityType.VendingMachine:
-                var vendingMachine = (kvp.Value as TileEntityVendingMachine);
-                if (vendingMachine != null)
+                if (kvp.Value is TileEntityVendingMachine vendingMachine)
                 {
                   var users = vendingMachine.GetUsers();
                   if (users.Contains(command.SteamId)) continue;
+
                   users.Add(command.SteamId);
                 }
                 count++;
@@ -859,21 +851,21 @@ namespace BCM.Commands
               case TileEntityType.Campfire:
                 break;
               case TileEntityType.SecureLoot:
-                var secureLoot = (kvp.Value as TileEntitySecureLootContainer);
-                if (secureLoot != null)
+                if (kvp.Value is TileEntitySecureLootContainer secureLoot)
                 {
                   var users = secureLoot.GetUsers();
                   if (users.Contains(command.SteamId)) continue;
+
                   users.Add(command.SteamId);
                 }
                 count++;
                 break;
               case TileEntityType.SecureDoor:
-                var secureDoor = (kvp.Value as TileEntitySecureDoor);
-                if (secureDoor != null)
+                if (kvp.Value is TileEntitySecureDoor secureDoor)
                 {
                   var users = secureDoor.GetUsers();
                   if (users.Contains(command.SteamId)) continue;
+
                   users.Add(command.SteamId);
                 }
                 count++;
@@ -881,11 +873,11 @@ namespace BCM.Commands
               case TileEntityType.Workstation:
                 break;
               case TileEntityType.Sign:
-                var sign = (kvp.Value as TileEntitySign);
-                if (sign != null)
+                if (kvp.Value is TileEntitySign sign)
                 {
                   var users = sign.GetUsers();
                   if (users.Contains(command.SteamId)) continue;
+
                   users.Add(command.SteamId);
                 }
                 count++;
@@ -940,11 +932,11 @@ namespace BCM.Commands
               case TileEntityType.Trader:
                 break;
               case TileEntityType.VendingMachine:
-                var vendingMachine = (kvp.Value as TileEntityVendingMachine);
-                if (vendingMachine != null)
+                if (kvp.Value is TileEntityVendingMachine vendingMachine)
                 {
                   var users = vendingMachine.GetUsers();
                   if (!users.Contains(command.SteamId)) continue;
+
                   users.Remove(command.SteamId);
                 }
                 count++;
@@ -954,21 +946,21 @@ namespace BCM.Commands
               case TileEntityType.Campfire:
                 break;
               case TileEntityType.SecureLoot:
-                var secureLoot = (kvp.Value as TileEntitySecureLootContainer);
-                if (secureLoot != null)
+                if (kvp.Value is TileEntitySecureLootContainer secureLoot)
                 {
                   var users = secureLoot.GetUsers();
                   if (!users.Contains(command.SteamId)) continue;
+
                   users.Remove(command.SteamId);
                 }
                 count++;
                 break;
               case TileEntityType.SecureDoor:
-                var secureDoor = (kvp.Value as TileEntitySecureDoor);
-                if (secureDoor != null)
+                if (kvp.Value is TileEntitySecureDoor secureDoor)
                 {
                   var users = secureDoor.GetUsers();
                   if (!users.Contains(command.SteamId)) continue;
+
                   users.Remove(command.SteamId);
                 }
                 count++;
@@ -976,11 +968,11 @@ namespace BCM.Commands
               case TileEntityType.Workstation:
                 break;
               case TileEntityType.Sign:
-                var sign = (kvp.Value as TileEntitySign);
-                if (sign != null)
+                if (kvp.Value is TileEntitySign sign)
                 {
                   var users = sign.GetUsers();
                   if (!users.Contains(command.SteamId)) continue;
+
                   users.Remove(command.SteamId);
                 }
                 count++;

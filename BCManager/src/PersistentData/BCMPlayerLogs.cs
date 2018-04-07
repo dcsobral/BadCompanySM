@@ -59,7 +59,7 @@ namespace BCM.PersistentData
   public class PlayerLog
   {
     public string SteamId;
-    public Dictionary<string, LogData> LogDataCache = new Dictionary<string, LogData>();
+    public readonly Dictionary<string, LogData> LogDataCache = new Dictionary<string, LogData>();
     private BCMVector3 last;
 
     public PlayerLog(string steamId)
@@ -67,9 +67,9 @@ namespace BCM.PersistentData
       SteamId = steamId;
     }
 
-    public PlayerLog LogPosition(BCMVector3 p, int r)
+    private void LogPosition(BCMVector3 p, int r)
     {
-      if (p.Equals(last)) return this;
+      if (p.Equals(last)) return;
 
       var ts = $"{DateTime.UtcNow:yyyy-MM-dd_HH_mm_ss.fffZ}";
       if (!LogDataCache.ContainsKey(ts))
@@ -77,15 +77,8 @@ namespace BCM.PersistentData
         LogDataCache.Add(ts, new LogData( new BCMVector4(p, r), "M"));
       }
       last = p;
-
-      return this;
     }
 
-    public PlayerLog LogPosition(Vector4 p, int r)
-    {
-      LogPosition(new BCMVector3(p), r);
-
-      return this;
-    }
+    public void LogPosition(Vector4 p, int r) => LogPosition(new BCMVector3(p), r);
   }
 }

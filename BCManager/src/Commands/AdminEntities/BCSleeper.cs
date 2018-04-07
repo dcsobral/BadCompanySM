@@ -2,25 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCSleeper : BCCommandAbstract
   {
-    //todo: change to more generic method so updates wont alwaysa require an update
+    //todo: change to more generic method so updates wont always require an update
     private const string _volumesFunction = "LW";
+
     //todo: add multi chunk option, remove all chunks for volume etc
-    public override void Process()
+    protected override void Process()
     {
+      if (!BCUtils.CheckWorld(out var world)) return;
+
       if (Params.Count == 0)
       {
         SendOutput(GetHelp());
 
         return;
       }
-
-      var world = GameManager.Instance.World;
-      if (world == null) return;
 
       switch (Params[0])
       {
@@ -129,16 +131,14 @@ namespace BCM.Commands
 
     private static void ListVolumes(World world, long chunkKey)
     {
-      var iChunk = world.GetChunkSync(chunkKey);
-      if (!(iChunk is Chunk chunk))
+      if (!(world.GetChunkSync(chunkKey) is Chunk chunk))
       {
         SendOutput("Unable to retrieve chunk");
 
         return;
       }
 
-      var sleepers = chunk.GetSleeperVolumes();
-      SendJson(new { msg = $"Sleeper volume array indexes for chunk {chunk.X},{chunk.Z}", data = sleepers });
+      SendJson(new { msg = $"Sleeper volume array indexes for chunk {chunk.X},{chunk.Z}", data = chunk.GetSleeperVolumes() });
     }
 
     private static bool GetChunkKey(World world, out long chunkKey)

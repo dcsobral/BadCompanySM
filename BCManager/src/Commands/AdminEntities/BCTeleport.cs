@@ -1,11 +1,15 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCTeleport : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
+      if (!BCUtils.CheckWorld(out var world)) return;
+
       if (Params.Count == 0)
       {
         SendOutput(GetHelp());
@@ -17,19 +21,19 @@ namespace BCM.Commands
       {
         case "entity":
           {
-            TeleportEntity(Params[1]);
+            TeleportEntity(world, Params[1]);
           }
           break;
 
         default:
-          TeleportEntity(Params[0]);
+          TeleportEntity(world, Params[0]);
 
           return;
       }
     }
 
     //todo: add teleport in facing direction x meters
-    private static bool GetPos(out Vector3 position)
+    private static bool GetPos(World world, out Vector3 position)
     {
       position = new Vector3(0, 0, 0);
 
@@ -70,7 +74,7 @@ namespace BCM.Commands
               return false;
             }
 
-            var p = GameManager.Instance.World?.Players.dict[ci.entityId]?.position;
+            var p = world.Players.dict[ci.entityId]?.position;
             if (p == null)
             {
               SendOutput("Unable to get player position from client entity");
@@ -134,7 +138,7 @@ namespace BCM.Commands
               return false;
             }
 
-            var p = GameManager.Instance.World?.Players.dict[ci.entityId]?.position;
+            var p = world.Players.dict[ci.entityId]?.position;
             if (p == null)
             {
               SendOutput("Unable to get player position from client entity");
@@ -149,35 +153,30 @@ namespace BCM.Commands
       }
     }
 
-    private static bool GetEntity(string eid, out Entity entity)
+    private static bool GetEntity(World world, string eid, out Entity entity)
     {
       entity = null;
       if (!int.TryParse(eid, out var entityId)) return false;
 
-      entity = GameManager.Instance.World.Entities.dict.ContainsKey(entityId)
-        ? GameManager.Instance.World.Entities.dict[entityId]
+      entity = world.Entities.dict.ContainsKey(entityId)
+        ? world.Entities.dict[entityId]
         : null;
 
       return true;
     }
 
-    private static bool GetClientInfo(string eid, out ClientInfo ci)
-    {
-      ci = ConsoleHelper.ParseParamIdOrName(eid);
+    private static bool GetClientInfo(string eid, out ClientInfo ci) => (ci = ConsoleHelper.ParseParamIdOrName(eid)) != null;
 
-      return ci != null;
-    }
-
-    private static void TeleportEntity(string param)
+    private static void TeleportEntity(World world, string param)
     {
-      if (!GetPos(out var position)) return;
+      if (!GetPos(world, out var position)) return;
 
       if (GetClientInfo(param, out var ci))
       {
         ci.SendPackage(new NetPackageTeleportPlayer(position));
         SendOutput($"Teleporting {ci.playerName} to {position.x} {position.y} {position.z}");
       }
-      else if (GetEntity(param, out var entity))
+      else if (GetEntity(world, param, out var entity))
       {
         if (entity == null)
         {

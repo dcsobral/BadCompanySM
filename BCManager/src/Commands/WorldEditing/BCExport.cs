@@ -1,19 +1,16 @@
-using System;
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCExport : BCCommandAbstract
   {
-    public override void Process()
-    {
-      var world = GameManager.Instance.World;
-      if (world == null)
-      {
-        SendOutput("World not initialized.");
+    //todo: load chunk observers async version
 
-        return;
-      }
+    protected override void Process()
+    {
+      if (!BCUtils.CheckWorld(out var world)) return;
 
       var command = new BCMCmdArea(Params, Options, "Export");
       if (!BCUtils.ProcessParams(command, 14))
@@ -46,28 +43,23 @@ namespace BCM.Commands
       ExportPrefab(command, world);
     }
 
-    private static void ExportPrefab(BCMCmdArea command, World world)
+    public static Prefab CopyFromWorld(World world, Vector3i pos, Vector3i size)
     {
-      if (command.Position == null)
-      {
-        command.Position = new BCMVector3(command.ChunkBounds.x * 16, 0, command.ChunkBounds.y * 16);
-        command.Size = new BCMVector3((command.ChunkBounds.z - command.ChunkBounds.x) * 16 + 15, 255, (command.ChunkBounds.w - command.ChunkBounds.y) * 16 + 15);
-      }
-
+      var maxPos = BCUtils.GetMaxPos(pos, size);
       //must use size constructor to initialize private arrays
-      var prefab = new Prefab(command.Size.ToV3Int());
+      var prefab = new Prefab(size);
       //Get prefab blocks from the world
       var _y = 0;
-      var y = command.Position.y;
-      while (y <= command.MaxPos.y)
+      var y = pos.y;
+      while (y <= maxPos.y)
       {
         var _x = 0;
-        var x = command.Position.x;
-        while (x <= command.MaxPos.x)
+        var x = pos.x;
+        while (x <= maxPos.x)
         {
           var _z = 0;
-          var z = command.Position.z;
-          while (z <= command.MaxPos.z)
+          var z = pos.z;
+          while (z <= maxPos.z)
           {
             prefab.SetBlock(_x, _y, _z, world.GetBlock(x, y, z));
             prefab.SetDensity(_x, _y, _z, world.GetDensity(0, x, y, z));
@@ -79,49 +71,48 @@ namespace BCM.Commands
               switch (te.GetTileEntityType())
               {
                 case TileEntityType.VendingMachine:
-                {
-                  if (te is TileEntityVendingMachine vm && vm.IsLocked())
                   {
-                    var bv = prefab.GetBlock(_x, _y, _z);
-                    bv.meta |= 4;
-                    prefab.SetBlock(_x, _y, _z, bv);
-                  }
-                  break;
+                    if (te is TileEntityVendingMachine vm && vm.IsLocked())
+                    {
+                      var bv = prefab.GetBlock(_x, _y, _z);
+                      bv.meta |= 4;
+                      prefab.SetBlock(_x, _y, _z, bv);
+                    }
+                    break;
 
                   }
                 case TileEntityType.SecureLoot:
-                {
-                  if (te is TileEntitySecureLootContainer sl && sl.IsLocked())
                   {
-                    var bv = prefab.GetBlock(_x, _y, _z);
-                    bv.meta |= 4;
-                    prefab.SetBlock(_x, _y, _z, bv);
+                    if (te is TileEntitySecureLootContainer sl && sl.IsLocked())
+                    {
+                      var bv = prefab.GetBlock(_x, _y, _z);
+                      bv.meta |= 4;
+                      prefab.SetBlock(_x, _y, _z, bv);
+                    }
+                    break;
                   }
-                  break;
-                }
                 case TileEntityType.SecureDoor:
-                {
-                  if (te is TileEntitySecureDoor sd && sd.IsLocked())
                   {
-                    var bv = prefab.GetBlock(_x, _y, _z);
-                    bv.meta |= 4;
-                    prefab.SetBlock(_x, _y, _z, bv);
+                    if (te is TileEntitySecureDoor sd && sd.IsLocked())
+                    {
+                      var bv = prefab.GetBlock(_x, _y, _z);
+                      bv.meta |= 4;
+                      prefab.SetBlock(_x, _y, _z, bv);
+                    }
+                    break;
                   }
-                  break;
-                }
                 case TileEntityType.Sign:
-                {
-                  if (te is TileEntitySign sg && sg.IsLocked())
                   {
-                    var bv = prefab.GetBlock(_x, _y, _z);
-                    bv.meta |= 4;
-                    prefab.SetBlock(_x, _y, _z, bv);
+                    if (te is TileEntitySign sg && sg.IsLocked())
+                    {
+                      var bv = prefab.GetBlock(_x, _y, _z);
+                      bv.meta |= 4;
+                      prefab.SetBlock(_x, _y, _z, bv);
+                    }
+                    break;
                   }
-                  break;
-                }
               }
             }
-
             ++z;
             ++_z;
           }
@@ -131,13 +122,24 @@ namespace BCM.Commands
         ++y;
         ++_y;
       }
-
-      prefab.filename = command.Pars[0];
       prefab.addAllChildBlocks();
       prefab.bSleeperVolumes = false;
 
-      //todo: parse additional config from options
+      return prefab;
+    }
 
+    private static void ExportPrefab(BCMCmdArea command, World world)
+    {
+      if (command.Position == null)
+      {
+        command.Position = new BCMVector3(command.ChunkBounds.x * 16, 0, command.ChunkBounds.y * 16);
+        command.Size = new BCMVector3((command.ChunkBounds.z - command.ChunkBounds.x) * 16 + 15, 255, (command.ChunkBounds.w - command.ChunkBounds.y) * 16 + 15);
+      }
+
+      var prefab = CopyFromWorld(world, command.Position.ToV3int(), command.Size.ToV3int());
+
+      prefab.filename = command.Pars[0];
+      //todo: parse additional config from options
       var dir = "Data/Prefabs";
       if (Options.ContainsKey("backup"))
       {

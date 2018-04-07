@@ -4,7 +4,7 @@ namespace BCM.Commands
 {
   public class BCSettings : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
       var settings = PersistentContainer.Instance.Settings;
 

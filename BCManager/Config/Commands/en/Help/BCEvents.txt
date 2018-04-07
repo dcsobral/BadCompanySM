@@ -1,20 +1,20 @@
 ﻿{description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command} {neuron name | config option} <subcommands>
-      Notes:
-            Use bc-help to get a list of common /options
-            View and edit event system settings and data
-            Config Options:
-              save (todo) - will be used to write current settings to Config/system.xml
-              on - start the heartbeat if not currently running
-              off  - kill the heartbeat
-              bpm - read or set the beats per minute param
-              state - display the state of each neuron, * for all
-              toggle - toggle the state of a neuron, * for all
-              disable - disable a neuron, * for all
-              enable - enable a neuron, * for all
-            Neurons:
-              deadisdead, pingkicker, tracker, logcache
-              todo: spawnmutator, spawnmanager
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command} {neuron name | config option} <subcommands>
+    Notes:
+      Use bc-help to get a list of common /options
+      View and edit event system settings and data
+      Config Options:
+        save (todo) - will be used to write current settings to Config/system.xml
+        on - start the heartbeat if not currently running
+        off  - kill the heartbeat
+        bpm - read or set the beats per minute param
+        state - display the state of each neuron, * for all
+        toggle - toggle the state of a neuron, * for all
+        disable - disable a neuron, * for all
+        enable - enable a neuron, * for all
+      Neurons:
+        deadisdead, pingkicker, tracker, logcache
+        todo: spawnmutator, spawnmanager

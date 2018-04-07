@@ -1,12 +1,16 @@
 using System.IO;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCSetSkillOnPlayer : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
+      if (!BCUtils.CheckWorld(out var world)) return;
+
       if (Params.Count < 2)
       {
         SendOutput("Incorrect command format");
@@ -22,6 +26,7 @@ namespace BCM.Commands
       if (string.IsNullOrEmpty(skillName))
       {
         SendOutput("Invalid skill name");
+
         return;
       }
 
@@ -39,7 +44,7 @@ namespace BCM.Commands
         return;
       }
 
-      var entity = GameManager.Instance.World.Entities.dict[clientInfo.entityId] as EntityPlayer;
+      var entity = world.Entities.dict[clientInfo.entityId] as EntityPlayer;
       if (entity == null)
       {
         SendOutput("Unable to find player entity");

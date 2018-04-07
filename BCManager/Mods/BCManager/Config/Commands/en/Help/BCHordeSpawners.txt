@@ -1,8 +1,8 @@
 {description}
-      Aliases: {commands}
-      Default Options: {defaultoptions}
-      Usage:
-            1. {command}
-      Notes:
-            Use bc-help to get a list of common /options
-            Gets information about the spawn manager system such as active spawns and spawncounts
+    Aliases: {commands}
+    Default Options: {defaultoptions}
+    Usage:
+      1. {command}
+    Notes:
+      Use bc-help to get a list of common /options
+      Gets information about the spawn manager system such as active spawns and spawncounts

@@ -4,19 +4,18 @@ using System;
 using System.IO;
 using RWG2.Rules;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCGameObjects : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
-      if (GameManager.Instance.World == null)
-      {
-        SendOutput("The world isn't loaded");
+      if (!BCUtils.CheckWorld()) return;
 
-        return;
-      }
+
 
       //if (_options.ContainsKey("filters"))
       //{

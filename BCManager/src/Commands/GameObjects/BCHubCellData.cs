@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCHubCellData : BCCommandAbstract
   {
     private static readonly List<BCMHubCell> _hubCellData = new List<BCMHubCell>();
     private static readonly List<Vector2i> _loaded = new List<Vector2i>();
 
-    public override void Process()
+    protected override void Process()
     {
       if (Options.ContainsKey("reset"))
       {

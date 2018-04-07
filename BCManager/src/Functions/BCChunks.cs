@@ -100,7 +100,7 @@ namespace BCM
       return reloadforclients.Count;
     }
 
-    private static void ResetStability(World world, Dictionary<long, Chunk> chunks)
+    public static void ResetStability(World world, Dictionary<long, Chunk> chunks)
     {
       var si = new StabilityInitializer(world);
       foreach (var chunk in chunks.Values)

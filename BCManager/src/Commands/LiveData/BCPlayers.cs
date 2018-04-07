@@ -13,14 +13,9 @@ namespace BCM.Commands
       .GroupBy(kvp => kvp.Value)
       .Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
 
-    public override void Process()
+    protected override void Process()
     {
-      if (GameManager.Instance.World == null)
-      {
-        SendOutput("The world isn't loaded");
-
-        return;
-      }
+      if (!BCUtils.CheckWorld()) return;
 
       if (Options.ContainsKey("filters"))
       {

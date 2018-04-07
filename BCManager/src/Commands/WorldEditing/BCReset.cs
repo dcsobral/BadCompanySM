@@ -1,18 +1,23 @@
 using System.Collections.Generic;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCReset : BCCommandAbstract
   {
+
+    //todo: get function reference without using MH
+    //todo: Change the reset to a setblockrpc loop
+    //todo: add a 1 param option for 'bc-reset here' to reset chunk player is in
+
     private readonly string _decorateFunction = "MH";
 
-    public override void Process()
+    protected override void Process()
     {
-      var world = GameManager.Instance.World;
-      if (world == null) return;
+      if (!BCUtils.CheckWorld(out var world)) return;
 
-      //todo add a 1 param option for 'bc-reset here' to reset chunk player is in
       //Resets the chunk to the original state it was created in
       if (Params.Count != 2)
       {

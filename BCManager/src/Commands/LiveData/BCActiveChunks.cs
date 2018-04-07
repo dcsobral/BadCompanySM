@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using BCM.Models;
+using JetBrains.Annotations;
 
 namespace BCM.Commands
 {
+  [UsedImplicitly]
   public class BCActiveChunks : BCCommandAbstract
   {
-    public override void Process()
+    protected override void Process()
     {
       var data = new Dictionary<string, object>();
       var chunkClusters = GameManager.Instance.World.ChunkClusters[0];

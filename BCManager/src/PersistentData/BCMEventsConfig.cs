@@ -39,14 +39,14 @@ namespace BCM.PersistentData
   public class NeuronConfig
   {
     public string Name;
-    public Dictionary<string, object> Settings = new Dictionary<string, object>();
+    public readonly Dictionary<string, object> Settings = new Dictionary<string, object>();
 
     public NeuronConfig(string name)
     {
       Name = name;
     }
 
-    public NeuronConfig SetItem(string key, object value)
+    public void SetItem(string key, object value)
     {
       if (Settings.ContainsKey(key))
       {
@@ -56,7 +56,6 @@ namespace BCM.PersistentData
       {
         Settings.Add(key, value);
       }
-      return this;
     }
   }
 }

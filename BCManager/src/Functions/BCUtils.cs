@@ -15,6 +15,93 @@ namespace BCM
 {
   public static class BCUtils
   {
+    private const string UndoDir = "Data/Prefabs/BCMUndoCache";
+    private static readonly Dictionary<int, List<BCMPrefabCache>> _undoCache = new Dictionary<int, List<BCMPrefabCache>>();
+
+    public static bool CheckWorld(out World world)
+    {
+      world = GameManager.Instance.World;
+      if (world != null) return true;
+
+      BCCommandAbstract.SendOutput("World not loaded");
+      return false;
+    }
+
+    public static bool CheckWorld()
+    {
+      if (GameManager.Instance.World != null) return true;
+
+      BCCommandAbstract.SendOutput("World not loaded");
+      return false;
+    }
+
+    public static void CreateUndo(EntityPlayer sender, Vector3i pos, Vector3i size)
+    {
+      var steamId = "_server";
+      if (BCCommandAbstract.SenderInfo.RemoteClientInfo != null)
+      {
+        steamId = BCCommandAbstract.SenderInfo.RemoteClientInfo.ownerId;
+      }
+
+      var userId = 0; // id will be 0 for web console issued commands
+      var areaCache = BCExport.CopyFromWorld(GameManager.Instance.World, pos, size);
+
+      if (sender != null)
+      {
+        userId = sender.entityId;
+      }
+      Directory.CreateDirectory(Utils.GetGameDir(UndoDir));
+      var filename = $"{steamId}.{pos.x}.{pos.y}.{pos.z}.{DateTime.UtcNow.ToFileTime()}";
+      areaCache.Save(Utils.GetGameDir(UndoDir), filename);
+
+      if (_undoCache.ContainsKey(userId))
+      {
+        _undoCache[userId].Add(new BCMPrefabCache(filename, pos));
+      }
+      else
+      {
+        _undoCache.Add(userId, new List<BCMPrefabCache> { new BCMPrefabCache(filename, pos) });
+      }
+    }
+
+    public static bool UndoSetBlocks(EntityPlayer sender)
+    {
+      var userId = 0;
+      if (sender != null)
+      {
+        userId = sender.entityId;
+      }
+      if (!_undoCache.ContainsKey(userId)) return false;
+
+      if (_undoCache[userId].Count <= 0) return false;
+
+      var pCache = _undoCache[userId][_undoCache[userId].Count - 1];
+      if (pCache != null)
+      {
+        var prefab = new Prefab();
+        prefab.Load(Utils.GetGameDir(UndoDir), pCache.Filename);
+        BCImport.InsertPrefab(GameManager.Instance.World, prefab, pCache.Pos);
+
+        var cacheFile = Utils.GetGameDir($"{UndoDir}{pCache.Filename}");
+        if (Utils.FileExists($"{cacheFile}.tts"))
+        {
+          Utils.FileDelete($"{cacheFile}.tts");
+        }
+        if (Utils.FileExists($"{cacheFile}.xml"))
+        {
+          Utils.FileDelete($"{cacheFile}.xml");
+        }
+      }
+      _undoCache[userId].RemoveAt(_undoCache[userId].Count - 1);
+
+      return true;
+    }
+
+    public static Vector3i GetMaxPos(Vector3i pos, Vector3i size) => new Vector3i(pos.x + size.x - 1, pos.y + size.y - 1, pos.z + size.z - 1);
+
+    public static Vector3i GetSize(Vector3i pos1, Vector3i pos2) => new Vector3i(Math.Abs(pos1.x - pos2.x) + 1, Math.Abs(pos1.y - pos2.y) + 1, Math.Abs(pos1.z - pos2.z) + 1);
+
+
     public static void WriteVector3i(Vector3i v, JsonWriter w, string format)
     {
       switch (format)
@@ -399,6 +486,8 @@ namespace BCM
 
       ChunkObserver(command, world, timeout / 2000);
 
+      //todo: needs to calc ChunkBounds if not set but has pos and size?
+
       //request any unloaded chunks in area
       for (var x = command.ChunkBounds.x; x <= command.ChunkBounds.z; x++)
       {
@@ -568,7 +657,8 @@ namespace BCM
         location += $"Pos {command.Position.x} {command.Position.y} {command.Position.z} ";
         if (command.HasSize)
         {
-          location += $"to {command.Position.x + command.Size.x - 1} {command.Position.y + command.Size.y - 1} {command.Position.z + command.Size.z - 1} ";
+          var maxPos = command.MaxPos;
+          location += $"to {maxPos.x} {maxPos.y} {maxPos.z} ";
         }
       }
       if (command.HasChunkPos)
@@ -602,75 +692,5 @@ namespace BCM
       return "";
     }
 
-    private class PrefabCache
-    {
-      public string Filename;
-      public Vector3i Pos;
-    }
-    private static readonly Dictionary<int, List<PrefabCache>> _undoCache = new Dictionary<int, List<PrefabCache>>();
-    private const string UndoDir = "Data/Prefabs/BCMUndoCache";
-
-    public static void CreateUndo(CommandSenderInfo SenderInfo, World world, EntityPlayer sender, Vector3i p0, Vector3i size)
-    {
-      var steamId = "_server";
-      //var ci = ConnectionManager.Instance.GetClientInfoForEntityId(sender.entityId);
-      if (SenderInfo.RemoteClientInfo != null)
-      {
-        steamId = SenderInfo.RemoteClientInfo.ownerId;
-      }
-
-      var areaCache = new Prefab();
-      var userId = 0; // id will be 0 for web console issued commands
-      areaCache.CopyFromWorld(world, p0, new Vector3i(p0.x + size.x - 1, p0.y + size.y - 1, p0.z + size.z - 1));
-      areaCache.bCopyAirBlocks = true;
-
-      if (sender != null)
-      {
-        userId = sender.entityId;
-      }
-      Directory.CreateDirectory(Utils.GetGameDir(UndoDir));
-      var filename = $"{steamId}.{p0.x}.{p0.y}.{p0.z}.{DateTime.UtcNow.ToFileTime()}";
-      areaCache.Save(Utils.GetGameDir(UndoDir), filename);
-
-      if (_undoCache.ContainsKey(userId))
-      {
-        _undoCache[userId].Add(new PrefabCache { Filename = filename, Pos = p0 });
-      }
-      else
-      {
-        _undoCache.Add(userId, new List<PrefabCache> { new PrefabCache { Filename = filename, Pos = p0 } });
-      }
-    }
-
-    public static void UndoInsert(EntityPlayer sender)
-    {
-      var userId = 0;
-      if (sender != null)
-      {
-        userId = sender.entityId;
-      }
-      if (!_undoCache.ContainsKey(userId)) return;
-
-      if (_undoCache[userId].Count <= 0) return;
-
-      var pCache = _undoCache[userId][_undoCache[userId].Count - 1];
-      if (pCache != null)
-      {
-        var p = new Prefab();
-        p.Load(Utils.GetGameDir(UndoDir), pCache.Filename);
-        BCImport.InsertPrefab(p, pCache.Pos.x, pCache.Pos.y, pCache.Pos.z, pCache.Pos);
-
-        var cacheFile = Utils.GetGameDir($"{UndoDir}{pCache.Filename}");
-        if (Utils.FileExists($"{cacheFile}.tts"))
-        {
-          Utils.FileDelete($"{cacheFile}.tts");
-        }
-        if (Utils.FileExists($"{cacheFile}.xml"))
-        {
-          Utils.FileDelete($"{cacheFile}.xml");
-        }
-      }
-      _undoCache[userId].RemoveAt(_undoCache[userId].Count - 1);
-    }
   }
 }
