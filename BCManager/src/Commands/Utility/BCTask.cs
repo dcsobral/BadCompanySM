@@ -11,8 +11,6 @@ namespace BCM.Commands
   {
     private static readonly Dictionary<string, BCMTask> Tasks = new Dictionary<string, BCMTask>();
 
-    //todo: format the output as proper json
-
     protected override void Process()
     {
       if (Tasks.Count == 0)
