@@ -1,5 +1,7 @@
+using System;
 using BCM.Models;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using JetBrains.Annotations;
@@ -10,8 +12,6 @@ namespace BCM.Commands
   [UsedImplicitly]
   public class BCAssets : BCCommandAbstract
   {
-    //todo: get mod icons
-
     protected override void Process()
     {
       var data = new List<object>();
@@ -69,9 +69,9 @@ namespace BCM.Commands
               break;
 
             case "itemicons":
-              var sprites = GetSprites();
+              var sprites = GetSprites(out var bakedCount);
               if (sprites == null) return;
-              data.AddRange(sprites.Select(s => s.name).Cast<object>());
+              data.Add(new { Count = sprites.Count, BakedCount = bakedCount, Icons = sprites });
               break;
 
             case "resources":
@@ -90,8 +90,10 @@ namespace BCM.Commands
       SendJson(data);
     }
 
-    private static List<UISpriteData> GetSprites()
+    private static List<string> GetSprites(out int bakedCount)
     {
+      //Vanilla
+      bakedCount = 0;
       var gameObject = GameObject.Find("/NGUI Root (2D)/ItemIconAtlas");
       if (gameObject == null)
       {
@@ -110,23 +112,42 @@ namespace BCM.Commands
 
       var prebakedAtlas = component.PrebakedAtlas;
 
-      if (!DynamicUIAtlasTools.ReadPrebakedAtlasDescriptor(prebakedAtlas, out var sprites, out int _, out int _))
+      if (!DynamicUIAtlasTools.ReadPrebakedAtlasDescriptor(prebakedAtlas, out var sprites, out var iconWidth, out var iconHeight))
       {
         SendOutput("Could not read dynamic atlas descriptor");
 
         return null;
       }
 
-      if (!DynamicUIAtlasTools.ReadPrebakedAtlasTexture(prebakedAtlas, out var texture2D))
-      {
-        SendOutput("Could not read dynamic atlas texture");
+      var list = sprites.Select(s => s.name).ToList();
+      bakedCount = list.Count;
 
-        return null;
+      //Mod Icons
+      foreach (var mod in ModManager.GetLoadedMods())
+      {
+        var modIconsPath = mod.Path + "/ItemIcons";
+        if (!Directory.Exists(modIconsPath)) continue;
+
+        foreach (var file in Directory.GetFiles(modIconsPath))
+        {
+          if (!file.ToLower().EndsWith(".png")) continue;
+
+          var name = Path.GetFileNameWithoutExtension(file);
+          if (list.Contains(name)) continue;
+
+          var tex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+          if (!tex.LoadImage(File.ReadAllBytes(file))) continue;
+
+          if (tex.width == iconWidth && tex.height == iconHeight)
+          {
+            list.Add(name);
+          }
+
+          UnityEngine.Object.Destroy(tex);
+        }
       }
 
-      Resources.UnloadAsset(texture2D);
-
-      return sprites;
+      return list;
     }
 
     private static Dictionary<string, List<string>> GetResources(out int count)
