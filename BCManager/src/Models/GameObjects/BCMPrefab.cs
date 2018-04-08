@@ -11,7 +11,7 @@ namespace BCM.Models
     private static readonly Dictionary<string, BCMPrefab> cache = new Dictionary<string, BCMPrefab>();
 
     #region Filters
-    private static class StrFilters
+    public static class StrFilters
     {
       public const string Name = "name";
       public const string Size = "size";

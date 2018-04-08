@@ -9,7 +9,7 @@ namespace BCM.Models
   public class BCMRWG : BCMAbstract
   {
     #region Filters
-    private static class StrFilters
+    public static class StrFilters
     {
       public const string RulesetName = "rulesetname";
       public const string Rulesets = "rules";

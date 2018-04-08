@@ -8,7 +8,7 @@ namespace BCM.Models
   public class BCMBiome : BCMAbstract
   {
     #region Filters
-    private static class StrFilters
+    public static class StrFilters
     {
       public const string Id = "id";
       public const string Name = "name";

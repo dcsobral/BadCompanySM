@@ -11,22 +11,12 @@ namespace BCM.Commands
   [UsedImplicitly]
   public class BCGameObjects : BCCommandAbstract
   {
+    //todo: count sub command that returns a count of each object type
+
     protected override void Process()
     {
       if (!BCUtils.CheckWorld()) return;
 
-
-
-      //if (_options.ContainsKey("filters"))
-      //{
-      //  //todo: filters for derived objects
-      //  return;
-      //}
-      //if (_options.ContainsKey("index"))
-      //{
-      //  //todo: index for derived objects
-      //  return;
-      //}
       string type;
       switch (Params.Count)
       {
@@ -43,7 +33,21 @@ namespace BCM.Commands
         case 1:
           //ALL OBJECTS OF A TYPE
           type = Params[0].ToLower();
-          //todo: count sub command that returns a count of each object type
+
+          if (Options.ContainsKey("filters"))
+          {
+            DisplayFilters(type);
+
+            return;
+          }
+
+          if (Options.ContainsKey("index"))
+          {
+            DisplayIndex(type);
+
+            return;
+          }
+
           //if (type == "count")
           //{
           //  CountObjects();
@@ -66,6 +70,202 @@ namespace BCM.Commands
           SendOutput("Wrong number of arguments");
           SendOutput(Config.GetHelp(GetType().Name));
           return;
+      }
+    }
+
+    private static void DisplayIndex(string type)
+    {
+      switch (type)
+      {
+        case BCMGameObject.GOTypes.Archetypes:
+          SendJson(BCMArchetype.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Biomes:
+          SendJson(BCMBiome.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.BiomeSpawning:
+          SendJson(BCMBiomeSpawn.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Blocks:
+          SendJson(BCMItemClass.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Buffs:
+          SendJson(BCMBuff.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.EntityClasses:
+          SendJson(BCMEntityClass.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.EntityGroups:
+          SendJson(BCMEntityGroup.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.ItemClasses:
+          SendJson(BCMItemClass.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Items:
+          SendJson(BCMItemClass.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.LootContainers:
+          SendJson(BCMLootContainer.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.LootGroups:
+          SendJson(BCMLootGroup.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.LootProbabilityTemplates:
+          SendJson(BCMLootProbabilityTemplate.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.LootQualityTemplates:
+          SendJson(BCMLootQualityTemplate.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Materials:
+          SendJson(BCMMaterial.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Prefabs:
+          SendJson(BCMPrefab.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Quests:
+          SendJson(BCMQuest.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Recipes:
+          SendJson(BCMRecipe.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Rwg:
+          SendJson(BCMRWG.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Skills:
+          SendJson(BCMSkill.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Spawners:
+          SendJson(BCMSpawner.FilterMap.GroupBy(kvp => kvp.Value).Select(group => group.First()).ToDictionary(kvp => kvp.Value, kvp => kvp.Key));
+          break;
+
+        case BCMGameObject.GOTypes.Players:
+          SendOutput("use bc-lp instead for player data");
+          break;
+
+        case BCMGameObject.GOTypes.Entities:
+          SendOutput("use bc-le instead for entity data");
+          break;
+
+        default:
+          SendJsonError("Unknown Type");
+          break;
+      }
+    }
+
+    private static void DisplayFilters(string type)
+    {
+      switch (type)
+      {
+        case BCMGameObject.GOTypes.Archetypes:
+          SendJson(typeof(BCMArchetype.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Biomes:
+          SendJson(typeof(BCMBiome.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.BiomeSpawning:
+          SendJson(typeof(BCMBiomeSpawn.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Blocks:
+          SendJson(typeof(BCMItemClass.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Buffs:
+          SendJson(typeof(BCMBuff.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.EntityClasses:
+          SendJson(typeof(BCMEntityClass.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.EntityGroups:
+          SendJson(typeof(BCMEntityGroup.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.ItemClasses:
+          SendJson(typeof(BCMItemClass.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Items:
+          SendJson(typeof(BCMItemClass.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.LootContainers:
+          SendJson(typeof(BCMLootContainer.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.LootGroups:
+          SendJson(typeof(BCMLootGroup.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.LootProbabilityTemplates:
+          SendJson(typeof(BCMLootProbabilityTemplate.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.LootQualityTemplates:
+          SendJson(typeof(BCMLootQualityTemplate.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Materials:
+          SendJson(typeof(BCMMaterial.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Prefabs:
+          SendJson(typeof(BCMPrefab.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Quests:
+          SendJson(typeof(BCMQuest.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Recipes:
+          SendJson(typeof(BCMRecipe.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Rwg:
+          SendJson(typeof(BCMRWG.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Skills:
+          SendJson(typeof(BCMSkill.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Spawners:
+          SendJson(typeof(BCMSpawner.StrFilters).GetFields().ToDictionary(field => field.Name, field => $"{field.GetValue(typeof(BCMPlayer.StrFilters))}"));
+          break;
+
+        case BCMGameObject.GOTypes.Players:
+          SendOutput("use bc-lp instead for player data");
+          break;
+
+        case BCMGameObject.GOTypes.Entities:
+          SendOutput("use bc-le instead for entity data");
+          break;
+
+        default:
+          SendJsonError("Unknown Type");
+          break;
       }
     }
 

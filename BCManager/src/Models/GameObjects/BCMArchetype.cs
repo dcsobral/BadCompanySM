@@ -8,7 +8,7 @@ namespace BCM.Models
   public class BCMArchetype : BCMAbstract
   {
     #region Filters
-    private static class StrFilters
+    public static class StrFilters
     {
       public const string Name = "name";
       public const string Type = "type";

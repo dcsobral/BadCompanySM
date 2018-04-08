@@ -9,7 +9,7 @@ namespace BCM.Models
   public class BCMRecipe : BCMAbstract
   {
     #region Filters
-    private static class StrFilters
+    public static class StrFilters
     {
       public const string Type = "type";
       public const string Count = "count";
