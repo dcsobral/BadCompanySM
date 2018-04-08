@@ -24,16 +24,16 @@ namespace BCM.Commands
 
       foreach (var task in Tasks.Values)
       {
-        SendOutput(string.Join(" - ", new[]
+        SendJson(new
         {
-          $"{task.Type}_{task.Hash}",
-          task.Timestamp.ToUtcStr(),
-          task.Completion.ToUtcStr(),
-          $"{task.Duration.TotalSeconds}s",
-          task.Status.ToString(),
-          task.Command == null ? "" : task.Command.Command
-        }));
-        SendJson(new { task.Output });
+          TypeHash = task.Type + "_" + task.Hash,
+          Timestamp = task.Timestamp.ToUtcStr(),
+          Completed = task.Completion.ToUtcStr(),
+          Duration = task.Duration.TotalSeconds,
+          Status = task.Status.ToString(),
+          Command = task.Command == null ? "" : task.Command.Command,
+          Output = task.Output
+        });
       }
     }
 
@@ -41,7 +41,7 @@ namespace BCM.Commands
     {
       if (Tasks.ContainsKey($"{taskType}_{hash}"))
       {
-        Log.Out($"{Config.ModPrefix} Unable to add tracked task to list, already in tracked list");
+        Log.Out($"{Config.ModPrefix} Unable to add tracked task to list, already in tracked list - {taskType}_{hash}");
 
         return;
       }

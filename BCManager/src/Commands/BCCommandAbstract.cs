@@ -82,7 +82,7 @@ namespace BCM.Commands
       foreach (var _default in defaultoptions.Split(','))
       {
         var add = _default.Trim().ToLower();
-        if ((add != "online" || !Options.ContainsKey("offline") && !Options.ContainsKey("all")) &&
+        if (!string.IsNullOrEmpty(add) && (add != "online" || !Options.ContainsKey("offline") && !Options.ContainsKey("all")) &&
             (add != "offline" || !Options.ContainsKey("online") && !Options.ContainsKey("all")) &&
             (add != "nl" || !Options.ContainsKey("nonl")) && (add != "csv" || !Options.ContainsKey("nocsv")) &&
             (add != "loc" || !Options.ContainsKey("r")) &&

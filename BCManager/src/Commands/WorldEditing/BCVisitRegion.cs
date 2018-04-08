@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using BCM.Models;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -12,6 +13,8 @@ namespace BCM.Commands
     private ClientInfo _lastSender;
     private int _hash;
     private static int completePercent;
+    private string commandStr;
+    private BCMTask bcmTask;
 
     protected override void Process()
     {
@@ -24,6 +27,15 @@ namespace BCM.Commands
           SendOutput("VisitRegion not running.");
 
           return;
+        }
+
+        if (bcmTask != null)
+        {
+          bcmTask.Output = new { Message = "Visitor was stopped before it completed" };
+          bcmTask.Command = new BCCmd {Command = commandStr};
+          bcmTask.Status = BCMTaskStatus.Aborted;
+          bcmTask.Completion = DateTime.UtcNow;
+          bcmTask.Duration = bcmTask.Completion - bcmTask.Timestamp;
         }
 
         _mapVisitor.Stop();
@@ -132,24 +144,40 @@ namespace BCM.Commands
 
       _lastSender = SenderInfo.RemoteClientInfo;
 
+      commandStr = "";
+      if (Params.Count > 0 || Options.Count > 0)
+      {
+        commandStr += string.Join(" ", new[] { GetCommands()[0] }.Concat(
+          Options.Count > 0
+            ? Params.Concat(Options.Select(o => "/" + o.Key + (o.Value != null ? "=" + o.Value : "")))
+            : Params
+        ).ToArray());
+      }
+
       _mapVisitor = new MapVisitor(new Vector3i(x * 512, 0, z * 512), new Vector3i(x2 * 512 + 511, 0, z2 * 512 + 511));
+
+      _hash = _mapVisitor.GetHashCode();
+      BCTask.AddTask("MapVisitor", _mapVisitor.GetHashCode(), null);
+      bcmTask = BCTask.GetTask("MapVisitor", _hash);
+      if (bcmTask != null)
+      {
+        bcmTask.Command = new BCCmd { Command = commandStr };
+        bcmTask.Output = new { Count = 0, Total = 0, Perc = 0.00, Time = 0.00 };
+      }
+
       _mapVisitor.OnVisitChunk += ReportStatus;
       _mapVisitor.OnVisitChunk += GetMapColors;
       _mapVisitor.OnVisitMapDone += ReportCompletion;
       _mapVisitor.Start();
-
-      _hash = _mapVisitor.GetHashCode();
-      BCTask.AddTask("MapVisitor", _mapVisitor.GetHashCode(), null);
     }
 
     private void ReportStatus(Chunk chunk, int count, int total, float elapsedTime)
     {
-      var bcmTask = BCTask.GetTask("MapVisitor", _hash);
-      if (bcmTask != null) bcmTask.Output = new { Count = count, Total = total, Time = Math.Round(elapsedTime, 2) };
+      if (bcmTask != null) bcmTask.Output = new { Count = count, Total = total, Perc = Math.Round((double)count / total * 100, 2), Time = Math.Round(elapsedTime, 2) };
 
       if (count % 128 != 0) return;
 
-      completePercent = Mathf.RoundToInt(100f * (count / (float) total));
+      completePercent = Mathf.RoundToInt(100f * (count / (float)total));
       Log.Out($"VisitRegion ({completePercent:00}%): {count} / {total} chunks done (estimated time left {(total - count) * (elapsedTime / count):0.00} seconds)");
     }
 
@@ -160,7 +188,6 @@ namespace BCM.Commands
 
     private void ReportCompletion(int total, float elapsedTime)
     {
-      var bcmTask = BCTask.GetTask("MapVisitor", _hash);
       if (bcmTask != null)
       {
         bcmTask.Status = BCMTaskStatus.Complete;
