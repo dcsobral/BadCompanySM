@@ -28,25 +28,24 @@ namespace BCM.Commands
         return;
       }
 
-      switch (Params.Count)
+      if (Params.Count == 1)
       {
-        case 0:
-          editMode.SetValue(GameManager.Instance, !mode);
-          break;
+        switch (Params[0])
+        {
+          case "toggle":
+            editMode.SetValue(GameManager.Instance, !mode);
+            break;
 
-        case 1:
-          if (!bool.TryParse(Params[0], out var flag))
-          {
-            SendOutput("Unable to parse param as a boolean");
+          default:
+            if (!bool.TryParse(Params[0], out var flag))
+            {
+              SendOutput("Unable to parse param as a boolean");
 
-            return;
-          }
-          editMode.SetValue(GameManager.Instance, flag);
-          break;
-
-        default:
-          SendOutput(GetHelp());
-          return;
+              return;
+            }
+            editMode.SetValue(GameManager.Instance, flag);
+            break;
+        }
       }
 
       SendOutput($"Edit Mode set to {GameManager.Instance.IsEditMode()}");

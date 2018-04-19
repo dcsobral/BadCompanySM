@@ -3,4 +3,8 @@
     Default Options: {defaultoptions}
     Usage:
       1. {command}
-      2. {command} <true | false>
+      2. {command} <toggle | true | false>
+    Notes:
+      1. Gives the current setting
+      2. Toggles or sets the value
+      WARNING: edit mode will change how a lot of functions work and could lead to problems on a populated server
