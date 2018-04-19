@@ -36,7 +36,8 @@
         /face=0-5 - 0=Top, 1=Bottom, 2=North, 3=West, 4=South, 5=East
       paintstrip - removes all paint from blocks in the area
       density - sets density on blocks in the area
-        /d=# - the density to use, from -127 to 128. Invalid density wont be applied
+        /d=# - the density to use, from -127 to 128. 
+        /force - will allow invalid density for the block type to be applied 
       rotate - rotates blocks in the area
         /rot=# - sets the value for the rotation to apply
       meta1/meta2/meta3 - sets the meta1/meta3/meta3 for blocks in the area

@@ -106,6 +106,8 @@ namespace BCM.Commands
           return;
         }
       }
+
+
       var decorateWithNeigbours = typeof(ChunkProviderGenerateWorld).GetMethod(_decorateFunction, BindingFlags.NonPublic | BindingFlags.Instance);
       if (decorateWithNeigbours == null)
       {

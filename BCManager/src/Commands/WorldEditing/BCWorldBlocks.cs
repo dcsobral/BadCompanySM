@@ -209,14 +209,15 @@ namespace BCM.Commands
             var worldBlock = GameManager.Instance.World.GetBlock(clrIdx, worldPos);
             if (worldBlock.Equals(BlockValue.Air) || worldBlock.ischild) continue;
 
-            GameManager.Instance.World.ChunkClusters[clrIdx].SetBlock(worldPos, false, worldBlock, true, density, false, false);
+            GameManager.Instance.World.ChunkClusters[clrIdx]
+              .SetBlock(worldPos, false, worldBlock, true, density, false, false, Options.ContainsKey("force"));
             counter++;
           }
         }
       }
 
       SendOutput($"Setting density on {counter} blocks '{density}' @ {position} to {BCUtils.GetMaxPos(position, size)}");
-      SendOutput("Use bc-wblock /undo to revert the changes");
+      SendOutput("Use bc-undo to revert the changes");
       Reload(modifiedChunks);
     }
 
@@ -263,7 +264,7 @@ namespace BCM.Commands
       }
 
       SendOutput($"Setting meta{metaIdx} on '{counter}' blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
-      SendOutput("Use bc-wblock /undo to revert the changes");
+      SendOutput("Use bc-undo to revert the changes");
       Reload(modifiedChunks);
     }
 
@@ -300,7 +301,7 @@ namespace BCM.Commands
       }
 
       SendOutput($"Setting rotation on '{counter}' blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
-      SendOutput("Use bc-wblock /undo to revert the changes");
+      SendOutput("Use bc-undo to revert the changes");
       Reload(modifiedChunks);
     }
 
@@ -327,7 +328,7 @@ namespace BCM.Commands
       }
 
       SendOutput($"Downgrading {counter} blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
-      SendOutput("Use bc-wblock /undo to revert the changes");
+      SendOutput("Use bc-undo to revert the changes");
       Reload(modifiedChunks);
     }
 
@@ -354,7 +355,7 @@ namespace BCM.Commands
       }
 
       SendOutput($"Upgrading {counter} blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
-      SendOutput("Use bc-wblock /undo to revert the changes");
+      SendOutput("Use bc-undo to revert the changes");
       Reload(modifiedChunks);
     }
 
@@ -451,7 +452,7 @@ namespace BCM.Commands
       }
 
       SendOutput($"Damaging {counter} blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
-      SendOutput("Use bc-wblock /undo to revert the changes");
+      SendOutput("Use bc-undo to revert the changes");
       Reload(modifiedChunks);
     }
 
@@ -477,7 +478,7 @@ namespace BCM.Commands
       }
 
       SendOutput($"Repairing {counter} blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
-      SendOutput("Use bc-wblock /undo to revert the changes");
+      SendOutput("Use bc-undo to revert the changes");
       Reload(modifiedChunks);
     }
 
@@ -535,7 +536,7 @@ namespace BCM.Commands
       }
 
       SendOutput($"Painting {counter} blocks on face '{((BlockFace)setFace).ToString()}' with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {position} to {BCUtils.GetMaxPos(position, size)}");
-      SendOutput("Use bc-wblock /undo to revert the changes");
+      SendOutput("Use bc-undo to revert the changes");
       Reload(modifiedChunks);
     }
 
@@ -586,7 +587,7 @@ namespace BCM.Commands
       }
 
       SendOutput($"Painting {counter} blocks with texture '{BlockTextureData.GetDataByTextureID(texture)?.Name}' @ {position} to {BCUtils.GetMaxPos(position, size)}");
-      SendOutput("Use bc-wblock /undo to revert the changes");
+      SendOutput("Use bc-undo to revert the changes");
       Reload(modifiedChunks);
     }
 
@@ -611,7 +612,7 @@ namespace BCM.Commands
       }
 
       SendOutput($"Paint removed from {counter} blocks @ {position} to {BCUtils.GetMaxPos(position, size)}");
-      SendOutput("Use bc-wblock /undo to revert the changes");
+      SendOutput("Use bc-undo to revert the changes");
       Reload(modifiedChunks);
     }
 
@@ -702,7 +703,7 @@ namespace BCM.Commands
       }
 
       SendOutput($"Replaced {counter} '{block1.GetBlockName()}' blocks with '{block2.GetBlockName()}' @ {position} to {BCUtils.GetMaxPos(position, size)}");
-      SendOutput("Use bc-wblock /undo to revert the changes");
+      SendOutput("Use bc-undo to revert the changes");
       Reload(modifiedChunks);
     }
 
@@ -726,7 +727,7 @@ namespace BCM.Commands
       else
       {
         SendOutput($"Inserting block '{Block.list[bv.type].GetBlockName()}' @ {position} to {BCUtils.GetMaxPos(position, size)}");
-        SendOutput("Use bc-wblock /undo to revert the changes");
+        SendOutput("Use bc-undo to revert the changes");
       }
 
       Reload(modifiedChunks);

@@ -1,4 +1,3 @@
-using System;
 using BCM.Models;
 using System.Collections.Generic;
 using System.IO;
@@ -71,7 +70,7 @@ namespace BCM.Commands
             case "itemicons":
               var sprites = GetSprites(out var bakedCount);
               if (sprites == null) return;
-              data.Add(new { Count = sprites.Count, BakedCount = bakedCount, Icons = sprites });
+              data.Add(new { sprites.Count, BakedCount = bakedCount, Icons = sprites });
               break;
 
             case "resources":
@@ -143,7 +142,7 @@ namespace BCM.Commands
             list.Add(name);
           }
 
-          UnityEngine.Object.Destroy(tex);
+          Object.Destroy(tex);
         }
       }
 

@@ -30,7 +30,7 @@ namespace BCM.Commands
           Duration = task.Duration.TotalSeconds,
           Status = task.Status.ToString(),
           Command = task.Command == null ? "" : task.Command.Command,
-          Output = task.Output
+          task.Output
         });
       }
     }
