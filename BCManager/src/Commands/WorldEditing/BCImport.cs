@@ -73,7 +73,7 @@ namespace BCM.Commands
       // SPAWN PREFAB
       Log.Out($"{Config.ModPrefix}Spawning prefab {prefab.filename} @ {pos}, size={prefab.size}, rot={r}");
       SendOutput($"Spawning prefab {prefab.filename} @ {pos}, size={prefab.size}, rot={r}");
-      if (Options.ContainsKey("sblock") || Options.ContainsKey("editmode"))
+      if (Options.ContainsKey("sblock") || Options.ContainsKey("editmode") || GameManager.Instance.IsEditMode())
       {
         SendOutput("* with Sleeper Blocks option set");
       }
@@ -81,11 +81,11 @@ namespace BCM.Commands
       {
         SendOutput("* with Sleeper Spawning option set");
       }
-      if (Options.ContainsKey("tfill") || Options.ContainsKey("editmode"))
+      if (Options.ContainsKey("tfill") || Options.ContainsKey("editmode") || GameManager.Instance.IsEditMode())
       {
         SendOutput("* with Terrain Filler option set");
       }
-      if (Options.ContainsKey("notrans") || Options.ContainsKey("editmode"))
+      if (Options.ContainsKey("notrans") || Options.ContainsKey("editmode") || GameManager.Instance.IsEditMode())
       {
         SendOutput("* with No Placeholder Translations option set");
       }
@@ -245,10 +245,10 @@ namespace BCM.Commands
     {
       // ENTITIES
       var entities = new List<int>();
-      prefab.CopyEntitiesIntoWorld(world, pos, entities, !(Options.ContainsKey("noent") || Options.ContainsKey("editmode")));
+      prefab.CopyEntitiesIntoWorld(world, pos, entities, !(Options.ContainsKey("noent") || Options.ContainsKey("editmode") || GameManager.Instance.IsEditMode()));
 
       //BLOCK TRANSLATIONS
-      if (Options.ContainsKey("notrans") || Options.ContainsKey("editmode")) return;
+      if (Options.ContainsKey("notrans") || Options.ContainsKey("editmode") || GameManager.Instance.IsEditMode()) return;
 
       var map = LootContainer.lootPlaceholderMap;
       for (var px = 0; px < prefab.size.x; px++)
@@ -401,7 +401,7 @@ namespace BCM.Commands
             var prefabBlock = prefab.GetBlock(x, y, z);
 
             //SLEEPER BLOCKS
-            if (!(Options.ContainsKey("sblocks") || Options.ContainsKey("editmode")) && Block.list[prefabBlock.type].IsSleeperBlock)
+            if (!(Options.ContainsKey("sblocks") || Options.ContainsKey("editmode") || GameManager.Instance.IsEditMode()) && Block.list[prefabBlock.type].IsSleeperBlock)
             {
               prefabBlock = BlockValue.Air;
             }
@@ -425,7 +425,7 @@ namespace BCM.Commands
             }
 
             //TERRAIN FILLER
-            if (!(Options.ContainsKey("tfill") || Options.ContainsKey("editmode")) && Constants.cTerrainFillerBlockValue.type != 0 && prefabBlock.type == Constants.cTerrainFillerBlockValue.type)
+            if (!(Options.ContainsKey("tfill") || Options.ContainsKey("editmode") || GameManager.Instance.IsEditMode()) && Constants.cTerrainFillerBlockValue.type != 0 && prefabBlock.type == Constants.cTerrainFillerBlockValue.type)
             {
               if (chunkBlock.type == 0 || Block.list[chunkBlock.type] == null || !Block.list[chunkBlock.type].shape.IsTerrain()) continue;
 
