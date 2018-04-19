@@ -67,5 +67,6 @@
   <Command name="BCTileEntity" commands="bc-te,tile" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCReset" commands="bc-reset" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCPrefab" commands="bc-prefab" defaultpermissionlevel="0" defaultoptions=""/>
+  <Command name="BCEditMode" commands="bc-editmode,editmode" defaultpermissionlevel="0" defaultoptions=""/>
   <Command name="BCUndo" commands="bc-undo" defaultpermissionlevel="0" defaultoptions=""/>
 </Commands>

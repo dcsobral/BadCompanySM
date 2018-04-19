@@ -37,6 +37,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\Commands\en\Description\BCEditMode.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Config\Commands\en\Description\BCTask.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -74,6 +77,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Description\BCWorldBlocksRPC.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Config\Commands\en\Help\BCEditMode.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\Commands\en\Help\BCPrefab.txt">
@@ -138,6 +144,7 @@
     <Compile Include="src\API.cs" />
     <Compile Include="src\Commands\AdminEntities\BCGiveItemToPlayer.cs" />
     <Compile Include="src\Commands\AdminEntities\BCHordeSpawners.cs" />
+    <Compile Include="src\Commands\WorldEditing\BCEditMode.cs" />
     <Compile Include="src\Models\Simple\BCMSleeperVolumeDetialed.cs" />
     <Compile Include="src\Models\Simple\BCMSpawnPoint.cs" />
     <Compile Include="src\Models\Simple\BCMEffect.cs" />

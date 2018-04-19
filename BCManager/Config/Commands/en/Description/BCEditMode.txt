@@ -1,0 +1,1 @@
+﻿Edit Mode - Toggles the edit mode setting for the world
