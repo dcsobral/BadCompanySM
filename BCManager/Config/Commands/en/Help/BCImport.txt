@@ -13,5 +13,6 @@
       /nw, /nw, /se, /sw - these options cause the prefab to spawn at the location in the direction indicated (instead of the center). If you face that direction it will appear in front of you
       /cornernw, /cornernw, /cornerse, /cornersw - these options cause the prefab to spawn at the location from that corner (instead of the center)
       /nooffset will cause the bottom layer of the prefab to spawn at y, without this option the -yoffset property is used to offset from the location given
-      /air /noair /sleepers /nosleepers - will override the xml settings for the prefab when importing
+      /air /noair - will override the xml settings for the prefab when importing
+      /editmode /sblock - will import sleeper blocks instead of spawning sleepers
       /noundo will skip the undo code and not make a backup of the area replaced by the import
