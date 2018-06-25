@@ -14,5 +14,9 @@
       /cornerne, /cornernw, /cornerse, /cornersw - these options cause the prefab to spawn at the location from that corner (instead of the center)
       /nooffset will cause the bottom layer of the prefab to spawn at y, without this option the -yoffset property is used to offset from the location given
       /air /noair - will override the xml settings for the prefab when importing
-      /editmode /sblock - will import sleeper blocks instead of spawning sleepers
+      /sblock - will import sleeper blocks instead of spawning sleepers
+      /tfill - will import terrain filler as terrain filler blocks instead of replacing them
+      /notrans - will import placerholder blocks as they are, instead of replacing them
+      /editmode - activates /sblock, /tfill and /notrans
+      /noreload /nr - Do not reload chunks for clients
       /noundo will skip the undo code and not make a backup of the area replaced by the import
