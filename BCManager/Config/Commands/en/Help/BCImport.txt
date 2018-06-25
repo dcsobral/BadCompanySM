@@ -11,7 +11,7 @@
       Use bc-location (loc or pos also work) to display and store your current location
       Use bc-prefabs to get a list of prefabs in the Data/Prefabs folder
       /ne, /nw, /se, /sw - these options cause the prefab to spawn at the location in the direction indicated (instead of the center). If you face that direction it will appear in front of you
-      /cornernw, /cornernw, /cornerse, /cornersw - these options cause the prefab to spawn at the location from that corner (instead of the center)
+      /cornerne, /cornernw, /cornerse, /cornersw - these options cause the prefab to spawn at the location from that corner (instead of the center)
       /nooffset will cause the bottom layer of the prefab to spawn at y, without this option the -yoffset property is used to offset from the location given
       /air /noair /sleepers /nosleepers - will override the xml settings for the prefab when importing
       /noundo will skip the undo code and not make a backup of the area replaced by the import
